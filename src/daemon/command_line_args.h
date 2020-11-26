@@ -35,7 +35,14 @@
 
 namespace daemon_args
 {
-  std::string const WINDOWS_SERVICE_NAME = "Monero Daemon";
+  std::string const WINDOWS_SERVICE_NAME = "Denarii Daemon";
+
+    //. added by codestar.j
+  const command_line::arg_descriptor<bool> arg_print_genesis_tx = {
+    "print-genesis-tx"
+    , "Print genesis for huang"
+  };
+  //
 
   const command_line::arg_descriptor<std::string, false, true, 2> arg_config_file = {
     "config-file"

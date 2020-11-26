@@ -153,7 +153,7 @@
 
 #define RPC_IP_FAILS_BEFORE_BLOCK                       3
 
-#define CRYPTONOTE_NAME                         "bitmonero"
+#define CRYPTONOTE_NAME                         "denarii"
 #define CRYPTONOTE_BLOCKCHAINDATA_FILENAME      "data.mdb"
 #define CRYPTONOTE_BLOCKCHAINDATA_LOCK_FILENAME "lock.mdb"
 #define P2P_NET_DATA_FILENAME                   "p2pstate.bin"
@@ -206,13 +206,13 @@ namespace config
   uint64_t const CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX = 18;
   uint64_t const CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX = 19;
   uint64_t const CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX = 42;
-  uint16_t const P2P_DEFAULT_PORT = 18080;
-  uint16_t const RPC_DEFAULT_PORT = 18081;
-  uint16_t const ZMQ_RPC_DEFAULT_PORT = 18082;
+  uint16_t const P2P_DEFAULT_PORT = 15668;
+  uint16_t const RPC_DEFAULT_PORT = 8424;
+  uint16_t const ZMQ_RPC_DEFAULT_PORT = 9775;
   boost::uuids::uuid const NETWORK_ID = { {
-      0x12 ,0x30, 0xF1, 0x71 , 0x61, 0x04 , 0x41, 0x61, 0x17, 0x31, 0x00, 0x82, 0x16, 0xA1, 0xA1, 0x10
+      0xef, 0x3e, 0xb8, 0x7b, 0x1e, 0x40, 0xd2, 0x71, 0x59, 0xdb, 0x4a, 0xcb, 0x1c, 0xba, 0x54, 0x47
     } }; // Bender's nightmare
-  std::string const GENESIS_TX = "013c01ff0001ffffffffffff03029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd08807121017767aafcde9be00dcfd098715ebcf7f410daebc582fda69d24a28e9d0bc890d1";
+  std::string const GENESIS_TX = "013c01ff0006ff9fdb58023a3ee9aae8c49871d0ac8479bf5c2ca0d9598821e805f801a7535d8a7d220eff80a8d6b90702784c77800b20cee7d9cf13aad198c2a8aa5feb08d1ed4d99ca28fec09aadae8e8088aca3cf0202417d42380878d552c5408ef1029e85864563597a5f38d88ebacac9096dd19f7a8090cad2c60e025a30abafa325f59bac9acd4d37ec55d811360104ccef5fe5a9a83c875cdaf5fc80e08d84ddcb010227d08fc58829be12d00ea920cb2219a4cc5f8e449b0d30dfbd858cd11acbfc3080c0caf384a302022bcaf8ec58db7554082ac0c0bb5aac447aa45cdc29d319d8f9369a35c7a7565c21011b95ded7a2e2b1d68c0a72901a7c620eb706b623bb65b9a74718717de5e95afd";
   uint32_t const GENESIS_NONCE = 10000;
 
   // Hash domain separators
@@ -236,9 +236,9 @@ namespace config
     uint64_t const CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX = 53;
     uint64_t const CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX = 54;
     uint64_t const CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX = 63;
-    uint16_t const P2P_DEFAULT_PORT = 28080;
-    uint16_t const RPC_DEFAULT_PORT = 28081;
-    uint16_t const ZMQ_RPC_DEFAULT_PORT = 28082;
+    uint16_t const P2P_DEFAULT_PORT = 15669;
+    uint16_t const RPC_DEFAULT_PORT = 15670;
+    uint16_t const ZMQ_RPC_DEFAULT_PORT = 15671;
     boost::uuids::uuid const NETWORK_ID = { {
         0x12 ,0x30, 0xF1, 0x71 , 0x61, 0x04 , 0x41, 0x61, 0x17, 0x31, 0x00, 0x82, 0x16, 0xA1, 0xA1, 0x11
       } }; // Bender's daydream
@@ -251,9 +251,9 @@ namespace config
     uint64_t const CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX = 24;
     uint64_t const CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX = 25;
     uint64_t const CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX = 36;
-    uint16_t const P2P_DEFAULT_PORT = 38080;
-    uint16_t const RPC_DEFAULT_PORT = 38081;
-    uint16_t const ZMQ_RPC_DEFAULT_PORT = 38082;
+    uint16_t const P2P_DEFAULT_PORT = 15680;
+    uint16_t const RPC_DEFAULT_PORT = 15681;
+    uint16_t const ZMQ_RPC_DEFAULT_PORT = 15682;
     boost::uuids::uuid const NETWORK_ID = { {
         0x12 ,0x30, 0xF1, 0x71 , 0x61, 0x04 , 0x41, 0x61, 0x17, 0x31, 0x00, 0x82, 0x16, 0xA1, 0xA1, 0x12
       } }; // Bender's daydream
