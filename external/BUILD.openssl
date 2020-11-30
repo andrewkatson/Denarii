@@ -1,0 +1,14 @@
+
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+ name = "libssl",
+ srcs = glob(["**/libssl.a"]),
+ hdrs = glob(["**/ssl/**/*.h"])
+)
+
+cc_library(
+ name = "libcrypto",
+ srcs = glob(["**/libcrypto.a"]),
+ hdrs = glob(["**/crypto/**/*.h"])
+)

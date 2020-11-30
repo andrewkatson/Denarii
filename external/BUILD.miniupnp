@@ -1,0 +1,38 @@
+
+package(default_visibility = ["//visibility:public"])
+
+cc_library (
+ name = "minissdpd",
+ srcs = glob(["**/minissdpd/*.o"]),
+ hdrs = glob(["**/minissdpd/*.h"])
+)
+
+cc_library(
+  name = "miniupnpc",
+ srcs = glob(["**/miniupnpc/*.o"]),
+ hdrs = glob(["**/miniupnpc/*.h"])
+)
+
+cc_library(
+  name = "miniupnpc-async",
+ srcs = glob(["**/miniupnpc-async/*.o"]),
+ hdrs = glob(["**/miniupnpc-async/*.h"])
+)
+
+cc_library(
+  name = "miniupnpc-libevent",
+ srcs = glob(["**/miniupnpc-libevent/*.o"]),
+ hdrs = glob(["**/miniupnpc-libevent/*.h"])
+)
+
+cc_library(
+  name = "miniupnpc-libuv",
+ srcs = glob(["**/miniupnpc-libuv/*.o"]),
+ hdrs = glob(["**/miniupnpc-libuv/*.h"])
+)
+
+cc_library(
+  name = "miniupnpd",
+ srcs = glob(["**/miniupnpd/*.o"]),
+ hdrs = glob(["**/miniupnpd/*.h"])
+)

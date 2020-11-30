@@ -1,0 +1,8 @@
+
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+  name = "ldns",
+  srcs = glob(["**/*.a"]),
+  hdrs = glob(["**/include/**/*.h"])
+)

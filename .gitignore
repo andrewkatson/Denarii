@@ -109,3 +109,19 @@ nbproject
 /testnet
 
 __pycache__/
+
+# External folders
+external/expat
+external/ldns
+external/libhidapi
+external/liblzma
+external/libnorm
+external/libreadline
+external/libsodium
+external/libudev
+external/libunbound
+external/libunwind
+external/libusb
+external/libzmq
+external/openpgm
+external/openssl

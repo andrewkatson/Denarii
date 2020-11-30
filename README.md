@@ -148,6 +148,29 @@ Approximately three months prior to a scheduled software upgrade, a branch from 
 
 ## Compiling Monero from source
 
+### Note
+* Everything has to be built with sudo because the files are moved using sudo and that gives them certain permissions.
+
+### Real Dependencies 
+
+#### Automatically pulled in 
+* Boost Archive: Do not need to do anything 
+* DB_Driver (liblmdb): Do not need to do anything 
+* Easylogging++: Do not need to do anything 
+* Miniupnp: Need to build each of the subfolders within the miniupnp folder. They all have their own instructions GL
+* Qrcodegen: Do not need to do anything. 
+* RandomX: Need to build it according to its README. 
+* Rapdijson: Do not need to do anything. If you want to build you need to remove "-Werror" from its CMakeLists.txt
+* Supercop: Need to build it according to its README. 
+* Trezor-common: Do not need to do anything
+* Unbound: Build according to its instructions in its README. Then, move libunbound.a from /usr/local/lib to the unbound directory
+
+#### Manually pulled in
+* openssl: https://github.com/openssl/openssl. Build according to the instructions in its README. 
+* libzmq: https://github.com/zeromq/libzmq. Build according to the instruction in its README (it will direct you to the INSTALL file). Then move libzmq.a 
+from /usr/local/lib to the libzmq directory.
+* All others you should follow the instructions to install below. 
+
 ### Dependencies
 
 The following table summarizes the tools and libraries required to build. A
@@ -204,11 +227,11 @@ FreeBSD 12.1 one-liner required to build dependencies:
 
 Clone recursively to pull-in needed submodule(s):
 
-`$ git clone --recursive https://github.com/monero-project/monero`
+`$ git clone --recursive https://github.com/DrewGlinsman/denarii.git`
 
 If you already have a repo cloned, initialize and update:
 
-`$ cd monero && git submodule init && git submodule update`
+`$ cd denarii && git submodule init && git submodule update`
 
 ### Build instructions
 
@@ -223,6 +246,7 @@ invokes cmake commands as needed.
     ```bash
     cd monero
     git checkout release-v0.17
+    sudo bazel run :configure
     make
     ```
 
