@@ -1,0 +1,68 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_binary(
+    name = "denariid",
+    srcs = [
+        "cryptonote_protocol/cryptonote_protocol_defs.h",
+        "cryptonote_protocol/cryptonote_protocol_handler.h",
+        "cryptonote_protocol/cryptonote_protocol_handler.inl",
+        "cryptonote_protocol/cryptonote_protocol_handler_common.h",
+        "daemon/command_parser_executor.cpp",
+        "daemon/command_parser_executor.h",
+        "daemon/command_server.cpp",
+        "daemon/command_server.h",
+        "daemon/core.h",
+        "daemon/daemon.cpp",
+        "daemon/daemon.h",
+        "daemon/executor.cpp",
+        "daemon/executor.h",
+        "daemon/main.cpp",
+        "daemon/p2p.h",
+        "daemon/protocol.h",
+        "daemon/rpc.h",
+        "daemon/rpc_command_executor.cpp",
+        "daemon/rpc_command_executor.h",
+        "p2p/net_node.h",
+        "p2p/net_node_common.h",
+        "p2p/net_peerlist.h",
+        "p2p/net_peerlist_boost_serialization.h",
+        "p2p/p2p_protocol_defs.h",
+        "p2p/stdafx.h",
+    ],
+    deps = [
+        "//contrib/epee",
+        "//src:version",
+        "//src/blockchain_db",
+        "//src/blocks",
+        "//src/common",
+        "//src/crypto:cncrypto",
+        "//src/cryptonote_core",
+        "//src/cryptonote_protocol",
+        "//src/daemonizer",
+        "//src/p2p",
+        "//src/rpc",
+        "//src/rpc:daemon_rpc_server",
+        "//src/serialization",
+        "@libreadline",
+        "@libzmq",
+        "@rules_boost//:chrono",
+        "@rules_boost//:filesystem",
+        "@rules_boost//:program_options",
+        "@rules_boost//:regex",
+        "@rules_boost//:system",
+    ],
+)
+
+cc_library(
+    name = "version",
+    srcs = [],
+    hdrs = [":version.h"],
+    deps = [],
+)
+
+cc_library(
+    name = "config",
+    srcs = [],
+    hdrs = ["cryptonote_config.h"],
+    deps = [],
+)

@@ -1,0 +1,42 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "wallet_api",
+    srcs = [
+        "address_book.cpp",
+        "pending_transaction.cpp",
+        "subaddress.cpp",
+        "subaddress_account.cpp",
+        "transaction_history.cpp",
+        "transaction_info.cpp",
+        "unsigned_transaction.cpp",
+        "utils.cpp",
+        "wallet.cpp",
+        "wallet_manager.cpp",
+    ],
+    hdrs = [
+        "address_book.h",
+        "common_defines.h",
+        "pending_transaction.h",
+        "subaddress.h",
+        "subaddress_account.h",
+        "transaction_history.h",
+        "transaction_info.h",
+        "unsigned_transaction.h",
+        "wallet.h",
+        "wallet2_api.h",
+        "wallet_manager.h",
+    ],
+    deps = [
+        "//src/common",
+        "//src/cryptonote_core",
+        "//src/mnemonics",
+        "//src/wallet",
+        "@db_drivers",
+        "@rules_boost//:chrono",
+        "@rules_boost//:filesystem",
+        "@rules_boost//:regex",
+        "@rules_boost//:serialization",
+        "@rules_boost//:thread",
+    ],
+)
