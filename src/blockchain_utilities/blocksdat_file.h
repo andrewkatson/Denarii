@@ -35,18 +35,18 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
 
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "cryptonote_basic/cryptonote_boost_serialization.h"
-#include "cryptonote_core/blockchain.h"
-#include "blockchain_db/blockchain_db.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/cryptonote_basic/cryptonote_boost_serialization.h"
+#include "src/cryptonote_core/blockchain.h"
+#include "src/blockchain_db/blockchain_db.h"
 
 #include <algorithm>
 #include <cstdio>
 #include <fstream>
 #include <atomic>
 
-#include "common/command_line.h"
-#include "version.h"
+#include "src/common/command_line.h"
+#include "src/version.h"
 
 #include "blockchain_utilities.h"
 

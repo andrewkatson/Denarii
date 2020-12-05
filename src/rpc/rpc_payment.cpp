@@ -26,17 +26,17 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <boost/archive/portable_binary_iarchive.hpp>
-#include "cryptonote_config.h"
-#include "include_base_utils.h"
-#include "string_tools.h"
-#include "file_io_utils.h"
-#include "int-util.h"
-#include "common/util.h"
-#include "common/unordered_containers_boost_serialization.h"
-#include "cryptonote_basic/cryptonote_boost_serialization.h"
-#include "cryptonote_basic/cryptonote_format_utils.h"
-#include "cryptonote_basic/difficulty.h"
+#include "archive/portable_binary_iarchive.hpp"
+#include "src/cryptonote_config.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "contrib/epee/include/string_tools.h"
+#include "contrib/epee/include/file_io_utils.h"
+#include "contrib/epee/include/int-util.h"
+#include "src/common/util.h"
+#include "src/common/unordered_containers_boost_serialization.h"
+#include "src/cryptonote_basic/cryptonote_boost_serialization.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
+#include "src/cryptonote_basic/difficulty.h"
 #include "core_rpc_server_error_codes.h"
 #include "rpc_payment.h"
 

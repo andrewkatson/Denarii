@@ -40,14 +40,14 @@
 #include <memory>  // std::unique_ptr
 #include <cstring>  // memcpy
 
-#include "string_tools.h"
-#include "file_io_utils.h"
-#include "common/util.h"
-#include "common/pruning.h"
-#include "cryptonote_basic/cryptonote_format_utils.h"
-#include "crypto/crypto.h"
-#include "profile_tools.h"
-#include "ringct/rctOps.h"
+#include "contrib/epee/include/string_tools.h"
+#include "contrib/epee/include/file_io_utils.h"
+#include "src/common/util.h"
+#include "src/common/pruning.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
+#include "src/crypto/crypto.h"
+#include "contrib/epee/include/profile_tools.h"
+#include "src/ringct/rctOps.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "blockchain.db.lmdb"

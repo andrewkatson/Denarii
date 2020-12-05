@@ -28,7 +28,7 @@
 
 #include "bootstrap_node_selector.h"
 
-#include "crypto/crypto.h"
+#include "src/crypto/crypto.h"
 
 namespace cryptonote
 {

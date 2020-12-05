@@ -27,10 +27,10 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <boost/algorithm/string.hpp>
-#include "cryptonote_config.h"
-#include "version.h"
-#include "string_tools.h"
-#include "daemon/command_server.h"
+#include "src/cryptonote_config.h"
+#include "src/version.h"
+#include "contrib/epee/include/string_tools.h"
+#include "src/daemon/command_server.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "daemon"

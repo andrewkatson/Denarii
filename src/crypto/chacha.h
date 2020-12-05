@@ -39,8 +39,8 @@
 #if defined(__cplusplus)
 #include <memory.h>
 
-#include "memwipe.h"
-#include "mlocker.h"
+#include "contrib/epee/include/memwipe.h"
+#include "contrib/epee/include/mlocker.h"
 #include "hash.h"
 
 namespace crypto {

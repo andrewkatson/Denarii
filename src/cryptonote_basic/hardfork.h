@@ -28,9 +28,9 @@
 
 #pragma once
 
-#include "syncobj.h"
-#include "hardforks/hardforks.h"
-#include "cryptonote_basic/cryptonote_basic.h"
+#include "contrib/epee/include/syncobj.h"
+#include "src/hardforks/hardforks.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
 
 namespace cryptonote
 {

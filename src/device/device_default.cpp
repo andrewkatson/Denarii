@@ -31,13 +31,13 @@
 
 
 #include "device_default.hpp"
-#include "int-util.h"
-#include "crypto/wallet/crypto.h"
-#include "cryptonote_basic/account.h"
-#include "cryptonote_basic/subaddress_index.h"
-#include "cryptonote_core/cryptonote_tx_utils.h"
-#include "ringct/rctOps.h"
-#include "cryptonote_config.h"
+#include "contrib/epee/include/int-util.h"
+#include "src/crypto/wallet/crypto.h"
+#include "src/cryptonote_basic/account.h"
+#include "src/cryptonote_basic/subaddress_index.h"
+#include "src/cryptonote_core/cryptonote_tx_utils.h"
+#include "src/ringct/rctOps.h"
+#include "src/cryptonote_config.h"
 
 namespace hw {
 

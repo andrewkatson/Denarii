@@ -40,11 +40,11 @@
 
 #include <boost/optional/optional_fwd.hpp>
 
-#include "common/common_fwd.h"
-#include "common/rpc_client.h"
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "net/net_fwd.h"
-#include "rpc/core_rpc_server.h"
+#include "src/common/common_fwd.h"
+#include "src/common/rpc_client.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "contrib/epee/include/net/net_fwd.h"
+#include "src/rpc/core_rpc_server.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "daemon"

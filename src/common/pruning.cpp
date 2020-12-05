@@ -26,9 +26,9 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "cryptonote_config.h"
-#include "misc_log_ex.h"
-#include "crypto/crypto.h"
+#include "src/cryptonote_config.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "src/crypto/crypto.h"
 #include "pruning.h"
 
 namespace tools

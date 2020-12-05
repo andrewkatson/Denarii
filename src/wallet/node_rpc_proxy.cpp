@@ -27,10 +27,10 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "node_rpc_proxy.h"
-#include "rpc/core_rpc_server_commands_defs.h"
-#include "rpc/rpc_payment_signature.h"
-#include "rpc/rpc_payment_costs.h"
-#include "storages/http_abstract_invoke.h"
+#include "src/rpc/core_rpc_server_commands_defs.h"
+#include "src/rpc/rpc_payment_signature.h"
+#include "src/rpc/rpc_payment_costs.h"
+#include "contrib/epee/include/storages/http_abstract_invoke.h"
 
 #define RETURN_ON_RPC_RESPONSE_ERROR(r, error, res, method) \
   do { \

@@ -40,10 +40,10 @@ Passing RPC commands:
 #pragma once
 
 #include <boost/optional/optional_fwd.hpp>
-#include "common/common_fwd.h"
-#include "console_handler.h"
-#include "daemon/command_parser_executor.h"
-#include "net/net_fwd.h"
+#include "src/common/common_fwd.h"
+#include "contrib/epee/include/console_handler.h"
+#include "src/daemon/command_parser_executor.h"
+#include "contrib/epee/include/net/net_fwd.h"
 
 namespace daemonize {
 

@@ -29,11 +29,11 @@
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/range/adaptor/transformed.hpp>
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "cryptonote_basic/tx_extra.h"
-#include "cryptonote_core/blockchain.h"
-#include "common/command_line.h"
-#include "version.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/cryptonote_basic/tx_extra.h"
+#include "src/cryptonote_core/blockchain.h"
+#include "src/common/command_line.h"
+#include "src/version.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "debugtools.deserialize"

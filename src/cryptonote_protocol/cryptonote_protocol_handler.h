@@ -37,14 +37,14 @@
 #include <boost/program_options/variables_map.hpp>
 #include <string>
 
-#include "math_helper.h"
-#include "storages/levin_abstract_invoke2.h"
-#include "warnings.h"
+#include "contrib/epee/include/math_helper.h"
+#include "contrib/epee/include/storages/levin_abstract_invoke2.h"
+#include "contrib/epee/include/warnings.h"
 #include "cryptonote_protocol_defs.h"
 #include "cryptonote_protocol_handler_common.h"
 #include "block_queue.h"
-#include "common/perf_timer.h"
-#include "cryptonote_basic/connection_context.h"
+#include "src/common/perf_timer.h"
+#include "src/cryptonote_basic/connection_context.h"
 #include <boost/circular_buffer.hpp>
 
 PUSH_WARNINGS

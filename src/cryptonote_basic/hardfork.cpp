@@ -29,8 +29,8 @@
 #include <algorithm>
 #include <cstdio>
 
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "blockchain_db/blockchain_db.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/blockchain_db/blockchain_db.h"
 #include "hardfork.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY

@@ -34,8 +34,8 @@
 #include <stdexcept>
 #include <system_error>
 
-#include "byte_slice.h"
-#include "rpc/zmq_pub.h"
+#include "contrib/epee/include/byte_slice.h"
+#include "src/rpc/zmq_pub.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "net.zmq"

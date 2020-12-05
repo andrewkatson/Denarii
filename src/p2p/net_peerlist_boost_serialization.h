@@ -32,14 +32,14 @@
 
 #include <cstring>
 
-#include "common/expect.h"
-#include "net/net_utils_base.h"
-#include "net/tor_address.h"
-#include "net/i2p_address.h"
-#include "p2p/p2p_protocol_defs.h"
+#include "src/common/expect.h"
+#include "contrib/epee/include/net/net_utils_base.h"
+#include "src/net/tor_address.h"
+#include "src/net/i2p_address.h"
+#include "src/p2p/p2p_protocol_defs.h"
 
 #ifdef CRYPTONOTE_PRUNING_DEBUG_SPOOF_SEED
-#include "common/pruning.h"
+#include "src/common/pruning.h"
 #endif
 
 BOOST_CLASS_VERSION(nodetool::peerlist_entry, 3)

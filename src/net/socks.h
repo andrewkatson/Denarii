@@ -38,8 +38,8 @@
 #include <memory>
 #include <utility>
 
-#include "net/fwd.h"
-#include "span.h"
+#include "src/net/fwd.h"
+#include "contrib/epee/include/span.h"
 
 namespace epee
 {

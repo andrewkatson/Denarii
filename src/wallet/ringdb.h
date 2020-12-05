@@ -30,10 +30,10 @@
 
 #include <string>
 #include <vector>
-#include <lmdb.h>
-#include "wipeable_string.h"
-#include "crypto/crypto.h"
-#include "cryptonote_basic/cryptonote_basic.h"
+#include "external/db_drivers/liblmdb/lmdb.h"
+#include "contrib/epee/include/wipeable_string.h"
+#include "src/crypto/crypto.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
 
 namespace tools
 {

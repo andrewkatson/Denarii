@@ -27,7 +27,7 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <set>
-#include "cryptonote_basic/blobdatatype.h"
+#include "src/cryptonote_basic/blobdatatype.h"
 
 namespace cryptonote
 {

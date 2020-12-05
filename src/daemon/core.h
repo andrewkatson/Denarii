@@ -28,10 +28,10 @@
 
 #pragma once
 
-#include "blocks/blocks.h"
-#include "cryptonote_core/cryptonote_core.h"
-#include "cryptonote_protocol/cryptonote_protocol_handler.h"
-#include "misc_log_ex.h"
+#include "src/blocks/blocks.h"
+#include "src/cryptonote_core/cryptonote_core.h"
+#include "src/cryptonote_protocol/cryptonote_protocol_handler.h"
+#include "contrib/epee/include/misc_log_ex.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "daemon"

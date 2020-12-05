@@ -32,9 +32,9 @@
 #include <boost/lambda/lambda.hpp>
 #include <openssl/ssl.h>
 #include <openssl/pem.h>
-#include "misc_log_ex.h"
-#include "net/net_helper.h"
-#include "net/net_ssl.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "contrib/epee/include/net/net_helper.h"
+#include "contrib/epee/include/net/net_ssl.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "net.ssl"

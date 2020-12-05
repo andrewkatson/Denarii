@@ -33,9 +33,9 @@
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
 #include <string>
-#include "common/util.h"
-#include "net/http_server_impl_base.h"
-#include "math_helper.h"
+#include "src/common/util.h"
+#include "contrib/epee/include/net/http_server_impl_base.h"
+#include "contrib/epee/include/math_helper.h"
 #include "wallet_rpc_server_commands_defs.h"
 #include "wallet2.h"
 

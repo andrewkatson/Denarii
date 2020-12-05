@@ -28,17 +28,17 @@
 //
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
-#include "string_tools.h"
-#include "common/password.h"
-#include "common/scoped_message_writer.h"
-#include "common/pruning.h"
-#include "daemon/rpc_command_executor.h"
-#include "rpc/core_rpc_server_commands_defs.h"
-#include "cryptonote_core/cryptonote_core.h"
-#include "cryptonote_basic/difficulty.h"
-#include "cryptonote_basic/hardfork.h"
-#include "rpc/rpc_payment_signature.h"
-#include "rpc/rpc_version_str.h"
+#include "contrib/epee/include/string_tools.h"
+#include "src/common/password.h"
+#include "src/common/scoped_message_writer.h"
+#include "src/common/pruning.h"
+#include "src/daemon/rpc_command_executor.h"
+#include "src/rpc/core_rpc_server_commands_defs.h"
+#include "src/cryptonote_core/cryptonote_core.h"
+#include "src/cryptonote_basic/difficulty.h"
+#include "src/cryptonote_basic/hardfork.h"
+#include "src/rpc/rpc_payment_signature.h"
+#include "src/rpc/rpc_version_str.h"
 #include <boost/format.hpp>
 #include <ctime>
 #include <string>

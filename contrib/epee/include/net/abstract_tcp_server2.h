@@ -51,9 +51,9 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/interprocess/detail/atomic.hpp>
 #include <boost/thread/thread.hpp>
-#include "byte_slice.h"
+#include "contrib/epee/include/byte_slice.h"
 #include "net_utils_base.h"
-#include "syncobj.h"
+#include "contrib/epee/include/syncobj.h"
 #include "connection_basic.hpp"
 #include "network_throttle-detail.hpp"
 

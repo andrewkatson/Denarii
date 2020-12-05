@@ -28,8 +28,8 @@
 
 #pragma once
 
-#include "crypto/hash.h"
-#include "cryptonote_basic/cryptonote_basic.h"
+#include "src/crypto/hash.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
 
 namespace cryptonote
 {

@@ -34,9 +34,9 @@
 #include "tx_extra.h"
 #include "account.h"
 #include "subaddress_index.h"
-#include "include_base_utils.h"
-#include "crypto/crypto.h"
-#include "crypto/hash.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "src/crypto/crypto.h"
+#include "src/crypto/hash.h"
 #include <unordered_map>
 #include <boost/multiprecision/cpp_int.hpp>
 

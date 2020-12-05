@@ -31,9 +31,9 @@
 
 #include <cstdint>
 
-#include "byte_slice.h"
+#include "contrib/epee/include/byte_slice.h"
 #include "net_utils_base.h"
-#include "span.h"
+#include "contrib/epee/include/span.h"
 
 #define LEVIN_SIGNATURE  0x0101010101012101LL  //Bender's nightmare
 

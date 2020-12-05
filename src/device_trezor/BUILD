@@ -17,16 +17,18 @@ cc_library(
         "trezor/messages_map.hpp",
         "trezor/protocol.hpp",
         "trezor/transport.hpp",
+        "trezor/trezor_defs.hpp",
     ],
     deps = [
-        "//src/common",
-        "//src/crypto:cncrypto",
-        "//src/cryptonote_core",
-        "//src/device",
-        "//src/ringct:ringct_basic",
+        "//src:cncrypto",
+        "//src:common",
+        "//src:cryptonote_core",
+        "//src:device",
+        "//src:ringct_basic",
+        "@boost//:chrono",
         "@libsodium",
         "@libusb",
-        "@rules_boost//:chrono",
+        "@rapidjson",
         "@trezor_common//protob:messages_cc_proto",
         "@trezor_common//protob:messages_common_cc_proto",
         "@trezor_common//protob:messages_management_cc_proto",
@@ -37,7 +39,11 @@ cc_library(
 # unclear if this is ever needed
 cc_library(
     name = "minimal_device_trezor",
-    srcs = ["device_trezor.cpp"],
+    srcs = [
+        "device_trezor.cpp",
+        "trezor.hpp",
+        "trezor/trezor_defs.hpp",
+    ],
     hdrs = ["device_trezor.hpp"],
-    deps = [],
+    deps = ["//src:device"],
 )

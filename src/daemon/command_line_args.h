@@ -29,9 +29,9 @@
 #ifndef DAEMON_COMMAND_LINE_ARGS_H
 #define DAEMON_COMMAND_LINE_ARGS_H
 
-#include "common/command_line.h"
-#include "cryptonote_config.h"
-#include "daemonizer/daemonizer.h"
+#include "src/common/command_line.h"
+#include "src/cryptonote_config.h"
+#include "src/daemonizer/daemonizer.h"
 
 namespace daemon_args
 {

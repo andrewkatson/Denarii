@@ -28,13 +28,13 @@
 //
 // Adapted from Python code by Sarang Noether
 
-#include "misc_log_ex.h"
-#include "common/perf_timer.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "src/common/perf_timer.h"
 extern "C"
 {
-#include "crypto/crypto-ops.h"
+#include "src/crypto/crypto-ops.h"
 }
-#include "common/aligned.h"
+#include "src/common/aligned.h"
 #include "rctOps.h"
 #include "multiexp.h"
 

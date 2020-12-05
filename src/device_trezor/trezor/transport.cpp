@@ -38,9 +38,9 @@
 #include <boost/asio/ip/udp.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/format.hpp>
-#include "common/apply_permutation.h"
+#include "src/common/apply_permutation.h"
 #include "transport.hpp"
-#include "messages/messages-common.pb.h"
+#include "protob/messages-common.pb.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "device.trezor.transport"

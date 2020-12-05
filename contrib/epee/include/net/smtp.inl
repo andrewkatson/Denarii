@@ -26,7 +26,7 @@
 
 
 
-#include "md5.h"
+#include "external/openssl/include/openssl//md5.h"
 
 namespace epee
 {

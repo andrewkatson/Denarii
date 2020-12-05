@@ -37,10 +37,10 @@
 #include "subaddress.h"
 #include "subaddress_account.h"
 #include "common_defines.h"
-#include "common/util.h"
+#include "src/common/util.h"
 
-#include "mnemonics/electrum-words.h"
-#include "mnemonics/english.h"
+#include "src/mnemonics/electrum-words.h"
+#include "src/mnemonics/english.h"
 #include <boost/format.hpp>
 #include <sstream>
 #include <unordered_map>

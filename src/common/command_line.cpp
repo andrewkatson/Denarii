@@ -31,7 +31,7 @@
 #include "command_line.h"
 #include <boost/algorithm/string/compare.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include "common/i18n.h"
+#include "src/common/i18n.h"
 
 namespace command_line
 {

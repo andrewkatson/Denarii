@@ -28,8 +28,8 @@
 
 #include "subaddress.h"
 #include "wallet.h"
-#include "crypto/hash.h"
-#include "wallet/wallet2.h"
+#include "src/crypto/hash.h"
+#include "src/wallet/wallet2.h"
 #include "common_defines.h"
 
 #include <vector>

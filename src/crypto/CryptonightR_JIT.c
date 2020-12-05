@@ -8,7 +8,7 @@
 #include <sys/mman.h>
 #endif
 
-#include "int-util.h"
+#include "contrib/epee/include/int-util.h"
 #include "hash-ops.h"
 #include "variant4_random_math.h"
 #include "CryptonightR_JIT.h"

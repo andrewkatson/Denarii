@@ -29,8 +29,8 @@
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
 #pragma once
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "crypto/hash.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/crypto/hash.h"
 
 namespace tools
 {

@@ -33,11 +33,11 @@
 #include <boost/uuid/uuid.hpp>
 #include <utility>
 #include <vector>
-#include "cryptonote_basic/blobdatatype.h"
-#include "cryptonote_protocol/enums.h"
-#include "cryptonote_protocol/fwd.h"
-#include "net/enums.h"
-#include "net/net_utils_base.h"
+#include "src/cryptonote_basic/blobdatatype.h"
+#include "src/cryptonote_protocol/enums.h"
+#include "src/cryptonote_protocol/fwd.h"
+#include "contrib/epee/include/net/enums.h"
+#include "contrib/epee/include/net/net_utils_base.h"
 #include "p2p_protocol_defs.h"
 
 namespace nodetool

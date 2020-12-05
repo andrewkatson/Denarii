@@ -15,8 +15,8 @@ cc_test(
         "//src/crypto:cncrypto",
         "//src/cryptonote_core",
         "//src/wallet",
-        "@rules_boost//:program_options",
-        "@rules_boost//:regex",
+        "@boost//:program_options",
+        "@boost//:regex",
     ],
 )
 

@@ -31,9 +31,9 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/asio/ip/address.hpp>
 #include <functional>
-#include "common/command_line.h"
-#include "common/i18n.h"
-#include "hex.h"
+#include "src/common/command_line.h"
+#include "src/common/i18n.h"
+#include "contrib/epee/include/hex.h"
 
 namespace cryptonote
 {

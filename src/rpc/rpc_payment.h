@@ -34,14 +34,14 @@
 #include <map>
 #include <boost/thread/mutex.hpp>
 #include <boost/serialization/version.hpp>
-#include "cryptonote_basic/blobdatatype.h"
-#include "cryptonote_basic/cryptonote_basic.h"
+#include "src/cryptonote_basic/blobdatatype.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/vector.hpp>
-#include "serialization/crypto.h"
-#include "serialization/string.h"
-#include "serialization/pair.h"
-#include "serialization/containers.h"
+#include "src/serialization/crypto.h"
+#include "src/serialization/string.h"
+#include "src/serialization/pair.h"
+#include "src/serialization/containers.h"
 
 namespace cryptonote
 {

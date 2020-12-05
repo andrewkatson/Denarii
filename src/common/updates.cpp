@@ -27,7 +27,7 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <boost/algorithm/string.hpp>
-#include "misc_log_ex.h"
+#include "contrib/epee/include/misc_log_ex.h"
 #include "util.h"
 #include "dns_utils.h"
 #include "updates.h"

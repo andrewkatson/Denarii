@@ -11,8 +11,8 @@ Public domain.
 #endif
 
 #include "chacha.h"
-#include "int-util.h"
-#include "warnings.h"
+#include "contrib/epee/include/int-util.h"
+#include "contrib/epee/include/warnings.h"
 
 /*
  * The following macros are used to obtain exact-width results.

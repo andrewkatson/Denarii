@@ -32,8 +32,8 @@
 #include <boost/utility/string_ref.hpp>
 #include <cstdint>
 
-#include "common/expect.h"
-#include "net/net_utils_base.h"
+#include "src/common/expect.h"
+#include "contrib/epee/include/net/net_utils_base.h"
 
 namespace net
 {

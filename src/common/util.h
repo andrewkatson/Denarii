@@ -45,8 +45,8 @@
 #include "misc_log_ex.h"
 #endif
 
-#include "crypto/hash.h"
-#include "cryptonote_config.h"
+#include "src/crypto/hash.h"
+#include "src/cryptonote_config.h"
 
 /*! \brief Various Tools
  *

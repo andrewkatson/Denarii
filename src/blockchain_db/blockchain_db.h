@@ -33,13 +33,13 @@
 #include <string>
 #include <exception>
 #include <boost/program_options.hpp>
-#include "common/command_line.h"
-#include "crypto/hash.h"
-#include "cryptonote_basic/blobdatatype.h"
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "cryptonote_basic/difficulty.h"
-#include "cryptonote_basic/hardfork.h"
-#include "cryptonote_protocol/enums.h"
+#include "src/common/command_line.h"
+#include "src/crypto/hash.h"
+#include "src/cryptonote_basic/blobdatatype.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/cryptonote_basic/difficulty.h"
+#include "src/cryptonote_basic/hardfork.h"
+#include "src/cryptonote_protocol/enums.h"
 
 /** \file
  * Cryptonote Blockchain Database Interface

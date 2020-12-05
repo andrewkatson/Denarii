@@ -37,12 +37,12 @@
 #include <vector>
 #include <random>
 
-#include "common/pod-class.h"
-#include "memwipe.h"
-#include "mlocker.h"
+#include "src/common/pod-class.h"
+#include "contrib/epee/include/memwipe.h"
+#include "contrib/epee/include/mlocker.h"
 #include "generic-ops.h"
-#include "hex.h"
-#include "span.h"
+#include "contrib/epee/include/hex.h"
+#include "contrib/epee/include/span.h"
 #include "hash.h"
 
 namespace crypto {

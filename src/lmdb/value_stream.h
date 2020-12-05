@@ -30,10 +30,10 @@
 #include <cstdint>
 #include <cstring>
 #include <iterator>
-#include <lmdb.h>
+#include "external/db_drivers/liblmdb/lmdb.h"
 #include <utility>
 
-#include "span.h"
+#include "contrib/epee/include/span.h"
 
 namespace lmdb
 {

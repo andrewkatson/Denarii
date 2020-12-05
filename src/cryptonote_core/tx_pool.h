@@ -29,7 +29,7 @@
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
 #pragma once
-#include "include_base_utils.h"
+#include "contrib/epee/include/include_base_utils.h"
 
 #include <atomic>
 #include <set>
@@ -40,17 +40,17 @@
 #include <boost/serialization/version.hpp>
 #include <boost/utility.hpp>
 
-#include "span.h"
-#include "string_tools.h"
-#include "syncobj.h"
-#include "math_helper.h"
-#include "cryptonote_basic/cryptonote_basic_impl.h"
-#include "cryptonote_basic/verification_context.h"
-#include "cryptonote_protocol/enums.h"
-#include "blockchain_db/blockchain_db.h"
-#include "crypto/hash.h"
-#include "rpc/core_rpc_server_commands_defs.h"
-#include "rpc/message_data_structs.h"
+#include "contrib/epee/include/span.h"
+#include "contrib/epee/include/string_tools.h"
+#include "contrib/epee/include/syncobj.h"
+#include "contrib/epee/include/math_helper.h"
+#include "src/cryptonote_basic/cryptonote_basic_impl.h"
+#include "src/cryptonote_basic/verification_context.h"
+#include "src/cryptonote_protocol/enums.h"
+#include "src/blockchain_db/blockchain_db.h"
+#include "src/crypto/hash.h"
+#include "src/rpc/core_rpc_server_commands_defs.h"
+#include "src/rpc/message_data_structs.h"
 
 namespace cryptonote
 {

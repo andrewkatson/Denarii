@@ -26,8 +26,8 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "wallet/api/wallet2_api.h"
-#include "wallet/wallet2.h"
+#include "src/wallet/api/wallet2_api.h"
+#include "src/wallet/wallet2.h"
 
 namespace Monero {
 

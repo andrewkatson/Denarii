@@ -32,11 +32,11 @@
 #include "wallet_manager.h"
 #include "wallet.h"
 #include "common_defines.h"
-#include "common/dns_utils.h"
-#include "common/util.h"
-#include "common/updates.h"
-#include "version.h"
-#include "net/http_client.h"
+#include "src/common/dns_utils.h"
+#include "src/common/util.h"
+#include "src/common/updates.h"
+#include "src/version.h"
+#include "contrib/epee/include/net/http_client.h"
 #include <boost/filesystem.hpp>
 #include <boost/regex.hpp>
 

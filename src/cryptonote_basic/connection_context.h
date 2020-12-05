@@ -32,9 +32,9 @@
 #include <unordered_set>
 #include <atomic>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include "net/net_utils_base.h"
-#include "copyable_atomic.h"
-#include "crypto/hash.h"
+#include "contrib/epee/include/net/net_utils_base.h"
+#include "contrib/epee/include/copyable_atomic.h"
+#include "src/crypto/hash.h"
 
 namespace cryptonote
 {

@@ -45,14 +45,14 @@
 #include "gzip_encoding.h"
 #endif 
 
-#include "string_tools.h"
-#include "reg_exp_definer.h"
+#include "contrib/epee/include/string_tools.h"
+#include "contrib/epee/include/reg_exp_definer.h"
 #include "abstract_http_client.h"
 #include "http_base.h" 
 #include "http_auth.h"
-#include "to_nonconst_iterator.h"
+#include "contrib/epee/include/to_nonconst_iterator.h"
 #include "net_parse_helpers.h"
-#include "syncobj.h"
+#include "contrib/epee/include/syncobj.h"
 
 //#include "shlwapi.h"
 

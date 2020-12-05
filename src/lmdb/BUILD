@@ -18,7 +18,7 @@ cc_library(
         "value_stream.h",
     ],
     deps = [
-        "//src/common",
+        "//src:common",
         "@db_drivers",
     ],
 )

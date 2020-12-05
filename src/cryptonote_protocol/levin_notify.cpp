@@ -36,16 +36,16 @@
 #include <stdexcept>
 #include <utility>
 
-#include "common/expect.h"
-#include "common/varint.h"
-#include "cryptonote_config.h"
-#include "crypto/crypto.h"
-#include "crypto/duration.h"
-#include "cryptonote_basic/connection_context.h"
-#include "cryptonote_core/i_core_events.h"
-#include "cryptonote_protocol/cryptonote_protocol_defs.h"
-#include "net/dandelionpp.h"
-#include "p2p/net_node.h"
+#include "src/common/expect.h"
+#include "src/common/varint.h"
+#include "src/cryptonote_config.h"
+#include "src/crypto/crypto.h"
+#include "src/crypto/duration.h"
+#include "src/cryptonote_basic/connection_context.h"
+#include "src/cryptonote_core/i_core_events.h"
+#include "src/cryptonote_protocol/cryptonote_protocol_defs.h"
+#include "src/net/dandelionpp.h"
+#include "src/p2p/net_node.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "net.p2p.tx"

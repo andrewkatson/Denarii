@@ -35,22 +35,22 @@
 
 #include <memory>
 
-#include "syncobj.h"
+#include "contrib/epee/include/syncobj.h"
 
-#include "net/net_utils_base.h" 
-#include "misc_log_ex.h" 
+#include "contrib/epee/include/net/net_utils_base.h"
+#include "contrib/epee/include/misc_log_ex.h"
 #include <boost/chrono.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/thread/thread.hpp> 
-#include "misc_language.h"
-#include "pragma_comp_defs.h"
+#include "contrib/epee/include/misc_language.h"
+#include "contrib/epee/include/pragma_comp_defs.h"
 #include <algorithm>
 
 
 #include "cryptonote_protocol_handler.h"
-#include "net/network_throttle.hpp"
+#include "contrib/epee/include/net/network_throttle.hpp"
 
-#include "cryptonote_core/cryptonote_core.h" // e.g. for the send_stop_signal()
+#include "src/cryptonote_core/cryptonote_core.h" // e.g. for the send_stop_signal()
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "net.cn"

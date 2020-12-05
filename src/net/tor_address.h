@@ -32,9 +32,9 @@
 #include <cstdint>
 #include <string>
 
-#include "common/expect.h"
-#include "net/enums.h"
-#include "net/error.h"
+#include "src/common/expect.h"
+#include "contrib/epee/include/net/enums.h"
+#include "src/net/error.h"
 
 namespace epee
 {

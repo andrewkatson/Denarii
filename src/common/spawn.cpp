@@ -38,7 +38,7 @@
 #include <signal.h>
 #endif
 
-#include "misc_log_ex.h"
+#include "contrib/epee/include/misc_log_ex.h"
 #include "util.h"
 #include "spawn.h"
 

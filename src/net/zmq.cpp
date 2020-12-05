@@ -26,14 +26,14 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "net/zmq.h"
+#include "src/net/zmq.h"
 
 #include <cassert>
 #include <cerrno>
 #include <limits>
 #include <utility>
 
-#include "byte_slice.h"
+#include "contrib/epee/include/byte_slice.h"
 
 namespace net
 {

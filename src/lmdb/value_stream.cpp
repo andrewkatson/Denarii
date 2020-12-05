@@ -28,9 +28,9 @@
 
 #include <stdexcept>
 
-#include "common/expect.h"
-#include "lmdb/error.h"
-#include "lmdb/util.h"
+#include "src/common/expect.h"
+#include "src/lmdb/error.h"
+#include "src/lmdb/util.h"
 
 namespace lmdb
 {

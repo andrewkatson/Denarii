@@ -26,16 +26,16 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <lmdb.h>
+#include "external/db_drivers/liblmdb/lmdb.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 #include <boost/filesystem.hpp>
-#include "common/util.h"
-#include "misc_log_ex.h"
-#include "misc_language.h"
+#include "src/common/util.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "contrib/epee/include/misc_language.h"
 #include "wallet_errors.h"
 #include "ringdb.h"
-#include "cryptonote_config.h"
+#include "src/cryptonote_config.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "wallet.ringdb"

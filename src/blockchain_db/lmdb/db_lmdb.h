@@ -28,12 +28,12 @@
 
 #include <atomic>
 
-#include "blockchain_db/blockchain_db.h"
-#include "cryptonote_basic/blobdatatype.h" // for type blobdata
-#include "ringct/rctTypes.h"
+#include "src/blockchain_db/blockchain_db.h"
+#include "src/cryptonote_basic/blobdatatype.h" // for type blobdata
+#include "src/ringct/rctTypes.h"
 #include <boost/thread/tss.hpp>
 
-#include <lmdb.h>
+#include "external/db_drivers/liblmdb/lmdb.h"
 
 #define ENABLE_AUTO_RESIZE
 

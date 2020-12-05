@@ -8,8 +8,8 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/utility/string_ref.hpp>
 
-#include "net/http_client.h"
-#include "storages/http_abstract_invoke.h"
+#include "contrib/epee/include/net/http_client.h"
+#include "contrib/epee/include/storages/http_abstract_invoke.h"
 
 #include "bootstrap_node_selector.h"
 

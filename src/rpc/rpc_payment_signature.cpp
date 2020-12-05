@@ -29,8 +29,8 @@
 #include <cinttypes>
 #include <stdlib.h>
 #include <chrono>
-#include "include_base_utils.h"
-#include "string_tools.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "contrib/epee/include/string_tools.h"
 #include "rpc_payment_signature.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY

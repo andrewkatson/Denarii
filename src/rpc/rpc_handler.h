@@ -32,8 +32,8 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-#include "byte_slice.h"
-#include "crypto/hash.h"
+#include "contrib/epee/include/byte_slice.h"
+#include "src/crypto/hash.h"
 
 namespace cryptonote
 {

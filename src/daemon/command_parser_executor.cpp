@@ -26,9 +26,9 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "common/dns_utils.h"
-#include "common/command_line.h"
-#include "daemon/command_parser_executor.h"
+#include "src/common/dns_utils.h"
+#include "src/common/command_line.h"
+#include "src/daemon/command_parser_executor.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "daemon"

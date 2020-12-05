@@ -31,11 +31,11 @@
 #include <map>
 #include <algorithm>
 #include <boost/program_options.hpp>
-#include "misc_log_ex.h"
-#include "common/util.h"
-#include "common/command_line.h"
-#include "common/dns_utils.h"
-#include "version.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "src/common/util.h"
+#include "src/common/command_line.h"
+#include "src/common/dns_utils.h"
+#include "src/version.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "debugtools.dnschecks"

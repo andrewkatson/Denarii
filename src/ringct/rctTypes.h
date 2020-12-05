@@ -39,20 +39,20 @@
 #include <sodium/crypto_verify_32.h>
 
 extern "C" {
-#include "crypto/crypto-ops.h"
-#include "crypto/random.h"
-#include "crypto/keccak.h"
+#include "src/crypto/crypto-ops.h"
+#include "src/crypto/random.h"
+#include "src/crypto/keccak.h"
 }
-#include "crypto/generic-ops.h"
-#include "crypto/crypto.h"
+#include "src/crypto/generic-ops.h"
+#include "src/crypto/crypto.h"
 
-#include "hex.h"
-#include "span.h"
-#include "memwipe.h"
-#include "serialization/containers.h"
-#include "serialization/debug_archive.h"
-#include "serialization/binary_archive.h"
-#include "serialization/json_archive.h"
+#include "contrib/epee/include/hex.h"
+#include "contrib/epee/include/span.h"
+#include "contrib/epee/include/memwipe.h"
+#include "src/serialization/containers.h"
+#include "src/serialization/debug_archive.h"
+#include "src/serialization/binary_archive.h"
+#include "src//serialization/json_archive.h"
 
 
 //Define this flag when debugging to get additional info on the console

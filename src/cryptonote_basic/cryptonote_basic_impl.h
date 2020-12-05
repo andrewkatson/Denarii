@@ -31,8 +31,8 @@
 #pragma once
 
 #include "cryptonote_basic.h"
-#include "crypto/crypto.h"
-#include "crypto/hash.h"
+#include "src/crypto/crypto.h"
+#include "src/crypto/hash.h"
 
 
 namespace cryptonote {

@@ -37,14 +37,14 @@
 #include <cstddef>
 #include <tuple>
 
-#include "crypto/generic-ops.h"
+#include "src/crypto/generic-ops.h"
 
 extern "C" {
-#include "crypto/random.h"
-#include "crypto/keccak.h"
+#include "src/crypto/random.h"
+#include "src/crypto/keccak.h"
 #include "rctCryptoOps.h"
 }
-#include "crypto/crypto.h"
+#include "src/crypto/crypto.h"
 
 #include "rctTypes.h"
 

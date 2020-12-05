@@ -2,11 +2,11 @@
 
 #include <utility>
 
-#include "common/expect.h"
-#include "lmdb/error.h"
-#include "lmdb/key_stream.h"
-#include "lmdb/util.h"
-#include "lmdb/value_stream.h"
+#include "src/common/expect.h"
+#include "src/lmdb/error.h"
+#include "src/lmdb/key_stream.h"
+#include "src/lmdb/util.h"
+#include "src/lmdb/value_stream.h"
 
 namespace lmdb
 {

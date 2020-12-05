@@ -9,6 +9,6 @@ cc_test(
         "//src/crypto:cncrypto",
         "//src/cryptonote_core",
         "//src/wallet",
-        "@rules_boost//:chrono",
+        "@boost//:chrono",
     ],
 )

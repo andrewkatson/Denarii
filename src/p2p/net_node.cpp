@@ -38,17 +38,17 @@
 #include <chrono>
 #include <utility>
 
-#include "common/command_line.h"
-#include "cryptonote_core/cryptonote_core.h"
-#include "cryptonote_protocol/cryptonote_protocol_defs.h"
+#include "src/common/command_line.h"
+#include "src/cryptonote_core/cryptonote_core.h"
+#include "src/cryptonote_protocol/cryptonote_protocol_defs.h"
 #include "net_node.h"
-#include "net/net_utils_base.h"
-#include "net/socks.h"
-#include "net/parse.h"
-#include "net/tor_address.h"
-#include "net/i2p_address.h"
-#include "p2p/p2p_protocol_defs.h"
-#include "string_tools.h"
+#include "contrib/epee/include/net/net_utils_base.h"
+#include "src/net/socks.h"
+#include "src/net/parse.h"
+#include "src/net/tor_address.h"
+#include "src/net/i2p_address.h"
+#include "src/p2p/p2p_protocol_defs.h"
+#include "contrib/epee/include/string_tools.h"
 
 namespace
 {

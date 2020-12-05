@@ -4,9 +4,9 @@
 #include <boost/thread.hpp>
 #include <boost/bind.hpp> 
 
-#include "net/jsonrpc_protocol_handler.h"
-#include "net/jsonrpc_server_handlers_map.h"
-#include "net/abstract_tcp_server2.h"
+#include "jsonrpc_protocol_handler.h"
+#include "jsonrpc_server_handlers_map.h"
+#include "abstract_tcp_server2.h"
 
 namespace epee
 {

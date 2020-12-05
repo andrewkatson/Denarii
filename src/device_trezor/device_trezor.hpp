@@ -31,7 +31,7 @@
 #define MONERO_DEVICE_TREZOR_H
 
 #include "trezor.hpp"
-#include "device/device.hpp"
+#include "src/device/device.hpp"
 
 #ifdef WITH_DEVICE_TREZOR
 #include <cstddef>
@@ -40,9 +40,9 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
-#include "device/device_default.hpp"
-#include "device/device_cold.hpp"
-#include "cryptonote_config.h"
+#include "src/device/device_default.hpp"
+#include "src/device/device_cold.hpp"
+#include "src/cryptonote_config.h"
 #include "device_trezor_base.hpp"
 #endif
 

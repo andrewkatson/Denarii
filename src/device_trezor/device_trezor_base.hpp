@@ -33,13 +33,13 @@
 
 #include <cstddef>
 #include <string>
-#include "device/device.hpp"
-#include "device/device_default.hpp"
-#include "device/device_cold.hpp"
+#include "src/device/device.hpp"
+#include "src/device/device_default.hpp"
+#include "src/device/device_cold.hpp"
 #include <boost/scope_exit.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/recursive_mutex.hpp>
-#include "cryptonote_config.h"
+#include "src/cryptonote_config.h"
 #include "trezor.hpp"
 
 #ifdef WITH_TREZOR_DEBUGGING

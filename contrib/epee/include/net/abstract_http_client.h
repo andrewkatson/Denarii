@@ -27,8 +27,8 @@
 
 #include <string>
 #include <boost/optional/optional.hpp>
-#include "http_auth.h"
-#include "net/net_ssl.h"
+#include "contrib/epee/include/net/http_auth.h"
+#include "contrib/epee/include/net/net_ssl.h"
 
 namespace epee
 {

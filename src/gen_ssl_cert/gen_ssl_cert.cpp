@@ -31,16 +31,16 @@
 #include <boost/algorithm/string.hpp>
 #include <openssl/ssl.h>
 #include <openssl/pem.h>
-#include "include_base_utils.h"
-#include "file_io_utils.h"
-#include "net/net_ssl.h"
-#include "crypto/crypto.h"
-#include "common/util.h"
-#include "common/i18n.h"
-#include "common/command_line.h"
-#include "common/scoped_message_writer.h"
-#include "common/password.h"
-#include "version.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "contrib/epee/include/file_io_utils.h"
+#include "contrib/epee/include/net/net_ssl.h"
+#include "src/crypto/crypto.h"
+#include "src/common/util.h"
+#include "src/common/i18n.h"
+#include "src/common/command_line.h"
+#include "src/common/scoped_message_writer.h"
+#include "src/common/password.h"
+#include "src/version.h"
 
 namespace po = boost::program_options;
 

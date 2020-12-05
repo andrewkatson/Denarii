@@ -32,13 +32,13 @@
 #include <stdlib.h>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
-#include "misc_log_ex.h"
-#include "span.h"
-#include "common/perf_timer.h"
-#include "cryptonote_config.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "contrib/epee/include/span.h"
+#include "src/common/perf_timer.h"
+#include "src/cryptonote_config.h"
 extern "C"
 {
-#include "crypto/crypto-ops.h"
+#include "src/crypto/crypto-ops.h"
 }
 #include "rctOps.h"
 #include "multiexp.h"

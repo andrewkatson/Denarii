@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "cryptonote_protocol/enums.h"
+#include "src/cryptonote_protocol/enums.h"
 
 namespace cryptonote
 {

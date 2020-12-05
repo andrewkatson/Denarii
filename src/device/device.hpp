@@ -29,10 +29,10 @@
 
 #pragma once
 
-#include "crypto/crypto.h"
-#include "crypto/chacha.h"
-#include "ringct/rctTypes.h"
-#include "cryptonote_config.h"
+#include "src/crypto/crypto.h"
+#include "src/crypto/chacha.h"
+#include "src/ringct/rctTypes.h"
+#include "src/cryptonote_config.h"
 
 
 #ifndef USE_DEVICE_LEDGER

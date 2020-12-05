@@ -32,9 +32,9 @@
 #include <cstddef>
 #include <string>
 
-#include "ringct/rctOps.h"
-#include "crypto/crypto.h"
-#include "cryptonote_basic/account.h"
+#include "src/ringct/rctOps.h"
+#include "src/crypto/crypto.h"
+#include "src/cryptonote_basic/account.h"
 
 #include "device.hpp"
 

@@ -27,15 +27,15 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <array>
-#include <lmdb.h>
+#include "external/db_drivers/liblmdb/lmdb.h"
 #include <boost/algorithm/string.hpp>
-#include "common/command_line.h"
-#include "common/pruning.h"
-#include "cryptonote_core/cryptonote_core.h"
-#include "cryptonote_core/blockchain.h"
-#include "blockchain_db/blockchain_db.h"
-#include "blockchain_db/lmdb/db_lmdb.h"
-#include "version.h"
+#include "src/common/command_line.h"
+#include "src/common/pruning.h"
+#include "src/cryptonote_core/cryptonote_core.h"
+#include "src/cryptonote_core/blockchain.h"
+#include "src/blockchain_db/blockchain_db.h"
+#include "src/blockchain_db/lmdb/db_lmdb.h"
+#include "src/version.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "bcutil"

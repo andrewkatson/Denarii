@@ -10,11 +10,11 @@ cc_test(
         "//contrib/epee",
         "//src/cryptonote_core",
         "//src/p2p",
+        "@boost//:chrono",
+        "@boost//:date_time",
+        "@boost//:system",
+        "@boost//:thread",
         "@gtest",
-        "@rules_boost//:chrono",
-        "@rules_boost//:date_time",
-        "@rules_boost//:system",
-        "@rules_boost//:thread",
     ],
 )
 
@@ -28,9 +28,9 @@ cc_test(
         "//contrib/epee",
         "//src/cryptonote_core",
         "//src/p2p",
+        "@boost//:chrono",
+        "@boost//:date_time",
+        "@boost//:system",
         "@gtest",
-        "@rules_boost//:chrono",
-        "@rules_boost//:date_time",
-        "@rules_boost//:system",
     ],
 )

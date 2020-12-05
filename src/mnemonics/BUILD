@@ -6,7 +6,9 @@ cc_library(
     hdrs = glob(["*.h"]),
     deps = [
         "//contrib/epee",
+        "//src:cncrypto",
+        "//src:common",
+        "@boost//:system",
         "@easy_logging",
-        "@rules_boost//:system",
     ],
 )

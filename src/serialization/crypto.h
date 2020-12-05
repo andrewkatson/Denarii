@@ -34,9 +34,9 @@
 
 #include "serialization.h"
 #include "debug_archive.h"
-#include "crypto/chacha.h"
-#include "crypto/crypto.h"
-#include "crypto/hash.h"
+#include "src/crypto/chacha.h"
+#include "src/crypto/crypto.h"
+#include "src/crypto/hash.h"
 
 // read
 template <template <bool> class Archive>

@@ -31,10 +31,10 @@
 #define MONERO_PROTOCOL_H
 
 #include "trezor_defs.hpp"
-#include "device/device_cold.hpp"
+#include "src/device/device_cold.hpp"
 #include "messages_map.hpp"
 #include "transport.hpp"
-#include "wallet/wallet2.h"
+#include "src/wallet/wallet2.h"
 
 namespace hw{
 namespace trezor{

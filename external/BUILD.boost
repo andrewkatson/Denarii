@@ -4,7 +4,7 @@ package(default_visibility = ["//visibility:public"])
 
 
 cc_library(
-   name = "boost",
+   name = "boost_extra",
    srcs = [],
-   hdrs = glob(["**/archive/*.hpp"]),
+   hdrs = glob(["**/*.hpp"]),
 )

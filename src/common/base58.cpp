@@ -34,8 +34,8 @@
 #include <string>
 #include <vector>
 
-#include "crypto/hash.h"
-#include "int-util.h"
+#include "src/crypto/hash.h"
+#include "contrib/epee/include/int-util.h"
 #include "varint.h"
 
 namespace tools

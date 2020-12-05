@@ -27,11 +27,11 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "message_transporter.h"
-#include "string_coding.h"
+#include "contrib/epee/include/string_coding.h"
 #include <boost/format.hpp>
 #include "wallet_errors.h"
-#include "net/http_client.h"
-#include "net/net_parse_helpers.h"
+#include "contrib/epee/include/net/http_client.h"
+#include "contrib/epee/include/net/net_parse_helpers.h"
 #include <algorithm>
 
 #undef MONERO_DEFAULT_LOG_CATEGORY

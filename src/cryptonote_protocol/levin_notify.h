@@ -33,12 +33,12 @@
 #include <memory>
 #include <vector>
 
-#include "byte_slice.h"
-#include "cryptonote_basic/blobdatatype.h"
-#include "cryptonote_protocol/enums.h"
-#include "cryptonote_protocol/fwd.h"
-#include "net/enums.h"
-#include "span.h"
+#include "contrib/epee/include/byte_slice.h"
+#include "src/cryptonote_basic/blobdatatype.h"
+#include "src/cryptonote_protocol/enums.h"
+#include "src/cryptonote_protocol/fwd.h"
+#include "contrib/epee/include/net/enums.h"
+#include "contrib/epee/include/span.h"
 
 namespace epee
 {

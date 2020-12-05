@@ -24,10 +24,10 @@ cc_test(
         "//src/rpc:daemon_rpc_server",
         "//src/serialization",
         "//src/wallet",
+        "@boost//:chrono",
+        "@boost//:thread",
         "@gtest",
         "@libzmq",
-        "@rules_boost//:chrono",
-        "@rules_boost//:thread",
     ],
 )
 

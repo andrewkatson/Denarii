@@ -24,7 +24,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "string_tools.h"
+#include "contrib/epee/include/string_tools.h"
 
 #include <ctype.h>
 

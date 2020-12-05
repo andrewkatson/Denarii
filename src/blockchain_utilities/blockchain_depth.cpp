@@ -28,13 +28,13 @@
 
 #include <boost/range/adaptor/transformed.hpp>
 #include <boost/algorithm/string.hpp>
-#include "common/command_line.h"
-#include "common/varint.h"
-#include "cryptonote_core/tx_pool.h"
-#include "cryptonote_core/cryptonote_core.h"
-#include "cryptonote_core/blockchain.h"
-#include "blockchain_db/blockchain_db.h"
-#include "version.h"
+#include "src/common/command_line.h"
+#include "src/common/varint.h"
+#include "src/cryptonote_core/tx_pool.h"
+#include "src/cryptonote_core/cryptonote_core.h"
+#include "src/cryptonote_core/blockchain.h"
+#include "src/blockchain_db/blockchain_db.h"
+#include "src/version.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "bcutil"

@@ -32,9 +32,9 @@
 #include <unordered_map>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
-#include "string_tools.h"
+#include "contrib/epee/include/string_tools.h"
 #include "cryptonote_protocol_defs.h"
-#include "common/pruning.h"
+#include "src/common/pruning.h"
 #include "block_queue.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY

@@ -33,8 +33,8 @@
 #include <functional>
 #include <string>
 #include <utility>
-#include "wipeable_string.h"
-#include "http_base.h"
+#include "contrib/epee/include/wipeable_string.h"
+#include "contrib/epee/include/net/http_base.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "net.http"

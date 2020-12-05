@@ -34,11 +34,11 @@
 #include <boost/asio/ip/address_v6.hpp>
 #include <typeinfo>
 #include <type_traits>
-#include "byte_slice.h"
+#include "contrib/epee/include/byte_slice.h"
 #include "enums.h"
-#include "misc_log_ex.h"
-#include "serialization/keyvalue_serialization.h"
-#include "int-util.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "contrib/epee/include/serialization/keyvalue_serialization.h"
+#include "contrib/epee/include/int-util.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "net"

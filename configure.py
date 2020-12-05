@@ -2,8 +2,12 @@
 # This assumes that denarii has been cloned into your $HOME repository.
 # To see what that is try 'printenv HOME'
 
+import glob
 import os
 import pathlib
+import platform
+import psutil
+import re
 import shutil
 import subprocess
 
@@ -15,6 +19,7 @@ class LibraryInfo:
         self.foldername = foldername
         self.folderpath = ""
         self.relevant_paths = []
+
 
 # note doxygen and graphviz do not work properly
 library_info = [LibraryInfo("libnorm-dev", "libnorm"), LibraryInfo("libunbound-dev", "libunbound"),
@@ -30,7 +35,8 @@ library_info = [LibraryInfo("libnorm-dev", "libnorm"), LibraryInfo("libunbound-d
 
 # NEED TO FILL THIS IN WITH YOUR USERNAME FOR THIS TO WORK SORRY
 username = "andrew"
-dirpath = os.path.join("/home/" + username, "denarii/external")
+external_dir_path = os.path.join("/home/" + username, "denarii/external")
+workspace_path = os.path.join("/home/", "andrew/denarii")
 
 
 def create_build_file(libraries):
@@ -38,7 +44,7 @@ def create_build_file(libraries):
 
         build_file_name = "BUILD." + library.foldername
 
-        path = os.path.join(dirpath, build_file_name)
+        path = os.path.join(external_dir_path, build_file_name)
 
         if not os.path.exists(path):
             os.mknod(path)
@@ -49,7 +55,7 @@ def create_folder(libraries):
 
         foldername = library.foldername
 
-        path = os.path.join(dirpath, foldername)
+        path = os.path.join(external_dir_path, foldername)
 
         if not os.path.exists(path):
             os.makedirs(path)
@@ -108,7 +114,6 @@ def find_src_files(libraries):
 
 
 def find_includes(libraries):
-
     for library in libraries:
 
         for path in library.relevant_paths:
@@ -135,8 +140,277 @@ def find_includes(libraries):
                     print("Could not copy file " + path)
                     print(e)
 
-create_folder(library_info)
-create_build_file(library_info)
-get_relevant_paths(library_info)
-find_includes(library_info)
-find_src_files(library_info)
+
+def import_dependencies():
+    create_folder(library_info)
+    create_build_file(library_info)
+    get_relevant_paths(library_info)
+    find_includes(library_info)
+    find_src_files(library_info)
+
+
+def blocks_generate():
+    input_files = ["checkpoints.dat", "stagenet_blocks.dat", "testnet_blocks.dat"]
+    output_files = ["generated_checkpoints.c", "generated_stagenet_blocks.c", "generated_testnet_blocks.c"]
+    base_names = ["checkpoints", "stagenet_blocks", "testnet_blocks"]
+
+    for i in range(len(input_files)):
+        input_file = input_files[i]
+        output_file = output_files[i]
+        base_name = base_names[i]
+
+        path_to_blocks = workspace_path + "/src/blocks"
+        command = "cd " + path_to_blocks + " && echo '#include\t<stddef.h>' > " + output_file \
+                  + " && echo 'const\tunsigned\tchar\t" + base_name + "[]={' >> " + output_file + " && od -v -An -tx1 " \
+                  + input_file + " | sed -e 's/[0-9a-fA-F]\\{1,\\}/0x&,/g' -e '$s/.$//' >> " + output_file + " && echo '};' >> " + output_file \
+                  + " && echo 'const\tsize_t\t" + base_name + "_len\t=\tsizeof(" + base_name + ");' >> " + output_file
+
+        os.system(command)
+
+
+def crypto_wallet_generate():
+    crypto_wallet_path = workspace_path + "/src/crypto/wallet"
+    ops_file = "ops.h"
+    build_file = "BUILD"
+
+    supercop_path = workspace_path + "/external/supercop"
+    copy_file_path = supercop_path + "/include/monero/crypto.h"
+
+    # If we are on Linux and have 64 bit processor we can use monero's default crypto libraries
+    if re.match(".*nix.*|.*ux.*", platform.system()) and re.match(".*amd64.*|.*AMD64.*|.*x86_64.*",
+                                                                  platform.processor()):
+
+        # copy the contents of the crypto file over to ops
+        with open(copy_file_path, "r") as copy:
+            # generate the file
+            command = "cd " + crypto_wallet_path + " && echo > " + ops_file
+            os.system(command)
+
+            # the license causes all sorts of problems with echo so we just skip it
+            seen_license_info = False
+            for line in copy:
+                if "MONERO_CRYPTO_H" in line:
+                    seen_license_info = True
+
+                if seen_license_info and "#include \"monero/crypto/amd64-64-24k.h\"" in line:
+                    # we have to output a different line than the include in this line because
+                    # bazel will not be viewing that dependency in the same way that cmake does
+                    modified_line = "#include \"include/monero/crypto/amd64-64-24k.h\""
+                    copy_line_command = "cd " + crypto_wallet_path + " && echo '" + modified_line + "' >> " + ops_file
+                    os.system(copy_line_command)
+
+                elif seen_license_info:
+                    copy_line_command = "cd " + crypto_wallet_path + " && echo '" + line + "' >> " + ops_file
+                    os.system(copy_line_command)
+    else:
+        # If not then we create an empty file
+        command = "cd " + crypto_wallet_path + " && echo > " + ops_file
+        os.system(command)
+        # and create an alias for wallet that just points to cnccrypto
+        alias_file_command = " cd " + crypto_wallet_path \
+                             + " && echo 'package(default_visibility = [\"//visibility:public\"])\n' > " + build_file \
+                             + " && echo 'alias(\n\tname = \"wallet_crypto\",\n\tactual = \"//src:cncrypto\"\n)' >> " + build_file
+        os.system(alias_file_command)
+
+
+def is_git_repo():
+    if subprocess.call(["git", "branch"], stderr=subprocess.STDOUT, stdout=open(os.devnull, 'w')) != 0:
+        return False
+    else:
+        return True
+
+
+def have_git():
+    try:
+        # pipe output to /dev/null for silence
+        null = open("/dev/null", "w")
+        subprocess.Popen("git", stdout=null, stderr=null)
+        null.close()
+        return True
+    except OSError:
+        return False
+
+
+version_re = re.compile('^Version: (.+)$', re.M)
+
+
+def get_version():
+    d = workspace_path
+
+    if os.path.isdir(os.path.join(d, '.git')):
+        # Get the version using "git describe".
+        cmd = 'git rev-parse --short=9 HEAD'.split()
+        try:
+            version = subprocess.check_output(cmd).decode().strip()
+        except subprocess.CalledProcessError:
+            print('Unable to get version number from git tags')
+            exit(1)
+
+        # PEP 386 compatibility
+        if '-' in version:
+            version = '.post'.join(version.split('-')[:2])
+
+        # Don't declare a version "dirty" merely because a time stamp has
+        # changed. If it is dirty, append a ".dev1" suffix to indicate a
+        # development revision after the release.
+        with open(os.devnull, 'w') as fd_devnull:
+            subprocess.call(['git', 'status'],
+                            stdout=fd_devnull, stderr=fd_devnull)
+
+        cmd = 'git diff-index --name-only HEAD'.split()
+        try:
+            dirty = subprocess.check_output(cmd).decode().strip()
+        except subprocess.CalledProcessError:
+            print('Unable to get git index status')
+            exit(1)
+
+        if dirty != '':
+            version += '.dev1'
+
+    else:
+        # Extract the version from the PKG-INFO file.
+        with open(os.path.join(d, 'PKG-INFO')) as f:
+            version = version_re.search(f.read()).group(1)
+
+    return version
+
+
+def generate_version_file_with_replacement(version_tag, is_release):
+    version_tag_str = "@VERSIONTAG@"
+    version_release_str = "@VERSION_IS_RELEASE@"
+
+    input_file = "version.cpp.in"
+    output_file = "version.cpp"
+
+    src_directory = workspace_path + "/src/"
+
+    input_file_path = os.path.join(src_directory, input_file)
+    with open(input_file_path, "r") as copy:
+
+        # create the file
+        create_file_command = "cd " + src_directory + " && echo > " + output_file
+        os.system(create_file_command)
+
+        for line in copy:
+            line_to_write = line
+            if version_tag_str in line:
+                line_to_write = line.replace(version_tag_str, version_tag)
+
+            if version_release_str in line:
+                line_to_write = line.replace(version_release_str, str(is_release).lower())
+
+            write_line_command = "cd " + src_directory + " && echo '" + line_to_write + "' >> " + output_file
+            os.system(write_line_command)
+
+
+def version_generate():
+    if have_git():
+        version_tag = ""
+        is_release = False
+
+        # if we are in a git repo then this is not a release branch
+        if is_git_repo():
+            version_tag = get_version().split(".")[0]
+        else:
+            version_tag = "release"
+            is_release = True
+
+        generate_version_file_with_replacement(version_tag, is_release)
+
+    else:
+        raise Exception("No git version found")
+
+
+def generate_benchmark_file_with_replacement(replacement):
+    benchmark_str = "@MONERO_WALLET_CRYPTO_BENCH_NAMES@"
+
+    input_file = "benchmark.h.in"
+    output_file = "benchmark.h"
+
+    tests_directory = workspace_path + "/tests/"
+
+    input_file_path = os.path.join(tests_directory, input_file)
+
+    with open(input_file_path, "r") as copy:
+
+        for line in copy:
+            line_to_write = line
+
+            if benchmark_str in line:
+                line_to_write = line.replace(benchmark_str, replacement)
+
+            write_line_command = "cd " + tests_directory + " && echo '" + line_to_write + "' >> " + output_file
+            os.system(write_line_command)
+
+
+def benchmark_generate():
+    replacement = ""
+
+    # If we are on Linux and have 64 bit processor we can use monero's default crypto libraries
+    if re.match(".*nix.*|.*ux.*", platform.system()) and re.match(".*amd64.*|.*AMD64.*|.*x86_64.*",
+                                                                  platform.processor()):
+        replacement = "(cn)(amd64_64_24k)(amd64_51_30k)"
+    else:
+        replacement = "(cn)"
+
+    generate_benchmark_file_with_replacement(replacement)
+
+
+def convert_translation_files():
+    translation_file_dir = workspace_path + "/translations"
+
+    os.chdir(translation_file_dir)
+
+    files = []
+    converted_files = []
+
+    for file in glob.glob("*.ts"):
+        files.append(file)
+        converted_files.append(file.replace(".ts", ".qm"))
+
+    for i in range(len(files)):
+        file = files[i]
+        converted_file = converted_files[i]
+
+        conversion_command = "lrelease " + file + " -qm " + converted_file
+        os.system(conversion_command)
+
+    return converted_files
+
+
+def run_translation_generation(translation_files):
+    translation_file_dir = workspace_path + "/translations"
+    # create the file first
+    create_command = "cd " + translation_file_dir + " && echo > translation_files.h"
+    os.system(create_command)
+
+    # need to build the binary first so the command will work
+    build_command = "bazel build :generate_translations"
+    os.system(build_command)
+
+    # we cannot use bazel run because it just won't cooperate
+    generation_command = workspace_path + "/bazel-bin/translations/generate_translations "
+
+    for translation_file in translation_files:
+        generation_command = generation_command + " " + translation_file
+
+    os.system(generation_command)
+
+
+def translations_generate():
+    # first change all the suffixes of the translations files to .qm
+    translations_files = convert_translation_files()
+
+    # then run the generation binary with the files as arguments
+    run_translation_generation(translations_files)
+
+
+def generate_files():
+    # blocks_generate()
+    # crypto_wallet_generate()
+    # version_generate()
+    # benchmark_generate()
+    translations_generate()
+
+
+generate_files()

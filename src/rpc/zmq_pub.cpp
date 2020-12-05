@@ -35,19 +35,19 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring>
-#include <rapidjson/document.h>
-#include <rapidjson/stringbuffer.h>
-#include <rapidjson/writer.h>
+#include "include/rapidjson/document.h"
+#include "include/rapidjson/stringbuffer.h"
+#include "include/rapidjson/writer.h"
 #include <stdexcept>
 #include <string>
 #include <utility>
 
-#include "common/expect.h"
-#include "crypto/crypto.h"
-#include "cryptonote_basic/cryptonote_format_utils.h"
-#include "cryptonote_basic/events.h"
-#include "misc_log_ex.h"
-#include "serialization/json_object.h"
+#include "src/common/expect.h"
+#include "src/crypto/crypto.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
+#include "src/cryptonote_basic/events.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "src/serialization/json_object.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "net.zmq"

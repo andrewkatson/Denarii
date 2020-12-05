@@ -43,12 +43,12 @@
 #include <boost/range/adaptor/reversed.hpp>
 
 
-#include "crypto/crypto.h"
-#include "cryptonote_config.h"
-#include "net/enums.h"
-#include "net/local_ip.h"
+#include "src/crypto/crypto.h"
+#include "src/cryptonote_config.h"
+#include "contrib/epee/include/net/enums.h"
+#include "contrib/epee/include/net/local_ip.h"
 #include "p2p_protocol_defs.h"
-#include "syncobj.h"
+#include "contrib/epee/include/syncobj.h"
 
 namespace nodetool
 {

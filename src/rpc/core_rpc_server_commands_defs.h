@@ -30,15 +30,15 @@
 
 #pragma once
 
-#include "string_tools.h"
+#include "contrib/epee/include/string_tools.h"
 
-#include "cryptonote_protocol/cryptonote_protocol_defs.h"
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "cryptonote_basic/difficulty.h"
-#include "crypto/hash.h"
-#include "rpc/rpc_handler.h"
-#include "common/varint.h"
-#include "common/perf_timer.h"
+#include "src/cryptonote_protocol/cryptonote_protocol_defs.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/cryptonote_basic/difficulty.h"
+#include "src/crypto/hash.h"
+#include "src/rpc/rpc_handler.h"
+#include "src/common/varint.h"
+#include "src/common/perf_timer.h"
 
 namespace
 {

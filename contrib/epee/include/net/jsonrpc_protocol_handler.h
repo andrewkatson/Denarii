@@ -4,10 +4,10 @@
 #include <cstdint>
 #include <string>
 
-#include "net/net_utils_base.h"
+#include "net_utils_base.h"
 #include "jsonrpc_structs.h"
-#include "storages/portable_storage.h"
-#include "storages/portable_storage_template_helper.h"
+#include "contrib/epee/include/storages/portable_storage.h"
+#include "contrib/epee/include/storages/portable_storage_template_helper.h"
 
 namespace epee
 {

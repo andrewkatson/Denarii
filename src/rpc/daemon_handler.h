@@ -28,13 +28,13 @@
 
 #pragma once
 
-#include "byte_slice.h"
+#include "contrib/epee/include/byte_slice.h"
 #include "daemon_messages.h"
 #include "daemon_rpc_version.h"
 #include "rpc_handler.h"
-#include "cryptonote_core/cryptonote_core.h"
-#include "cryptonote_protocol/cryptonote_protocol_handler.h"
-#include "p2p/net_node.h"
+#include "src/cryptonote_core/cryptonote_core.h"
+#include "src/cryptonote_protocol/cryptonote_protocol_handler.h"
+#include "src/p2p/net_node.h"
 
 namespace
 {

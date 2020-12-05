@@ -49,10 +49,10 @@
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
 
-#include "byte_slice.h"
-#include "net/net_utils_base.h"
-#include "net/net_ssl.h"
-#include "syncobj.h"
+#include "contrib/epee/include/byte_slice.h"
+#include "contrib/epee/include/net/net_utils_base.h"
+#include "contrib/epee/include/net/net_ssl.h"
+#include "contrib/epee/include/syncobj.h"
 
 namespace epee
 {

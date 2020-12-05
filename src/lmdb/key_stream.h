@@ -30,11 +30,11 @@
 #include <cstdint>
 #include <cstring>
 #include <iterator>
-#include <lmdb.h>
+#include "external/db_drivers/liblmdb/lmdb.h"
 #include <utility>
 
-#include "lmdb/value_stream.h"
-#include "span.h"
+#include "src/lmdb/value_stream.h"
+#include "contrib/epee/include/span.h"
 
 namespace lmdb
 {

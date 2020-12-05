@@ -35,10 +35,10 @@
 #include <cstring>
 #include <limits>
 
-#include "net/error.h"
-#include "serialization/keyvalue_serialization.h"
-#include "storages/portable_storage.h"
-#include "string_tools.h"
+#include "src/net/error.h"
+#include "contrib/epee/include/serialization/keyvalue_serialization.h"
+#include "contrib/epee/include/storages/portable_storage.h"
+#include "contrib/epee/include/string_tools.h"
 
 namespace net
 {

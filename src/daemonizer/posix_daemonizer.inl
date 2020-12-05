@@ -28,9 +28,9 @@
 
 #pragma once
 
-#include "common/scoped_message_writer.h"
-#include "common/util.h"
-#include "daemonizer/posix_fork.h"
+#include "src/common/scoped_message_writer.h"
+#include "src/common/util.h"
+#include "src/daemonizer/posix_fork.h"
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>

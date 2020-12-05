@@ -34,9 +34,9 @@
 #define MULTIEXP_H
 
 #include <vector>
-#include "crypto/crypto.h"
+#include "src/crypto/crypto.h"
 #include "rctTypes.h"
-#include "misc_log_ex.h"
+#include "contrib/epee/include/misc_log_ex.h"
 
 namespace rct
 {

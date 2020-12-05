@@ -39,9 +39,9 @@
 #include <unordered_map>
 #include <string>
 #include <boost/algorithm/string.hpp>
-#include "misc_log_ex.h"
-#include "fnv1.h"
-#include "common/utf8.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "contrib/epee/include/fnv1.h"
+#include "src/common/utf8.h"
 
 /*!
  * \namespace Language

@@ -25,7 +25,7 @@
 // INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include "net/http_auth.h"
+#include "contrib/epee/include/net/http_auth.h"
 
 #include <array>
 #include <boost/algorithm/string/find_iterator.hpp>
@@ -66,9 +66,9 @@
 #include <tuple>
 #include <type_traits>
 
-#include "hex.h"
-#include "md5_l.h"
-#include "string_coding.h"
+#include "contrib/epee/include/hex.h"
+#include "contrib/epee/include/md5_l.h"
+#include "contrib/epee/include/string_coding.h"
 
 /* This file uses the `u8` prefix and specifies all chars by ASCII numeric
 value. This is for maximum portability - C++ does not actually specify ASCII

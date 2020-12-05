@@ -29,7 +29,7 @@
 #ifndef __tables_h
 #define __tables_h
 
-#include "int-util.h"
+#include "contrib/epee/include/int-util.h"
 
 
 #if BYTE_ORDER == LITTLE_ENDIAN

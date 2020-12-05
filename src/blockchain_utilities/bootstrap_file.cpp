@@ -27,8 +27,8 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "bootstrap_serialization.h"
-#include "serialization/binary_utils.h" // dump_binary(), parse_binary()
-#include "serialization/json_utils.h" // dump_json()
+#include "src/serialization/binary_utils.h" // dump_binary(), parse_binary()
+#include "src/serialization/json_utils.h" // dump_json()
 
 #include "bootstrap_file.h"
 

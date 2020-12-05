@@ -36,9 +36,9 @@
 #include <memory>
 #include <vector>
 
-#include "cryptonote_basic/fwd.h"
-#include "net/zmq.h"
-#include "span.h"
+#include "src/cryptonote_basic/fwd.h"
+#include "src/net/zmq.h"
+#include "contrib/epee/include/span.h"
 
 namespace cryptonote { namespace listener
 {

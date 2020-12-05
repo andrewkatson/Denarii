@@ -31,31 +31,31 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/uuid/nil_generator.hpp>
 
-#include "string_tools.h"
+#include "contrib/epee/include/string_tools.h"
 using namespace epee;
 
 #include <unordered_set>
 #include "cryptonote_core.h"
-#include "common/util.h"
-#include "common/updates.h"
-#include "common/download.h"
-#include "common/threadpool.h"
-#include "common/command_line.h"
-#include "cryptonote_basic/events.h"
-#include "warnings.h"
-#include "crypto/crypto.h"
-#include "cryptonote_config.h"
-#include "misc_language.h"
-#include "file_io_utils.h"
+#include "src/common/util.h"
+#include "src/common/updates.h"
+#include "src/common/download.h"
+#include "src/common/threadpool.h"
+#include "src/common/command_line.h"
+#include "src/cryptonote_basic/events.h"
+#include "contrib/epee/include/warnings.h"
+#include "src/crypto/crypto.h"
+#include "src/cryptonote_config.h"
+#include "contrib/epee/include/misc_language.h"
+#include "contrib/epee/include/file_io_utils.h"
 #include <csignal>
-#include "checkpoints/checkpoints.h"
-#include "ringct/rctTypes.h"
-#include "blockchain_db/blockchain_db.h"
-#include "ringct/rctSigs.h"
-#include "rpc/zmq_pub.h"
-#include "common/notify.h"
-#include "hardforks/hardforks.h"
-#include "version.h"
+#include "src/checkpoints/checkpoints.h"
+#include "src/ringct/rctTypes.h"
+#include "src/blockchain_db/blockchain_db.h"
+#include "src/ringct/rctSigs.h"
+#include "src/rpc/zmq_pub.h"
+#include "src/common/notify.h"
+#include "src/hardforks/hardforks.h"
+#include "src/version.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "cn"

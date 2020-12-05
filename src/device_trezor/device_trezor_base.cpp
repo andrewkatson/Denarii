@@ -28,7 +28,7 @@
 //
 
 #include "device_trezor_base.hpp"
-#include "memwipe.h"
+#include "contrib/epee/include/memwipe.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/regex.hpp>

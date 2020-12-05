@@ -34,13 +34,13 @@
 #include <map>
 #include <boost/shared_ptr.hpp>
 
-#include "misc_log_ex.h"
+#include "contrib/epee/include/misc_log_ex.h"
 //#include "threads_helper.h"
-#include "syncobj.h"
+#include "contrib/epee/include/syncobj.h"
 #define ENABLE_PROFILING
-#include "profile_tools.h"
+#include "contrib/epee/include/profile_tools.h"
 #include "net_utils_base.h"
-#include "pragma_comp_defs.h"
+#include "contrib/epee/include/pragma_comp_defs.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "net"

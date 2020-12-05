@@ -3,6 +3,6 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
  name = "easy_logging",
- srcs = glob(["**/easylogging++.cc"]),
+ srcs = glob(["**/*.cc"]),
  hdrs = glob(["**/*.h"])
 )

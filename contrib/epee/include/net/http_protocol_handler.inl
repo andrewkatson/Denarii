@@ -28,11 +28,11 @@
 #include <boost/regex.hpp>
 #include <boost/lexical_cast.hpp>
 #include "http_protocol_handler.h"
-#include "reg_exp_definer.h"
-#include "string_tools.h"
-#include "file_io_utils.h"
+#include "contrib/epee/include/reg_exp_definer.h"
+#include "contrib/epee/include/string_tools.h"
+#include "contrib/epee/include/file_io_utils.h"
 #include "net_parse_helpers.h"
-#include "time_helper.h"
+#include "contrib/epee/include/time_helper.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "net.http"

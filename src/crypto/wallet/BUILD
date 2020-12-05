@@ -1,8 +1,14 @@
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
-    name = "wallet-crypto",
+    name = "wallet_crypto",
     srcs = [],
-    hdrs = [":crypto.h"],
-    deps = [],
+    hdrs = [
+        "crypto.h",
+        "ops.h",
+    ],
+    deps = [
+        "//src:cncrypto",
+        "@supercop",
+    ],
 )

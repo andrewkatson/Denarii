@@ -26,10 +26,10 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <lmdb.h>
+#include "external/db_drivers/liblmdb/lmdb.h"
 #include <memory>
 
-#include "lmdb/error.h"
+#include "src/lmdb/error.h"
 
 //! Uses C++ type system to differentiate between cursors
 #define MONERO_CURSOR(name)                                    \

@@ -28,7 +28,7 @@
 #ifndef _GZIPPED_INMEMSTORAGE_H_
 #define _GZIPPED_INMEMSTORAGE_H_
 
-#include "zlib_helper.h"
+#include "contrib/epee/include/zlib_helper.h"
 namespace epee
 {
 namespace StorageNamed

@@ -28,11 +28,11 @@
 
 #pragma once
 
-#include "crypto/hash.h"
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "cryptonote_basic/difficulty.h"
-#include "ringct/rctSigs.h"
-#include "rpc/rpc_handler.h"
+#include "src/crypto/hash.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/cryptonote_basic/difficulty.h"
+#include "src/ringct/rctSigs.h"
+#include "src/rpc/rpc_handler.h"
 
 #include <unordered_map>
 #include <vector>

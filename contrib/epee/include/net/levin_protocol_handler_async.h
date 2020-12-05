@@ -36,10 +36,10 @@
 
 #include "levin_base.h"
 #include "buffer.h"
-#include "misc_language.h"
-#include "syncobj.h"
-#include "misc_os_dependent.h"
-#include "int-util.h"
+#include "contrib/epee/include/misc_language.h"
+#include "contrib/epee/include/syncobj.h"
+#include "contrib/epee/include/misc_os_dependent.h"
+#include "contrib/epee/include/int-util.h"
 
 #include <random>
 #include <chrono>

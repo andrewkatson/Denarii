@@ -32,15 +32,15 @@
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/serialization/version.hpp>
-#include "serialization/keyvalue_serialization.h"
-#include "net/net_utils_base.h"
-#include "net/tor_address.h" // needed for serialization
-#include "net/i2p_address.h" // needed for serialization
-#include "misc_language.h"
-#include "string_tools.h"
-#include "time_helper.h"
-#include "serialization/serialization.h"
-#include "cryptonote_config.h"
+#include "contrib/epee/include/serialization/keyvalue_serialization.h"
+#include "contrib/epee/include/net/net_utils_base.h"
+#include "src/net/tor_address.h" // needed for serialization
+#include "src/net/i2p_address.h" // needed for serialization
+#include "contrib/epee/include/misc_language.h"
+#include "contrib/epee/include/string_tools.h"
+#include "contrib/epee/include/time_helper.h"
+#include "src/serialization/serialization.h"
+#include "src/cryptonote_config.h"
 
 namespace nodetool
 {

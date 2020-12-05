@@ -32,9 +32,9 @@
 #include "wallet.h"
 #include "common_defines.h"
 
-#include "cryptonote_basic/cryptonote_format_utils.h"
-#include "cryptonote_basic/cryptonote_basic_impl.h"
-#include "common/base58.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
+#include "src/cryptonote_basic/cryptonote_basic_impl.h"
+#include "src/common/base58.h"
 
 #include <memory>
 #include <vector>

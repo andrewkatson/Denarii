@@ -38,12 +38,12 @@
 #include <boost/thread/lock_guard.hpp>
 #include <boost/shared_ptr.hpp>
 
-#include "common/varint.h"
-#include "warnings.h"
+#include "src/common/varint.h"
+#include "contrib/epee/include/warnings.h"
 #include "crypto.h"
 #include "hash.h"
 
-#include "cryptonote_config.h"
+#include "src/cryptonote_config.h"
 
 namespace {
   static void local_abort(const char *msg)

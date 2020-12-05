@@ -5,9 +5,10 @@ cc_binary(
     srcs = ["gen_ssl_cert.cpp"],
     deps = [
         "//contrib/epee",
+        "//src:common",
         "//src:version",
-        "//src/common",
-        "@rules_boost//:filesystem",
-        "@rules_boost//:program_options",
+        "@boost//:filesystem",
+        "@boost//:program_options",
+        "@liblzma",
     ],
 )

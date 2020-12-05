@@ -39,7 +39,7 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/optional/optional.hpp>
 
-#include "net/http_client.h"
+#include "contrib/epee/include/net/http_client.h"
 
 namespace cryptonote
 {

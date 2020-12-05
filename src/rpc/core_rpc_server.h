@@ -36,12 +36,12 @@
 #include <boost/program_options/variables_map.hpp>
 
 #include "bootstrap_daemon.h"
-#include "net/http_server_impl_base.h"
-#include "net/http_client.h"
+#include "contrib/epee/include/net/http_server_impl_base.h"
+#include "contrib/epee/include/net/http_client.h"
 #include "core_rpc_server_commands_defs.h"
-#include "cryptonote_core/cryptonote_core.h"
-#include "p2p/net_node.h"
-#include "cryptonote_protocol/cryptonote_protocol_handler.h"
+#include "src/cryptonote_core/cryptonote_core.h"
+#include "src/p2p/net_node.h"
+#include "src/cryptonote_protocol/cryptonote_protocol_handler.h"
 #include "rpc_payment.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY

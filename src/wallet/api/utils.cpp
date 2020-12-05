@@ -30,8 +30,8 @@
 
 
 
-#include "include_base_utils.h"                     // LOG_PRINT_x
-#include "common/util.h"
+#include "contrib/epee/include/include_base_utils.h"                     // LOG_PRINT_x
+#include "src/common/util.h"
 
 using namespace std;
 

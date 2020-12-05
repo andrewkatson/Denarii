@@ -19,9 +19,8 @@
 
 #include <unistd.h>
 
-#if defined(AUTO_INITIALIZE_EASYLOGGINGPP)
+// We cheat and make it always initialized because we cannot do this in the cmake files.
 INITIALIZE_EASYLOGGINGPP
-#endif
 
 namespace el {
 

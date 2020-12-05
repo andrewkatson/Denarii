@@ -36,10 +36,10 @@
 #include <unistd.h>
 #include <limits.h>
 
-#include "randomx.h"
+#include "src/randomx.h"
 #include "c_threads.h"
 #include "hash-ops.h"
-#include "misc_log_ex.h"
+#include "contrib/epee/include/misc_log_ex.h"
 
 #define RX_LOGCAT	"randomx"
 

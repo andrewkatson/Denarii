@@ -38,8 +38,8 @@
 #include <iterator>
 #include <boost/type_traits/make_unsigned.hpp>
 
-#include "common/varint.h"
-#include "warnings.h"
+#include "src/common/varint.h"
+#include "contrib/epee/include/warnings.h"
 
 /* I have no clue what these lines means */
 PUSH_WARNINGS

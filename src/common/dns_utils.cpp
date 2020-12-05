@@ -26,14 +26,14 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "common/dns_utils.h"
+#include "src/common/dns_utils.h"
 // check local first (in the event of static or in-source compilation of libunbound)
 #include "unbound.h"
 
 #include <stdlib.h>
-#include "include_base_utils.h"
-#include "common/threadpool.h"
-#include "crypto/crypto.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "src/common/threadpool.h"
+#include "src/crypto/crypto.h"
 #include <boost/thread/mutex.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/optional.hpp>

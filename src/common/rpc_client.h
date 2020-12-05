@@ -30,14 +30,14 @@
 
 #include <boost/optional/optional.hpp>
 
-#include "common/http_connection.h"
-#include "common/scoped_message_writer.h"
-#include "rpc/core_rpc_server_commands_defs.h"
-#include "storages/http_abstract_invoke.h"
-#include "net/http_auth.h"
-#include "net/http_client.h"
-#include "net/net_ssl.h"
-#include "string_tools.h"
+#include "src/common/http_connection.h"
+#include "src/common/scoped_message_writer.h"
+#include "src/rpc/core_rpc_server_commands_defs.h"
+#include "contrib/epee/include/storages/http_abstract_invoke.h"
+#include "contrib/epee/include/net/http_auth.h"
+#include "contrib/epee/include/net/http_client.h"
+#include "contrib/epee/include/net/net_ssl.h"
+#include "contrib/epee/include/string_tools.h"
 
 namespace tools
 {

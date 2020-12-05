@@ -28,15 +28,15 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "misc_log_ex.h"
-#include "misc_language.h"
-#include "common/perf_timer.h"
-#include "common/threadpool.h"
-#include "common/util.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "contrib/epee/include/misc_language.h"
+#include "src/common/perf_timer.h"
+#include "src/common/threadpool.h"
+#include "src/common/util.h"
 #include "rctSigs.h"
 #include "bulletproofs.h"
-#include "cryptonote_basic/cryptonote_format_utils.h"
-#include "cryptonote_config.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
+#include "src/cryptonote_config.h"
 
 using namespace crypto;
 using namespace std;

@@ -34,10 +34,10 @@
 #include <memory>
 #include <system_error>
 
-#include "net/error.h"
-#include "net/net_utils_base.h"
-#include "net/socks.h"
-#include "string_tools.h"
+#include "src/net/error.h"
+#include "contrib/epee/include/net/net_utils_base.h"
+#include "src/net/socks.h"
+#include "contrib/epee/include/string_tools.h"
 
 namespace net
 {

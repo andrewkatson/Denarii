@@ -33,8 +33,8 @@
 #include <system_error>
 #include <zmq.h>
 
-#include "common/expect.h"
-#include "span.h"
+#include "src/common/expect.h"
+#include "contrib/epee/include/span.h"
 
 //! If the expression is less than 0, return the current ZMQ error code.
 #define MONERO_ZMQ_CHECK(...)                      \

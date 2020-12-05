@@ -36,19 +36,19 @@
 #include <cstring>  // memcmp
 #include <sstream>
 #include <atomic>
-#include "serialization/variant.h"
-#include "serialization/containers.h"
-#include "serialization/binary_archive.h"
-#include "serialization/json_archive.h"
-#include "serialization/debug_archive.h"
-#include "serialization/crypto.h"
-#include "serialization/keyvalue_serialization.h" // eepe named serialization
-#include "cryptonote_config.h"
-#include "crypto/crypto.h"
-#include "crypto/hash.h"
-#include "misc_language.h"
-#include "ringct/rctTypes.h"
-#include "device/device.hpp"
+#include "src/serialization/variant.h"
+#include "src/serialization/containers.h"
+#include "src/serialization/binary_archive.h"
+#include "src/serialization/json_archive.h"
+#include "src/serialization/debug_archive.h"
+#include "src/serialization/crypto.h"
+#include "contrib/epee/include/serialization/keyvalue_serialization.h" // eepe named serialization
+#include "src/cryptonote_config.h"
+#include "src/crypto/crypto.h"
+#include "src/crypto/hash.h"
+#include "contrib/epee/include/misc_language.h"
+#include "src/ringct/rctTypes.h"
+#include "src/device/device.hpp"
 
 namespace cryptonote
 {

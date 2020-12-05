@@ -2,13 +2,21 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "epee",
-    srcs = glob(["src/*.cpp"]),
-    hdrs = glob(["**/*.h"]),
+    srcs = glob([
+        "src/*.cpp",
+        "src/*.c",
+    ]),
+    hdrs = glob([
+        "**/*.h",
+        "**/*.hpp",
+        "**/*.inl",
+    ]),
     deps = [
+        "@boost//:chrono",
+        "@boost//:filesystem",
+        "@boost//:thread",
         "@easy_logging",
-        "@openssl",
-        "@rules_boost//:chrono",
-        "@rules_boost//:filesystem",
-        "@rules_boost//:thread",
+        "@openssl//:libcrypto",
+        "@openssl//:libssl",
     ],
 )

@@ -30,14 +30,14 @@
 
 #include <atomic>
 #include <boost/algorithm/string.hpp>
-#include "wipeable_string.h"
-#include "string_tools.h"
-#include "serialization/string.h"
+#include "contrib/epee/include/wipeable_string.h"
+#include "contrib/epee/include/string_tools.h"
+#include "src/serialization/string.h"
 #include "cryptonote_format_utils.h"
-#include "cryptonote_config.h"
-#include "crypto/crypto.h"
-#include "crypto/hash.h"
-#include "ringct/rctSigs.h"
+#include "src/cryptonote_config.h"
+#include "src/crypto/crypto.h"
+#include "src/crypto/hash.h"
+#include "src/ringct/rctSigs.h"
 
 using namespace epee;
 

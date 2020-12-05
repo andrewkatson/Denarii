@@ -45,9 +45,9 @@
 #include <boost/interprocess/detail/atomic.hpp>
 #include <boost/system/error_code.hpp>
 #include <functional>
-#include "net/net_utils_base.h"
-#include "net/net_ssl.h"
-#include "misc_language.h"
+#include "contrib/epee/include/net/net_utils_base.h"
+#include "contrib/epee/include/net/net_ssl.h"
+#include "contrib/epee/include/misc_language.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "net"

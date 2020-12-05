@@ -31,9 +31,9 @@
 #include <time.h>
 #include <boost/regex.hpp>
 
-#include "misc_language.h"
+#include "contrib/epee/include/misc_language.h"
 #include "portable_storage_base.h"
-#include "warnings.h"
+#include "contrib/epee/include/warnings.h"
 
 namespace epee
 {

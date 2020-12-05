@@ -30,20 +30,21 @@
 
 #include <unordered_set>
 #include <random>
-#include "include_base_utils.h"
-#include "string_tools.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "contrib/epee/include/string_tools.h"
 using namespace epee;
 
-#include "common/apply_permutation.h"
+#include "src/common/apply_permutation.h"
 #include "cryptonote_tx_utils.h"
-#include "cryptonote_config.h"
+#include "src/cryptonote_config.h"
 #include "blockchain.h"
-#include "cryptonote_basic/miner.h"
-#include "cryptonote_basic/tx_extra.h"
-#include "crypto/crypto.h"
-#include "crypto/hash.h"
-#include "ringct/rctSigs.h"
-#include "multisig/multisig.h"
+#include "src/cryptonote_basic/miner.h"
+#include "src/cryptonote_basic/tx_extra.h"
+#include "src/crypto/crypto.h"
+#include "src/crypto/hash.h"
+#include "src/ringct/rctSigs.h"
+#include "src/multisig/multisig.h"
+#include "contrib/epee/include/memwipe.h"
 
 using namespace crypto;
 

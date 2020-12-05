@@ -28,10 +28,10 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "misc_log_ex.h"
-#include "cryptonote_config.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "src/cryptonote_config.h"
 #include "rctTypes.h"
-#include "int-util.h"
+#include "contrib/epee/include/int-util.h"
 using namespace crypto;
 using namespace std;
 

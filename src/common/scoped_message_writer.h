@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "misc_log_ex.h"
+#include "contrib/epee/include/misc_log_ex.h"
 #include <iostream>
 
 #ifdef HAVE_READLINE

@@ -33,9 +33,9 @@ cc_library(
         ],
     }),
     deps = [
-        "//src/common",
-        "@rules_boost//:chrono",
-        "@rules_boost//:filesystem",
-        "@rules_boost//:program_options",
+        "//src:common",
+        "@boost//:chrono",
+        "@boost//:filesystem",
+        "@boost//:program_options",
     ],
 )

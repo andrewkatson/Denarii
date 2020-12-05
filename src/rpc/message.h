@@ -28,13 +28,13 @@
 
 #pragma once
 
-#include <rapidjson/document.h>
-#include <rapidjson/writer.h>
+#include "include/rapidjson/document.h"
+#include "include/rapidjson/writer.h"
 #include <string>
 
-#include "byte_slice.h"
-#include "byte_stream.h"
-#include "rpc/message_data_structs.h"
+#include "contrib/epee/include/byte_slice.h"
+#include "contrib/epee/include/byte_stream.h"
+#include "src/rpc/message_data_structs.h"
 
 namespace cryptonote
 {

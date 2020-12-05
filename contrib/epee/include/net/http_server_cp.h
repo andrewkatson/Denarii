@@ -31,7 +31,7 @@
 #define _HTTP_SERVER_CP_H_
 
 #include "abstract_tcp_server_cp.h"
-#include "http_server.h"
+#include "external/openssl/apps/include/http_server.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "net.http"

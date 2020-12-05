@@ -30,17 +30,17 @@
 
 #include <boost/utility/string_ref.hpp>
 #include <cstring>
-#include <rapidjson/document.h>
-#include <rapidjson/writer.h>
+#include "include/rapidjson/document.h"
+#include "include/rapidjson/writer.h"
 #include <vector>
 
-#include "byte_stream.h"
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "rpc/message_data_structs.h"
-#include "cryptonote_protocol/cryptonote_protocol_defs.h"
-#include "common/sfinae_helpers.h"
-#include "hex.h"
-#include "span.h"
+#include "contrib/epee/include/byte_stream.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/rpc/message_data_structs.h"
+#include "src/cryptonote_protocol/cryptonote_protocol_defs.h"
+#include "src/common/sfinae_helpers.h"
+#include "contrib/epee/include/hex.h"
+#include "contrib/epee/include/span.h"
 
 #define OBJECT_HAS_MEMBER_OR_THROW(val, key) \
   do \

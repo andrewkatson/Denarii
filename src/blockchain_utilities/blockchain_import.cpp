@@ -34,15 +34,15 @@
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <unistd.h>
-#include "misc_log_ex.h"
+#include "contrib/epee/include/misc_log_ex.h"
 #include "bootstrap_file.h"
 #include "bootstrap_serialization.h"
-#include "blocks/blocks.h"
-#include "cryptonote_basic/cryptonote_format_utils.h"
-#include "serialization/binary_utils.h" // dump_binary(), parse_binary()
-#include "serialization/json_utils.h" // dump_json()
-#include "include_base_utils.h"
-#include "cryptonote_core/cryptonote_core.h"
+#include "src/blocks/blocks.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
+#include "src/serialization/binary_utils.h" // dump_binary(), parse_binary()
+#include "src/serialization/json_utils.h" // dump_json()
+#include "contrib/epee/include/include_base_utils.h"
+#include "src/cryptonote_core/cryptonote_core.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "bcutil"

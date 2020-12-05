@@ -34,12 +34,12 @@
 #include <memory>
 #include <string>
 
-#include "common/command_line.h"
-#include "cryptonote_basic/fwd.h"
-#include "net/zmq.h"
-#include "rpc/fwd.h"
-#include "rpc/rpc_handler.h"
-#include "span.h"
+#include "src/common/command_line.h"
+#include "src/cryptonote_basic/fwd.h"
+#include "src/net/zmq.h"
+#include "src/rpc/fwd.h"
+#include "src/rpc/rpc_handler.h"
+#include "contrib/epee/include/span.h"
 
 namespace cryptonote
 {

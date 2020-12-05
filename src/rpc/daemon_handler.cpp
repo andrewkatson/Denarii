@@ -36,11 +36,11 @@
 #include <boost/utility/string_ref.hpp>
 // likely included by daemon_handler.h's includes,
 // but including here for clarity
-#include "cryptonote_core/cryptonote_core.h"
-#include "cryptonote_basic/cryptonote_format_utils.h"
-#include "cryptonote_basic/blobdatatype.h"
-#include "ringct/rctSigs.h"
-#include "version.h"
+#include "src/cryptonote_core/cryptonote_core.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
+#include "src/cryptonote_basic/blobdatatype.h"
+#include "src/ringct/rctSigs.h"
+#include "src/version.h"
 
 namespace cryptonote
 {

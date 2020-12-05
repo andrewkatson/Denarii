@@ -31,23 +31,23 @@
 #include <memory>
 #include <stdexcept>
 #include <boost/algorithm/string/split.hpp>
-#include "misc_log_ex.h"
-#include "daemon/daemon.h"
-#include "rpc/daemon_handler.h"
-#include "rpc/zmq_pub.h"
-#include "rpc/zmq_server.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "src/daemon/daemon.h"
+#include "src/rpc/daemon_handler.h"
+#include "src/rpc/zmq_pub.h"
+#include "src/rpc/zmq_server.h"
 
-#include "common/password.h"
-#include "common/util.h"
-#include "cryptonote_basic/events.h"
-#include "daemon/core.h"
-#include "daemon/p2p.h"
-#include "daemon/protocol.h"
-#include "daemon/rpc.h"
-#include "daemon/command_server.h"
-#include "daemon/command_line_args.h"
-#include "net/net_ssl.h"
-#include "version.h"
+#include "src/common/password.h"
+#include "src/common/util.h"
+#include "src/cryptonote_basic/events.h"
+#include "src/daemon/core.h"
+#include "src/daemon/p2p.h"
+#include "src/daemon/protocol.h"
+#include "src/daemon/rpc.h"
+#include "src/daemon/command_server.h"
+#include "src/daemon/command_line_args.h"
+#include "contrib/epee/include/net/net_ssl.h"
+#include "src/version.h"
 
 using namespace epee;
 

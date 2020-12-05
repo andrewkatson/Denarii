@@ -5,9 +5,9 @@ cc_library(
     srcs = ["multisig.cpp"],
     hdrs = ["multisig.h"],
     deps = [
-        "//src/common",
-        "//src/crypto:cncrypto",
-        "//src/cryptonote_basic",
-        "//src/ringct",
+        "//src:cncrypto",
+        "//src:common",
+        "//src:cryptonote_basic",
+        "//src:ringct",
     ],
 )

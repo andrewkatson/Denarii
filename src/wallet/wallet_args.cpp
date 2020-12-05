@@ -25,16 +25,16 @@
 // INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#include "wallet/wallet_args.h"
+#include "src/wallet/wallet_args.h"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/format.hpp>
-#include "common/i18n.h"
-#include "common/util.h"
-#include "misc_log_ex.h"
-#include "string_tools.h"
-#include "version.h"
+#include "src/common/i18n.h"
+#include "src/common/util.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "contrib/epee/include/string_tools.h"
+#include "src/version.h"
 
 #if defined(WIN32)
 #include <crtdbg.h>

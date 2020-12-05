@@ -3,7 +3,7 @@
 #include <time.h>
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
-#include "misc_log_ex.h"
+#include "contrib/epee/include/misc_log_ex.h"
 #include "timings.h"
 
 #define N_EXPECTED_FIELDS (8+11)

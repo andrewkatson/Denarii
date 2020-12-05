@@ -30,8 +30,8 @@
 #include <atomic>
 #include <boost/filesystem.hpp>
 #include <boost/thread/thread.hpp>
-#include "file_io_utils.h"
-#include "net/http_client.h"
+#include "contrib/epee/include/file_io_utils.h"
+#include "contrib/epee/include/net/http_client.h"
 #include "download.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY

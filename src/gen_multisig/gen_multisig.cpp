@@ -38,14 +38,14 @@
 #include <boost/program_options.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
-#include "include_base_utils.h"
-#include "crypto/crypto.h"  // for crypto::secret_key definition
-#include "common/i18n.h"
-#include "common/command_line.h"
-#include "common/util.h"
-#include "common/scoped_message_writer.h"
-#include "wallet/wallet_args.h"
-#include "wallet/wallet2.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "src/crypto/crypto.h"  // for crypto::secret_key definition
+#include "src/common/i18n.h"
+#include "src/common/command_line.h"
+#include "src/common/util.h"
+#include "src/common/scoped_message_writer.h"
+#include "src/wallet/wallet_args.h"
+#include "src/wallet/wallet2.h"
 
 using namespace std;
 using namespace epee;

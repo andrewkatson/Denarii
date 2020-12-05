@@ -40,11 +40,11 @@
 #include <boost/date_time/posix_time/posix_time.hpp> // TODO
 #include <boost/thread/condition_variable.hpp> // TODO
 #include <boost/make_shared.hpp>
-#include "warnings.h"
-#include "string_tools.h"
-#include "misc_language.h"
-#include "net/local_ip.h"
-#include "pragma_comp_defs.h"
+#include "contrib/epee/include/warnings.h"
+#include "contrib/epee/include/string_tools.h"
+#include "contrib/epee/include/misc_language.h"
+#include "contrib/epee/include/net/local_ip.h"
+#include "contrib/epee/include/pragma_comp_defs.h"
 
 #include <sstream>
 #include <iomanip>

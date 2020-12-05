@@ -33,7 +33,7 @@
 #include <string>
 #include <atomic>
 #include <boost/optional/optional.hpp>
-#include "wipeable_string.h"
+#include "contrib/epee/include/wipeable_string.h"
 
 namespace tools
 {

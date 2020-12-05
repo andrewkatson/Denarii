@@ -43,21 +43,21 @@
 #include <utility>
 #include <vector>
 
-#include "cryptonote_config.h"
-#include "cryptonote_protocol/fwd.h"
-#include "cryptonote_protocol/levin_notify.h"
-#include "warnings.h"
-#include "net/abstract_tcp_server2.h"
-#include "net/levin_protocol_handler.h"
-#include "net/levin_protocol_handler_async.h"
+#include "src/cryptonote_config.h"
+#include "src/cryptonote_protocol/fwd.h"
+#include "src/cryptonote_protocol/levin_notify.h"
+#include "contrib/epee/include/warnings.h"
+#include "contrib/epee/include/net/abstract_tcp_server2.h"
+#include "contrib/epee/include/net/levin_protocol_handler.h"
+#include "contrib/epee/include/net/levin_protocol_handler_async.h"
 #include "p2p_protocol_defs.h"
-#include "storages/levin_abstract_invoke2.h"
+#include "contrib/epee/include/storages/levin_abstract_invoke2.h"
 #include "net_peerlist.h"
-#include "math_helper.h"
+#include "contrib/epee/include/math_helper.h"
 #include "net_node_common.h"
-#include "net/enums.h"
-#include "net/fwd.h"
-#include "common/command_line.h"
+#include "contrib/epee/include/net/enums.h"
+#include "src/net/fwd.h"
+#include "src/common/command_line.h"
 
 PUSH_WARNINGS
 DISABLE_VS_WARNINGS(4355)

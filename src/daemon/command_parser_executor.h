@@ -38,10 +38,10 @@
 
 #include <boost/optional/optional.hpp>
 
-#include "daemon/rpc_command_executor.h"
-#include "common/common_fwd.h"
-#include "net/net_fwd.h"
-#include "rpc/core_rpc_server.h"
+#include "src/daemon/rpc_command_executor.h"
+#include "src/common/common_fwd.h"
+#include "contrib/epee/include/net/net_fwd.h"
+#include "src/rpc/core_rpc_server.h"
 
 namespace daemonize {
 

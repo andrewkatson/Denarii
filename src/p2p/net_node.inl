@@ -44,25 +44,25 @@
 #include <tuple>
 #include <vector>
 
-#include "version.h"
-#include "string_tools.h"
-#include "common/util.h"
-#include "common/dns_utils.h"
-#include "common/pruning.h"
-#include "net/error.h"
-#include "net/net_helper.h"
-#include "math_helper.h"
-#include "misc_log_ex.h"
+#include "src/version.h"
+#include "contrib/epee/include/string_tools.h"
+#include "src/common/util.h"
+#include "src/common/dns_utils.h"
+#include "src/common/pruning.h"
+#include "src/net/error.h"
+#include "contrib/epee/include/net/net_helper.h"
+#include "contrib/epee/include/math_helper.h"
+#include "contrib/epee/include/misc_log_ex.h"
 #include "p2p_protocol_defs.h"
-#include "net/local_ip.h"
-#include "crypto/crypto.h"
-#include "storages/levin_abstract_invoke2.h"
-#include "cryptonote_core/cryptonote_core.h"
-#include "net/parse.h"
+#include "contrib/epee/include/net/local_ip.h"
+#include "src/crypto/crypto.h"
+#include "contrib/epee/include/storages/levin_abstract_invoke2.h"
+#include "src/cryptonote_core/cryptonote_core.h"
+#include "src/net/parse.h"
 
-#include <miniupnp/miniupnpc/miniupnpc.h>
-#include <miniupnp/miniupnpc/upnpcommands.h>
-#include <miniupnp/miniupnpc/upnperrors.h>
+#include "miniupnpc/miniupnpc.h"
+#include "miniupnpc/upnpcommands.h"
+#include "miniupnpc/upnperrors.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "net.p2p"

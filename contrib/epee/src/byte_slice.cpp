@@ -33,8 +33,8 @@
 #include <stdexcept>
 #include <utility>
 
-#include "byte_slice.h"
-#include "byte_stream.h"
+#include "contrib/epee/include/byte_slice.h"
+#include "contrib/epee/include/byte_stream.h"
 
 namespace epee
 {

@@ -28,19 +28,19 @@
 //
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
-#include "include_base_utils.h"
+#include "contrib/epee/include/include_base_utils.h"
 using namespace epee;
 
 #include "cryptonote_basic_impl.h"
-#include "string_tools.h"
-#include "serialization/binary_utils.h"
+#include "contrib/epee/include/string_tools.h"
+#include "src/serialization/binary_utils.h"
 #include "cryptonote_format_utils.h"
-#include "cryptonote_config.h"
-#include "misc_language.h"
-#include "common/base58.h"
-#include "crypto/hash.h"
-#include "int-util.h"
-#include "common/dns_utils.h"
+#include "src/cryptonote_config.h"
+#include "contrib/epee/include/misc_language.h"
+#include "src/common/base58.h"
+#include "src/crypto/hash.h"
+#include "contrib/epee/include/int-util.h"
+#include "src/common/dns_utils.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "cn"

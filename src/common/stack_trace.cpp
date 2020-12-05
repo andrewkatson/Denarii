@@ -31,7 +31,7 @@
 #else
 #define ELPP_FEATURE_CRASH_LOG 1
 #endif
-#include "easylogging++/easylogging++.h"
+#include "easylogging++.h"
 
 #include <stdexcept>
 #ifdef USE_UNWIND
@@ -43,8 +43,8 @@
 #include <dlfcn.h>
 #endif
 #include <boost/algorithm/string.hpp>
-#include "common/stack_trace.h"
-#include "misc_log_ex.h"
+#include "src/common/stack_trace.h"
+#include "contrib/epee/include/misc_log_ex.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "stacktrace"

@@ -27,13 +27,13 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <unordered_set>
-#include "include_base_utils.h"
-#include "crypto/crypto.h"
-#include "ringct/rctOps.h"
-#include "cryptonote_basic/account.h"
-#include "cryptonote_basic/cryptonote_format_utils.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "src/crypto/crypto.h"
+#include "src/ringct/rctOps.h"
+#include "src/cryptonote_basic/account.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
 #include "multisig.h"
-#include "cryptonote_config.h"
+#include "src/cryptonote_config.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "multisig"

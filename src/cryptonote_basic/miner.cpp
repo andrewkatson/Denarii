@@ -32,17 +32,17 @@
 #include <numeric>
 #include <boost/interprocess/detail/atomic.hpp>
 #include <boost/algorithm/string.hpp>
-#include "misc_language.h"
-#include "syncobj.h"
+#include "contrib/epee/include/misc_language.h"
+#include "contrib/epee/include/syncobj.h"
 #include "cryptonote_basic_impl.h"
 #include "cryptonote_format_utils.h"
-#include "cryptonote_core/cryptonote_tx_utils.h"
-#include "file_io_utils.h"
-#include "common/command_line.h"
-#include "common/util.h"
-#include "string_coding.h"
-#include "string_tools.h"
-#include "storages/portable_storage_template_helper.h"
+#include "src/cryptonote_core/cryptonote_tx_utils.h"
+#include "contrib/epee/include/file_io_utils.h"
+#include "src/common/command_line.h"
+#include "src/common/util.h"
+#include "contrib/epee/include/string_coding.h"
+#include "contrib/epee/include/string_tools.h"
+#include "contrib/epee/include/storages/portable_storage_template_helper.h"
 #include "boost/logic/tribool.hpp"
 
 #ifdef __APPLE__

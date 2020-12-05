@@ -28,11 +28,11 @@
 
 #include <cstddef>
 #include <cstring>
-#include <lmdb.h>
+#include "external/db_drivers/liblmdb/lmdb.h"
 #include <type_traits>
 #include <utility>
 
-#include "span.h"
+#include "contrib/epee/include/span.h"
 
 /*! Calculates types and offset of struct field. Use in template arguments for
     `table::get_value`, `value_iterator::get_value`,

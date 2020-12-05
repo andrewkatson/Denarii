@@ -46,21 +46,21 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "span.h"
-#include "syncobj.h"
-#include "string_tools.h"
-#include "rolling_median.h"
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "common/util.h"
-#include "cryptonote_protocol/cryptonote_protocol_defs.h"
-#include "rpc/core_rpc_server_commands_defs.h"
-#include "cryptonote_basic/difficulty.h"
+#include "contrib/epee/include/span.h"
+#include "contrib/epee/include/syncobj.h"
+#include "contrib/epee/include/string_tools.h"
+#include "contrib/epee/include/rolling_median.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/common/util.h"
+#include "src/cryptonote_protocol/cryptonote_protocol_defs.h"
+#include "src/rpc/core_rpc_server_commands_defs.h"
+#include "src/cryptonote_basic/difficulty.h"
 #include "cryptonote_tx_utils.h"
-#include "cryptonote_basic/verification_context.h"
-#include "crypto/hash.h"
-#include "checkpoints/checkpoints.h"
-#include "cryptonote_basic/hardfork.h"
-#include "blockchain_db/blockchain_db.h"
+#include "src/cryptonote_basic/verification_context.h"
+#include "src/crypto/hash.h"
+#include "src/checkpoints/checkpoints.h"
+#include "src/cryptonote_basic/hardfork.h"
+#include "src/blockchain_db/blockchain_db.h"
 
 namespace tools { class Notify; }
 

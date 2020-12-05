@@ -38,9 +38,9 @@
 #include <limits>
 #include <string>
 
-#include "net/net_utils_base.h"
-#include "net/tor_address.h"
-#include "net/i2p_address.h"
+#include "contrib/epee/include/net/net_utils_base.h"
+#include "src/net/tor_address.h"
+#include "src/net/i2p_address.h"
 
 namespace net
 {

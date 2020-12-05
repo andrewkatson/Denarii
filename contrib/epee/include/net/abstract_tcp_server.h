@@ -32,7 +32,7 @@
 #include <process.h>
 #include <list>
 #include <winsock2.h>
-#include "winobj.h"
+#include "contrib/epee/include/winobj.h"
 //#include "threads_helper.h"
 #include "net_utils_base.h"
 

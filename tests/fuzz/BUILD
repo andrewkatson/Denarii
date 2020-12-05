@@ -82,7 +82,7 @@ cc_test(
     deps = [
         "//contrib/epee",
         "//src/common",
-        "@rules_boost//:program_options",
+        "@boost//:program_options",
     ],
 )
 
@@ -95,7 +95,7 @@ cc_test(
     deps = [
         "//contrib/epee",
         "//src/common",
-        "@rules_boost//:program_options",
+        "@boost//:program_options",
     ],
 )
 
@@ -108,7 +108,7 @@ cc_test(
     deps = [
         "//contrib/epee",
         "//src/common",
-        "@rules_boost//:program_options",
+        "@boost//:program_options",
     ],
 )
 
@@ -120,9 +120,9 @@ cc_test(
     ],
     deps = [
         "//contrib/epee",
-        "@rules_boost//:program_options",
-        "@rules_boost//:regex",
-        "@rules_boost//:system",
+        "@boost//:program_options",
+        "@boost//:regex",
+        "@boost//:system",
     ],
 )
 
@@ -134,11 +134,11 @@ cc_test(
     ],
     deps = [
         "//contrib/epee",
-        "@rules_boost//:chrono",
-        "@rules_boost//:program_options",
-        "@rules_boost//:regex",
-        "@rules_boost//:system",
-        "@rules_boost//:thread",
+        "@boost//:chrono",
+        "@boost//:program_options",
+        "@boost//:regex",
+        "@boost//:system",
+        "@boost//:thread",
     ],
 )
 
@@ -151,10 +151,10 @@ cc_test(
     deps = [
         "//contrib/epee:",
         "//src/common",
-        "@rules_boost//:chrono",
-        "@rules_boost//:program_options",
-        "@rules_boost//:regex",
-        "@rules_boost//:thread",
+        "@boost//:chrono",
+        "@boost//:program_options",
+        "@boost//:regex",
+        "@boost//:thread",
     ],
 )
 
@@ -167,10 +167,10 @@ cc_test(
     deps = [
         "//contrib/epee",
         "//src/common",
-        "@rules_boost//:chrono",
-        "@rules_boost//:program_options",
-        "@rules_boost//:regex",
-        "@rules_boost//:thread",
+        "@boost//:chrono",
+        "@boost//:program_options",
+        "@boost//:regex",
+        "@boost//:thread",
     ],
 )
 
@@ -184,10 +184,10 @@ cc_test(
         "//contrib/epee",
         "//src/common",
         "//src/cryptonote_basic",
-        "@rules_boost//:chrono",
-        "@rules_boost//:program_options",
-        "@rules_boost//:regex",
-        "@rules_boost//:system",
-        "@rules_boost//:thread",
+        "@boost//:chrono",
+        "@boost//:program_options",
+        "@boost//:regex",
+        "@boost//:system",
+        "@boost//:thread",
     ],
 )

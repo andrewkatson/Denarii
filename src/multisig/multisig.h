@@ -30,9 +30,9 @@
 
 #include <vector>
 #include <unordered_map>
-#include "crypto/crypto.h"
-#include "cryptonote_basic/cryptonote_format_utils.h"
-#include "ringct/rctTypes.h"
+#include "src/crypto/crypto.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
+#include "src/ringct/rctTypes.h"
 
 namespace cryptonote
 {

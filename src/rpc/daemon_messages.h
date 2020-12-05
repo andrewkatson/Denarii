@@ -28,16 +28,16 @@
 
 #pragma once
 
-#include <rapidjson/writer.h>
+#include "include/rapidjson/writer.h"
 #include <unordered_map>
 #include <vector>
 
-#include "byte_stream.h"
+#include "contrib/epee/include/byte_stream.h"
 #include "message.h"
-#include "cryptonote_protocol/cryptonote_protocol_defs.h"
-#include "rpc/message_data_structs.h"
-#include "rpc/daemon_rpc_version.h"
-#include "cryptonote_basic/cryptonote_basic.h"
+#include "src/cryptonote_protocol/cryptonote_protocol_defs.h"
+#include "src/rpc/message_data_structs.h"
+#include "src/rpc/daemon_rpc_version.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
 
 #define BEGIN_RPC_MESSAGE_CLASS(classname) \
 class classname \

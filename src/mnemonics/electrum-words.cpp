@@ -40,10 +40,10 @@
 #include <cstdint>
 #include <vector>
 #include <unordered_map>
-#include "wipeable_string.h"
-#include "misc_language.h"
-#include "int-util.h"
-#include "mnemonics/electrum-words.h"
+#include "contrib/epee/include/wipeable_string.h"
+#include "contrib/epee/include/misc_language.h"
+#include "contrib/epee/include/int-util.h"
+#include "src/mnemonics/electrum-words.h"
 #include <boost/crc.hpp>
 
 #include "chinese_simplified.h"

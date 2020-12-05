@@ -39,9 +39,9 @@
 #include <atomic>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-#include "string_tools.h"
-#include "misc_os_dependent.h"
-#include "misc_log_ex.h"
+#include "contrib/epee/include/string_tools.h"
+#include "contrib/epee/include/misc_os_dependent.h"
+#include "contrib/epee/include/misc_log_ex.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "logging"

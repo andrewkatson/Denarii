@@ -38,20 +38,20 @@
 
 #include <typeinfo>
 #include <type_traits>
-#include "net/http_client.h"
+#include "contrib/epee/include/net/http_client.h"
 
-#include "rapidjson/document.h"
-#include "rapidjson/writer.h"
-#include "rapidjson/stringbuffer.h"
+#include "include/rapidjson/document.h"
+#include "include/rapidjson/writer.h"
+#include "include/rapidjson/stringbuffer.h"
 
 #include "exceptions.hpp"
 #include "trezor_defs.hpp"
 #include "messages_map.hpp"
 
-#include "messages/messages.pb.h"
-#include "messages/messages-common.pb.h"
-#include "messages/messages-management.pb.h"
-#include "messages/messages-monero.pb.h"
+#include "protob/messages.pb.h"
+#include "protob/messages-common.pb.h"
+#include "protob/messages-management.pb.h"
+#include "protob/messages-monero.pb.h"
 
 namespace hw {
 namespace trezor {

@@ -49,10 +49,10 @@
 #include <boost/interprocess/detail/atomic.hpp>
 #include <boost/thread/thread.hpp>
 
-#include "syncobj.h"
+#include "contrib/epee/include/syncobj.h"
 
-#include "net/net_utils_base.h" 
-#include "misc_log_ex.h" 
+#include "contrib/epee/include/net/net_utils_base.h"
+#include "contrib/epee/include/misc_log_ex.h"
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/uuid/random_generator.hpp>
@@ -60,8 +60,8 @@
 #include <boost/utility/value_init.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include "misc_language.h"
-#include "pragma_comp_defs.h"
+#include "contrib/epee/include/misc_language.h"
+#include "contrib/epee/include/pragma_comp_defs.h"
 #include <sstream>
 #include <iomanip>
 #include <algorithm>

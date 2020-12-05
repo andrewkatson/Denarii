@@ -75,7 +75,7 @@ git_repository(
 
 # boost archive extra files
 new_local_repository(
-    name = "boost",
+    name = "boost_extra",
     build_file = "external/BUILD.boost",
     path = "external/boost",
 )

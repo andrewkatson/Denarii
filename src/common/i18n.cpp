@@ -31,9 +31,9 @@
 #include <ctype.h>
 #include <string>
 #include <map>
-#include "file_io_utils.h"
-#include "common/i18n.h"
-#include "translation_files.h"
+#include "contrib/epee/include/file_io_utils.h"
+#include "src/common/i18n.h"
+#include "translations/translation_files.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "i18n"

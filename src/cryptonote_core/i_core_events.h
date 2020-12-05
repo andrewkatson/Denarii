@@ -28,9 +28,9 @@
 
 #pragma once
 
-#include "cryptonote_basic/blobdatatype.h"
-#include "cryptonote_protocol/enums.h"
-#include "span.h"
+#include "src/cryptonote_basic/blobdatatype.h"
+#include "src/cryptonote_protocol/enums.h"
+#include "contrib/epee/include/span.h"
 
 namespace cryptonote
 {
