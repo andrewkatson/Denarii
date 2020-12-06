@@ -125,3 +125,4 @@ external/libusb
 external/libzmq
 external/openpgm
 external/openssl
+external/zlib
