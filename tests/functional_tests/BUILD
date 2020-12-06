@@ -1,6 +1,6 @@
 package(default_visibility = ["//visibility:public"])
 
-cc_test(
+cc_binary(
     name = "functional_tests",
     srcs = [
         "main.cpp",
@@ -9,51 +9,47 @@ cc_test(
         "transactions_generation_from_blockchain.cpp",
         "transactions_generation_from_blockchain.h",
     ],
+    linkopts = [
+        "-ltinfo",
+        "-lreadline",
+    ],
     deps = [
         "//contrib/epee",
-        "//src/common",
-        "//src/crypto:cncrypto",
-        "//src/cryptonote_core",
-        "//src/wallet",
+        "//src:cncrypto",
+        "//src:common",
+        "//src:cryptonote_core",
+        "//src:wallet",
         "@boost//:program_options",
         "@boost//:regex",
+        "@liblzma",
+        "@libreadline",
     ],
 )
 
-cc_test(
+cc_binary(
     name = "make_test_signature",
     srcs = ["make_test_signature.cc"],
+    linkopts = [
+        "-ltinfo",
+        "-lreadline",
+    ],
     deps = [
         "//contrib/epee",
-        "//src/crypto:cncrypto",
-        "//src/rpc:rpc_base",
+        "//src:cncrypto",
+        "//src:rpc_base",
+        "@liblzma",
+        "@libreadline",
     ],
 )
 
-py_test(
+py_binary(
+    name = "functional_tests_rpc",
+    srcs = ["functional_tests_rpc.py"],
+    deps = [],
+)
+
+py_binary(
     name = "check_missing_rpc_methods",
-    srcs = [
-        "address_book.py",
-        "bans.py",
-        "blockchain.py",
-        "check_missing_rpc_methods.py",
-        "cold_signing.py",
-        "daemon_info.py",
-        "functional_tests_rpc.py",
-        "get_output_distribution.py",
-        "integrated_address.py",
-        "mining.py",
-        "multisig.py",
-        "p2p.py",
-        "proofs.py",
-        "rpc_payment.py",
-        "sign_message.py",
-        "speed.py",
-        "transfer.py",
-        "txpool.py",
-        "uri.py",
-        "validate_address.py",
-        "wallet.py",
-    ],
+    srcs = ["check_missing_rpc_methods.py"],
     deps = [],
 )

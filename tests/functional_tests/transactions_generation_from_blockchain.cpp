@@ -28,9 +28,9 @@
 // 
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
-#include "include_base_utils.h"
+#include "contrib/epee/include/include_base_utils.h"
 using namespace epee;
-#include "wallet/wallet2.h"
+#include "src/wallet/wallet2.h"
 
 using namespace cryptonote;
 

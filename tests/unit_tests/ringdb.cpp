@@ -35,13 +35,13 @@
 
 #include "gtest/gtest.h"
 
-#include "string_tools.h"
-#include "crypto/crypto.h"
-#include "crypto/random.h"
-#include "crypto/chacha.h"
-#include "ringct/rctOps.h"
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "wallet/ringdb.h"
+#include "contrib/epee/include/string_tools.h"
+#include "src/crypto/crypto.h"
+#include "src/crypto/random.h"
+#include "src/crypto/chacha.h"
+#include "src/ringct/rctOps.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/wallet/ringdb.h"
 
 static crypto::chacha_key generate_chacha_key()
 {

@@ -28,11 +28,11 @@
 // 
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
-#include "ringct/rctSigs.h"
-#include "ringct/bulletproofs.h"
+#include "src/ringct/rctSigs.h"
+#include "src/ringct/bulletproofs.h"
 #include "chaingen.h"
 #include "rct2.h"
-#include "device/device.hpp"
+#include "src/device/device.hpp"
 
 using namespace epee;
 using namespace crypto;

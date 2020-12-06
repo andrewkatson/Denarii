@@ -27,7 +27,7 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <string>
-#include "file_io_utils.h"
+#include "contrib/epee/include/file_io_utils.h"
 
 #ifdef OSSFUZZ
 

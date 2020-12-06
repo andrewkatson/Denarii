@@ -30,7 +30,7 @@
 
 #include "gtest/gtest.h"
 
-#include "wallet/wallet2.h"
+#include "src/wallet/wallet2.h"
 
 static crypto::hash make_hash(uint64_t n)
 {

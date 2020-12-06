@@ -30,9 +30,9 @@
 
 #include "gtest/gtest.h"
 
-#include "wallet/wallet2.h"
-#include "common/dns_utils.h"
-#include "simplewallet/simplewallet.h"
+#include "src/wallet/wallet2.h"
+#include "src/common/dns_utils.h"
+#include "src/simplewallet/simplewallet.h"
 #include <string>
 
 TEST(AddressFromTXT, Success)

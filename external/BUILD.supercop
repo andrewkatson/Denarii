@@ -2,7 +2,13 @@
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
- name = "supercop",
+ name = "supercop64",
+ srcs = glob(["**/libmonero-crypto64.a"]),
+ hdrs = glob(["**/include/**/*.h"])
+)
+
+cc_library(
+ name = "supercop51",
  srcs = glob(["**/libmonero-crypto.a"]),
  hdrs = glob(["**/include/**/*.h"])
 )

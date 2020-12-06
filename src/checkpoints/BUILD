@@ -16,3 +16,11 @@ cc_library(
         "@boost//:thread",
     ],
 )
+
+# WORKAROUND TO GET TESTS WORKING DO NOT USE
+cc_library(
+    name = "checkpoints_for_tests",
+    srcs = [],
+    hdrs = ["checkpoints.cpp"],
+    deps = [],
+)

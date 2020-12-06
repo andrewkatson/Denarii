@@ -36,9 +36,9 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include "misc_log_ex.h"
-#include "cryptonote_config.h"
-#include "cryptonote_basic/difficulty.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "src/cryptonote_config.h"
+#include "src/cryptonote_basic/difficulty.h"
 
 using namespace std;
 

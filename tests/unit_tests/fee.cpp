@@ -30,7 +30,7 @@
 
 #include "gtest/gtest.h"
 
-#include "cryptonote_core/blockchain.h"
+#include "src/cryptonote_core/blockchain.h"
 
 using namespace cryptonote;
 

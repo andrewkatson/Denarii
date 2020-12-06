@@ -31,12 +31,12 @@
 #include <vector>
 #include <iostream>
 
-#include "include_base_utils.h"
+#include "contrib/epee/include/include_base_utils.h"
 
-#include "console_handler.h"
+#include "contrib/epee/include/console_handler.h"
 
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "cryptonote_basic/cryptonote_format_utils.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
 
 #include "chaingen.h"
 #include "chaingen_tests_list.h"

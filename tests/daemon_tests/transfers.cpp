@@ -30,10 +30,10 @@
 
 #include "gtest/gtest.h"
 #include <sstream>
-#include "wallet/wallet.h"
-#include "rpc/core_rpc_server.h"
-#include "cryptonote_basic/account.h"
-#include "net/http_client_abstract_invoke.h"
+#include "src/wallet/api/wallet.h"
+#include "src/rpc/core_rpc_server.h"
+#include "src/cryptonote_basic/account.h"
+#include "contrib/epee/include/net/http_client_abstract_invoke.h"
 using namespace std;
 using namespace epee::misc_utils;
 using namespace cryptonote;

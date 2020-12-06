@@ -28,7 +28,7 @@
 
 #include "gtest/gtest.h"
 
-#include "cryptonote_basic/account.h"
+#include "src/cryptonote_basic/account.h"
 
 TEST(account, encrypt_keys)
 {

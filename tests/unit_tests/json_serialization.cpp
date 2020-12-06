@@ -2,17 +2,17 @@
 #include <boost/optional/optional.hpp>
 #include <boost/range/adaptor/indexed.hpp>
 #include <gtest/gtest.h>
-#include <rapidjson/document.h>
-#include <rapidjson/writer.h>
+#include "include/rapidjson/document.h"
+#include "include/rapidjson/writer.h"
 #include <vector>
 
-#include "byte_stream.h"
-#include "crypto/hash.h"
-#include "cryptonote_basic/account.h"
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "cryptonote_basic/cryptonote_format_utils.h"
-#include "cryptonote_core/cryptonote_tx_utils.h"
-#include "serialization/json_object.h"
+#include "contrib/epee/include/byte_stream.h"
+#include "src/crypto/hash.h"
+#include "src/cryptonote_basic/account.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
+#include "src/cryptonote_core/cryptonote_tx_utils.h"
+#include "src/serialization/json_object.h"
 
 
 namespace test

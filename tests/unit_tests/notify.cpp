@@ -34,10 +34,10 @@
 
 #include <boost/filesystem.hpp>
 
-#include "misc_language.h"
-#include "string_tools.h"
-#include "file_io_utils.h"
-#include "common/notify.h"
+#include "contrib/epee/include/misc_language.h"
+#include "contrib/epee/include/string_tools.h"
+#include "contrib/epee/include/file_io_utils.h"
+#include "src/common/notify.h"
 
 TEST(notify, works)
 {

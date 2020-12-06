@@ -1,21 +1,40 @@
 package(default_visibility = ["//visibility:public"])
 
-cc_test(
+cc_binary(
     name = "cnccrypto_tests",
     srcs = [
         "crypto.cpp",
         "crypto-ops.c",
-        "crypto-ops-data.c",
         "crypto-tests.h",
         "hash.c",
         "main.cpp",
-        "random.cs",
+        "random.c",
     ],
-    deps = ["//src/common"],
+    linkopts = [
+        "-ltinfo",
+        "-lreadline",
+    ],
+    deps = [
+        "//src:cnccrypto_for_tests",
+        "//src:cncrypto",
+        "//src:common",
+        "//tests:io",
+        "@liblzma",
+        "@libreadline",
+    ],
 )
 
-cc_test(
+cc_binary(
     name = "cnv4_jit_tests",
     srcs = ["cnv4-jit.c"],
-    deps = ["//src/common"],
+    linkopts = [
+        "-ltinfo",
+        "-lreadline",
+    ],
+    deps = [
+        "//src:cncrypto",
+        "//src:common",
+        "@liblzma",
+        "@libreadline",
+    ],
 )

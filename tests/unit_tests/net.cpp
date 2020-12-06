@@ -28,8 +28,8 @@
 
 #include <algorithm>
 #include <atomic>
-#include <boost/archive/portable_binary_oarchive.hpp>
-#include <boost/archive/portable_binary_iarchive.hpp>
+#include "archive/portable_binary_oarchive.hpp"
+#include "archive/portable_binary_iarchive.hpp"
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/tcp.hpp>
@@ -53,19 +53,19 @@
 #include <memory>
 #include <type_traits>
 
-#include "crypto/crypto.h"
-#include "net/dandelionpp.h"
-#include "net/error.h"
-#include "net/i2p_address.h"
-#include "net/net_utils_base.h"
-#include "net/socks.h"
-#include "net/socks_connect.h"
-#include "net/parse.h"
-#include "net/tor_address.h"
-#include "net/zmq.h"
-#include "p2p/net_peerlist_boost_serialization.h"
-#include "serialization/keyvalue_serialization.h"
-#include "storages/portable_storage.h"
+#include "src/crypto/crypto.h"
+#include "src/net/dandelionpp.h"
+#include "src/net/error.h"
+#include "src/net/i2p_address.h"
+#include "contrib/epee/include/net/net_utils_base.h"
+#include "src/net/socks.h"
+#include "src/net/socks_connect.h"
+#include "src/net/parse.h"
+#include "src/net/tor_address.h"
+#include "src/net/zmq.h"
+#include "src/p2p/net_peerlist_boost_serialization.h"
+#include "contrib/epee/include/serialization/keyvalue_serialization.h"
+#include "contrib/epee/include/storages/portable_storage.h"
 
 namespace
 {

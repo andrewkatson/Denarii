@@ -35,13 +35,13 @@
 #include <boost/asio/io_service.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
-#include "include_base_utils.h"
-#include "string_tools.h"
-#include "net/levin_protocol_handler_async.h"
-#include "net/abstract_tcp_server2.h"
-#include "serialization/keyvalue_serialization.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "contrib/epee/include/string_tools.h"
+#include "contrib/epee/include/net/levin_protocol_handler_async.h"
+#include "contrib/epee/include/net/abstract_tcp_server2.h"
+#include "contrib/epee/include/serialization/keyvalue_serialization.h"
 
-#include "../unit_tests/unit_tests_utils.h"
+#include "tests/unit_tests/unit_tests_utils.h"
 
 namespace net_load_tests
 {

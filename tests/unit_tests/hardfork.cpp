@@ -31,10 +31,10 @@
 #include <algorithm>
 #include "gtest/gtest.h"
 
-#include "blockchain_db/blockchain_db.h"
-#include "cryptonote_basic/cryptonote_format_utils.h"
-#include "cryptonote_basic/hardfork.h"
-#include "blockchain_db/testdb.h"
+#include "src/blockchain_db/blockchain_db.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
+#include "src/cryptonote_basic/hardfork.h"
+#include "src/blockchain_db/testdb.h"
 
 using namespace cryptonote;
 

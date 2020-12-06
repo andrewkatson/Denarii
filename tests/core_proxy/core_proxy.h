@@ -32,9 +32,9 @@
 
 #include <boost/program_options/variables_map.hpp>
 
-#include "cryptonote_basic/cryptonote_basic_impl.h"
-#include "cryptonote_basic/verification_context.h"
-#include "cryptonote_core/i_core_events.h"
+#include "src/cryptonote_basic/cryptonote_basic_impl.h"
+#include "src/cryptonote_basic/verification_context.h"
+#include "src/cryptonote_core/i_core_events.h"
 #include <unordered_map>
 
 namespace tests

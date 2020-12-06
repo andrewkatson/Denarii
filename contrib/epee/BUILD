@@ -18,5 +18,6 @@ cc_library(
         "@easy_logging",
         "@openssl//:libcrypto",
         "@openssl//:libssl",
+        "@zlib",
     ],
 )

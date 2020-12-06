@@ -5,10 +5,11 @@ cc_test(
     srcs = ["transfers.cpp"],
     deps = [
         "//contrib/epee",
-        "//src/common",
-        "//src/crypto:cncrypto",
-        "//src/cryptonote_core",
-        "//src/rpc",
+        "//src:cncrypto",
+        "//src:common",
+        "//src:cryptonote_core",
+        "//src:rpc",
+        "//src/wallet/api:wallet_api",
         "@gtest",
     ],
 )

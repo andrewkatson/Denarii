@@ -34,14 +34,14 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/program_options.hpp>
 
-#include "p2p/net_node.h"
-#include "p2p/net_node.inl"
-#include "cryptonote_protocol/cryptonote_protocol_handler.h"
-#include "cryptonote_protocol/cryptonote_protocol_handler.inl"
-#include "include_base_utils.h"
-#include "string_tools.h"
-#include "common/command_line.h"
-#include "common/util.h"
+#include "src/p2p/net_node.h"
+#include "src/p2p/net_node.inl"
+#include "src/cryptonote_protocol/cryptonote_protocol_handler.h"
+#include "src/cryptonote_protocol/cryptonote_protocol_handler.inl"
+#include "contrib/epee/include/include_base_utils.h"
+#include "contrib/epee/include/string_tools.h"
+#include "src/common/command_line.h"
+#include "src/common/util.h"
 #include "unit_tests_utils.h"
 
 namespace po = boost::program_options;

@@ -247,6 +247,13 @@ new_local_repository(
     path = "external/lrelease",
 )
 
+#zlib
+new_local_repository(
+    name = "zlib",
+    build_file = "external/BUILD.zlib",
+    path = "external/zlib",
+)
+
 load("@rules_cc//cc:repositories.bzl", "rules_cc_dependencies")
 
 rules_cc_dependencies()

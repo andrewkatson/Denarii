@@ -1,17 +1,21 @@
 package(default_visibility = ["//visibility:public"])
 
-cc_test(
+cc_binary(
     name = "difficulty",
     srcs = ["difficulty.cpp"],
-    deps = ["//src/cryptonote_basic"],
+    linkopts = [
+        "-ltinfo",
+        "-lreadline",
+    ],
+    deps = [
+        "//src:cryptonote_basic",
+        "@liblzma",
+        "@libreadline",
+    ],
 )
 
-py_test(
+py_binary(
     name = "wide_difficulty",
-    srcs = [
-        "gen_wide_data.py",
-        "generate-data",
-        "wide_difficulty.py",
-    ],
+    srcs = ["wide_difficulty.py"],
     deps = [],
 )

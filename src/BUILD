@@ -77,6 +77,31 @@ cc_library(
     ],
 )
 
+# ONLY USE IN TESTS THIS IS A WORKAROUND BECAUSE CMAKE IS WEIRD
+cc_library(
+    name = "cnccrypto_for_tests",
+    srcs = [],
+    hdrs = [
+        "crypto/crypto.cpp",
+        "crypto/crypto-ops.c",
+        "crypto/hash.c",
+        "crypto/keccak.c",
+        "crypto/random.c",
+    ],
+    copts = [
+        "-msse4.1",
+        "-maes",
+        "-march=native",
+    ],
+    deps = [
+        ":config",
+        "//contrib/epee",
+        "@boost//:system",
+        "@libsodium",
+        "@randomx",
+    ],
+)
+
 cc_library(
     name = "common",
     srcs = glob([
@@ -110,6 +135,14 @@ cc_library(
         "@openssl//:libssl",
         "@unbound",
     ],
+)
+
+# ANOTHER WORKAROUND FOR TESTS. DO NOT USE NORMALLY.
+cc_library(
+    name = "common_for_tests",
+    srcs = [],
+    hdrs = ["common/base58.cpp"],
+    deps = [],
 )
 
 cc_library(
@@ -404,6 +437,7 @@ cc_library(
     hdrs = [
         "blockchain_db/blockchain_db.h",
         "blockchain_db/lmdb/db_lmdb.h",
+        "blockchain_db/testdb.h",
     ],
     deps = [
         "//src:cncrypto",
@@ -637,6 +671,26 @@ cc_library(
         "@boost//:system",
         "@boost//:thread",
         "@libzmq",
+        "@rapidjson",
+    ],
+)
+
+# DO NOT USE NORMALLY THIS IS JUST A WORKAROUND
+cc_library(
+    name = "daemon_files_for_test",
+    srcs = glob([
+        "**/daemon/*.c",
+        "**/daemon/*.cpp",
+        "**/daemon/*.cc",
+    ]),
+    hdrs = glob([
+        "**/daemon/*.h",
+        "**/daemon/*.hpp",
+    ]),
+    deps = [
+        ":daemon_rpc_server",
+        "//contrib/epee",
+        "//src/daemonizer",
         "@rapidjson",
     ],
 )

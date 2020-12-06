@@ -31,7 +31,7 @@
 #pragma once
 
 #include "chaingen.h"
-#include "wallet/wallet2.h"
+#include "src/wallet/wallet2.h"
 
 typedef struct {
   tools::wallet2::transfer_details * td;

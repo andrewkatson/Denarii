@@ -30,12 +30,12 @@
 
 #include <boost/program_options.hpp>
 
-#include "include_base_utils.h"
-#include "string_tools.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "contrib/epee/include/string_tools.h"
 using namespace epee;
 
-#include "common/command_line.h"
-#include "common/util.h"
+#include "src/common/command_line.h"
+#include "src/common/util.h"
 #include "transactions_flow_test.h"
 
 namespace po = boost::program_options;

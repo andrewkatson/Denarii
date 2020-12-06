@@ -42,19 +42,19 @@
 # include <arpa/inet.h>
 #endif
 
-#include "boost/archive/portable_binary_iarchive.hpp"
-#include "boost/archive/portable_binary_oarchive.hpp"
-#include "byte_slice.h"
-#include "byte_stream.h"
-#include "crypto/crypto.h"
-#include "hex.h"
-#include "net/net_utils_base.h"
-#include "net/local_ip.h"
-#include "net/buffer.h"
-#include "p2p/net_peerlist_boost_serialization.h"
-#include "span.h"
-#include "string_tools.h"
-#include "storages/parserse_base_utils.h"
+#include "archive/portable_binary_iarchive.hpp"
+#include "archive/portable_binary_oarchive.hpp"
+#include "contrib/epee/include/byte_slice.h"
+#include "contrib/epee/include/byte_stream.h"
+#include "src/crypto/crypto.h"
+#include "contrib/epee/include/hex.h"
+#include "contrib/epee/include/net/net_utils_base.h"
+#include "contrib/epee/include/net/local_ip.h"
+#include "contrib/epee/include/net/buffer.h"
+#include "src/p2p/net_peerlist_boost_serialization.h"
+#include "contrib/epee/include/span.h"
+#include "contrib/epee/include/string_tools.h"
+#include "contrib/epee/include/storages/parserse_base_utils.h"
 
 namespace
 {

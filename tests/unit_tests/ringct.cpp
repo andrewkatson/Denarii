@@ -34,11 +34,11 @@
 #include <algorithm>
 #include <sstream>
 
-#include "ringct/rctTypes.h"
-#include "ringct/rctSigs.h"
-#include "ringct/rctOps.h"
-#include "device/device.hpp"
-#include "string_tools.h"
+#include "src/ringct/rctTypes.h"
+#include "src/ringct/rctSigs.h"
+#include "src/ringct/rctOps.h"
+#include "src/device/device.hpp"
+#include "contrib/epee/include/string_tools.h"
 
 using namespace std;
 using namespace crypto;

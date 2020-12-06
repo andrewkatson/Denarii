@@ -30,12 +30,12 @@
 #include <boost/filesystem.hpp>
 #include "gtest/gtest.h"
 
-#include "include_base_utils.h"
-#include "wallet/wallet2.h"
-#include "crypto/crypto.h"
-#include "cryptonote_basic/account.h"
-#include "cryptonote_basic/cryptonote_basic_impl.h"
-#include "wallet/api/subaddress.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "src/wallet/wallet2.h"
+#include "src/crypto/crypto.h"
+#include "src/cryptonote_basic/account.h"
+#include "src/cryptonote_basic/cryptonote_basic_impl.h"
+#include "src/wallet/api/subaddress.h"
 
 class WalletSubaddress : public ::testing::Test 
 {

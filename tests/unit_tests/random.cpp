@@ -28,10 +28,10 @@
 
 #include "gtest/gtest.h"
 
-#include "crypto/crypto.h"
+#include "src/crypto/crypto.h"
 
 extern "C" {
-#include "crypto/crypto-ops.h"
+#include "src/crypto/crypto-ops.h"
 }
 
 TEST(random32_unbiased, less_than_order)

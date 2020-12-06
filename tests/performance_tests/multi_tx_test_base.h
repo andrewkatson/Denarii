@@ -32,10 +32,10 @@
 
 #include <vector>
 
-#include "cryptonote_basic/account.h"
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "cryptonote_core/cryptonote_tx_utils.h"
-#include "crypto/crypto.h"
+#include "src/cryptonote_basic/account.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/cryptonote_core/cryptonote_tx_utils.h"
+#include "src/crypto/crypto.h"
 
 template<size_t a_ring_size>
 class multi_tx_test_base

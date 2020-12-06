@@ -26,12 +26,12 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "include_base_utils.h"
-#include "file_io_utils.h"
-#include "cryptonote_basic/blobdatatype.h"
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "cryptonote_basic/cryptonote_format_utils.h"
-#include "wallet/wallet2.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "contrib/epee/include/file_io_utils.h"
+#include "src/cryptonote_basic/blobdatatype.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
+#include "src/wallet/wallet2.h"
 #include "fuzzer.h"
 
 static tools::wallet2 *wallet = NULL;

@@ -29,7 +29,7 @@
 #include "gtest/gtest.h"
 
 extern "C" {
-#include "crypto/keccak.h"
+#include "src/crypto/keccak.h"
 }
 
 #define KECCAK_BLOCKLEN 136

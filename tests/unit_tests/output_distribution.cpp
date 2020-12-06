@@ -27,13 +27,13 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "gtest/gtest.h"
-#include "misc_log_ex.h"
-#include "rpc/rpc_handler.h"
-#include "blockchain_db/blockchain_db.h"
-#include "cryptonote_core/cryptonote_core.h"
-#include "cryptonote_core/tx_pool.h"
-#include "cryptonote_core/blockchain.h"
-#include "blockchain_db/testdb.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "src/rpc/rpc_handler.h"
+#include "src/blockchain_db/blockchain_db.h"
+#include "src/cryptonote_core/cryptonote_core.h"
+#include "src/cryptonote_core/tx_pool.h"
+#include "src/cryptonote_core/blockchain.h"
+#include "src/blockchain_db/testdb.h"
 
 static const uint64_t test_distribution[32] = {
   0, 0, 0, 0, 0, 1, 5, 1, 4, 0, 0, 1, 0, 1, 2, 3, 1, 0, 2, 0, 1, 3, 8, 1, 3, 5, 7, 1, 5, 0, 2, 3

@@ -32,20 +32,20 @@
 //
 
 
-#include "include_base_utils.h"
-#include "version.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "src/version.h"
 #include <iostream>
 #include <sstream>
 
 #include <boost/program_options.hpp>
 
-#include "common/command_line.h"
-#include "console_handler.h"
-#include "p2p/net_node.h"
-#include "p2p/net_node.inl"
+#include "src/common/command_line.h"
+#include "contrib/epee/include/console_handler.h"
+#include "src/p2p/net_node.h"
+#include "src/p2p/net_node.inl"
 //#include "cryptonote_core/cryptonote_core.h"
-#include "cryptonote_protocol/cryptonote_protocol_handler.h"
-#include "cryptonote_protocol/cryptonote_protocol_handler.inl"
+#include "src/cryptonote_protocol/cryptonote_protocol_handler.h"
+#include "src/cryptonote_protocol/cryptonote_protocol_handler.inl"
 #include "core_proxy.h"
 
 #if defined(WIN32)

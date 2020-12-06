@@ -168,7 +168,8 @@ Approximately three months prior to a scheduled software upgrade, a branch from 
 #### Manually pulled in
 * openssl: https://github.com/openssl/openssl. Build according to the instructions in its README. 
 * libzmq: https://github.com/zeromq/libzmq. Build according to the instruction in its README (it will direct you to the INSTALL file). Then move libzmq.a 
-from /usr/local/lib to the libzmq directory.
+from /usr/local/lib to the libzmq directory. Also need to run it with ```./configure --with-libsodium```
+* zlib: https://zlib.net. Just unpack it. 
 * All others you should follow the instructions to install below. 
 
 ### Dependencies

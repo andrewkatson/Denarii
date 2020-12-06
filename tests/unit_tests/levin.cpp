@@ -36,19 +36,19 @@
 #include <set>
 #include <map>
 
-#include "byte_slice.h"
-#include "crypto/crypto.h"
-#include "cryptonote_basic/connection_context.h"
-#include "cryptonote_config.h"
-#include "cryptonote_core/cryptonote_core.h"
-#include "cryptonote_core/i_core_events.h"
-#include "cryptonote_protocol/cryptonote_protocol_defs.h"
-#include "cryptonote_protocol/levin_notify.h"
-#include "int-util.h"
-#include "p2p/net_node.h"
-#include "net/dandelionpp.h"
-#include "net/levin_base.h"
-#include "span.h"
+#include "contrib/epee/include/byte_slice.h"
+#include "src/crypto/crypto.h"
+#include "src/cryptonote_basic/connection_context.h"
+#include "src/cryptonote_config.h"
+#include "src/cryptonote_core/cryptonote_core.h"
+#include "src/cryptonote_core/i_core_events.h"
+#include "src/cryptonote_protocol/cryptonote_protocol_defs.h"
+#include "src/cryptonote_protocol/levin_notify.h"
+#include "contrib/epee/include/int-util.h"
+#include "src/p2p/net_node.h"
+#include "src/net/dandelionpp.h"
+#include "contrib/epee/include/net/levin_base.h"
+#include "contrib/epee/include/span.h"
 
 namespace
 {

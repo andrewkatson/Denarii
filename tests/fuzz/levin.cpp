@@ -26,12 +26,12 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "include_base_utils.h"
-#include "file_io_utils.h"
-#include "net/net_utils_base.h"
-#include "net/abstract_tcp_server2.h"
-#include "storages/levin_abstract_invoke2.h"
-#include "net/levin_protocol_handler_async.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "contrib/epee/include/file_io_utils.h"
+#include "contrib/epee/include/net/net_utils_base.h"
+#include "contrib/epee/include/net/abstract_tcp_server2.h"
+#include "contrib/epee/include/storages/levin_abstract_invoke2.h"
+#include "contrib/epee/include/net/levin_protocol_handler_async.h"
 #include "fuzzer.h"
 
 namespace

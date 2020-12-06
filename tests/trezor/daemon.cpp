@@ -27,7 +27,7 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "daemon.h"
-#include <common/command_line.h>
+#include "src/common/command_line.h"
 
 using namespace std;
 using namespace daemonize;

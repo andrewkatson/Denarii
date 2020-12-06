@@ -30,7 +30,7 @@
 
 #include "gtest/gtest.h"
 
-#include "wallet/wallet2.h"
+#include "src/wallet/wallet2.h"
 #include <string>
 
 static tools::wallet2::transfer_container make_transfers_container(size_t N)

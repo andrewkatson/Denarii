@@ -28,18 +28,18 @@
 
 #include <boost/preprocessor/stringize.hpp>
 #include <gtest/gtest.h>
-#include <rapidjson/document.h>
+#include "include/rapidjson/document.h"
 
-#include "cryptonote_basic/account.h"
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "cryptonote_basic/events.h"
-#include "cryptonote_basic/cryptonote_format_utils.h"
+#include "src/cryptonote_basic/account.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/cryptonote_basic/events.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
 #include "json_serialization.h"
-#include "net/zmq.h"
-#include "rpc/message.h"
-#include "rpc/zmq_pub.h"
-#include "rpc/zmq_server.h"
-#include "serialization/json_object.h"
+#include "src/net/zmq.h"
+#include "src/rpc/message.h"
+#include "src/rpc/zmq_pub.h"
+#include "src/rpc/zmq_server.h"
+#include "src/serialization/json_object.h"
 
 #define MASSERT(...)                                                      \
   if (!(__VA_ARGS__))                                                     \

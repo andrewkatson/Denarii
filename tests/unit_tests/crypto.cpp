@@ -32,7 +32,7 @@
 #include <sstream>
 #include <string>
 
-#include "cryptonote_basic/cryptonote_basic_impl.h"
+#include "src/cryptonote_basic/cryptonote_basic_impl.h"
 
 namespace
 {

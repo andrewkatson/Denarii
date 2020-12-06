@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "crypto/crypto.h"
+#include "src/crypto/crypto.h"
 
 class test_sc_reduce32
 {

@@ -28,8 +28,8 @@
 
 #include <atomic>
 #include "gtest/gtest.h"
-#include "misc_language.h"
-#include "common/threadpool.h"
+#include "contrib/epee/include/misc_language.h"
+#include "src/common/threadpool.h"
 
 TEST(threadpool, wait_nothing)
 {

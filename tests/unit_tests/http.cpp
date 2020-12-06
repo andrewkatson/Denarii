@@ -27,7 +27,7 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "gtest/gtest.h"
-#include "net/http_auth.h"
+#include "contrib/epee/include/net/http_auth.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/join.hpp>
@@ -58,9 +58,9 @@
 #include <utility>
 #include <vector>
 
-#include "md5_l.h"
-#include "string_tools.h"
-#include "crypto/crypto.h"
+#include "contrib/epee/include/md5_l.h"
+#include "contrib/epee/include/string_tools.h"
+#include "src/crypto/crypto.h"
 
 namespace {
 namespace http = epee::net_utils::http;

@@ -27,8 +27,8 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "gtest/gtest.h"
-#include "ringct/rctOps.h"
-#include "device/device_default.hpp"
+#include "src/ringct/rctOps.h"
+#include "src/device/device_default.hpp"
 
 TEST(device, name)
 {

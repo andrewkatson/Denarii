@@ -27,7 +27,7 @@
 
 #pragma once
 extern "C" { 
-#include "zlib/zlib.h"
+#include "external/zlib/zlib.h"
 }
 #pragma comment(lib, "zlibstat.lib")
 

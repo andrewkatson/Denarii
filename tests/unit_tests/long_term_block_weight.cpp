@@ -29,10 +29,10 @@
 #define IN_UNIT_TESTS
 
 #include "gtest/gtest.h"
-#include "cryptonote_core/blockchain.h"
-#include "cryptonote_core/tx_pool.h"
-#include "cryptonote_core/cryptonote_core.h"
-#include "blockchain_db/testdb.h"
+#include "src/cryptonote_core/blockchain.h"
+#include "src/cryptonote_core/tx_pool.h"
+#include "src/cryptonote_core/cryptonote_core.h"
+#include "src/blockchain_db/testdb.h"
 
 #define TEST_LONG_TERM_BLOCK_WEIGHT_WINDOW 5000
 

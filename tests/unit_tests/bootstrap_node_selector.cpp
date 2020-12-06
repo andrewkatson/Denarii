@@ -28,7 +28,7 @@
 
 #include <gtest/gtest.h>
 
-#include "rpc/bootstrap_node_selector.h"
+#include "src/rpc/bootstrap_node_selector.h"
 
 class bootstrap_node_selector : public ::testing::Test
 {

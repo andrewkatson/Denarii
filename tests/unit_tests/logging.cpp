@@ -30,8 +30,8 @@
 
 #include <boost/filesystem.hpp>
 #include "gtest/gtest.h"
-#include "file_io_utils.h"
-#include "misc_log_ex.h"
+#include "contrib/epee/include/file_io_utils.h"
+#include "contrib/epee/include/misc_log_ex.h"
 
 static std::string log_filename;
 

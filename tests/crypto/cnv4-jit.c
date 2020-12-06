@@ -32,7 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include "crypto/hash-ops.h"
+#include "src/crypto/hash-ops.h"
 
 extern volatile int use_v4_jit_flag;
 

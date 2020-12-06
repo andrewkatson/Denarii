@@ -37,24 +37,24 @@
 #include <sstream>
 #include <fstream>
 
-#include "include_base_utils.h"
+#include "contrib/epee/include/include_base_utils.h"
 
-#include "console_handler.h"
+#include "contrib/epee/include/console_handler.h"
 
-#include "p2p/net_node.h"
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "cryptonote_basic/cryptonote_basic_impl.h"
-#include "cryptonote_basic/cryptonote_format_utils.h"
-#include "cryptonote_basic/miner.h"
+#include "src/p2p/net_node.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/cryptonote_basic/cryptonote_basic_impl.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
+#include "src/cryptonote_basic/miner.h"
 
-#include "blockchain_db/blockchain_db.h"
-#include "cryptonote_core/cryptonote_core.h"
-#include "cryptonote_core/tx_pool.h"
-#include "cryptonote_core/blockchain.h"
-#include "blockchain_db/testdb.h"
+#include "src/blockchain_db/blockchain_db.h"
+#include "src/cryptonote_core/cryptonote_core.h"
+#include "src/cryptonote_core/tx_pool.h"
+#include "src/cryptonote_core/blockchain.h"
+#include "src/blockchain_db/testdb.h"
 
 #include "chaingen.h"
-#include "device/device.hpp"
+#include "src/device/device.hpp"
 using namespace std;
 
 using namespace epee;

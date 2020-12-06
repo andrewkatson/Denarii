@@ -36,10 +36,10 @@
 #include <boost/chrono.hpp>
 #include <boost/regex.hpp>
 
-#include "misc_language.h"
-#include "stats.h"
-#include "common/perf_timer.h"
-#include "common/timings.h"
+#include "contrib/epee/include/misc_language.h"
+#include "contrib/epee/include/stats.h"
+#include "src/common/perf_timer.h"
+#include "src/common/timings.h"
 
 class performance_timer
 {

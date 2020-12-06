@@ -34,9 +34,9 @@
 
 #include "gtest/gtest.h"
 
-#include "include_base_utils.h"
-#include "string_tools.h"
-#include "net/abstract_tcp_server2.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "contrib/epee/include/string_tools.h"
+#include "contrib/epee/include/net/abstract_tcp_server2.h"
 
 namespace
 {

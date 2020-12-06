@@ -57,10 +57,10 @@
 #include <utility>
 #include <vector>
 
-#include "crypto/crypto.h"
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "monero/crypto/amd64-64-24k.h"
-#include "monero/crypto/amd64-51-30k.h"
+#include "src/crypto/crypto.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "include/monero/crypto/amd64-64-24k.h"
+#include "include/monero/crypto/amd64-51-30k.h"
 
 #define CHECK(...)                           \
     if(!( __VA_ARGS__ ))                      \

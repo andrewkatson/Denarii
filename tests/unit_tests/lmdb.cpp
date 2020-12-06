@@ -30,10 +30,10 @@
 #include <boost/range/algorithm/equal.hpp>
 #include <gtest/gtest.h>
 
-#include "lmdb/database.h"
-#include "lmdb/table.h"
-#include "lmdb/transaction.h"
-#include "lmdb/util.h"
+#include "src/lmdb/database.h"
+#include "src/lmdb/table.h"
+#include "src/lmdb/transaction.h"
+#include "src/lmdb/util.h"
 
 namespace
 {

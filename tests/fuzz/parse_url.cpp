@@ -26,9 +26,9 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "include_base_utils.h"
-#include "file_io_utils.h"
-#include "net/net_parse_helpers.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "contrib/epee/include/file_io_utils.h"
+#include "contrib/epee/include/net/net_parse_helpers.h"
 #include "fuzzer.h"
 
 BEGIN_INIT_SIMPLE_FUZZER()

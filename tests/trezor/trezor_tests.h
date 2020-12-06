@@ -30,11 +30,11 @@
 
 #pragma once
 
-#include <device_trezor/device_trezor.hpp>
-#include <wallet/api/wallet2_api.h>
+#include "src/device_trezor/device_trezor.hpp"
+#include "src/wallet/api/wallet2_api.h"
 #include "daemon.h"
-#include "../core_tests/chaingen.h"
-#include "../core_tests/wallet_tools.h"
+#include "tests/core_tests/chaingen.h"
+#include "tests/core_tests/wallet_tools.h"
 
 #define TREZOR_TEST_FEE 90000000000
 #define TREZOR_TEST_MIXIN 11

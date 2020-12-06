@@ -30,8 +30,8 @@
 
 #pragma once
 
-#include "crypto/crypto.h"
-#include "cryptonote_basic/cryptonote_basic.h"
+#include "src/crypto/crypto.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
 
 class test_generate_keypair
 {

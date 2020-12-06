@@ -9,6 +9,7 @@ cc_library(
     ],
     deps = [
         "//src:cncrypto",
-        "@supercop",
+        "@supercop//:supercop51",
+        "@supercop//:supercop64",
     ],
 )

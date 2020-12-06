@@ -406,11 +406,12 @@ def translations_generate():
 
 
 def generate_files():
-    # blocks_generate()
-    # crypto_wallet_generate()
-    # version_generate()
-    # benchmark_generate()
+    blocks_generate()
+    crypto_wallet_generate()
+    version_generate()
+    benchmark_generate()
     translations_generate()
 
 
-generate_files()
+#import_dependencies()
+#generate_files()

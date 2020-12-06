@@ -37,11 +37,11 @@
 
 #include "gtest/gtest.h"
 
-#include "include_base_utils.h"
-#include "misc_language.h"
-#include "misc_log_ex.h"
-#include "storages/levin_abstract_invoke2.h"
-#include "common/util.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "contrib/epee/include/misc_language.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "contrib/epee/include/storages/levin_abstract_invoke2.h"
+#include "src/common/util.h"
 
 #include "net_load_tests.h"
 

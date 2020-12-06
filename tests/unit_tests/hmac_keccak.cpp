@@ -27,10 +27,10 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "gtest/gtest.h"
-#include "../io.h"
+#include "tests/io.h"
 
 extern "C" {
-#include "crypto/hmac-keccak.h"
+#include "src/crypto/hmac-keccak.h"
 }
 
 #define KECCAK_BLOCKLEN 136

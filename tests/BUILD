@@ -2,7 +2,53 @@ package(default_visibility = ["//visibility:public"])
 
 cc_test(
     name = "benchmark",
-    srcs = ["benchmark.cpp", "benchmark.h"],
-    deps = ["//src/crypto:cncrypto", "@supercop"],
+    srcs = [
+        "benchmark.cpp",
+        "benchmark.h",
+    ],
+    linkopts = [
+        "-ltinfo",
+        "-lreadline",
+        "-lnorm",
+    ],
+    deps = [
+        "//src:cncrypto",
+        "//src:cryptonote_basic",
+        "@liblzma",
+        "@libnorm",
+        "@libreadline",
+        "@libzmq",
+        "@openpgm",
+        "@supercop//:supercop51",
+        "@supercop//:supercop64",
+    ],
 )
 
+cc_library(
+    name = "io",
+    srcs = [],
+    hdrs = ["io.h"],
+    deps = [],
+)
+
+cc_test(
+    name = "hash_tests",
+    srcs = ["hash-target.cpp"],
+    linkopts = [
+        "-ltinfo",
+        "-lreadline",
+    ],
+    deps = [
+        "//contrib/epee",
+        "//src:cncrypto",
+        "//src:cryptonote_basic",
+        "@liblzma",
+        "@libreadline",
+    ],
+)
+
+py_binary(
+    name = "run_monero_tests",
+    srcs = ["run_monero_tests.py"],
+    deps = [],
+)

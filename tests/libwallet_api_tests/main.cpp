@@ -30,10 +30,10 @@
 
 #include "gtest/gtest.h"
 
-#include "wallet/api/wallet2_api.h"
-#include "wallet/wallet2.h"
-#include "include_base_utils.h"
-#include "common/util.h"
+#include "src/wallet/api/wallet2_api.h"
+#include "src/wallet/wallet2.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "src/common/util.h"
 
 #include <boost/chrono/chrono.hpp>
 #include <boost/filesystem.hpp>

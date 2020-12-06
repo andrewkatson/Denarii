@@ -28,13 +28,13 @@
 // 
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
-#include "ringct/rctSigs.h"
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "multisig/multisig.h"
-#include "common/apply_permutation.h"
+#include "src/ringct/rctSigs.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/multisig/multisig.h"
+#include "src/common/apply_permutation.h"
 #include "chaingen.h"
 #include "multisig.h"
-#include "device/device.hpp"
+#include "src/device/device.hpp"
 using namespace epee;
 using namespace crypto;
 using namespace cryptonote;

@@ -34,20 +34,20 @@
 #include <iostream>
 #include <vector>
 #include <boost/foreach.hpp>
-#include <boost/archive/portable_binary_iarchive.hpp>
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "cryptonote_basic/cryptonote_basic_impl.h"
-#include "ringct/rctSigs.h"
-#include "serialization/binary_archive.h"
-#include "serialization/json_archive.h"
-#include "serialization/debug_archive.h"
-#include "serialization/variant.h"
-#include "serialization/containers.h"
-#include "serialization/binary_utils.h"
-#include "wallet/wallet2.h"
+#include "archive/portable_binary_iarchive.hpp"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/cryptonote_basic/cryptonote_basic_impl.h"
+#include "src/ringct/rctSigs.h"
+#include "src/serialization/binary_archive.h"
+#include "src/serialization/json_archive.h"
+#include "src/serialization/debug_archive.h"
+#include "src/serialization/variant.h"
+#include "src/serialization/containers.h"
+#include "src/serialization/binary_utils.h"
+#include "src/wallet/wallet2.h"
 #include "gtest/gtest.h"
 #include "unit_tests_utils.h"
-#include "device/device.hpp"
+#include "src/device/device.hpp"
 using namespace std;
 using namespace crypto;
 

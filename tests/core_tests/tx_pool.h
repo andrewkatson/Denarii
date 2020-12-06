@@ -32,7 +32,7 @@
 #include <unordered_set>
 
 #include "chaingen.h"
-#include "crypto/crypto.h"
+#include "src/crypto/crypto.h"
 
 enum class relay_test
 {

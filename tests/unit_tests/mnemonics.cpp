@@ -27,29 +27,29 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "gtest/gtest.h"
-#include "wipeable_string.h"
-#include "mnemonics/language_base.h"
-#include "mnemonics/electrum-words.h"
-#include "crypto/crypto.h"
+#include "contrib/epee/include/wipeable_string.h"
+#include "src/mnemonics/language_base.h"
+#include "src/mnemonics/electrum-words.h"
+#include "src/crypto/crypto.h"
 #include <stdlib.h>
 #include <vector>
 #include <time.h>
 #include <iostream>
 #include <boost/algorithm/string.hpp>
-#include "mnemonics/chinese_simplified.h"
-#include "mnemonics/english.h"
-#include "mnemonics/spanish.h"
-#include "mnemonics/portuguese.h"
-#include "mnemonics/japanese.h"
-#include "mnemonics/german.h"
-#include "mnemonics/italian.h"
-#include "mnemonics/russian.h"
-#include "mnemonics/french.h"
-#include "mnemonics/dutch.h"
-#include "mnemonics/esperanto.h"
-#include "mnemonics/lojban.h"
-#include "mnemonics/english_old.h"
-#include "mnemonics/singleton.h"
+#include "src/mnemonics/chinese_simplified.h"
+#include "src/mnemonics/english.h"
+#include "src/mnemonics/spanish.h"
+#include "src/mnemonics/portuguese.h"
+#include "src/mnemonics/japanese.h"
+#include "src/mnemonics/german.h"
+#include "src/mnemonics/italian.h"
+#include "src/mnemonics/russian.h"
+#include "src/mnemonics/french.h"
+#include "src/mnemonics/dutch.h"
+#include "src/mnemonics/esperanto.h"
+#include "src/mnemonics/lojban.h"
+#include "src/mnemonics/english_old.h"
+#include "src/mnemonics/singleton.h"
 
 namespace
 {

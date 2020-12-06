@@ -34,12 +34,12 @@
 #include <string>
 #include <vector>
 
-#include "warnings.h"
-#include "misc_log_ex.h"
-#include "crypto/crypto.h"
-#include "crypto/hash.h"
+#include "contrib/epee/include/warnings.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "src/crypto/crypto.h"
+#include "src/crypto/hash.h"
 #include "crypto-tests.h"
-#include "../io.h"
+#include "tests/io.h"
 
 using namespace std;
 using namespace crypto;

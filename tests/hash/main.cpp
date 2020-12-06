@@ -35,11 +35,11 @@
 #include <string>
 #include <cfenv>
 
-#include "misc_log_ex.h"
-#include "warnings.h"
-#include "crypto/hash.h"
-#include "crypto/variant2_int_sqrt.h"
-#include "../io.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "contrib/epee/include/warnings.h"
+#include "src/crypto/hash.h"
+#include "src/crypto/variant2_int_sqrt.h"
+#include "tests/io.h"
 
 using namespace std;
 using namespace crypto;

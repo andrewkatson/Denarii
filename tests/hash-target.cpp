@@ -32,9 +32,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <limits>
-#include "misc_log_ex.h"
-#include "crypto/hash.h"
-#include "cryptonote_basic/difficulty.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "src/crypto/hash.h"
+#include "src/cryptonote_basic/difficulty.h"
 
 using namespace std;
 using cryptonote::check_hash;

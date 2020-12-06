@@ -30,9 +30,9 @@
 
 #pragma once
 
-#include "string_tools.h"
-#include "crypto/crypto.h"
-#include "cryptonote_basic/cryptonote_basic.h"
+#include "contrib/epee/include/string_tools.h"
+#include "src/crypto/crypto.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
 
 template<unsigned int variant>
 class test_cn_slow_hash

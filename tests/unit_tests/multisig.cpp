@@ -30,7 +30,7 @@
 
 #include <cstdint>
 
-#include "wallet/wallet2.h"
+#include "src/wallet/wallet2.h"
 
 static const struct
 {

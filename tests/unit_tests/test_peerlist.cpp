@@ -30,9 +30,9 @@
 
 #include "gtest/gtest.h"
 
-#include "common/util.h"
-#include "p2p/net_peerlist.h"
-#include "net/net_utils_base.h"
+#include "src/common/util.h"
+#include "src/p2p/net_peerlist.h"
+#include "contrib/epee/include/net/net_utils_base.h"
 
 TEST(peer_list, peer_list_general)
 {

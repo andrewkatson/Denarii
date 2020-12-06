@@ -28,7 +28,7 @@
 
 #include "gtest/gtest.h"
 
-#include "common/util.h"
+#include "src/common/util.h"
 
 TEST(vercmp, empty) { ASSERT_TRUE(tools::vercmp("", "") == 0); }
 TEST(vercmp, empty0) { ASSERT_TRUE(tools::vercmp("", "0") == 0); }

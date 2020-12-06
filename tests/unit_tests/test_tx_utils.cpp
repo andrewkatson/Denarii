@@ -32,10 +32,10 @@
 
 #include <vector>
 
-#include "common/util.h"
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "cryptonote_basic/tx_extra.h"
-#include "cryptonote_core/cryptonote_tx_utils.h"
+#include "src/common/util.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/cryptonote_basic/tx_extra.h"
+#include "src/cryptonote_core/cryptonote_tx_utils.h"
 
 namespace
 {

@@ -43,19 +43,19 @@
 #include <boost/serialization/unordered_map.hpp>
 #include <boost/functional/hash.hpp>
 
-#include "include_base_utils.h"
-#include "common/boost_serialization_helper.h"
-#include "common/command_line.h"
-#include "common/threadpool.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "src/common/boost_serialization_helper.h"
+#include "src/common/command_line.h"
+#include "src/common/threadpool.h"
 
-#include "cryptonote_basic/account_boost_serialization.h"
-#include "cryptonote_basic/cryptonote_basic.h"
-#include "cryptonote_basic/cryptonote_basic_impl.h"
-#include "cryptonote_basic/cryptonote_format_utils.h"
-#include "cryptonote_core/cryptonote_core.h"
-#include "cryptonote_protocol/enums.h"
-#include "cryptonote_basic/cryptonote_boost_serialization.h"
-#include "misc_language.h"
+#include "src/cryptonote_basic/account_boost_serialization.h"
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/cryptonote_basic/cryptonote_basic_impl.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
+#include "src/cryptonote_core/cryptonote_core.h"
+#include "src/cryptonote_protocol/enums.h"
+#include "src/cryptonote_basic/cryptonote_boost_serialization.h"
+#include "contrib/epee/include/misc_language.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "tests.core"

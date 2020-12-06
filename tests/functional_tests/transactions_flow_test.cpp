@@ -33,9 +33,9 @@
 #include <boost/uuid/random_generator.hpp>
 #include <unordered_map>
 
-#include "include_base_utils.h"
+#include "contrib/epee/include/include_base_utils.h"
 using namespace epee;
-#include "wallet/wallet2.h"
+#include "src/wallet/wallet2.h"
 using namespace cryptonote;
 
 namespace

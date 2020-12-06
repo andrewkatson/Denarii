@@ -28,23 +28,23 @@
 // 
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
-#include "include_base_utils.h"
-#include "cryptonote_basic/cryptonote_basic_impl.h"
-#include "cryptonote_basic/account.h"
-#include "cryptonote_core/cryptonote_tx_utils.h"
-#include "misc_language.h"
-#include "string_tools.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "src/cryptonote_basic/cryptonote_basic_impl.h"
+#include "src/cryptonote_basic/account.h"
+#include "src/cryptonote_core/cryptonote_tx_utils.h"
+#include "contrib/epee/include/misc_language.h"
+#include "contrib/epee/include/string_tools.h"
 
 using namespace cryptonote;
 
 #include <boost/regex.hpp>
-#include <common/apply_permutation.h>
-#include "common/util.h"
-#include "common/command_line.h"
+#include "src/common/apply_permutation.h"
+#include "src/common/util.h"
+#include "src/common/command_line.h"
 #include "trezor_tests.h"
 #include "tools.h"
-#include "device/device_cold.hpp"
-#include "device_trezor/device_trezor.hpp"
+#include "src/device/device_cold.hpp"
+#include "src/device_trezor/device_trezor.hpp"
 
 
 namespace po = boost::program_options;

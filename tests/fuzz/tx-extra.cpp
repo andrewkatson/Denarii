@@ -26,8 +26,8 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "include_base_utils.h"
-#include "cryptonote_basic/cryptonote_format_utils.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
 #include "fuzzer.h"
 
 BEGIN_INIT_SIMPLE_FUZZER()

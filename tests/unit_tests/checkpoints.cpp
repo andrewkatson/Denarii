@@ -30,7 +30,7 @@
 
 #include "gtest/gtest.h"
 
-#include "checkpoints/checkpoints.cpp"
+#include "src/checkpoints/checkpoints.cpp"
 
 using namespace cryptonote;
 
