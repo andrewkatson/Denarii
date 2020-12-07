@@ -1,10 +1,11 @@
-# This file runs any monero tests that are done through commands in CMAKE
+# This file runs any monero tests that are done through commands in CMAKE. The ones that are run with gtest do not need this
+# and have to be run manually
 import os
 import subprocess
 
 # NEED TO FILL THIS IN WITH YOUR USERNAME FOR THIS TO WORK SORRY
 username = "andrew"
-workspace_path = os.path.join("/home/", "andrew/denarii")
+workspace_path = os.path.join("/home/", f"{username}/denarii")
 
 
 def report_status_of_test(process, testname):
@@ -99,7 +100,6 @@ def test_functional_tests():
 
 
 def test_fuzz():
-
     block_fuzz_tests_command = "bazel run tests/fuzz:block_fuzz_tests"
     functional_tests_proc = subprocess.Popen(block_fuzz_tests_command, shell=True, stdout=subprocess.PIPE)
     functional_tests_proc.wait()
@@ -121,17 +121,20 @@ def test_fuzz():
     report_status_of_test(cold_outputs_fuzz_tests_proc, "fuzz:cold_outputs_fuzz_tests")
 
     cold_transaction_fuzz_tests_command = "bazel run tests/fuzz:cold_transaction_fuzz_tests"
-    cold_transaction_fuzz_tests_proc = subprocess.Popen(cold_transaction_fuzz_tests_command, shell=True, stdout=subprocess.PIPE)
+    cold_transaction_fuzz_tests_proc = subprocess.Popen(cold_transaction_fuzz_tests_command, shell=True,
+                                                        stdout=subprocess.PIPE)
     cold_transaction_fuzz_tests_proc.wait()
     report_status_of_test(cold_transaction_fuzz_tests_proc, "fuzz:cold_transaction_fuzz_tests")
 
     load_from_binary_fuzz_tests_command = "bazel run tests/fuzz:load_from_binary_fuzz_tests"
-    load_from_binary_fuzz_tests_proc = subprocess.Popen(load_from_binary_fuzz_tests_command, shell=True, stdout=subprocess.PIPE)
+    load_from_binary_fuzz_tests_proc = subprocess.Popen(load_from_binary_fuzz_tests_command, shell=True,
+                                                        stdout=subprocess.PIPE)
     load_from_binary_fuzz_tests_proc.wait()
     report_status_of_test(load_from_binary_fuzz_tests_proc, "fuzz:load_from_binary_fuzz_tests")
 
     load_from_json_fuzz_tests_command = "bazel run tests/fuzz:load_from_json_fuzz_tests"
-    load_from_json_fuzz_tests_proc = subprocess.Popen(load_from_json_fuzz_tests_command, shell=True, stdout=subprocess.PIPE)
+    load_from_json_fuzz_tests_proc = subprocess.Popen(load_from_json_fuzz_tests_command, shell=True,
+                                                      stdout=subprocess.PIPE)
     load_from_json_fuzz_tests_proc.wait()
     report_status_of_test(load_from_json_fuzz_tests_proc, "fuzz:load_from_json_fuzz_tests")
 
@@ -139,37 +142,77 @@ def test_fuzz():
     base58_fuzz_tests_proc = subprocess.Popen(base58_fuzz_tests_command, shell=True, stdout=subprocess.PIPE)
     base58_fuzz_tests_proc.wait()
     report_status_of_test(base58_fuzz_tests_proc, "fuzz:base58_fuzz_tests")
-    
+
     parse_url_fuzz_tests_command = "bazel run tests/fuzz:parse_url_fuzz_tests"
     parse_url_fuzz_tests_proc = subprocess.Popen(parse_url_fuzz_tests_command, shell=True, stdout=subprocess.PIPE)
     parse_url_fuzz_tests_proc.wait()
     report_status_of_test(parse_url_fuzz_tests_proc, "fuzz:parse_url_fuzz_tests")
-    
+
     http_client_fuzz_tests_command = "bazel run tests/fuzz:http_client_fuzz_tests"
     http_client_fuzz_tests_proc = subprocess.Popen(http_client_fuzz_tests_command, shell=True, stdout=subprocess.PIPE)
     http_client_fuzz_tests_proc.wait()
     report_status_of_test(http_client_fuzz_tests_proc, "fuzz:http_client_fuzz_tests")
-    
+
     levin_fuzz_tests_command = "bazel run tests/fuzz:levin_fuzz_tests"
     levin_fuzz_tests_proc = subprocess.Popen(levin_fuzz_tests_command, shell=True, stdout=subprocess.PIPE)
     levin_fuzz_tests_proc.wait()
     report_status_of_test(levin_fuzz_tests_proc, "fuzz:levin_fuzz_tests")
-    
+
     bulletproof_fuzz_tests_command = "bazel run tests/fuzz:bulletproof_fuzz_tests"
     bulletproof_fuzz_tests_proc = subprocess.Popen(bulletproof_fuzz_tests_command, shell=True, stdout=subprocess.PIPE)
     bulletproof_fuzz_tests_proc.wait()
     report_status_of_test(bulletproof_fuzz_tests_proc, "fuzz:bulletproof_fuzz_tests")
-    
+
     tx_extra_fuzz_tests_command = "bazel run tests/fuzz:tx_extra_fuzz_tests"
     tx_extra_fuzz_tests_proc = subprocess.Popen(tx_extra_fuzz_tests_command, shell=True, stdout=subprocess.PIPE)
     tx_extra_fuzz_tests_proc.wait()
     report_status_of_test(tx_extra_fuzz_tests_proc, "fuzz:tx_extra_fuzz_tests")
 
+
+def test_hash():
+    flavors = ["fast", "slow", "slow-1", "slow-2", "slow-3", "slow-4", "tree", "extra-blake", "extra-groestl",
+               "extra-jh", "extra-skein"]
+
+    for flavor in flavors:
+        text_file_path = workspace_path + "/tests/hash/tests-" + flavor + ".txt"
+        flavor_command = "bazel run tests/hash:hash_tests -- " + flavor + " " + text_file_path
+        flavor_proc = subprocess.Popen(flavor_command, shell=True, stdout=subprocess.PIPE)
+        flavor_proc.wait()
+        report_status_of_test(flavor_proc, "hash:" + flavor)
+
+    hash_variant_command = "bazel run tests/hash:hash_tests -- " + "variant2_int_sqrt"
+    hash_variant_proc = subprocess.Popen(hash_variant_command, shell=True, stdout=subprocess.PIPE)
+    hash_variant_proc.wait()
+    report_status_of_test(hash_variant_proc, "hash:hash_variant")
+
+
+def test_performance_tests():
+    performance_tests_command = "bazel run tests/performance_tests:performance_tests"
+    performance_tests_proc = subprocess.Popen(performance_tests_command, shell=True, stdout=subprocess.PIPE)
+    performance_tests_proc.wait()
+    report_status_of_test(performance_tests_proc, "performance_tests:performance_tests")
+
+
+def test_top_level():
+    benchmark_command = "bazel run tests:benchmark"
+    benchmark_proc = subprocess.Popen(benchmark_command, shell=True, stdout=subprocess.PIPE)
+    benchmark_proc.wait()
+    report_status_of_test(benchmark_proc, "top_level:benchmark")
+
+    hash_tests_command = "bazel run tests:hash_tests"
+    hash_tests_proc = subprocess.Popen(hash_tests_command, shell=True, stdout=subprocess.PIPE)
+    hash_tests_proc.wait()
+    report_status_of_test(hash_tests_proc, "top_level:hash_tests")
+
+
 os.chdir(workspace_path)
-# test_block_weight()
-# test_core_proxy()
-# test_core_tests()
-# test_crypto()
-# test_difficulty()
-# test_functional_tests()
-# test_fuzz()
+test_block_weight()
+test_core_proxy()
+test_core_tests()
+test_crypto()
+test_difficulty()
+test_functional_tests()
+test_fuzz()
+test_hash()
+test_performance_tests()
+test_top_level()

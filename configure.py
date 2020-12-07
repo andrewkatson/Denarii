@@ -36,7 +36,7 @@ library_info = [LibraryInfo("libnorm-dev", "libnorm"), LibraryInfo("libunbound-d
 # NEED TO FILL THIS IN WITH YOUR USERNAME FOR THIS TO WORK SORRY
 username = "andrew"
 external_dir_path = os.path.join("/home/" + username, "denarii/external")
-workspace_path = os.path.join("/home/", "andrew/denarii")
+workspace_path = os.path.join("/home/", f"{username}/denarii")
 
 
 def create_build_file(libraries):

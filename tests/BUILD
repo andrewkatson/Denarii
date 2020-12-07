@@ -1,6 +1,6 @@
 package(default_visibility = ["//visibility:public"])
 
-cc_test(
+cc_binary(
     name = "benchmark",
     srcs = [
         "benchmark.cpp",
@@ -31,7 +31,7 @@ cc_library(
     deps = [],
 )
 
-cc_test(
+cc_binary(
     name = "hash_tests",
     srcs = ["hash-target.cpp"],
     linkopts = [
