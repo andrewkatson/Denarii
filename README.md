@@ -161,7 +161,10 @@ Approximately three months prior to a scheduled software upgrade, a branch from 
 * Qrcodegen: Do not need to do anything. 
 * RandomX: Need to build it according to its README. 
 * Rapdijson: Do not need to do anything. If you want to build you need to remove "-Werror" from its CMakeLists.txt
-* Supercop: Need to build it according to its README. 
+* Supercop: Need to build it according to its README. But you need to build it twice. Once normally and then rename 
+            the outputted file to ```libmonero-crypto64.a```. Then build with the ```-DMONERO_CRYPTO_LIBRARY=amd64-51-30k```
+            flag at the cmake step. Make sure you go and manually pull supercop do not rely on the one that is provided when 
+            you pull this repository. From https://github.com/monero-project/supercop/tree/monero 
 * Trezor-common: Do not need to do anything
 * Unbound: Build according to its instructions in its README. Then, move libunbound.a from /usr/local/lib to the unbound directory
 
