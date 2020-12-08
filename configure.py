@@ -36,8 +36,8 @@ library_info = [LibraryInfo("libnorm-dev", "libnorm"), LibraryInfo("libunbound-d
 # NEED TO FILL THIS IN WITH YOUR PATH TO DENARII FOR THIS TO WORK SORRY
 workspace_path = "/home/andrew/denarii"
 
-def create_build_file(libraries):
 
+def create_build_file(libraries):
     external_dir_path = workspace_path + "/external"
 
     for library in libraries:
@@ -51,7 +51,6 @@ def create_build_file(libraries):
 
 
 def create_folder(libraries):
-
     external_dir_path = workspace_path + "/external"
 
     for library in libraries:
@@ -415,6 +414,5 @@ def generate_files():
     benchmark_generate()
     translations_generate()
 
-
-#import_dependencies()
-#generate_files()
+# import_dependencies()
+# generate_files()

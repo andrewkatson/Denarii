@@ -3,9 +3,8 @@
 import os
 import subprocess
 
-# NEED TO FILL THIS IN WITH YOUR USERNAME FOR THIS TO WORK SORRY
-username = "andrew"
-workspace_path = os.path.join("/home/", f"{username}/denarii")
+# NEED TO FILL THIS IN WITH YOUR PATH TO DENARII FOR THIS TO WORK SORRY
+workspace_path = "/home/andrew/denarii"
 
 
 def report_status_of_test(process, testname):
