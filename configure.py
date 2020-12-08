@@ -33,13 +33,13 @@ library_info = [LibraryInfo("libnorm-dev", "libnorm"), LibraryInfo("libunbound-d
                 LibraryInfo("libhidapi-dev", "libhidapi"), LibraryInfo("libusb-1.0-0-dev", "libusb"),
                 LibraryInfo("libudev-dev", "libudev")]
 
-# NEED TO FILL THIS IN WITH YOUR USERNAME FOR THIS TO WORK SORRY
-username = "andrew"
-external_dir_path = os.path.join("/home/" + username, "denarii/external")
-workspace_path = os.path.join("/home/", f"{username}/denarii")
-
+# NEED TO FILL THIS IN WITH YOUR PATH TO DENARII FOR THIS TO WORK SORRY
+workspace_path = "/home/andrew/denarii"
 
 def create_build_file(libraries):
+
+    external_dir_path = workspace_path + "/external"
+
     for library in libraries:
 
         build_file_name = "BUILD." + library.foldername
@@ -51,6 +51,9 @@ def create_build_file(libraries):
 
 
 def create_folder(libraries):
+
+    external_dir_path = workspace_path + "/external"
+
     for library in libraries:
 
         foldername = library.foldername
