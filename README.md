@@ -50,6 +50,7 @@ See [LICENSE](LICENSE).
 
 ### Note
 * Everything has to be built with sudo because the files are moved using sudo and that gives them certain permissions.
+* The real dependencies no longer need to be fiddled with just run the configuration script and it will do the rest.
 
 ### Real Dependencies 
 
