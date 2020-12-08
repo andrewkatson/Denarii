@@ -8,8 +8,10 @@ import pathlib
 import platform
 import psutil
 import re
+import requests
 import shutil
 import subprocess
+import zipfile
 
 
 class LibraryInfo:
@@ -35,6 +37,13 @@ library_info = [LibraryInfo("libnorm-dev", "libnorm"), LibraryInfo("libunbound-d
 
 # NEED TO FILL THIS IN WITH YOUR PATH TO DENARII FOR THIS TO WORK SORRY
 workspace_path = "/home/andrew/denarii"
+
+
+def download_url(url, save_path, chunk_size=128):
+    r = requests.get(url, stream=True)
+    with open(save_path, 'wb') as fd:
+        for chunk in r.iter_content(chunk_size=chunk_size):
+            fd.write(chunk)
 
 
 def create_build_file(libraries):
@@ -149,6 +158,123 @@ def import_dependencies():
     get_relevant_paths(library_info)
     find_includes(library_info)
     find_src_files(library_info)
+
+
+def miniupnp(external_dir_path):
+    # we only need to build one of the subdirectories
+    miniupnp_path = external_dir_path + "/miniupnp/miniupnpc"
+
+    os.chdir(miniupnp_path)
+
+    command = "sudo make install"
+    os.system(command)
+
+
+def randomx(external_dir_path):
+    randomx_path = external_dir_path + "/randomx"
+
+    os.chdir(randomx_path)
+
+    command = "mkdir build && cd build && cmake -DARCH=native && make"
+    os.system(command)
+
+
+def supercop(external_dir_path):
+    os.chdir(external_dir_path)
+
+    supercop_path = external_dir_path + "/supercop"
+
+    supercop_zip_path = external_dir_path + "/supercop.zip"
+    download_url("https://github.com/monero-project/supercop/archive/monero.zip", supercop_zip_path)
+
+    with zipfile.ZipFile(supercop_zip_path, 'r') as zip_ref:
+        zip_ref.extractall(external_dir_path)
+
+    # for some reason there are two directories when we unzip so delete one
+    delete_command = "rm -rf " + external_dir_path + "/supercop"
+    os.system(delete_command)
+
+    # we need to move the directory to the right place
+    move_command = "mv " + external_dir_path + "/supercop-monero " + external_dir_path + "/supercop"
+    os.system(move_command)
+
+    os.chdir(supercop_path)
+
+    # need to create the first crypto library 
+    first_create_command = "cmake . && make && sudo make install"
+    os.system(first_create_command)
+
+    first_move_command = "mv /usr/local/lib/libmonero-crypto.a " + supercop_path + "/libmonero-crypto64.a"
+    os.system(first_move_command)
+
+    # then create its sibling
+    second_create_command = "cmake . -DMONERO_CRYPTO_LIBRARY=amd64-51-30k && make && sudo make install"
+    os.system(second_create_command)
+
+    second_move_command = "mv /usr/local/lib/libmonero-crypto.a " + supercop_path + "/libmonero-crypto.a"
+    os.system(second_move_command)
+
+
+def unbound(external_dir_path):
+    unbound_path = external_dir_path + "/unbound"
+
+    os.chdir(unbound_path)
+
+    command = "./configure && make && sudo make install"
+    os.system(command)
+
+    move_command = "mv /usr/local/lib/libunbound.a " + unbound_path
+    os.system(move_command)
+
+
+def openssl(external_dir_path):
+
+    clone_command = "git clone https://github.com/openssl/openssl.git"
+    os.system(clone_command)
+
+    openssl_path = external_dir_path + "/openssl"
+
+    os.chdir(openssl_path)
+
+    command = "./Configure && make && make test"
+    os.system(command)
+
+
+def libzmq(external_dir_path):
+    clone_command = "git clone https://github.com/zeromq/libzmq.git"
+    os.system(clone_command)
+
+    libzmq_path = external_dir_path + "/libzmq"
+
+    os.chdir(libzmq_path)
+
+    command = "./autogen.sh && ./configure --with-libsodium && make && sudo make install"
+    os.system(command)
+
+    move_command = "mv /usr/local/lib/libzmq.a " + libzmq_path
+    os.system(move_command)
+
+
+def zlib(external_dir_path):
+
+    zlib_path = external_dir_path + "/zlib"
+
+    os.chdir(zlib_path)
+
+    command = "./configure && make test && sudo make install"
+    os.system(command)
+
+def build_dependencies():
+    external_dir_path = workspace_path + "/external"
+    os.chdir(external_dir_path)
+
+    miniupnp(external_dir_path)
+    randomx(external_dir_path)
+    supercop(external_dir_path)
+    unbound(external_dir_path)
+    openssl(external_dir_path)
+    libzmq(external_dir_path)
+    zlib(external_dir_path)
 
 
 def blocks_generate():
@@ -414,5 +540,7 @@ def generate_files():
     benchmark_generate()
     translations_generate()
 
-# import_dependencies()
-# generate_files()
+
+import_dependencies()
+build_dependencies()
+generate_files()
