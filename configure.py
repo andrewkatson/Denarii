@@ -162,6 +162,10 @@ def import_dependencies():
 
 def miniupnp(external_dir_path):
 
+    # remove the empty directory
+    remove_command = "rm -rf " + external_dir_path + "/miniupnp"
+    os.system(remove_command)
+
     # For now we have to clone this because miniupnp fails to download :(
     clone_command = "git clone https://github.com/miniupnp/miniupnp.git"
     os.system(clone_command)
@@ -274,12 +278,26 @@ def build_dependencies():
     os.chdir(external_dir_path)
 
     miniupnp(external_dir_path)
+
+    os.chdir(external_dir_path)
     randomx(external_dir_path)
+
+    os.chdir(external_dir_path)
     supercop(external_dir_path)
+
+    os.chdir(external_dir_path)
     unbound(external_dir_path)
+
+    os.chdir(external_dir_path)
     openssl(external_dir_path)
+
+    os.chdir(external_dir_path)
     libzmq(external_dir_path)
+
+    os.chdir(external_dir_path)
     zlib(external_dir_path)
+
+    os.chdir(external_dir_path)
 
 
 def blocks_generate():
