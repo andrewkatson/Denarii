@@ -161,6 +161,11 @@ def import_dependencies():
 
 
 def miniupnp(external_dir_path):
+
+    # For now we have to clone this because miniupnp fails to download :(
+    clone_command = "git clone https://github.com/miniupnp/miniupnp.git"
+    os.system(clone_command)
+
     # we only need to build one of the subdirectories
     miniupnp_path = external_dir_path + "/miniupnp/miniupnpc"
 
