@@ -48,7 +48,7 @@ def test_crypto():
     tests_path = workspace_path + "/tests/crypto/tests.txt"
 
     # run crypto
-    crypto_command = "bazel run tests/crypto:crypto -- " + tests_path
+    crypto_command = "bazel run tests/crypto:cnccrypto_tests -- " + tests_path
     crypto_proc = subprocess.Popen(crypto_command, shell=True, stdout=subprocess.PIPE)
     crypto_proc.wait()
     report_status_of_test(crypto_proc, "crypto:crypto")
@@ -225,4 +225,8 @@ test_hash()
 test_top_level()
 
 print("\n\n\n\n\n\n")
-print(failed_tests)
+if len(failed_tests) == 0:
+    print("All tests passed!")
+else:
+    print("Some tests failed")
+    print(failed_tests)
