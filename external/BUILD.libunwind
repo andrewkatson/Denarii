@@ -3,7 +3,7 @@ package(default_visibility = ["//visibility:public"])
 
 
 config_setting(
-    name = "x86_64",
+    name = "x84_64",
     constraint_values = [
         "@bazel_tools//platforms:x86_64",
     ],
@@ -13,7 +13,7 @@ config_setting(
 cc_library(
   name = "libunwind",
   srcs = select({
-   ":x86_64": glob(["**/libunwind-x84_64.so"]),
+   ":x84_64": glob(["**/libunwind-x84_64.so"]),
     "//conditions:default": glob(["**/libunwind.so"])
    }),
   hdrs = glob(["**/include/**/*.h"])
