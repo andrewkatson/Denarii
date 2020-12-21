@@ -10,7 +10,7 @@ cc_binary(
         ],
         exclude = ["**/*.txt"],
     ),
-    linkopts = ["-fuse-ld=bfd"],
+    linkopts = ["-lunwind"],
     deps = [
         "//contrib/epee",
         "//src:blockchain_db",
@@ -111,10 +111,6 @@ cc_library(
         "**/common/*.cpp",
     ]),
     hdrs = glob(["**/common/*.h"]),
-    copts = [
-        "-lssl",
-        "-lcrypto",
-    ],
     linkopts = [
         "-lssl",
         "-lcrypto",
@@ -216,10 +212,6 @@ cc_library(
         "ringct/rctOps.h",
         "ringct/rctTypes.h",
     ],
-    copts = [
-        "-lssl",
-        "-lcrypto",
-    ],
     linkopts = [
         "-lssl",
         "-lcrypto",
@@ -237,10 +229,6 @@ cc_library(
     name = "ringct",
     srcs = ["ringct/rctSigs.cpp"],
     hdrs = ["ringct/rctSigs.h"],
-    copts = [
-        "-lssl",
-        "-lcrypto",
-    ],
     linkopts = [
         "-lssl",
         "-lcrypto",
@@ -354,10 +342,6 @@ cc_library(
         "device/device_io_hid.hpp",
         "device/device_ledger.hpp",
         "device/log.hpp",
-    ],
-    copts = [
-        "-lssl",
-        "-lcrypto",
     ],
     linkopts = [
         "-lssl",
@@ -858,5 +842,31 @@ cc_binary(
         "@boost//:filesystem",
         "@boost//:thread",
         "@liblzma",
+    ],
+)
+
+cc_binary(
+    name = "cannot_catch_exception",
+    srcs = [
+        "cannot_catch_exception.cpp",
+    ],
+    linkopts = [
+        "-llzma",
+    ],
+    deps = [
+        "@libunwind",
+    ],
+)
+
+cc_binary(
+    name = "cannot_catch_boost_interrupt",
+    srcs = ["cannot_catch_boost_interrupt.cpp"],
+    linkopts = [
+        "-llzma",
+    ],
+    deps = [
+        "@boost//:thread",
+        "@liblzma",
+        "@libunwind",
     ],
 )
