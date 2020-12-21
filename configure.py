@@ -161,9 +161,6 @@ def import_dependencies():
 
 
 def miniupnp(external_dir_path):
-    # remove the empty directory
-    remove_command = "rm -rf " + external_dir_path + "/miniupnp"
-    os.system(remove_command)
 
     # remove the empty directory
     remove_command = "rm -rf " + external_dir_path + "/miniupnp"
