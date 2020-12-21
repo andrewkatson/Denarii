@@ -66,7 +66,8 @@ class MiningTest():
         # close the wallet if any, will throw if none is loaded
         try: wallet.close_wallet()
         except: pass
-        res = wallet.restore_deterministic_wallet(seed = 'velvet lymph giddy number token physics poetry unquoted nibs useful sabotage limits benches lifestyle eden nitrogen anvil fewest avoid batch vials washing fences goat unquoted')
+        res = wallet.restore_deterministic_wallet(seed = 'donuts casket wives dice shipped token goblet zippers makeup ladder sincerely dice elbow suede gown heels vessel entrance moon today refer limits often pests wives')
+        print(res.address)
 
     def mine(self, via_daemon):
         print("Test mining via " + ("daemon" if via_daemon else "wallet"))
@@ -83,14 +84,14 @@ class MiningTest():
         res_status = daemon.mining_status()
 
         if via_daemon:
-            res = daemon.start_mining('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', threads_count = 1)
+            res = daemon.start_mining('76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b', threads_count = 1)
         else:
             res = wallet.start_mining(threads_count = 1)
 
         res_status = daemon.mining_status()
         assert res_status.active == True
         assert res_status.threads_count == 1
-        assert res_status.address == '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm'
+        assert res_status.address == '76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b'
         assert res_status.is_background_mining_enabled == False
         assert res_status.block_reward >= 600000000000
 
@@ -127,13 +128,13 @@ class MiningTest():
         assert balance >= prev_balance + (new_height - prev_height) * 600000000000
 
         if via_daemon:
-            res = daemon.start_mining('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', threads_count = 1, do_background_mining = True)
+            res = daemon.start_mining('76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b', threads_count = 1, do_background_mining = True)
         else:
             res = wallet.start_mining(threads_count = 1, do_background_mining = True)
         res_status = daemon.mining_status()
         assert res_status.active == True
         assert res_status.threads_count == 1
-        assert res_status.address == '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm'
+        assert res_status.address == '76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b'
         assert res_status.is_background_mining_enabled == True
         assert res_status.block_reward >= 600000000000
 
@@ -143,6 +144,7 @@ class MiningTest():
         else:
             res = wallet.stop_mining()
         res_status = daemon.mining_status()
+        print(res_status)
         assert res_status.active == False
 
     def submitblock(self):
@@ -151,7 +153,7 @@ class MiningTest():
         daemon = Daemon()
         res = daemon.get_height()
         height = res.height
-        res = daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 5)
+        res = daemon.generateblocks('76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b', 5)
         assert len(res.blocks) == 5
         hashes = res.blocks
         blocks = []
@@ -184,7 +186,7 @@ class MiningTest():
 
         epoch = int(os.environ['SEEDHASH_EPOCH_BLOCKS'])
         lag = int(os.environ['SEEDHASH_EPOCH_LAG'])
-        address = '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm'
+        address = '76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b'
 
         # check we can generate blocks, and that the seed hash changes when expected
         res = daemon.getblocktemplate(address)

@@ -397,16 +397,18 @@ namespace cryptonote
     boost::interprocess::ipcdetail::atomic_write32(&m_thread_index, 0);
     set_is_background_mining_enabled(do_background);
     set_ignore_battery(ignore_battery);
-    
-    for(size_t i = 0; i != m_threads_total; i++)
-    {
-      m_threads.push_back(boost::thread(m_attrs, boost::bind(&miner::worker_thread, this)));
+
+    if (!get_is_background_mining_enabled()) {
+        for(size_t i = 0; i != m_threads_total; i++)
+        {
+          m_threads.push_back(boost::thread(m_attrs, boost::bind(&miner::worker_thread, this)));
+        }
     }
 
     if (threads_count == 0)
       MINFO("Mining has started, autodetecting optimal number of threads, good luck!" );
     else
-      MINFO("Mining has started with " << threads_count << " threads, good luck!" );
+      MINFO("Mining has started with " << m_threads.size() << " threads, good luck!" );
 
     if( get_is_background_mining_enabled() )
     {
@@ -440,13 +442,13 @@ namespace cryptonote
   //-----------------------------------------------------------------------------------------------------
   bool miner::stop()
   {
-    MTRACE("Miner has received stop signal");
+    MINFO("Miner has received stop signal");
 
     CRITICAL_REGION_LOCAL(m_threads_lock);
-    bool mining = !m_threads.empty();
+    bool mining = !m_threads.empty()  || get_is_background_mining_enabled();
     if (!mining)
     {
-      MTRACE("Not mining - nothing to stop" );
+      MINFO("Not mining - nothing to stop" );
       return true;
     }
 
@@ -462,8 +464,12 @@ namespace cryptonote
 
     // The background mining thread could be sleeping for a long time, so we
     // interrupt it just in case
+    // Except no we arent because this causes crashes
     m_background_mining_thread.interrupt();
-    m_background_mining_thread.join();
+    MDEBUG(m_background_mining_thread.joinable());
+    if (m_background_mining_thread.joinable()) {
+        m_background_mining_thread.join();
+    }
     m_is_background_mining_enabled = false;
 
     MINFO("Mining has been stopped, " << m_threads.size() << " finished" );
@@ -546,12 +552,12 @@ namespace cryptonote
         while( !m_is_background_mining_started )
         {
           MGINFO("background mining is enabled, but not started, waiting until start triggers");
-          boost::unique_lock<boost::mutex> started_lock( m_is_background_mining_started_mutex );        
+          boost::unique_lock<boost::mutex> started_lock( m_is_background_mining_started_mutex );
           m_is_background_mining_started_cond.wait( started_lock );
           if( m_stop ) break;
         }
-        
-        if( m_stop ) continue;         
+
+        if( m_stop ) continue;
       }
 
       if(local_template_ver != m_template_no)
@@ -684,7 +690,7 @@ namespace cryptonote
     
     while(!m_stop)
     {
-        
+
       try
       {
         // Commenting out the below since we're going with privatizing the bg mining enabled
@@ -697,127 +703,129 @@ namespace cryptonote
         // you've clicked "start mining". There's still an issue here where if background
         // mining is disabled when start is called, this thread is never created, and so
         // enabling after does nothing, something I have to fix in the future. However,
-        // this should take care of the case where mining is started with bg-enabled, 
+        // this should take care of the case where mining is started with bg-enabled,
         // and then the user decides to un-check background mining, and just do
-        // regular full-speed mining. I might just be over-doing it and thinking up 
+        // regular full-speed mining. I might just be over-doing it and thinking up
         // non-existant use-cases, so if the consensus is to simplify, we can remove all this fluff.
         /*
         while( !m_is_background_mining_enabled )
         {
           MGINFO("background mining is disabled, waiting until enabled!");
-          boost::unique_lock<boost::mutex> enabled_lock( m_is_background_mining_enabled_mutex );        
+          boost::unique_lock<boost::mutex> enabled_lock( m_is_background_mining_enabled_mutex );
           m_is_background_mining_enabled_cond.wait( enabled_lock );
-        } 
-        */       
-        
+        }
+        */
+
         // If we're already mining, then sleep for the miner monitor interval.
         // If we're NOT mining, then sleep for the idle monitor interval
         uint64_t sleep_for_seconds = BACKGROUND_MINING_MINER_MONITOR_INVERVAL_IN_SECONDS;
         if( !m_is_background_mining_started ) sleep_for_seconds = get_min_idle_seconds();
-        boost::this_thread::sleep_for(boost::chrono::seconds(sleep_for_seconds));
+          boost::this_thread::sleep_for(boost::chrono::seconds(sleep_for_seconds));
+          bool on_ac_power = m_ignore_battery;
+          if(!m_ignore_battery)
+          {
+              boost::tribool battery_powered(on_battery_power());
+              if(!indeterminate( battery_powered ))
+              {
+                  on_ac_power = !(bool)battery_powered;
+              }
+          }
+
+          if( m_is_background_mining_started )
+          {
+              // figure out if we need to stop, and monitor mining usage
+
+              // If we get here, then previous values are initialized.
+              // Let's get some current data for comparison.
+
+              if(!get_system_times(current_total_time, current_idle_time))
+              {
+                  MERROR("get_system_times call failed");
+                  continue;
+              }
+
+              if(!get_process_time(current_process_time))
+              {
+                  MERROR("get_process_time call failed!");
+                  continue;
+              }
+
+              uint64_t total_diff = (current_total_time - prev_total_time);
+              uint64_t idle_diff = (current_idle_time - prev_idle_time);
+              uint64_t process_diff = (current_process_time - previous_process_time);
+              uint8_t idle_percentage = get_percent_of_total(idle_diff, total_diff);
+              uint8_t process_percentage = get_percent_of_total(process_diff, total_diff);
+
+              MDEBUG("idle percentage is " << unsigned(idle_percentage) << "\%, miner percentage is " << unsigned(process_percentage) << "\%, ac power : " << on_ac_power);
+              if( idle_percentage + process_percentage < get_idle_threshold() || !on_ac_power )
+              {
+                  MINFO("cpu is " << unsigned(idle_percentage) << "% idle, idle threshold is " << unsigned(get_idle_threshold()) << "\%, ac power : " << on_ac_power << ", background mining stopping, thanks for your contribution!");
+                  m_is_background_mining_started = false;
+
+                  // reset process times
+                  previous_process_time = 0;
+                  current_process_time = 0;
+              }
+              else
+              {
+                  previous_process_time = current_process_time;
+
+                  // adjust the miner extra sleep variable
+                  int64_t miner_extra_sleep_change = (-1 * (get_mining_target() - process_percentage) );
+                  int64_t new_miner_extra_sleep = m_miner_extra_sleep + miner_extra_sleep_change;
+                  // if you start the miner with few threads on a multicore system, this could
+                  // fall below zero because all the time functions aggregate across all processors.
+                  // I'm just hard limiting to 5 millis min sleep here, other options?
+                  m_miner_extra_sleep = std::max( new_miner_extra_sleep , (int64_t)5 );
+                  MDEBUG("m_miner_extra_sleep " << m_miner_extra_sleep);
+              }
+
+              prev_total_time = current_total_time;
+              prev_idle_time = current_idle_time;
+          }
+          else if( on_ac_power )
+          {
+              // figure out if we need to start
+
+              if(!get_system_times(current_total_time, current_idle_time))
+              {
+                  MERROR("get_system_times call failed");
+                  continue;
+              }
+
+              uint64_t total_diff = (current_total_time - prev_total_time);
+              uint64_t idle_diff = (current_idle_time - prev_idle_time);
+              uint8_t idle_percentage = get_percent_of_total(idle_diff, total_diff);
+
+              MDEBUG("idle percentage is " << unsigned(idle_percentage));
+              if( idle_percentage >= get_idle_threshold() && on_ac_power )
+              {
+                  MINFO("cpu is " << unsigned(idle_percentage) << "% idle, idle threshold is " << unsigned(get_idle_threshold()) << "\%, ac power : " << on_ac_power << ", background mining started, good luck!");
+                  m_is_background_mining_started = true;
+                  m_is_background_mining_started_cond.notify_all();
+
+                  // Wait for a little mining to happen ..
+                  boost::this_thread::sleep_for(boost::chrono::seconds( 1 ));
+
+                  // Starting data ...
+                  if(!get_process_time(previous_process_time))
+                  {
+                      m_is_background_mining_started = false;
+                      MERROR("get_process_time call failed!");
+                  }
+              }
+
+              prev_total_time = current_total_time;
+              prev_idle_time = current_idle_time;
+          }
       }
       catch(const boost::thread_interrupted&)
       {
         MDEBUG("background miner thread interrupted ");
-        continue; // if interrupted because stop called, loop should end ..
-      }
-
-      bool on_ac_power = m_ignore_battery;
-      if(!m_ignore_battery)
-      {
-        boost::tribool battery_powered(on_battery_power());
-        if(!indeterminate( battery_powered ))
-        {
-          on_ac_power = !(bool)battery_powered;
-        }
-      }
-
-      if( m_is_background_mining_started )
-      {
-        // figure out if we need to stop, and monitor mining usage
-        
-        // If we get here, then previous values are initialized.
-        // Let's get some current data for comparison.
-
-        if(!get_system_times(current_total_time, current_idle_time))
-        {
-          MERROR("get_system_times call failed");
-          continue;
-        }
-
-        if(!get_process_time(current_process_time))
-        {
-          MERROR("get_process_time call failed!");
-          continue;
-        }
-
-        uint64_t total_diff = (current_total_time - prev_total_time);
-        uint64_t idle_diff = (current_idle_time - prev_idle_time);
-        uint64_t process_diff = (current_process_time - previous_process_time);
-        uint8_t idle_percentage = get_percent_of_total(idle_diff, total_diff);
-        uint8_t process_percentage = get_percent_of_total(process_diff, total_diff);
-
-        MDEBUG("idle percentage is " << unsigned(idle_percentage) << "\%, miner percentage is " << unsigned(process_percentage) << "\%, ac power : " << on_ac_power);
-        if( idle_percentage + process_percentage < get_idle_threshold() || !on_ac_power )
-        {
-          MINFO("cpu is " << unsigned(idle_percentage) << "% idle, idle threshold is " << unsigned(get_idle_threshold()) << "\%, ac power : " << on_ac_power << ", background mining stopping, thanks for your contribution!");
-          m_is_background_mining_started = false;
-
-          // reset process times
-          previous_process_time = 0;
-          current_process_time = 0;
-        }
-        else
-        {
-          previous_process_time = current_process_time;
-
-          // adjust the miner extra sleep variable
-          int64_t miner_extra_sleep_change = (-1 * (get_mining_target() - process_percentage) );
-          int64_t new_miner_extra_sleep = m_miner_extra_sleep + miner_extra_sleep_change;
-          // if you start the miner with few threads on a multicore system, this could
-          // fall below zero because all the time functions aggregate across all processors.
-          // I'm just hard limiting to 5 millis min sleep here, other options?
-          m_miner_extra_sleep = std::max( new_miner_extra_sleep , (int64_t)5 );
-          MDEBUG("m_miner_extra_sleep " << m_miner_extra_sleep);
-        }
-        
-        prev_total_time = current_total_time;
-        prev_idle_time = current_idle_time;
-      }
-      else if( on_ac_power )
-      {
-        // figure out if we need to start
-
-        if(!get_system_times(current_total_time, current_idle_time))
-        {
-          MERROR("get_system_times call failed");
-          continue;
-        }
-
-        uint64_t total_diff = (current_total_time - prev_total_time);
-        uint64_t idle_diff = (current_idle_time - prev_idle_time);
-        uint8_t idle_percentage = get_percent_of_total(idle_diff, total_diff);
-
-        MDEBUG("idle percentage is " << unsigned(idle_percentage));
-        if( idle_percentage >= get_idle_threshold() && on_ac_power )
-        {
-          MINFO("cpu is " << unsigned(idle_percentage) << "% idle, idle threshold is " << unsigned(get_idle_threshold()) << "\%, ac power : " << on_ac_power << ", background mining started, good luck!");
-          m_is_background_mining_started = true;
-          m_is_background_mining_started_cond.notify_all();
-
-          // Wait for a little mining to happen ..
-          boost::this_thread::sleep_for(boost::chrono::seconds( 1 ));
-
-          // Starting data ...
-          if(!get_process_time(previous_process_time))
-          {
-            m_is_background_mining_started = false;
-            MERROR("get_process_time call failed!");
-          }
-        }
-
-        prev_total_time = current_total_time;
-        prev_idle_time = current_idle_time;
+        break; // if interrupted because stop called, loop should end ..
+      } catch (const std::exception&) {
+        MDEBUG("General exception");
+        break;
       }
     }
 

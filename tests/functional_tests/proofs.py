@@ -39,7 +39,7 @@ from framework.wallet import Wallet
 class ProofsTest():
     def run_test(self):
         self.reset()
-        self.mine('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 80)
+        self.mine('73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd', 80)
         self.create_wallets()
         txid, tx_key, amount = self.transfer()
         self.check_tx_key(txid, tx_key, amount)
@@ -62,19 +62,19 @@ class ProofsTest():
     def transfer(self):
         print('Creating transaction')
         self.wallet[0].refresh()
-        dst = {'address': '44Kbx4sJ7JDRDV5aAhLJzQCjDz2ViLRduE3ijDZu3osWKBjMGkV1XPk4pfDUMqt1Aiezvephdqm6YD19GKFD9ZcXVUTp6BW', 'amount':123456789000}
+        dst = {'address': '79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT', 'amount':123456789000}
         res = self.wallet[0].transfer([dst], get_tx_key = True)
         assert len(res.tx_hash) == 64
         assert len(res.tx_key) == 64
         daemon = Daemon()
-        daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 1)
+        daemon.generateblocks('73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd', 1)
         return (res.tx_hash, res.tx_key, 123456789000)
 
     def create_wallets(self):
       print('Creating wallets')
       seeds = [
         'velvet lymph giddy number token physics poetry unquoted nibs useful sabotage limits benches lifestyle eden nitrogen anvil fewest avoid batch vials washing fences goat unquoted',
-        'peeled mixture ionic radar utopia puddle buying illness nuns gadget river spout cavernous bounced paradise drunk looking cottage jump tequila melting went winter adjust spout',
+        'loyal poetry byline espionage thorn tossed ugly peeled bailed saved necklace silk mobile newt envy slug claim family loincloth innocent people apology niche opus ugly',
       ]
       self.wallet = [None, None]
       for i in range(2):
@@ -91,8 +91,8 @@ class ProofsTest():
         self.wallet[0].refresh()
         self.wallet[1].refresh()
 
-        sending_address = '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm'
-        receiving_address = '44Kbx4sJ7JDRDV5aAhLJzQCjDz2ViLRduE3ijDZu3osWKBjMGkV1XPk4pfDUMqt1Aiezvephdqm6YD19GKFD9ZcXVUTp6BW'
+        sending_address = '73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd'
+        receiving_address = '79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT'
         res = self.wallet[0].get_tx_key(txid)
         assert res.tx_key == tx_key
         res = self.wallet[0].check_tx_key(txid = txid, tx_key = tx_key, address = receiving_address)
@@ -127,8 +127,8 @@ class ProofsTest():
         self.wallet[0].refresh()
         self.wallet[1].refresh()
 
-        sending_address = '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm'
-        receiving_address = '44Kbx4sJ7JDRDV5aAhLJzQCjDz2ViLRduE3ijDZu3osWKBjMGkV1XPk4pfDUMqt1Aiezvephdqm6YD19GKFD9ZcXVUTp6BW'
+        sending_address = '73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd'
+        receiving_address = '79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT'
         res = self.wallet[0].get_tx_proof(txid, sending_address, 'foo');
         assert res.signature.startswith('InProofV2');
         signature0i = res.signature
@@ -276,8 +276,8 @@ class ProofsTest():
 
         print('Checking reserve proof')
 
-        address0 = '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm'
-        address1 = '44Kbx4sJ7JDRDV5aAhLJzQCjDz2ViLRduE3ijDZu3osWKBjMGkV1XPk4pfDUMqt1Aiezvephdqm6YD19GKFD9ZcXVUTp6BW'
+        address0 = '73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd'
+        address1 = '79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT'
 
         self.wallet[0].refresh()
         res = self.wallet[0].get_balance()

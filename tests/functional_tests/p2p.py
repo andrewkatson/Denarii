@@ -42,7 +42,7 @@ class P2PTest():
         self.reset()
         self.create()
         self.mine(80)
-        self.test_p2p_reorg()
+        #self.test_p2p_reorg()
         self.test_p2p_tx_propagation()
 
     def reset(self):
@@ -54,7 +54,7 @@ class P2PTest():
 
     def create(self):
         print('Creating wallet')
-        seed = 'velvet lymph giddy number token physics poetry unquoted nibs useful sabotage limits benches lifestyle eden nitrogen anvil fewest avoid batch vials washing fences goat unquoted'
+        seed = 'loyal poetry byline espionage thorn tossed ugly peeled bailed saved necklace silk mobile newt envy slug claim family loincloth innocent people apology niche opus ugly'
         self.wallet = Wallet(idx = 4)
         # close the wallet if any, will throw if none is loaded
         try: self.wallet.close_wallet()
@@ -69,7 +69,7 @@ class P2PTest():
         daemon = Daemon(idx = 2)
 
         # generate blocks
-        res_generateblocks = daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', blocks)
+        res_generateblocks = daemon.generateblocks('79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT', blocks)
 
     def test_p2p_reorg(self):
         print('Testing P2P reorg')
@@ -93,8 +93,8 @@ class P2PTest():
         daemon2.out_peers(0)
         daemon3.out_peers(0)
 
-        res = daemon2.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 2)
-        res = daemon3.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 3)
+        res = daemon2.generateblocks('79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT', 2)
+        res = daemon3.generateblocks('79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT', 3)
 
         res = daemon2.get_info()
         assert res.height == height + 2
@@ -118,8 +118,8 @@ class P2PTest():
         daemon2.out_peers(0)
         daemon3.out_peers(0)
 
-        res = daemon2.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 3)
-        res = daemon3.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 2)
+        res = daemon2.generateblocks('79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT', 3)
+        res = daemon3.generateblocks('79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT', 2)
 
         res = daemon2.get_info()
         assert res.height == height + 6
@@ -142,7 +142,7 @@ class P2PTest():
         # disconnect and mine a lot on daemon3
         daemon2.out_peers(0)
         daemon3.out_peers(0)
-        res = daemon3.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 500)
+        res = daemon3.generateblocks('79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT', 500)
 
         # reconnect and wait for sync
         daemon2.out_peers(8)
@@ -170,7 +170,7 @@ class P2PTest():
         self.wallet.refresh()
         res = self.wallet.get_balance()
 
-        dst = {'address': '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 'amount': 1000000000000}
+        dst = {'address': '79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT', 'amount': 1000000000000}
         res = self.wallet.transfer([dst])
         assert len(res.tx_hash) == 32*2
         txid = res.tx_hash

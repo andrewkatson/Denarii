@@ -193,15 +193,19 @@ namespace cryptonote {
     uint64_t integrated_address_prefix = get_config(nettype).CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX;
     uint64_t subaddress_prefix = get_config(nettype).CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX;
 
-    if (2 * sizeof(public_address_outer_blob) != str.size())
+      if (2 * sizeof(public_address_outer_blob) != str.size())
     {
+
       blobdata data;
       uint64_t prefix;
+
       if (!tools::base58::decode_addr(str, prefix, data))
       {
-        LOG_PRINT_L2("Invalid address format");
+        LOG_PRINT_L1("Invalid address format");
         return false;
       }
+
+      LOG_PRINT_L1(prefix);
 
       if (integrated_address_prefix == prefix)
       {
@@ -256,6 +260,7 @@ namespace cryptonote {
       // Old address format
       std::string buff;
       if(!string_tools::parse_hexstr_to_binbuff(str, buff))
+        LOG_PRINT_L1("Old address format");
         return false;
 
       if(buff.size()!=sizeof(public_address_outer_blob))

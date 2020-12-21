@@ -85,12 +85,18 @@ class BlockchainTest():
         res = daemon.get_fee_estimate(10)
         assert res.fee <= 234562
 
-        # generate blocks
-        res_generateblocks = daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', blocks)
+        res_block_header_at_height = daemon.get_block_header_by_height(0)
 
+        # generate blocks
+        res_generateblocks = daemon.generateblocks('73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd', blocks)
+
+        res_block_header_at_height = daemon.get_block_header_by_height(0)
+
+        res_last_block_header = daemon.get_last_block_header()
         # check info/height after generateblocks blocks
         assert res_generateblocks.height == height + blocks - 1
         res_info = daemon.get_info()
+
         assert res_info.height == height + blocks
         assert res_info.top_block_hash != prev_block
         res_height = daemon.get_height()
@@ -131,7 +137,7 @@ class BlockchainTest():
         assert res_getblockheaderbyheight.block_header == block_header
 
         # getting a block template after that should have the right height, etc
-        res_getblocktemplate = daemon.getblocktemplate('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm')
+        res_getblocktemplate = daemon.getblocktemplate('73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd')
         assert res_getblocktemplate.height == height + blocks
         assert res_getblocktemplate.reserved_offset > 0
         assert res_getblocktemplate.prev_hash == res_info.top_block_hash
@@ -173,6 +179,7 @@ class BlockchainTest():
         assert res.height == height + blocks - 1
         nblocks = height + blocks - 1
         res = daemon.getblockheadersrange(0, nblocks - 1)
+        res_block_header_at_height = daemon.get_block_header_by_height(0)
         assert len(res.headers) == nblocks
         assert res.headers[-1] == block_header
         txids = [x.miner_tx_hash for x in res.headers]
@@ -256,16 +263,24 @@ class BlockchainTest():
         root_block_hash = res.top_block_hash
         height = res.height
         prev_hash = res.top_block_hash
-        res_template = daemon.getblocktemplate('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm')
+        res_template = daemon.getblocktemplate('73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd')
         nonce = 0
 
         # 5 siblings
         alt_blocks = [None] * 5
         for i in range(len(alt_blocks)):
-            res = daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 1, prev_block = prev_hash, starting_nonce = nonce)
+            res = daemon.generateblocks('73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd', 1, prev_block = prev_hash, starting_nonce = nonce)
             assert res.height == height
             assert len(res.blocks) == 1
             txid = res.blocks[0]
+            print(res)
+            res = daemon.get_block_header_by_height(5)
+            print(res)
+            res = daemon.get_alternate_chains()
+            print(res)
+            res = daemon.get_alt_blocks_hashes()
+            print(res)
+
             res = daemon.getblockheaderbyhash(txid)
             nonce = res.block_header.nonce
             print('mined ' + ('alt' if res.block_header.orphan_status else 'tip') + ' block ' + str(height) + ', nonce ' + str(nonce))
@@ -277,7 +292,7 @@ class BlockchainTest():
         print('mining 3 on 1')
         # three more on [1]
         chain1 = []
-        res = daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 3, prev_block = alt_blocks[1], starting_nonce = nonce)
+        res = daemon.generateblocks('73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd', 3, prev_block = alt_blocks[1], starting_nonce = nonce)
         assert res.height == height + 3
         assert len(res.blocks) == 3
         blk_hash = res.blocks[2]
@@ -299,7 +314,7 @@ class BlockchainTest():
         top_block_hash = blk_hash
         prev_block = alt_blocks[3]
         for i in range(4):
-            res = daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 1, prev_block = prev_block)
+            res = daemon.generateblocks('73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd', 1, prev_block = prev_block)
             assert res.height == height + 1 + i
             assert len(res.blocks) == 1
             prev_block = res.blocks[-1]

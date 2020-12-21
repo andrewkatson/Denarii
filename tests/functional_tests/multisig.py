@@ -39,40 +39,40 @@ from framework.wallet import Wallet
 class MultisigTest():
     def run_test(self):
         self.reset()
-        self.mine('493DsrfJPqiN3Suv9RcRDoZEbQtKZX1sNcGPA3GhkKYEEmivk8kjQrTdRdVc4ZbmzWJuE157z9NNUKmF2VDfdYDR3CziGMk', 5)
-        self.mine('42jSRGmmKN96V2j3B8X2DbiNThBXW1tSi1rW1uwkqbyURenq3eC3yosNm8HEMdHuWwKMFGzMUB3RCTvcTaW9kHpdRPP7p5y', 5)
-        self.mine('47fF32AdrmXG84FcPY697uZdd42pMMGiH5UpiTRTt3YX2pZC7t7wkzEMStEicxbQGRfrYvAAYxH6Fe8rnD56EaNwUgxRd53', 5)
-        self.mine('44SKxxLQw929wRF6BA9paQ1EWFshNnKhXM3qz6Mo3JGDE2YG3xyzVutMStEicxbQGRfrYvAAYxH6Fe8rnD56EaNwUiqhcwR', 5)
-        self.mine('4ADHswEU3XBUee8pudBkZQd9beJainqNo1BQKkHJujAEPJyQrLj9U4dNm8HEMdHuWwKMFGzMUB3RCTvcTaW9kHpdRUDxgjW', 5)
-        self.mine('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 60)
+        self.mine('79PGBisrGmANhK9afA8hnWaJfxYmpwhkwcp7GiMUXoojRVtZE8JYCEqLPPNbxFFmrgdSfyqeXWmXqCBxgZUvReum4B6erEo', 5)
+        self.mine('78i1RMc36mYcdR7YRAGhEgaBfLdqdGcmB3HG3VnH8WHse4WmwRNUGkxXksKCPwPi5QFAE5JPokAJGi76J2qyvH2w8JLJRmJ', 5)
+        self.mine('787EFF5UsBVNmfxPyoGHhFCx3RzShATo12Soy88hFuvD2B1S6ehHbVxGrGsQfRRFcrKE3BxL5J5QhDuoYYuMTXeFSizj3EL', 5)
+        self.mine('79dxJsLov28JjiMvSfJ3cD7cgATcmPG2VHFgESN7izSBfUPSCfJHCAJGrGsQfRRFcrKE3BxL5J5QhDuoYYuMTXeFSmToSsx', 5)
+        self.mine('77cKJKR3nv51cdvjjaT29mFuqX3dLfpBmiUwBv8iHU47PB6uhaVa9wvXksKCPwPi5QFAE5JPokAJGi76J2qyvH2w8G3S9ZZ', 5)
+        self.mine('73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd', 60)
 
         self.test_states()
 
-        self.create_multisig_wallets(2, 2, '493DsrfJPqiN3Suv9RcRDoZEbQtKZX1sNcGPA3GhkKYEEmivk8kjQrTdRdVc4ZbmzWJuE157z9NNUKmF2VDfdYDR3CziGMk')
+        self.create_multisig_wallets(2, 2, '79PGBisrGmANhK9afA8hnWaJfxYmpwhkwcp7GiMUXoojRVtZE8JYCEqLPPNbxFFmrgdSfyqeXWmXqCBxgZUvReum4B6erEo')
         self.import_multisig_info([1, 0], 5)
         txid = self.transfer([1, 0])
         self.import_multisig_info([0, 1], 6)
         self.check_transaction(txid)
 
-        self.create_multisig_wallets(2, 3, '42jSRGmmKN96V2j3B8X2DbiNThBXW1tSi1rW1uwkqbyURenq3eC3yosNm8HEMdHuWwKMFGzMUB3RCTvcTaW9kHpdRPP7p5y')
+        self.create_multisig_wallets(2, 3, '78i1RMc36mYcdR7YRAGhEgaBfLdqdGcmB3HG3VnH8WHse4WmwRNUGkxXksKCPwPi5QFAE5JPokAJGi76J2qyvH2w8JLJRmJ')
         self.import_multisig_info([0, 2], 5)
         txid = self.transfer([0, 2])
         self.import_multisig_info([0, 1, 2], 6)
         self.check_transaction(txid)
 
-        self.create_multisig_wallets(3, 3, '4ADHswEU3XBUee8pudBkZQd9beJainqNo1BQKkHJujAEPJyQrLj9U4dNm8HEMdHuWwKMFGzMUB3RCTvcTaW9kHpdRUDxgjW')
+        self.create_multisig_wallets(3, 3, '77cKJKR3nv51cdvjjaT29mFuqX3dLfpBmiUwBv8iHU47PB6uhaVa9wvXksKCPwPi5QFAE5JPokAJGi76J2qyvH2w8G3S9ZZ')
         self.import_multisig_info([2, 0, 1], 5)
         txid = self.transfer([2, 1, 0])
         self.import_multisig_info([0, 2, 1], 6)
         self.check_transaction(txid)
 
-        self.create_multisig_wallets(3, 4, '47fF32AdrmXG84FcPY697uZdd42pMMGiH5UpiTRTt3YX2pZC7t7wkzEMStEicxbQGRfrYvAAYxH6Fe8rnD56EaNwUgxRd53')
+        self.create_multisig_wallets(3, 4, '787EFF5UsBVNmfxPyoGHhFCx3RzShATo12Soy88hFuvD2B1S6ehHbVxGrGsQfRRFcrKE3BxL5J5QhDuoYYuMTXeFSizj3EL')
         self.import_multisig_info([0, 2, 3], 5)
         txid = self.transfer([0, 2, 3])
         self.import_multisig_info([0, 1, 2, 3], 6)
         self.check_transaction(txid)
 
-        self.create_multisig_wallets(2, 4, '44SKxxLQw929wRF6BA9paQ1EWFshNnKhXM3qz6Mo3JGDE2YG3xyzVutMStEicxbQGRfrYvAAYxH6Fe8rnD56EaNwUiqhcwR')
+        self.create_multisig_wallets(2, 4, '79dxJsLov28JjiMvSfJ3cD7cgATcmPG2VHFgESN7izSBfUPSCfJHCAJGrGsQfRRFcrKE3BxL5J5QhDuoYYuMTXeFSmToSsx')
         self.import_multisig_info([1, 2], 5)
         txid = self.transfer([1, 2])
         self.import_multisig_info([0, 1, 2, 3], 6)
@@ -94,9 +94,9 @@ class MultisigTest():
       print('Creating ' + str(M_threshold) + '/' + str(N_total) + ' multisig wallet')
       seeds = [
         'velvet lymph giddy number token physics poetry unquoted nibs useful sabotage limits benches lifestyle eden nitrogen anvil fewest avoid batch vials washing fences goat unquoted',
-        'peeled mixture ionic radar utopia puddle buying illness nuns gadget river spout cavernous bounced paradise drunk looking cottage jump tequila melting went winter adjust spout',
-        'dilute gutter certain antics pamphlet macro enjoy left slid guarded bogeys upload nineteen bomb jubilee enhanced irritate turnip eggs swung jukebox loudly reduce sedan slid',
-        'waking gown buffet negative reorder speedy baffles hotel pliers dewdrop actress diplomat lymph emit ajar mailed kennel cynical jaunt justice weavers height teardrop toyed lymph',
+        'loyal poetry byline espionage thorn tossed ugly peeled bailed saved necklace silk mobile newt envy slug claim family loincloth innocent people apology niche opus ugly',
+        'opus peaches lair aztec segments muzzle gags large drinks patio bawled nylon sphere italics sixteen niece elapse jeans locker possible request cinema rift rugged large',
+        'omnibus dynamite oven flippant paddles kitchens germs among unrest dime reorder tamper inexact scrub organs mumble issued serving september hamburger tubes vegan pebbles recipe oven',
       ]
       assert M_threshold <= N_total
       assert N_total <= len(seeds)
@@ -145,6 +145,7 @@ class MultisigTest():
           next_stage.append(res.multisig_info)
           addresses.append(res.address)
       for i in range(N_total):
+        print(addresses[i])
         assert addresses[i] == expected_address
       self.wallet_address = expected_address
 
@@ -158,9 +159,9 @@ class MultisigTest():
     def test_states(self):
         print('Testing multisig states')
         seeds = [
-            'velvet lymph giddy number token physics poetry unquoted nibs useful sabotage limits benches lifestyle eden nitrogen anvil fewest avoid batch vials washing fences goat unquoted',
-            'peeled mixture ionic radar utopia puddle buying illness nuns gadget river spout cavernous bounced paradise drunk looking cottage jump tequila melting went winter adjust spout',
-            'dilute gutter certain antics pamphlet macro enjoy left slid guarded bogeys upload nineteen bomb jubilee enhanced irritate turnip eggs swung jukebox loudly reduce sedan slid',
+            'donuts casket wives dice shipped token goblet zippers makeup ladder sincerely dice elbow suede gown heels vessel entrance moon today refer limits often pests wives',
+            'loyal poetry byline espionage thorn tossed ugly peeled bailed saved necklace silk mobile newt envy slug claim family loincloth innocent people apology niche opus ugly',
+            'omnibus dynamite oven flippant paddles kitchens germs among unrest dime reorder tamper inexact scrub organs mumble issued serving september hamburger tubes vegan pebbles recipe oven',
         ]
         info = []
         wallet = [None, None, None]
@@ -244,7 +245,7 @@ class MultisigTest():
 
         print("Creating multisig transaction from wallet " + str(signers[0]))
 
-        dst = {'address': '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 'amount': 1000000000000}
+        dst = {'address': '73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd', 'amount': 1000000000000}
         res = self.wallet[signers[0]].transfer([dst])
         assert len(res.tx_hash) == 0 # not known yet
         txid = res.tx_hash
@@ -259,7 +260,7 @@ class MultisigTest():
         assert len(res.unsigned_txset) == 0
         multisig_txset = res.multisig_txset
 
-        daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 1)
+        daemon.generateblocks('73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd', 1)
         for i in range(len(self.wallet)):
           self.wallet[i].refresh()
 
@@ -278,7 +279,7 @@ class MultisigTest():
           assert desc.fee == fee
           assert len(desc.recipients) == 1
           rec = desc.recipients[0]
-          assert rec.address == '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm'
+          assert rec.address == '73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd'
           assert rec.amount == 1000000000000
 
           res = self.wallet[signers[i+1]].sign_multisig(multisig_txset)
@@ -303,7 +304,7 @@ class MultisigTest():
           assert len([x for x in (res['pending'] if 'pending' in res else []) if x.txid == txid]) == (1 if i == signers[-1] else 0)
           assert len([x for x in (res['out'] if 'out' in res else []) if x.txid == txid]) == 0
 
-        daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 1)
+        daemon.generateblocks('73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd', 1)
         return txid
 
     def check_transaction(self, txid):
@@ -317,6 +318,7 @@ class MultisigTest():
 class Guard:
     def __enter__(self):
         for i in range(4):
+            print(i)
             Wallet(idx = i).auto_refresh(False)
     def __exit__(self, exc_type, exc_value, traceback):
         for i in range(4):

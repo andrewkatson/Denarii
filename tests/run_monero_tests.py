@@ -6,12 +6,15 @@ import subprocess
 # NEED TO FILL THIS IN WITH YOUR PATH TO DENARII FOR THIS TO WORK SORRY
 workspace_path = "/home/andrew/denarii"
 
+failed_tests = []
+
 
 def report_status_of_test(process, testname):
     if process.returncode == 0:
         print(f"\nTest {testname} passed\n")
     else:
         print(f"\nTest {testname} failed\n")
+        failed_tests.append(testname)
 
 
 def test_block_weight():
@@ -34,8 +37,8 @@ def test_core_proxy():
 
 
 def test_core_tests():
-    # run core proxy
-    core_tests_command = "bazel run tests/core_tests:core_tests"
+    # run core tests
+    core_tests_command = "bazel run tests/core_tests:core_tests -- --generate_and_play_test_data"
     core_tests_proc = subprocess.Popen(core_tests_command, shell=True, stdout=subprocess.PIPE)
     core_tests_proc.wait()
     report_status_of_test(core_tests_proc, "core_tests:core_tests")
@@ -74,18 +77,20 @@ def test_difficulty():
 
 
 def test_functional_tests():
-    functional_tests_command = "bazel run tests/functional_tests:functional_tests"
-    functional_tests_proc = subprocess.Popen(functional_tests_command, shell=True, stdout=subprocess.PIPE)
-    functional_tests_proc.wait()
-    report_status_of_test(functional_tests_proc, "functional_tests:functional_tests")
+    # Monero doesn't run these
+    # functional_tests_command = "bazel run tests/functional_tests:functional_tests"
+    # functional_tests_proc = subprocess.Popen(functional_tests_command, shell=True, stdout=subprocess.PIPE)
+    # functional_tests_proc.wait()
+    # report_status_of_test(functional_tests_proc, "functional_tests:functional_tests")
 
-    make_test_signature_command = "bazel run tests/functional_tests:make_test_signature"
-    make_test_signature_proc = subprocess.Popen(make_test_signature_command, shell=True, stdout=subprocess.PIPE)
-    make_test_signature_proc.wait()
-    report_status_of_test(make_test_signature_proc, "functional_tests:make_test_signature")
+    # Monero doesn't run these
+    # make_test_signature_command = "bazel run tests/functional_tests:make_test_signature"
+    # make_test_signature_proc = subprocess.Popen(make_test_signature_command, shell=True, stdout=subprocess.PIPE)
+    # make_test_signature_proc.wait()
+    # report_status_of_test(make_test_signature_proc, "functional_tests:make_test_signature")
 
     current_path = workspace_path + "/tests/functional_tests"
-    binary_path = workspace_path + "/bazel-bin"
+    binary_path = workspace_path + "/bazel-bin/src"
     functional_tests_rpc_command = "bazel run tests/functional_tests:functional_tests_rpc -- python3 " + current_path + " " + binary_path + " all"
     functional_tests_rpc_proc = subprocess.Popen(functional_tests_rpc_command, shell=True, stdout=subprocess.PIPE)
     functional_tests_rpc_proc.wait()
@@ -169,7 +174,7 @@ def test_fuzz():
 
 
 def test_hash():
-    flavors = ["fast", "slow", "slow-1", "slow-2", "slow-3", "slow-4", "tree", "extra-blake", "extra-groestl",
+    flavors = ["fast", "slow", "slow-1", "slow-2", "slow-4", "tree", "extra-blake", "extra-groestl",
                "extra-jh", "extra-skein"]
 
     for flavor in flavors:
@@ -206,12 +211,18 @@ def test_top_level():
 
 os.chdir(workspace_path)
 test_block_weight()
-test_core_proxy()
+# Monero doesn't run these
+# test_core_proxy()
 test_core_tests()
 test_crypto()
 test_difficulty()
 test_functional_tests()
-test_fuzz()
+# Monero doesnt run these
+# test_fuzz()
 test_hash()
-test_performance_tests()
+# Monero doesnt run these
+# test_performance_tests()
 test_top_level()
+
+print("\n\n\n\n\n\n")
+print(failed_tests)

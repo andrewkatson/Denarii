@@ -10,6 +10,7 @@ cc_binary(
         ],
         exclude = ["**/*.txt"],
     ),
+    linkopts = ["-fuse-ld=bfd"],
     deps = [
         "//contrib/epee",
         "//src:blockchain_db",
@@ -707,10 +708,6 @@ cc_binary(
         "blockchain_utilities/bootstrap_serialization.h",
         "serialization/difficulty_type.h",
         "serialization/json_utils.h",
-    ],
-    copts = [
-        "-lssl",
-        "-lcrypto",
     ],
     linkopts = [
         "-lssl",

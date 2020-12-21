@@ -52,11 +52,11 @@ class MessageSigningTest():
         print('Creating wallets')
         seeds = [
             'velvet lymph giddy number token physics poetry unquoted nibs useful sabotage limits benches lifestyle eden nitrogen anvil fewest avoid batch vials washing fences goat unquoted',
-            'peeled mixture ionic radar utopia puddle buying illness nuns gadget river spout cavernous bounced paradise drunk looking cottage jump tequila melting went winter adjust spout',
+            'loyal poetry byline espionage thorn tossed ugly peeled bailed saved necklace silk mobile newt envy slug claim family loincloth innocent people apology niche opus ugly',
         ]
         self.address = [
-            '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm',
-            '44Kbx4sJ7JDRDV5aAhLJzQCjDz2ViLRduE3ijDZu3osWKBjMGkV1XPk4pfDUMqt1Aiezvephdqm6YD19GKFD9ZcXVUTp6BW',
+            '73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd',
+            '79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT',
         ]
         self.wallet = [None, None]
         for i in range(2):
@@ -65,6 +65,7 @@ class MessageSigningTest():
             try: self.wallet[i].close_wallet()
             except: pass
             res = self.wallet[i].restore_deterministic_wallet(seed = seeds[i])
+            print("ADDRESS AT " + str(i) + " " + res.address)
             assert res.address == self.address[i]
             assert res.seed == seeds[i]
 

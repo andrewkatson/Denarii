@@ -63,9 +63,9 @@ class TransferTest():
     def create(self):
         print('Creating wallets')
         seeds = [
-          'velvet lymph giddy number token physics poetry unquoted nibs useful sabotage limits benches lifestyle eden nitrogen anvil fewest avoid batch vials washing fences goat unquoted',
-          'peeled mixture ionic radar utopia puddle buying illness nuns gadget river spout cavernous bounced paradise drunk looking cottage jump tequila melting went winter adjust spout',
-          'dilute gutter certain antics pamphlet macro enjoy left slid guarded bogeys upload nineteen bomb jubilee enhanced irritate turnip eggs swung jukebox loudly reduce sedan slid',
+          'donuts casket wives dice shipped token goblet zippers makeup ladder sincerely dice elbow suede gown heels vessel entrance moon today refer limits often pests wives',
+          'omnibus dynamite oven flippant paddles kitchens germs among unrest dime reorder tamper inexact scrub organs mumble issued serving september hamburger tubes vegan pebbles recipe oven',
+          'opus peaches lair aztec segments muzzle gags large drinks patio bawled nylon sphere italics sixteen niece elapse jeans locker possible request cinema rift rugged large',
         ]
         self.wallet = [None] * len(seeds)
         for i in range(len(seeds)):
@@ -74,6 +74,7 @@ class TransferTest():
             try: self.wallet[i].close_wallet()
             except: pass
             res = self.wallet[i].restore_deterministic_wallet(seed = seeds[i])
+            print(res.address)
 
     def mine(self):
         print("Mining some blocks")
@@ -82,7 +83,7 @@ class TransferTest():
         res = daemon.get_info()
         height = res.height
 
-        daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 80)
+        daemon.generateblocks('76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b', 80)
         for i in range(len(self.wallet)):
             self.wallet[i].refresh()
             res = self.wallet[i].get_height()
@@ -93,13 +94,14 @@ class TransferTest():
 
         print("Creating transfer to self")
 
-        dst = {'address': '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 'amount': 1000000000000}
+        dst = {'address': '76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b', 'amount': 1000000000000}
         payment_id = '1234500000012345abcde00000abcdeff1234500000012345abcde00000abcde'
 
         start_balances = [0] * len(self.wallet)
         running_balances = [0] * len(self.wallet)
         for i in range(len(self.wallet)):
           res = self.wallet[i].get_balance()
+          print(res)
           start_balances[i] = res.balance
           running_balances[i] = res.balance
           assert res.unlocked_balance <= res.balance
@@ -127,6 +129,7 @@ class TransferTest():
         assert ok
 
         res = self.wallet[0].transfer([dst], ring_size = 11, get_tx_key = False, get_tx_hex = True)
+        print(res)
         assert len(res.tx_hash) == 32*2
         txid = res.tx_hash
         assert len(res.tx_key) == 0
@@ -142,6 +145,7 @@ class TransferTest():
         unsigned_txset = res.unsigned_txset
 
         res = daemon.get_fee_estimate(10)
+        print(res)
         assert res.fee > 0
         assert res.quantization_mask > 0
         expected_fee = (res.fee * 1 * tx_weight + res.quantization_mask - 1) // res.quantization_mask * res.quantization_mask
@@ -150,9 +154,11 @@ class TransferTest():
         self.wallet[0].refresh()
 
         res = daemon.get_info()
+        print(res)
         height = res.height
 
         res = self.wallet[0].get_transfers()
+        print(res)
         assert len(res['in']) == height - 1 # coinbases
         assert not 'out' in res or len(res.out) == 0 # not mined yet
         assert len(res.pending) == 1
@@ -167,25 +173,28 @@ class TransferTest():
         assert e.unlock_time == 0
         assert e.subaddr_index.major == 0
         assert e.subaddr_indices == [{'major': 0, 'minor': 0}]
-        assert e.address == '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm'
+        assert e.address == '76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b'
         assert e.double_spend_seen == False
         assert not 'confirmations' in e or e.confirmations == 0
 
         running_balances[0] -= 1000000000000 + fee
 
         res = self.wallet[0].get_balance()
+        print(res)
         assert res.balance == running_balances[0]
         assert res.unlocked_balance <= res.balance
         assert res.blocks_to_unlock == 59
 
-        daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 1)
+        daemon.generateblocks('76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b', 1)
         res = daemon.getlastblockheader()
+        print(res)
         running_balances[0] += res.block_header.reward
         self.wallet[0].refresh()
 
         running_balances[0] += 1000000000000
 
         res = self.wallet[0].get_transfers()
+        print(res)
         assert len(res['in']) == height # coinbases
         assert len(res.out) == 1 # not mined yet
         assert not 'pending' in res or len(res.pending) == 0
@@ -200,13 +209,14 @@ class TransferTest():
         assert e.unlock_time == 0
         assert e.subaddr_index.major == 0
         assert e.subaddr_indices == [{'major': 0, 'minor': 0}]
-        assert e.address == '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm'
+        assert e.address == '76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b'
         assert e.double_spend_seen == False
         assert e.confirmations == 1
 
         res = self.wallet[0].get_height()
         wallet_height = res.height
         res = self.wallet[0].get_transfer_by_txid(txid)
+        print(res)
         assert len(res.transfers) == 1
         assert res.transfers[0] == res.transfer
         t = res.transfer
@@ -218,22 +228,24 @@ class TransferTest():
         assert t.fee == fee
         assert t.note == ''
         assert len(t.destinations) == 1
-        assert t.destinations[0] == {'address': '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 'amount': 1000000000000}
+        assert t.destinations[0] == {'address': '76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b', 'amount': 1000000000000}
         assert t.type == 'out'
         assert t.unlock_time == 0
-        assert t.address == '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm'
+        assert t.address == '76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b'
         assert t.double_spend_seen == False
         assert t.confirmations == 1
 
         res = self.wallet[0].get_balance()
+        print(res)
         assert res.balance == running_balances[0]
         assert res.unlocked_balance <= res.balance
         assert res.blocks_to_unlock == 59
 
         print("Creating transfer to another, manual relay")
 
-        dst = {'address': '44Kbx4sJ7JDRDV5aAhLJzQCjDz2ViLRduE3ijDZu3osWKBjMGkV1XPk4pfDUMqt1Aiezvephdqm6YD19GKFD9ZcXVUTp6BW', 'amount': 1000000000000}
+        dst = {'address': '78JeASYhf5X5pENxLZ8PsER2EuPRdGQrGALNxCpyNs87Q5JPHFXWysbdYS1SzHRXh7dqBfnUeRsTJZg6aSnBjcp6Ttr8c3d', 'amount': 1000000000000}
         res = self.wallet[0].transfer([dst], ring_size = 11, get_tx_key = True, do_not_relay = True, get_tx_hex = True)
+        print(res)
         assert len(res.tx_hash) == 32*2
         txid = res.tx_hash
         assert len(res.tx_key) == 32*2
@@ -248,6 +260,7 @@ class TransferTest():
         tx_blob = res.tx_blob
 
         res = daemon.send_raw_transaction(tx_blob)
+        print(res)
         assert res.not_relayed == False
         assert res.low_mixin == False
         assert res.double_spend == False
@@ -260,6 +273,7 @@ class TransferTest():
         self.wallet[0].refresh()
 
         res = self.wallet[0].get_balance()
+        print(res)
         assert res.balance == running_balances[0]
         assert res.unlocked_balance <= res.balance
         assert res.blocks_to_unlock == 59
@@ -267,6 +281,7 @@ class TransferTest():
         self.wallet[1].refresh()
 
         res = self.wallet[1].get_transfers()
+        print(res)
         assert not 'in' in res or len(res['in']) == 0
         assert not 'out' in res or len(res.out) == 0
         assert not 'pending' in res or len(res.pending) == 0
@@ -279,20 +294,22 @@ class TransferTest():
         assert e.unlock_time == 0
         assert e.subaddr_index.major == 0
         assert e.subaddr_indices == [{'major': 0, 'minor': 0}]
-        assert e.address == '44Kbx4sJ7JDRDV5aAhLJzQCjDz2ViLRduE3ijDZu3osWKBjMGkV1XPk4pfDUMqt1Aiezvephdqm6YD19GKFD9ZcXVUTp6BW'
+        assert e.address == '78JeASYhf5X5pENxLZ8PsER2EuPRdGQrGALNxCpyNs87Q5JPHFXWysbdYS1SzHRXh7dqBfnUeRsTJZg6aSnBjcp6Ttr8c3d'
         assert e.double_spend_seen == False
         assert not 'confirmations' in e or e.confirmations == 0
         assert e.amount == amount
         assert e.fee == fee
 
-        daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 1)
+        daemon.generateblocks('76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b', 1)
         res = daemon.getlastblockheader()
+        print(res)
         running_balances[0] -= 1000000000000 + fee
         running_balances[0] += res.block_header.reward
         self.wallet[1].refresh()
         running_balances[1] += 1000000000000
 
         res = self.wallet[1].get_transfers()
+        print(res)
         assert len(res['in']) == 1
         assert not 'out' in res or len(res.out) == 0
         assert not 'pending' in res or len(res.pending) == 0
@@ -305,13 +322,14 @@ class TransferTest():
         assert e.unlock_time == 0
         assert e.subaddr_index.major == 0
         assert e.subaddr_indices == [{'major': 0, 'minor': 0}]
-        assert e.address == '44Kbx4sJ7JDRDV5aAhLJzQCjDz2ViLRduE3ijDZu3osWKBjMGkV1XPk4pfDUMqt1Aiezvephdqm6YD19GKFD9ZcXVUTp6BW'
+        assert e.address == '78JeASYhf5X5pENxLZ8PsER2EuPRdGQrGALNxCpyNs87Q5JPHFXWysbdYS1SzHRXh7dqBfnUeRsTJZg6aSnBjcp6Ttr8c3d'
         assert e.double_spend_seen == False
         assert e.confirmations == 1
         assert e.amount == amount
         assert e.fee == fee
 
         res = self.wallet[1].get_balance()
+        print(res)
         assert res.balance == running_balances[1]
         assert res.unlocked_balance <= res.balance
         assert res.blocks_to_unlock == 9
@@ -320,10 +338,12 @@ class TransferTest():
 
         self.wallet[0].refresh()
 
-        dst0 = {'address': '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 'amount': 1000000000000}
-        dst1 = {'address': '44Kbx4sJ7JDRDV5aAhLJzQCjDz2ViLRduE3ijDZu3osWKBjMGkV1XPk4pfDUMqt1Aiezvephdqm6YD19GKFD9ZcXVUTp6BW', 'amount': 1100000000000}
-        dst2 = {'address': '46r4nYSevkfBUMhuykdK3gQ98XDqDTYW1hNLaXNvjpsJaSbNtdXh1sKMsdVgqkaihChAzEy29zEDPMR3NHQvGoZCLGwTerK', 'amount': 1200000000000}
+        dst0 = {'address': '76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b', 'amount': 1000000000000}
+        dst1 = {'address': '78JeASYhf5X5pENxLZ8PsER2EuPRdGQrGALNxCpyNs87Q5JPHFXWysbdYS1SzHRXh7dqBfnUeRsTJZg6aSnBjcp6Ttr8c3d', 'amount': 1100000000000}
+        dst2 = {'address': '73qkqZ4JGPj9joQX9fKgMXiCiFQ5Mv4thaAcUcZNyR2GgdyPFDMhQsEaWeNe9QDCeZhUMiLfUpYWs4YuxGoRwJd4Uw4Axvs', 'amount': 1200000000000}
         res = self.wallet[0].transfer([dst0, dst1, dst2], ring_size = 11, get_tx_key = True)
+
+        print(res)
         assert len(res.tx_hash) == 32*2
         txid = res.tx_hash
         assert len(res.tx_key) == 32*2
@@ -340,12 +360,15 @@ class TransferTest():
         running_balances[0] -= 1000000000000 + 1100000000000 + 1200000000000 + fee
 
         res = self.wallet[0].get_balance()
+
+        print(res)
         assert res.balance == running_balances[0]
         assert res.unlocked_balance <= res.balance
         assert res.blocks_to_unlock == 59
 
-        daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 1)
+        daemon.generateblocks('76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b', 1)
         res = daemon.getlastblockheader()
+        print(res)
         running_balances[0] += res.block_header.reward
         running_balances[0] += 1000000000000
         running_balances[1] += 1100000000000
@@ -353,6 +376,7 @@ class TransferTest():
         self.wallet[0].refresh()
 
         res = self.wallet[0].get_transfers()
+        print(res)
         assert len(res['in']) == height + 2
         assert len(res.out) == 3
         assert not 'pending' in res or len(res.pending) == 0
@@ -367,7 +391,7 @@ class TransferTest():
         assert e.unlock_time == 0
         assert e.subaddr_index.major == 0
         assert e.subaddr_indices == [{'major': 0, 'minor': 0}]
-        assert e.address == '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm'
+        assert e.address == '76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b'
         assert e.double_spend_seen == False
         assert e.confirmations == 1
 
@@ -375,12 +399,14 @@ class TransferTest():
         assert e.fee == fee
 
         res = self.wallet[0].get_balance()
+        print(res)
         assert res.balance == running_balances[0]
         assert res.unlocked_balance <= res.balance
         assert res.blocks_to_unlock == 59
 
         self.wallet[1].refresh()
         res = self.wallet[1].get_transfers()
+        print(res)
         assert len(res['in']) == 2
         assert not 'out' in res or len(res.out) == 0
         assert not 'pending' in res or len(res.pending) == 0
@@ -395,19 +421,21 @@ class TransferTest():
         assert e.unlock_time == 0
         assert e.subaddr_index.major == 0
         assert e.subaddr_indices == [{'major': 0, 'minor': 0}]
-        assert e.address == '44Kbx4sJ7JDRDV5aAhLJzQCjDz2ViLRduE3ijDZu3osWKBjMGkV1XPk4pfDUMqt1Aiezvephdqm6YD19GKFD9ZcXVUTp6BW'
+        assert e.address == '78JeASYhf5X5pENxLZ8PsER2EuPRdGQrGALNxCpyNs87Q5JPHFXWysbdYS1SzHRXh7dqBfnUeRsTJZg6aSnBjcp6Ttr8c3d'
         assert e.double_spend_seen == False
         assert e.confirmations == 1
         assert e.amount == 1100000000000
         assert e.fee == fee
 
         res = self.wallet[1].get_balance()
+        print(res)
         assert res.balance == running_balances[1]
         assert res.unlocked_balance <= res.balance
         assert res.blocks_to_unlock == 9
 
         self.wallet[2].refresh()
         res = self.wallet[2].get_transfers()
+        print(res)
         assert len(res['in']) == 1
         assert not 'out' in res or len(res.out) == 0
         assert not 'pending' in res or len(res.pending) == 0
@@ -422,13 +450,14 @@ class TransferTest():
         assert e.unlock_time == 0
         assert e.subaddr_index.major == 0
         assert e.subaddr_indices == [{'major': 0, 'minor': 0}]
-        assert e.address == '46r4nYSevkfBUMhuykdK3gQ98XDqDTYW1hNLaXNvjpsJaSbNtdXh1sKMsdVgqkaihChAzEy29zEDPMR3NHQvGoZCLGwTerK'
+        assert e.address == '73qkqZ4JGPj9joQX9fKgMXiCiFQ5Mv4thaAcUcZNyR2GgdyPFDMhQsEaWeNe9QDCeZhUMiLfUpYWs4YuxGoRwJd4Uw4Axvs'
         assert e.double_spend_seen == False
         assert e.confirmations == 1
         assert e.amount == 1200000000000
         assert e.fee == fee
 
         res = self.wallet[2].get_balance()
+        print(res)
         assert res.balance == running_balances[2]
         assert res.unlocked_balance <= res.balance
         assert res.blocks_to_unlock == 9
@@ -436,10 +465,13 @@ class TransferTest():
         print('Sending to integrated address')
         self.wallet[0].refresh()
         res = self.wallet[0].get_balance()
+        print(res)
         i_pid = '1111111122222222'
-        res = self.wallet[0].make_integrated_address(standard_address = '44Kbx4sJ7JDRDV5aAhLJzQCjDz2ViLRduE3ijDZu3osWKBjMGkV1XPk4pfDUMqt1Aiezvephdqm6YD19GKFD9ZcXVUTp6BW', payment_id = i_pid)
+        res = self.wallet[0].make_integrated_address(standard_address = '78JeASYhf5X5pENxLZ8PsER2EuPRdGQrGALNxCpyNs87Q5JPHFXWysbdYS1SzHRXh7dqBfnUeRsTJZg6aSnBjcp6Ttr8c3d', payment_id = i_pid)
+        print(res)
         i_address = res.integrated_address
         res = self.wallet[0].transfer([{'address': i_address, 'amount': 200000000}])
+        print(res)
         assert len(res.tx_hash) == 32*2
         i_txid = res.tx_hash
         assert len(res.tx_key) == 32*2
@@ -455,51 +487,62 @@ class TransferTest():
         running_balances[0] -= 200000000 + fee
 
         res = self.wallet[0].get_balance()
+        print(res)
         assert res.balance == running_balances[0]
         assert res.unlocked_balance <= res.balance
         assert res.blocks_to_unlock == 59
 
-        daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 1)
+        daemon.generateblocks('76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b', 1)
         res = daemon.getlastblockheader()
+        print(res)
         running_balances[0] += res.block_header.reward
         running_balances[1] += 200000000
 
         self.wallet[0].refresh()
         res = self.wallet[0].get_balance()
+        print(res)
         assert res.balance == running_balances[0]
         assert res.unlocked_balance <= res.balance
         assert res.blocks_to_unlock == 59
 
         self.wallet[1].refresh()
         res = self.wallet[1].get_balance()
+        print(res)
         assert res.balance == running_balances[1]
         assert res.unlocked_balance <= res.balance
         assert res.blocks_to_unlock == 9
 
         self.wallet[2].refresh()
         res = self.wallet[2].get_balance()
+        print(res)
         assert res.balance == running_balances[2]
         assert res.unlocked_balance <= res.balance
         assert res.blocks_to_unlock == 8
 
-        daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 1)
+        daemon.generateblocks('76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b', 1)
         res = daemon.getlastblockheader()
         running_balances[0] += res.block_header.reward
 
         self.wallet[0].refresh()
         res = self.wallet[0].get_balance()
+        print("wallet 0")
+        print(res)
         assert res.balance == running_balances[0]
         assert res.unlocked_balance <= res.balance
         assert res.blocks_to_unlock == 59
 
         self.wallet[1].refresh()
         res = self.wallet[1].get_balance()
+        print("wallet 1")
+        print(res)
         assert res.balance == running_balances[1]
         assert res.unlocked_balance <= res.balance
         assert res.blocks_to_unlock == 8
 
         self.wallet[2].refresh()
         res = self.wallet[2].get_balance()
+        print("wallet 2")
+        print(res)
         assert res.balance == running_balances[2]
         assert res.unlocked_balance <= res.balance
         assert res.blocks_to_unlock == 7
@@ -567,11 +610,12 @@ class TransferTest():
         print('Checking double spend detection')
         txes = [[None, None], [None, None]]
         for i in range(2):
-            self.wallet[0].restore_deterministic_wallet(seed = 'velvet lymph giddy number token physics poetry unquoted nibs useful sabotage limits benches lifestyle eden nitrogen anvil fewest avoid batch vials washing fences goat unquoted')
+            self.wallet[0].restore_deterministic_wallet(seed = 'donuts casket wives dice shipped token goblet zippers makeup ladder sincerely dice elbow suede gown heels vessel entrance moon today refer limits often pests wives')
             self.wallet[0].refresh()
             res = self.wallet[0].get_balance()
+            print(res)
             unlocked_balance = res.unlocked_balance
-            res = self.wallet[0].sweep_all(address = '44Kbx4sJ7JDRDV5aAhLJzQCjDz2ViLRduE3ijDZu3osWKBjMGkV1XPk4pfDUMqt1Aiezvephdqm6YD19GKFD9ZcXVUTp6BW', do_not_relay = True, get_tx_hex = True)
+            res = self.wallet[0].sweep_all(address = '78JeASYhf5X5pENxLZ8PsER2EuPRdGQrGALNxCpyNs87Q5JPHFXWysbdYS1SzHRXh7dqBfnUeRsTJZg6aSnBjcp6Ttr8c3d', do_not_relay = True, get_tx_hex = True)
             assert len(res.tx_hash_list) == 1
             assert len(res.tx_hash_list[0]) == 32*2
             txes[i][0] = res.tx_hash_list[0]
@@ -633,7 +677,7 @@ class TransferTest():
 
         print("Sending single output")
 
-        daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 1)
+        daemon.generateblocks('76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b', 1)
         self.wallet[0].refresh()
         res = self.wallet[0].incoming_transfers(transfer_type = 'available')
         for t in res.transfers:
@@ -644,20 +688,20 @@ class TransferTest():
         assert res.transfers[index].amount > 0
         ki = res.transfers[index].key_image
         amount = res.transfers[index].amount
-        daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 10) # ensure unlocked
+        daemon.generateblocks('76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b', 10) # ensure unlocked
         self.wallet[0].refresh()
         res = self.wallet[0].get_balance()
         balance = res.balance
         res = daemon.is_key_image_spent([ki])
         assert len(res.spent_status) == 1
         assert res.spent_status[0] == 0
-        res = self.wallet[0].sweep_single('44Kbx4sJ7JDRDV5aAhLJzQCjDz2ViLRduE3ijDZu3osWKBjMGkV1XPk4pfDUMqt1Aiezvephdqm6YD19GKFD9ZcXVUTp6BW', key_image = ki)
+        res = self.wallet[0].sweep_single('78JeASYhf5X5pENxLZ8PsER2EuPRdGQrGALNxCpyNs87Q5JPHFXWysbdYS1SzHRXh7dqBfnUeRsTJZg6aSnBjcp6Ttr8c3d', key_image = ki)
         assert len(res.tx_hash) == 64
         tx_hash = res.tx_hash
         res = daemon.is_key_image_spent([ki])
         assert len(res.spent_status) == 1
         assert res.spent_status[0] == 2
-        daemon.generateblocks('44Kbx4sJ7JDRDV5aAhLJzQCjDz2ViLRduE3ijDZu3osWKBjMGkV1XPk4pfDUMqt1Aiezvephdqm6YD19GKFD9ZcXVUTp6BW', 1)
+        daemon.generateblocks('78JeASYhf5X5pENxLZ8PsER2EuPRdGQrGALNxCpyNs87Q5JPHFXWysbdYS1SzHRXh7dqBfnUeRsTJZg6aSnBjcp6Ttr8c3d', 1)
         res = daemon.is_key_image_spent([ki])
         assert len(res.spent_status) == 1
         assert res.spent_status[0] == 1
@@ -689,7 +733,7 @@ class TransferTest():
 
         print("Checking transaction destinations")
 
-        dst = {'address': '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 'amount': 1000000000000}
+        dst = {'address': '76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b', 'amount': 1000000000000}
         res = self.wallet[0].transfer([dst])
         assert len(res.tx_hash) == 64
         tx_hash = res.tx_hash
@@ -700,13 +744,13 @@ class TransferTest():
             e = l[0]
             assert len(e.destinations) == 1
             assert e.destinations[0].amount == 1000000000000
-            assert e.destinations[0].address == '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm'
+            assert e.destinations[0].address == '76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b'
 
             if i == 0:
-                daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 1)
+                daemon.generateblocks('76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b', 1)
                 self.wallet[0].refresh()
 
-        dst = {'address': '8AsN91rznfkBGTY8psSNkJBg9SZgxxGGRUhGwRptBhgr5XSQ1XzmA9m8QAnoxydecSh5aLJXdrgXwTDMMZ1AuXsN1EX5Mtm', 'amount': 1000000000000}
+        dst = {'address': 'FCSsBDhUUzveas2h4QV4TEJiT2T3eUwNAH7bERRiCptUL5hVh5A6waaJzb6rbRkQGHfhxM7ka1Myr1WysoNqAcSYDgpUtCH', 'amount': 1000000000000}
         res = self.wallet[0].transfer([dst])
         assert len(res.tx_hash) == 64
         tx_hash = res.tx_hash
@@ -717,13 +761,13 @@ class TransferTest():
             e = l[0]
             assert len(e.destinations) == 1
             assert e.destinations[0].amount == 1000000000000
-            assert e.destinations[0].address == '8AsN91rznfkBGTY8psSNkJBg9SZgxxGGRUhGwRptBhgr5XSQ1XzmA9m8QAnoxydecSh5aLJXdrgXwTDMMZ1AuXsN1EX5Mtm'
+            assert e.destinations[0].address == 'FCSsBDhUUzveas2h4QV4TEJiT2T3eUwNAH7bERRiCptUL5hVh5A6waaJzb6rbRkQGHfhxM7ka1Myr1WysoNqAcSYDgpUtCH'
 
             if i == 0:
-                daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 1)
+                daemon.generateblocks('76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b', 1)
                 self.wallet[0].refresh()
 
-        dst = {'address': '4BxSHvcgTwu25WooY4BVmgdcKwZu5EksVZSZkDd6ooxSVVqQ4ubxXkhLF6hEqtw96i9cf3cVfLw8UWe95bdDKfRQeYtPwLm1Jiw7AKt2LY', 'amount': 1000000000000}
+        dst = {'address': '73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd', 'amount': 1000000000000}
         res = self.wallet[0].transfer([dst])
         assert len(res.tx_hash) == 64
         tx_hash = res.tx_hash
@@ -734,10 +778,10 @@ class TransferTest():
             e = l[0]
             assert len(e.destinations) == 1
             assert e.destinations[0].amount == 1000000000000
-            assert e.destinations[0].address == '4BxSHvcgTwu25WooY4BVmgdcKwZu5EksVZSZkDd6ooxSVVqQ4ubxXkhLF6hEqtw96i9cf3cVfLw8UWe95bdDKfRQeYtPwLm1Jiw7AKt2LY'
+            assert e.destinations[0].address == '73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd'
 
             if i == 0:
-                daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 1)
+                daemon.generateblocks('76YmRQ6ZLq4Ge17ryYXF83HthNRvc1uHARYQg2AkoYhdNL7u1kBNiXFJrnSskFi9fNbPkjh3tQ7fv87NKVmpxKVwFyURn1b', 1)
                 self.wallet[0].refresh()
 
     def check_tx_notes(self):

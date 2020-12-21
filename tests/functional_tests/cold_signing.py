@@ -62,12 +62,12 @@ class ColdSigningTest():
         try: self.cold_wallet.close_wallet()
         except: pass
 
-        seed = 'velvet lymph giddy number token physics poetry unquoted nibs useful sabotage limits benches lifestyle eden nitrogen anvil fewest avoid batch vials washing fences goat unquoted'
+        seed = 'loyal poetry byline espionage thorn tossed ugly peeled bailed saved necklace silk mobile newt envy slug claim family loincloth innocent people apology niche opus ugly'
         res = self.cold_wallet.restore_deterministic_wallet(seed = seed)
         self.cold_wallet.set_daemon('127.0.0.1:11111', ssl_support = "disabled")
         spend_key = self.cold_wallet.query_key("spend_key").key
         view_key = self.cold_wallet.query_key("view_key").key
-        res = self.hot_wallet.generate_from_keys(viewkey = view_key, address = '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm')
+        res = self.hot_wallet.generate_from_keys(viewkey = view_key, address = '79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT')
 
         ok = False
         try: res = self.hot_wallet.query_key("spend_key")
@@ -85,7 +85,7 @@ class ColdSigningTest():
         daemon = Daemon()
         wallet = Wallet()
 
-        daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 80)
+        daemon.generateblocks('79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT', 80)
         wallet.refresh()
 
     def transfer(self):
@@ -93,7 +93,7 @@ class ColdSigningTest():
 
         print("Creating transaction in hot wallet")
 
-        dst = {'address': '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 'amount': 1000000000000}
+        dst = {'address': '79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT', 'amount': 1000000000000}
 
         self.hot_wallet.refresh()
         res = self.hot_wallet.export_outputs()
@@ -125,11 +125,11 @@ class ColdSigningTest():
         assert desc.unlock_time == 0
         assert desc.payment_id in ['', '0000000000000000']
         assert desc.change_amount == desc.amount_in - 1000000000000 - fee
-        assert desc.change_address == '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm'
+        assert desc.change_address == '79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT'
         assert desc.fee == fee
         assert len(desc.recipients) == 1
         rec = desc.recipients[0]
-        assert rec.address == '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm'
+        assert rec.address == '79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT'
         assert rec.amount == 1000000000000
 
         res = self.cold_wallet.sign_transfer(unsigned_txset)
@@ -148,7 +148,7 @@ class ColdSigningTest():
         assert len([x for x in (res['pending'] if 'pending' in res else []) if x.txid == txid]) == 1
         assert len([x for x in (res['out'] if 'out' in res else []) if x.txid == txid]) == 0
 
-        daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 1)
+        daemon.generateblocks('79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT', 1)
         self.hot_wallet.refresh()
 
         res = self.hot_wallet.get_transfers()

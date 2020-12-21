@@ -145,7 +145,7 @@ class RPCPaymentTest():
         res = daemon.rpc_access_info(client = self.get_signature())
         assert len(res.hashing_blob) > 39
         assert res.height == 1
-        assert res.top_hash == '418015bb9ae982a1975da7d79277c2705727a56894ba0fb246adaabb1f4632e3'
+        assert res.top_hash == '526b9ee72cf29508bfce91cb60d660420a0a2c4328c1df812ec2a6a49588dfbd'
         assert res.credits_per_hash_found == 5000
         assert res.diff == 10
         assert res.credits == 0
@@ -181,7 +181,7 @@ class RPCPaymentTest():
         res = daemon.rpc_access_info(client = self.get_signature())
         assert len(res.hashing_blob) > 39
         assert res.height > 1
-        assert res.top_hash != '418015bb9ae982a1975da7d79277c2705727a56894ba0fb246adaabb1f4632e3' # here, any share matches network diff
+        assert res.top_hash != '526b9ee72cf29508bfce91cb60d660420a0a2c4328c1df812ec2a6a49588dfbd' # here, any share matches network diff
         assert res.credits_per_hash_found == 5000
         assert res.diff == 10
         cookie = res.cookie
@@ -361,7 +361,7 @@ class RPCPaymentTest():
         assert res.credits == credits - 1
         credits = res.credits
 
-        res = daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 100)
+        res = daemon.generateblocks('73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd', 100)
         block_hashes = res.blocks
 
         # ask for 1 block -> 1 credit
@@ -443,6 +443,7 @@ class RPCPaymentTest():
 class Guard:
     def __enter__(self):
         for i in range(4):
+            print(i)
             Wallet(idx = i).auto_refresh(False)
     def __exit__(self, exc_type, exc_value, traceback):
         for i in range(4):

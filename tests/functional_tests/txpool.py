@@ -64,7 +64,7 @@ class TransferTest():
         daemon = Daemon()
         wallet = Wallet()
 
-        daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 80)
+        daemon.generateblocks('73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd', 80)
         wallet.refresh()
 
     def create_txes(self, address, ntxes):
@@ -112,7 +112,7 @@ class TransferTest():
 
         self.check_empty_pool()
 
-        txes = self.create_txes('46r4nYSevkfBUMhuykdK3gQ98XDqDTYW1hNLaXNvjpsJaSbNtdXh1sKMsdVgqkaihChAzEy29zEDPMR3NHQvGoZCLGwTerK', 5)
+        txes = self.create_txes('79DtEURvmq8dW2M5x8A9Lo6VNCJgkUPQv8M4r17YURgTF8NRA8E5XKCRQ4rwSSbiEDHbXByefuWpDcn5h257zwuyRX6uhhT', 5)
 
         res = daemon.get_info()
         assert res.tx_pool_size == txpool_size + 5
@@ -214,7 +214,7 @@ class TransferTest():
         assert len(res.transactions) == txpool_size - 2
 
         print('Mining transactions')
-        daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 1)
+        daemon.generateblocks('73H5G7Q6Cc64886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJL911Bd', 1)
         res = daemon.get_transaction_pool()
         assert not 'transactions' in res or len(res.transactions) == txpool_size - 5
         res = daemon.get_transaction_pool_hashes()

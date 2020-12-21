@@ -3228,6 +3228,7 @@ namespace tools
       }
       catch (const std::exception& e)
       {
+          LOG_PRINT_L0("Caught this one");
         handle_rpc_exception(std::current_exception(), er, WALLET_RPC_ERROR_CODE_UNKNOWN_ERROR);
         return false;
       }
@@ -3252,6 +3253,7 @@ namespace tools
     }
     catch (const std::exception& e)
     {
+      LOG_PRINT_L0("caught eception");
       handle_rpc_exception(std::current_exception(), er, WALLET_RPC_ERROR_CODE_UNKNOWN_ERROR);
     }
     if (!wal)

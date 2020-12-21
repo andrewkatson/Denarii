@@ -2596,8 +2596,10 @@ bool Blockchain::get_split_transactions_blobs(const t_ids_container& txs_ids, t_
         if (!m_db->get_prunable_tx_blob(tx_hash, std::get<3>(txs.back())))
           std::get<3>(txs.back()).clear();
       }
-      else
-        missed_txs.push_back(tx_hash);
+      else {
+          missed_txs.push_back(tx_hash);
+          LOG_PRINT_L0("Missed");
+      }
     }
     catch (const std::exception& e)
     {

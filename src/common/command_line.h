@@ -284,7 +284,8 @@ namespace command_line
   template<typename T, bool required>
   T get_arg(const boost::program_options::variables_map& vm, const arg_descriptor<T, required>& arg)
   {
-    return vm[arg.name].template as<T>();
+    auto& thing = vm[arg.name];
+    return thing.template as<T>();
   }
  
   template<bool dependent, int NUM_DEPS>

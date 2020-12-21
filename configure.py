@@ -161,6 +161,18 @@ def import_dependencies():
 
 
 def miniupnp(external_dir_path):
+    # remove the empty directory
+    remove_command = "rm -rf " + external_dir_path + "/miniupnp"
+    os.system(remove_command)
+
+    # remove the empty directory
+    remove_command = "rm -rf " + external_dir_path + "/miniupnp"
+    os.system(remove_command)
+
+    # For now we have to clone this because miniupnp fails to download :(
+    clone_command = "git clone https://github.com/miniupnp/miniupnp.git"
+    os.system(clone_command)
+
     # we only need to build one of the subdirectories
     miniupnp_path = external_dir_path + "/miniupnp/miniupnpc"
 
@@ -223,22 +235,30 @@ def unbound(external_dir_path):
     command = "./configure && make && sudo make install"
     os.system(command)
 
-    move_command = "mv /usr/local/lib/libunbound.a " + unbound_path
+    move_command = "mv /usr/local/lib/libunbound.so " + unbound_path
     os.system(move_command)
 
 
 def openssl(external_dir_path):
 
-    clone_command = "git clone https://github.com/openssl/openssl.git"
-    os.system(clone_command)
+    os.chdir(external_dir_path)
+
+    openssl_zip_path = external_dir_path + "/openssl.zip"
+    download_url("https://www.openssl.org/source/openssl-1.1.1i.tar.gz", openssl_zip_path)
+
+    unzip_command = "tar -xvzf " + openssl_zip_path + " -C " + external_dir_path
+    os.system(unzip_command)
 
     openssl_path = external_dir_path + "/openssl"
 
+    openssl_wrong_name_path = external_dir_path + "/openssl-1.1.1i"
+    rename_command = "mv " + openssl_wrong_name_path + " " + openssl_path
+    os.system(rename_command)
+
     os.chdir(openssl_path)
 
-    command = "./Configure && make && make test"
+    command = "./config && make && make test"
     os.system(command)
-
 
 def libzmq(external_dir_path):
     clone_command = "git clone https://github.com/zeromq/libzmq.git"
@@ -256,7 +276,6 @@ def libzmq(external_dir_path):
 
 
 def zlib(external_dir_path):
-
     zlib_path = external_dir_path + "/zlib"
 
     os.chdir(zlib_path)
@@ -264,17 +283,32 @@ def zlib(external_dir_path):
     command = "./configure && make test && sudo make install"
     os.system(command)
 
+
 def build_dependencies():
     external_dir_path = workspace_path + "/external"
     os.chdir(external_dir_path)
 
     miniupnp(external_dir_path)
+
+    os.chdir(external_dir_path)
     randomx(external_dir_path)
+
+    os.chdir(external_dir_path)
     supercop(external_dir_path)
+
+    os.chdir(external_dir_path)
     unbound(external_dir_path)
+
+    os.chdir(external_dir_path)
     openssl(external_dir_path)
+
+    os.chdir(external_dir_path)
     libzmq(external_dir_path)
+
+    os.chdir(external_dir_path)
     zlib(external_dir_path)
+
+    os.chdir(external_dir_path)
 
 
 def blocks_generate():
@@ -544,3 +578,4 @@ def generate_files():
 import_dependencies()
 build_dependencies()
 generate_files()
+

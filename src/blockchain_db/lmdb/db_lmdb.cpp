@@ -3113,12 +3113,14 @@ bool BlockchainLMDB::get_pruned_tx_blob(const crypto::hash& h, cryptonote::blobd
   auto get_result = mdb_cursor_get(m_cur_tx_indices, (MDB_val *)&zerokval, &v, MDB_GET_BOTH);
   if (get_result == 0)
   {
-    txindex *tip = (txindex *)v.mv_data;
+      txindex *tip = (txindex *)v.mv_data;
     MDB_val_set(val_tx_id, tip->data.tx_id);
     get_result = mdb_cursor_get(m_cur_txs_pruned, &val_tx_id, &result, MDB_SET);
   }
-  if (get_result == MDB_NOTFOUND)
-    return false;
+  if (get_result == MDB_NOTFOUND) {
+      LOG_PRINT_L0("Oh no");
+      return false;
+  }
   else if (get_result)
     throw0(DB_ERROR(lmdb_error("DB error attempting to fetch tx from hash", get_result).c_str()));
 

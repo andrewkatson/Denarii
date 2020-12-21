@@ -124,5 +124,22 @@ external/libunwind
 external/libusb
 external/libzmq
 external/openpgm
-external/openssl
+external/openssl*/
 external/zlib
+external/openssl-1.1.1i/
+external/supercop
+external/miniupnp
+
+# Testing stuff
+tests/functional_tests/functional-tests-directory/
+tests/functional_tests/tests/
+test*.keys
+test*
+mytest*
+
+# Zips from setup
+external/openssl.zip
+external/supercop.zip
+
+# No clue
+core

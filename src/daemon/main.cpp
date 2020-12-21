@@ -159,7 +159,7 @@ void print_genesis_tx_hex(uint8_t nettype) {
 
   //Prepare genesis_tx
   cryptonote::transaction tx_genesis;
-  cryptonote::construct_miner_tx(0, 0, 0, 10, 0, miner_acc1.get_keys().m_account_address, tx_genesis);
+  cryptonote::construct_miner_tx(0, 0, 0, 10, 0, miner_acc1.get_keys().m_account_address, tx_genesis, blobdata(), 1);
 
   std::cout << "Object:" << std::endl;
   std::cout << obj_to_json_str(tx_genesis) << std::endl << std::endl;

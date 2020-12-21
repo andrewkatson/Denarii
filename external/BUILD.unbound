@@ -3,6 +3,6 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
  name = "unbound",
- srcs = glob(["**/*.a"]),
+ srcs = glob(["**/*.so"]),
  hdrs = glob(["**/*.h"]),
 )
