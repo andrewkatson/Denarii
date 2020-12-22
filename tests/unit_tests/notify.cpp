@@ -60,7 +60,7 @@ TEST(notify, works)
   ASSERT_TRUE(fd >= 0);
   close(fd);
 
-  const std::string spec = epee::string_tools::get_current_module_folder() + "/test_notifier"
+  const std::string spec = std::string(epee::string_tools::get_workspace_path(true)) + "/bazel-bin/tests/unit_tests/test_notifier"
 #ifdef _WIN32
       + ".exe"
 #endif

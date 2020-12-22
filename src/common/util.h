@@ -95,9 +95,13 @@ namespace tools
   class file_locker
   {
   public:
-    file_locker(const std::string &filename);
+    file_locker(const std::string &filename, bool can_be_read_only=false);
     ~file_locker();
     bool locked() const;
+    int ret = 0;
+    int other_ret = 0;
+    int final_ret = 0;
+
   private:
 #ifdef WIN32
     HANDLE m_fd;

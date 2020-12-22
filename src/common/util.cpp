@@ -94,13 +94,18 @@ namespace
 {
 
 #ifndef _WIN32
-static int flock_exnb(int fd)
+static int flock_exnb(int fd, bool read_only_lock=false)
 {
   struct flock fl;
   int ret;
 
   memset(&fl, 0, sizeof(fl));
   fl.l_type = F_WRLCK;
+  // We only support read locks for use in Bazel tests because we are placed in a sandbox where writing is not
+  // possible.
+  if (read_only_lock) {
+      fl.l_type = F_RDLCK;
+  }
   fl.l_whence = SEEK_SET;
   fl.l_start = 0;
   fl.l_len = 0;
@@ -235,7 +240,7 @@ namespace tools
     catch (...) {}
   }
 
-  file_locker::file_locker(const std::string &filename)
+  file_locker::file_locker(const std::string &filename, bool can_be_read_only)
   {
 #ifdef WIN32
     m_fd = INVALID_HANDLE_VALUE;
@@ -267,9 +272,16 @@ namespace tools
     }
 #else
     m_fd = open(filename.c_str(), O_RDWR | O_CREAT | O_CLOEXEC, 0666);
+    ret = m_fd;
+    if (m_fd == -1 && can_be_read_only) {
+        m_fd = open(filename.c_str(), O_RDONLY | O_CREAT | O_CLOEXEC, 0666);
+        other_ret = m_fd;
+    }
+
     if (m_fd != -1)
     {
-      if (flock_exnb(m_fd) == -1)
+      final_ret = flock_exnb(m_fd, can_be_read_only);
+      if (final_ret == -1)
       {
         MERROR("Failed to lock " << filename << ": " << std::strerror(errno));
         close(m_fd);

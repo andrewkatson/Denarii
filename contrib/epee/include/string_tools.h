@@ -225,6 +225,15 @@ POP_WARNINGS
 
 	}
 
+	// This relies on the user setting DENARII_WORKSPACE_PATH as an environment variable.
+	inline char* get_workspace_path(bool test) {
+      // For some reason they wipe our environment varibales during tests.
+      if (test) {
+          return "/home/andrew/denarii";
+      }
+      return getenv("DENARII_WORKSPACE_PATH");
+    }
+
 	//----------------------------------------------------------------------------
 	inline bool trim_left(std::string& str)
 	{

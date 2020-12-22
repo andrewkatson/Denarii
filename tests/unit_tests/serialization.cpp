@@ -645,11 +645,15 @@ TEST(Serialization, portability_wallet)
   bool r = false;
   try
   {
-    w.load(wallet_file.string(), password);
+    // Bazel testing is weird and throws fake read only file system errors. I think this is an intentional restriction.
+    // Therefore we open the wallet key file in read only mode.
+    w.load(wallet_file.string(), password, "", "", true);
     r = true;
   }
   catch (const exception& e)
-  {}
+  {
+      std::cout << e.what() << std::endl;
+  }
   ASSERT_TRUE(r);
   /*
   fields of tools::wallet2 to be checked: 

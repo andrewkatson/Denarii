@@ -5577,10 +5577,11 @@ void wallet2::generate_chacha_key_from_password(const epee::wipeable_string &pas
   crypto::generate_chacha_key(pass.data(), pass.size(), key, m_kdf_rounds);
 }
 //----------------------------------------------------------------------------------------------------
-void wallet2::load(const std::string& wallet_, const epee::wipeable_string& password, const std::string& keys_buf, const std::string& cache_buf)
+void wallet2::load(const std::string& wallet_, const epee::wipeable_string& password, const std::string& keys_buf, const std::string& cache_buf, bool can_be_read_only)
 {
   clear();
   prepare_file_names(wallet_);
+  m_can_be_read_only = can_be_read_only;
 
   // determine if loading from file system or string buffer
   bool use_fs = !wallet_.empty();
@@ -7880,14 +7881,17 @@ bool wallet2::is_output_blackballed(const std::pair<uint64_t, uint64_t> &output)
 
 bool wallet2::lock_keys_file()
 {
-  if (m_wallet_file.empty())
+  if (m_wallet_file.empty()) {
     return true;
+  }
+
   if (m_keys_file_locker)
   {
     MDEBUG(m_keys_file << " is already locked.");
     return false;
   }
-  m_keys_file_locker.reset(new tools::file_locker(m_keys_file));
+
+  m_keys_file_locker.reset(new tools::file_locker(m_keys_file, m_can_be_read_only));
   return true;
 }
 
@@ -7906,8 +7910,9 @@ bool wallet2::unlock_keys_file()
 
 bool wallet2::is_keys_file_locked() const
 {
-  if (m_wallet_file.empty())
+  if (m_wallet_file.empty()) {
     return false;
+  }
   return m_keys_file_locker->locked();
 }
 

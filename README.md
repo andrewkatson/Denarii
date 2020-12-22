@@ -51,6 +51,7 @@ See [LICENSE](LICENSE).
 ### Note
 * Everything has to be built with sudo because the files are moved using sudo and that gives them certain permissions.
 * The real dependencies no longer need to be fiddled with just run the configuration script and it will do the rest.
+* Need to set an enviornment variable ```DENARI_WORKSPACE_PATH=``` and then put whatever the path is to folder containing the ```WORKSPACE``` file. 
 
 ### Real Dependencies 
 

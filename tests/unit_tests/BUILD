@@ -53,7 +53,7 @@ cc_test(
     ],
 )
 
-cc_test(
+cc_binary(
     name = "test_notifier",
     srcs = ["test_notifier.cpp"],
     deps = [],

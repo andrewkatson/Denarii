@@ -870,3 +870,8 @@ cc_binary(
         "@libunwind",
     ],
 )
+
+cc_binary(
+    name = "what_is_argv",
+    srcs = ["what_is_argv.cpp"],
+)

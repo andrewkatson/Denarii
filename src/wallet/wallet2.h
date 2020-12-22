@@ -813,7 +813,7 @@ private:
      */
     void rewrite(const std::string& wallet_name, const epee::wipeable_string& password);
     void write_watch_only_wallet(const std::string& wallet_name, const epee::wipeable_string& password, std::string &new_keys_filename);
-    void load(const std::string& wallet, const epee::wipeable_string& password, const std::string& keys_buf = "", const std::string& cache_buf = "");
+    void load(const std::string& wallet, const epee::wipeable_string& password, const std::string& keys_buf = "", const std::string& cache_buf = "", bool can_be_read_only=false);
     void store();
     /*!
      * \brief store_to  Stores wallet to another file(s), deleting old ones
@@ -1797,6 +1797,9 @@ private:
 
     bool m_unattended;
     bool m_devices_registered;
+    // Since we are just locking the key file its fine if it is READ ONLY. This gets around tests with bazel
+    // where READ WRITE is randomly broken... However, we keep the default behavior of Monero.
+    bool m_can_be_read_only = false;
 
     std::shared_ptr<tools::Notify> m_tx_notify;
     std::unique_ptr<wallet_device_callback> m_device_callback;
