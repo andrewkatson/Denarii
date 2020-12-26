@@ -36,7 +36,7 @@ library_info = [LibraryInfo("libnorm-dev", "libnorm"), LibraryInfo("libunbound-d
                 LibraryInfo("libudev-dev", "libudev")]
 
 # NEED TO FILL THIS IN WITH YOUR PATH TO DENARII FOR THIS TO WORK SORRY
-workspace_path = "/home/andrew/denarii"
+workspace_path = os.environ['HOME'] + "/denarii"
 
 
 def download_url(url, save_path, chunk_size=128):
