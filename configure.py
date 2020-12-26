@@ -36,14 +36,17 @@ library_info = [LibraryInfo("libnorm-dev", "libnorm"), LibraryInfo("libunbound-d
                 LibraryInfo("libudev-dev", "libudev")]
 
 # NEED TO FILL THIS IN WITH YOUR PATH TO DENARII FOR THIS TO WORK SORRY
-workspace_path = "home/andrew/denarii"
+workspace_path = "/home/andrew/denarii"
 
-# A workspace path that works regardless on EC2s
-possible_workspace_path = "home/" + os.environ["SUDO_USER"] + "/denarii"
-
-if os.path.exists(possible_workspace_path): 
-    workspace_path = possible_workspace_path
-
+# A workspace path that works regardless on EC2
+try:
+    possible_workspace_path = "home/" + os.environ["SUDO_USER"] + "/denarii"
+    
+    if os.path.exists(possible_workspace_path):
+        workspace_path = possible_workspace_path
+except Exception as e: 
+    print(e)
+    print("Not on an EC2")
 
 def download_url(url, save_path, chunk_size=128):
     r = requests.get(url, stream=True)
