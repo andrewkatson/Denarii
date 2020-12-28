@@ -656,14 +656,14 @@ def translations_generate():
 
 
 def generate_files():
-    #blocks_generate()
-    #crypto_wallet_generate()
-    #version_generate()
-    #benchmark_generate()
-    #translations_generate()
+    blocks_generate()
+    crypto_wallet_generate()
+    version_generate()
+    benchmark_generate()
+    translations_generate()
     trezor_common()
 
 
-#import_dependencies()
-#build_dependencies()
+import_dependencies()
+build_dependencies()
 generate_files()
