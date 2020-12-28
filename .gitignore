@@ -143,3 +143,9 @@ external/supercop.zip
 
 # No clue
 core
+
+# Bazel 
+bazel-bin/
+bazel-denarii/
+bazel-out/
+bazel-testlogs/

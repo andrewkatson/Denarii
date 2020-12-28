@@ -326,6 +326,58 @@ def build_dependencies():
     os.chdir(external_dir_path)
 
 
+def trezor_common():
+    text =  'load(\"@rules_proto//proto:defs.bzl\", \"proto_library\")  \n\
+load(\"@rules_cc//cc:defs.bzl\", \"cc_proto_library\")     \n\
+package(default_visibility = [\"//visibility:public\"])  \n\
+cc_proto_library(                                      \n\
+ name = \"messages_cc_proto\",                        \n\
+ deps = [\":messages_proto\"],                        \n\
+)                                                      \n\
+proto_library(                                         \n\
+ name = \"messages_proto\",                           \n\
+ srcs = [\"messages.proto\"],                         \n\
+ deps = [                                           \n\
+     \"@com_google_protobuf//:descriptor_proto\",     \n\
+ ],                                                 \n\
+)                                                      \n\
+cc_proto_library(                                      \n\
+ name = \"messages_common_cc_proto\",                 \n\
+ deps = [\":messages_common_proto\"],                 \n\
+)                                                      \n\
+proto_library(                                         \n\
+ name = \"messages_common_proto\",                    \n\
+ srcs = [\"messages-common.proto\"],                  \n\
+ deps = [                                           \n\
+ ],                                                 \n\
+)                                                      \n\
+cc_proto_library(                                      \n\
+ name = \"messages_management_cc_proto\",             \n\
+ deps = [\":messages_management_proto\"],             \n\
+)                                                      \n\
+proto_library(                                         \n\
+ name = \"messages_management_proto\",                \n\
+ srcs = [\"messages-management.proto\"],              \n\
+ deps = [                                           \n\
+ ],                                                 \n\
+)                                                      \n\
+cc_proto_library(                                      \n\
+ name = \"messages_monero_cc_proto\",                 \n\
+ deps = [\":messages_monero_proto\"],                 \n\
+)                                                      \n\
+proto_library(                                         \n\
+ name = \"messages_monero_proto\",                    \n\
+ srcs = [\"messages-monero.proto\"],                  \n\
+ deps = [                                           \n\
+ ],                                                 \n\
+)'
+
+    path_to_dir = workspace_path + "/external/trezor-common/protob"
+    os.chdir(path_to_dir)
+
+    print(text)
+    os.system(f"echo \'{text}\' > BUILD")
+
 def blocks_generate():
     input_files = ["checkpoints.dat", "stagenet_blocks.dat", "testnet_blocks.dat"]
     output_files = ["generated_checkpoints.c", "generated_stagenet_blocks.c", "generated_testnet_blocks.c"]
@@ -519,7 +571,6 @@ def generate_benchmark_file_with_replacement(replacement):
             write_line_command = "cd " + tests_directory + " && echo '" + line_to_write + "' >> " + output_file
             os.system(write_line_command)
 
-
 def benchmark_generate():
     replacement = ""
 
@@ -588,6 +639,7 @@ def generate_files():
     version_generate()
     benchmark_generate()
     translations_generate()
+    trezor_common()
 
 
 import_dependencies()
