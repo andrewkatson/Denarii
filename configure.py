@@ -298,6 +298,12 @@ def zlib(external_dir_path):
     command = "./configure && make test && sudo make install"
     os.system(command)
 
+def liblmdb(external_dir_path):
+    liblmdb_path = external_dir_path + "/db_drivers/liblmdb"
+
+    os.chdir(liblmdb_path)
+    command = "make"
+    os.system(command)
 
 def build_dependencies():
     external_dir_path = workspace_path + "/external"
@@ -325,6 +331,8 @@ def build_dependencies():
 
     os.chdir(external_dir_path)
 
+    liblmdb(external_dir_path)
+    os.chdir(external_dir_path)
 
 def trezor_common():
     text = 'load(\"@rules_proto//proto:defs.bzl\", \"proto_library\")  \n\
