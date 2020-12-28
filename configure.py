@@ -39,11 +39,11 @@ library_info = [LibraryInfo("libnorm-dev", "libnorm"), LibraryInfo("libunbound-d
 workspace_path = "/home/andrew/denarii"
 
 # A workspace path that works if not suco on EC2
-try: 
+try:
     possible_workspace_path = os.environ["HOME"] + "/denarii"
     if os.path.exists(possible_workspace_path):
         workspace_path = possible_workspace_path
-except Exception as e: 
+except Exception as e:
     print(e)
     print("The HOME variable does not point to the directory")
 
@@ -56,6 +56,7 @@ try:
 except Exception as e:
     print(e)
     print("Not on an EC2 using sudo")
+
 
 def download_url(url, save_path, chunk_size=128):
     r = requests.get(url, stream=True)
@@ -179,7 +180,6 @@ def import_dependencies():
 
 
 def miniupnp(external_dir_path):
-
     # remove the empty directory
     remove_command = "rm -rf " + external_dir_path + "/miniupnp"
     os.system(remove_command)
@@ -255,7 +255,6 @@ def unbound(external_dir_path):
 
 
 def openssl(external_dir_path):
-
     os.chdir(external_dir_path)
 
     openssl_zip_path = external_dir_path + "/openssl.zip"
@@ -274,6 +273,7 @@ def openssl(external_dir_path):
 
     command = "./config && make && make test"
     os.system(command)
+
 
 def libzmq(external_dir_path):
     clone_command = "git clone https://github.com/zeromq/libzmq.git"
@@ -327,7 +327,7 @@ def build_dependencies():
 
 
 def trezor_common():
-    text =  'load(\"@rules_proto//proto:defs.bzl\", \"proto_library\")  \n\
+    text = 'load(\"@rules_proto//proto:defs.bzl\", \"proto_library\")  \n\
 load(\"@rules_cc//cc:defs.bzl\", \"cc_proto_library\")     \n\
 package(default_visibility = [\"//visibility:public\"])  \n\
 cc_proto_library(                                      \n\
@@ -375,8 +375,29 @@ proto_library(                                         \n\
     path_to_dir = workspace_path + "/external/trezor-common/protob"
     os.chdir(path_to_dir)
 
-    print(text)
     os.system(f"echo \'{text}\' > BUILD")
+    
+    path_to_workspace_dir = workspace_path + "/external/trezor-common"
+    os.chdir(path_to_workspace_dir)
+    
+    workspace_text = f'workspace(name = \"trezor_common\") \n\
+load(\"@bazel_tools//tools/build_defs/repo:http.bzl\", \"http_archive\")   \n\
+# rules_proto defines abstract rules for building Protocol Buffers. \n\
+http_archive( \n\
+    name = \"rules_proto\", \n\
+    sha256 = \"602e7161d9195e50246177e7c55b2f39950a9cf7366f74ed5f22fd45750cd208\", \n\
+    strip_prefix = \"rules_proto-97d8af4dc474595af3900dd85cb3a29ad28cc313\", \n\
+    urls = [ \n\
+        \"https://mirror.bazel.build/github.com/bazelbuild/rules_proto/archive/97d8af4dc474595af3900dd85cb3a29ad28cc313.tar.gz\", \n\
+        \"https://github.com/bazelbuild/rules_proto/archive/97d8af4dc474595af3900dd85cb3a29ad28cc313.tar.gz\", \n\
+    ], \n\
+) \n\
+load(\"@rules_proto//proto:repositories.bzl\", \"rules_proto_dependencies\", \"rules_proto_toolchains\") \n\
+rules_proto_dependencies() \n\
+rules_proto_toolchains()'
+    
+    os.system(f"echo \'{workspace_text}\' > WORKSPACE")
+
 
 def blocks_generate():
     input_files = ["checkpoints.dat", "stagenet_blocks.dat", "testnet_blocks.dat"]
@@ -571,6 +592,7 @@ def generate_benchmark_file_with_replacement(replacement):
             write_line_command = "cd " + tests_directory + " && echo '" + line_to_write + "' >> " + output_file
             os.system(write_line_command)
 
+
 def benchmark_generate():
     replacement = ""
 
@@ -634,15 +656,14 @@ def translations_generate():
 
 
 def generate_files():
-    blocks_generate()
-    crypto_wallet_generate()
-    version_generate()
-    benchmark_generate()
-    translations_generate()
+    #blocks_generate()
+    #crypto_wallet_generate()
+    #version_generate()
+    #benchmark_generate()
+    #translations_generate()
     trezor_common()
 
 
-import_dependencies()
-build_dependencies()
+#import_dependencies()
+#build_dependencies()
 generate_files()
-
