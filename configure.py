@@ -38,15 +38,24 @@ library_info = [LibraryInfo("libnorm-dev", "libnorm"), LibraryInfo("libunbound-d
 # NEED TO FILL THIS IN WITH YOUR PATH TO DENARII FOR THIS TO WORK SORRY
 workspace_path = "/home/andrew/denarii"
 
-# A workspace path that works regardless on EC2
-try:
-    possible_workspace_path = "home/" + os.environ["SUDO_USER"] + "/denarii"
-    
+# A workspace path that works if not suco on EC2
+try: 
+    possible_workspace_path = os.environ["HOME"] + "/denarii"
     if os.path.exists(possible_workspace_path):
         workspace_path = possible_workspace_path
 except Exception as e: 
     print(e)
-    print("Not on an EC2")
+    print("The HOME variable does not point to the directory")
+
+# A workspace path that works in sudo on EC2
+try:
+    possible_workspace_path = "home/" + os.environ["SUDO_USER"] + "/denarii"
+
+    if os.path.exists(possible_workspace_path):
+        workspace_path = possible_workspace_path
+except Exception as e:
+    print(e)
+    print("Not on an EC2 using sudo")
 
 def download_url(url, save_path, chunk_size=128):
     r = requests.get(url, stream=True)
