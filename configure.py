@@ -202,7 +202,7 @@ def randomx(external_dir_path):
 
     os.chdir(randomx_path)
 
-    command = "mkdir build && cd build && cmake -DARCH=native && make"
+    command = "mkdir build && cd build && cmake -DARCH=native .. && make"
     os.system(command)
 
 
