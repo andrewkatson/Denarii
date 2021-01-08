@@ -43,16 +43,18 @@ try:
     possible_workspace_path = os.environ["HOME"] + "/denarii"
     if os.path.exists(possible_workspace_path):
         workspace_path = possible_workspace_path
+        print("USING " + possible_workspace_path)
 except Exception as e:
     print(e)
     print("The HOME variable does not point to the directory")
 
 # A workspace path that works in sudo on EC2
 try:
-    possible_workspace_path = "home/" + os.environ["SUDO_USER"] + "/denarii"
+    possible_workspace_path = "/home/" + os.environ["SUDO_USER"] + "/denarii"
 
     if os.path.exists(possible_workspace_path):
         workspace_path = possible_workspace_path
+        print("USING " + possible_workspace_path)
 except Exception as e:
     print(e)
     print("Not on an EC2 using sudo")
@@ -139,6 +141,7 @@ def find_src_files(libraries):
                     finally:
                         print(" ALREADY EXISTS " + new_path)
                     shutil.copyfile(path, new_path)
+
                 else:
                     print(path + " does not exist")
 
