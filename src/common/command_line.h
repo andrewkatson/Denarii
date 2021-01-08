@@ -263,7 +263,8 @@ namespace command_line
   template<typename T, bool required, bool dependent, int NUM_DEPS>
   bool is_arg_defaulted(const boost::program_options::variables_map& vm, const arg_descriptor<T, required, dependent, NUM_DEPS>& arg)
   {
-    return vm[arg.name].defaulted();
+    auto& thing = vm[arg.name];
+    return thing.defaulted();
   }
 
   template<typename T>

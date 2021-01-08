@@ -342,32 +342,102 @@ std::string get_weight_string(const cryptonote::transaction &tx, size_t blob_siz
   return get_weight_string(get_transaction_weight(tx, blob_size));
 }
 
-std::unique_ptr<tools::wallet2> make_basic(const boost::program_options::variables_map& vm, bool unattended, const options& opts, const std::function<boost::optional<tools::password_container>(const char *, bool)> &password_prompter)
+std::unique_ptr<tools::wallet2> make_basic(const boost::program_options::variables_map& vm, bool unattended, const options& opts, const std::function<boost::optional<tools::password_container>(const char *, bool)> &password_prompter, bool genesis_wallet)
 {
+
   namespace ip = boost::asio::ip;
 
-  const bool testnet = command_line::get_arg(vm, opts.testnet);
-  const bool stagenet = command_line::get_arg(vm, opts.stagenet);
-  const network_type nettype = testnet ? TESTNET : stagenet ? STAGENET : MAINNET;
-  const uint64_t kdf_rounds = command_line::get_arg(vm, opts.kdf_rounds);
-  THROW_WALLET_EXCEPTION_IF(kdf_rounds == 0, tools::error::wallet_internal_error, "KDF rounds must not be 0");
+  bool testnet;
+  bool stagenet;
+  network_type nettype;
+  uint64_t kdf_rounds;
 
-  const bool use_proxy = command_line::has_arg(vm, opts.proxy);
-  auto daemon_address = command_line::get_arg(vm, opts.daemon_address);
-  auto daemon_host = command_line::get_arg(vm, opts.daemon_host);
-  auto daemon_port = command_line::get_arg(vm, opts.daemon_port);
-  auto device_name = command_line::get_arg(vm, opts.hw_device);
-  auto device_derivation_path = command_line::get_arg(vm, opts.hw_device_derivation_path);
-  auto daemon_ssl_private_key = command_line::get_arg(vm, opts.daemon_ssl_private_key);
-  auto daemon_ssl_certificate = command_line::get_arg(vm, opts.daemon_ssl_certificate);
-  auto daemon_ssl_ca_file = command_line::get_arg(vm, opts.daemon_ssl_ca_certificates);
-  auto daemon_ssl_allowed_fingerprints = command_line::get_arg(vm, opts.daemon_ssl_allowed_fingerprints);
-  auto daemon_ssl_allow_any_cert = command_line::get_arg(vm, opts.daemon_ssl_allow_any_cert);
-  auto daemon_ssl = command_line::get_arg(vm, opts.daemon_ssl);
+  bool use_proxy;
+  std::string daemon_address;
+  std::string daemon_host;
+  int daemon_port;
+  std::string device_name;
+  std::string device_derivation_path;
+  std::string daemon_ssl_private_key;
+  std::string daemon_ssl_certificate;
+  std::string daemon_ssl_ca_file;
+  std::vector<std::string> daemon_ssl_allowed_fingerprints;
+  bool daemon_ssl_allow_any_cert;
+  std::string daemon_ssl;
+  bool daemon_ssl_allow_chained;
+  boost::filesystem::path ringdb_path;
+  bool no_dns;
+  bool offline;
+  std::string extra_entropy;
+  bool trusted_daemon_cl;
+  bool untrusted_daemon;
+  std::string bitmessage_address;
+  std::string bitmessage_login;
+  std::string tx_notify;
+
+  if (genesis_wallet) {
+    // Genesis wallets are made by the daemon so we need to explicitly set all the default values.
+    testnet = false;
+    stagenet = false;
+    nettype = testnet ? TESTNET : stagenet ? STAGENET : MAINNET;
+    kdf_rounds = 1;
+
+    use_proxy = false;
+    daemon_address = "";
+    daemon_host = "localhost";
+    daemon_port = 8080;
+    device_name = "";
+    device_derivation_path = "";
+    daemon_ssl_private_key = "";
+    daemon_ssl_certificate = "";
+    daemon_ssl_ca_file = "";
+    daemon_ssl_allowed_fingerprints = {};
+    daemon_ssl_allow_any_cert = false;
+    daemon_ssl = "autodetect";
+    daemon_ssl_allow_chained = false;
+    ringdb_path = get_default_ringdb_path();
+    no_dns = false;
+    offline = false;
+    extra_entropy = "";
+    trusted_daemon_cl = true;
+    untrusted_daemon = false;
+    bitmessage_address = "http://localhost:8442/";
+    bitmessage_login = "username:password";
+    tx_notify = "";
+
+  } else {
+    testnet = command_line::get_arg(vm, opts.testnet);
+    stagenet = command_line::get_arg(vm, opts.stagenet);
+    nettype = testnet ? TESTNET : stagenet ? STAGENET : MAINNET;
+    kdf_rounds = command_line::get_arg(vm, opts.kdf_rounds);
+
+    use_proxy = command_line::has_arg(vm, opts.proxy);
+    daemon_address = command_line::get_arg(vm, opts.daemon_address);
+    daemon_host = command_line::get_arg(vm, opts.daemon_host);
+    daemon_port = command_line::get_arg(vm, opts.daemon_port);
+    device_name = command_line::get_arg(vm, opts.hw_device);
+    device_derivation_path = command_line::get_arg(vm, opts.hw_device_derivation_path);
+    daemon_ssl_private_key = command_line::get_arg(vm, opts.daemon_ssl_private_key);
+    daemon_ssl_certificate = command_line::get_arg(vm, opts.daemon_ssl_certificate);
+    daemon_ssl_ca_file = command_line::get_arg(vm, opts.daemon_ssl_ca_certificates);
+    daemon_ssl_allowed_fingerprints = command_line::get_arg(vm, opts.daemon_ssl_allowed_fingerprints);
+    daemon_ssl_allow_any_cert = command_line::get_arg(vm, opts.daemon_ssl_allow_any_cert);
+    daemon_ssl = command_line::get_arg(vm, opts.daemon_ssl);
+    daemon_ssl_allow_chained = command_line::get_arg(vm, opts.daemon_ssl_allow_chained);
+    ringdb_path = command_line::get_arg(vm, opts.shared_ringdb_dir);
+    no_dns = command_line::get_arg(vm, opts.no_dns);
+    offline = command_line::get_arg(vm, opts.offline);
+    extra_entropy  = command_line::get_arg(vm, opts.extra_entropy);
+    trusted_daemon_cl = command_line::get_arg(vm, opts.trusted_daemon);
+    untrusted_daemon = command_line::get_arg(vm, opts.untrusted_daemon);
+    tx_notify = command_line::get_arg(vm, opts.tx_notify);
+  }
+
+  THROW_WALLET_EXCEPTION_IF(kdf_rounds == 0, tools::error::wallet_internal_error, "KDF rounds must not be 0");
 
   // user specified CA file or fingeprints implies enabled SSL by default
   epee::net_utils::ssl_options_t ssl_options = epee::net_utils::ssl_support_t::e_ssl_support_enabled;
-  if (command_line::get_arg(vm, opts.daemon_ssl_allow_any_cert))
+  if (daemon_ssl_allow_any_cert)
     ssl_options.verification = epee::net_utils::ssl_verification_t::none;
   else if (!daemon_ssl_ca_file.empty() || !daemon_ssl_allowed_fingerprints.empty())
   {
@@ -383,7 +453,7 @@ std::unique_ptr<tools::wallet2> make_basic(const boost::program_options::variabl
       std::move(ssl_allowed_fingerprints), std::move(daemon_ssl_ca_file)
     };
 
-    if (command_line::get_arg(vm, opts.daemon_ssl_allow_chained))
+    if (daemon_ssl_allow_chained)
       ssl_options.verification = epee::net_utils::ssl_verification_t::user_ca;
   }
 
@@ -404,7 +474,7 @@ std::unique_ptr<tools::wallet2> make_basic(const boost::program_options::variabl
   if (command_line::has_arg(vm, opts.daemon_login))
   {
     auto parsed = tools::login::parse(
-      command_line::get_arg(vm, opts.daemon_login), false, [password_prompter](bool verify) {
+        command_line::get_arg(vm, opts.daemon_login), false, [password_prompter](bool verify) {
         if (!password_prompter)
         {
           MERROR("Password needed without prompt function");
@@ -469,8 +539,8 @@ std::unique_ptr<tools::wallet2> make_basic(const boost::program_options::variabl
 
   boost::optional<bool> trusted_daemon;
   if (!command_line::is_arg_defaulted(vm, opts.trusted_daemon) || !command_line::is_arg_defaulted(vm, opts.untrusted_daemon))
-    trusted_daemon = command_line::get_arg(vm, opts.trusted_daemon) && !command_line::get_arg(vm, opts.untrusted_daemon);
-  THROW_WALLET_EXCEPTION_IF(!command_line::is_arg_defaulted(vm, opts.trusted_daemon) && !command_line::is_arg_defaulted(vm, opts.untrusted_daemon),
+    trusted_daemon = trusted_daemon_cl && !untrusted_daemon;
+  THROW_WALLET_EXCEPTION_IF(!command_line::is_arg_defaulted(vm, opts.trusted_daemon) && !command_line::is_arg_defaulted(vm, opts.untrusted_daemon) && !genesis_wallet,
     tools::error::wallet_internal_error, tools::wallet2::tr("--trusted-daemon and --untrusted-daemon are both seen, assuming untrusted"));
 
   // set --trusted-daemon if local and not overridden
@@ -493,19 +563,22 @@ std::unique_ptr<tools::wallet2> make_basic(const boost::program_options::variabl
   {
     THROW_WALLET_EXCEPTION(tools::error::wallet_internal_error, tools::wallet2::tr("failed to initialize the wallet"));
   }
-  boost::filesystem::path ringdb_path = command_line::get_arg(vm, opts.shared_ringdb_dir);
+
   wallet->set_ring_database(ringdb_path.string());
-  wallet->get_message_store().set_options(vm);
+  if (genesis_wallet) {
+    wallet->get_message_store().set_options(bitmessage_address, bitmessage_login);
+  } else {
+    wallet->get_message_store().set_options(vm);
+  }
   wallet->device_name(device_name);
   wallet->device_derivation_path(device_derivation_path);
 
-  if (command_line::get_arg(vm, opts.no_dns))
+  if (no_dns)
     wallet->enable_dns(false);
 
-  if (command_line::get_arg(vm, opts.offline))
+  if (offline)
     wallet->set_offline();
 
-  const std::string extra_entropy = command_line::get_arg(vm, opts.extra_entropy);
   if (!extra_entropy.empty())
   {
     std::string data;
@@ -516,8 +589,8 @@ std::unique_ptr<tools::wallet2> make_basic(const boost::program_options::variabl
 
   try
   {
-    if (!command_line::is_arg_defaulted(vm, opts.tx_notify))
-      wallet->set_tx_notify(std::shared_ptr<tools::Notify>(new tools::Notify(command_line::get_arg(vm, opts.tx_notify).c_str())));
+    if (!command_line::is_arg_defaulted(vm, opts.tx_notify) && tx_notify != "")
+      wallet->set_tx_notify(std::shared_ptr<tools::Notify>(new tools::Notify(tx_notify.c_str())));
   }
   catch (const std::exception &e)
   {
@@ -699,7 +772,7 @@ std::pair<std::unique_ptr<tools::wallet2>, tools::password_container> generate_f
     THROW_WALLET_EXCEPTION_IF(deprecated_wallet, tools::error::wallet_internal_error,
       tools::wallet2::tr("Cannot generate deprecated wallets from JSON"));
 
-    wallet.reset(make_basic(vm, unattended, opts, password_prompter).release());
+    wallet.reset(make_basic(vm, unattended, opts, password_prompter, false).release());
     wallet->set_refresh_from_block_height(field_scan_from_height);
     wallet->explicit_refresh_from_block_height(field_scan_from_height_found);
     if (!old_language.empty())
@@ -1284,7 +1357,7 @@ std::pair<std::unique_ptr<wallet2>, password_container> wallet2::make_from_file(
   {
     return {nullptr, password_container{}};
   }
-  auto wallet = make_basic(vm, unattended, opts, password_prompter);
+  auto wallet = make_basic(vm, unattended, opts, password_prompter, false);
   if (wallet && !wallet_file.empty())
   {
     wallet->load(wallet_file, pwd->password());
@@ -1292,7 +1365,7 @@ std::pair<std::unique_ptr<wallet2>, password_container> wallet2::make_from_file(
   return {std::move(wallet), std::move(*pwd)};
 }
 
-std::pair<std::unique_ptr<wallet2>, password_container> wallet2::make_new(const boost::program_options::variables_map& vm, bool unattended, const std::function<boost::optional<password_container>(const char *, bool)> &password_prompter)
+std::pair<std::unique_ptr<wallet2>, password_container> wallet2::make_new(const boost::program_options::variables_map& vm, bool unattended, const std::function<boost::optional<password_container>(const char *, bool)> &password_prompter, bool genesis_wallet)
 {
   const options opts{};
   auto pwd = get_password(vm, opts, password_prompter, true);
@@ -1300,13 +1373,13 @@ std::pair<std::unique_ptr<wallet2>, password_container> wallet2::make_new(const 
   {
     return {nullptr, password_container{}};
   }
-  return {make_basic(vm, unattended, opts, password_prompter), std::move(*pwd)};
+  return {make_basic(vm, unattended, opts, password_prompter, genesis_wallet), std::move(*pwd)};
 }
 
 std::unique_ptr<wallet2> wallet2::make_dummy(const boost::program_options::variables_map& vm, bool unattended, const std::function<boost::optional<tools::password_container>(const char *, bool)> &password_prompter)
 {
   const options opts{};
-  return make_basic(vm, unattended, opts, password_prompter);
+  return make_basic(vm, unattended, opts, password_prompter, false);
 }
 
 //----------------------------------------------------------------------------------------------------
