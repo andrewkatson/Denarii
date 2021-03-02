@@ -2,21 +2,22 @@
 # This assumes that denarii has been cloned into your $HOME repository.
 # To see what that is try 'printenv HOME'
 
+import argparse
 import glob
 import os
 import pathlib
 import platform
-import psutil
 import re
 import requests
 import shutil
 import subprocess
+import sys
 import zipfile
 
 
 class LibraryInfo:
 
-    def __init__(self, libname, foldername):
+    def __init__(self, libname, foldername=""):
         self.libname = libname
         self.foldername = foldername
         self.folderpath = ""
@@ -24,40 +25,63 @@ class LibraryInfo:
 
 
 # note doxygen and graphviz do not work properly
-library_info = [LibraryInfo("libnorm-dev", "libnorm"), LibraryInfo("libunbound-dev", "libunbound"),
-                LibraryInfo("libpgm-dev", "openpgm"),
-                LibraryInfo("libsodium-dev", "libsodium"), LibraryInfo("libunwind-dev", "libunwind"),
-                LibraryInfo("liblzma-dev", "liblzma"),
-                LibraryInfo("libreadline-dev", "libreadline"), LibraryInfo("libldns-dev", "ldns"),
-                LibraryInfo("libexpat1-dev", "expat"),
-                LibraryInfo("doxygen", "doxygen"), LibraryInfo("qttools5-dev-tools", "lrelease"),
-                LibraryInfo("graphviz", "graphviz"),
-                LibraryInfo("libhidapi-dev", "libhidapi"), LibraryInfo("libusb-1.0-0-dev", "libusb"),
-                LibraryInfo("libudev-dev", "libudev")]
+linux_library_info = [LibraryInfo("libnorm-dev", "libnorm"), LibraryInfo("libunbound-dev", "libunbound"),
+                      LibraryInfo("libpgm-dev", "openpgm"),
+                      LibraryInfo("libsodium-dev", "libsodium"), LibraryInfo("libunwind-dev", "libunwind"),
+                      LibraryInfo("liblzma-dev", "liblzma"),
+                      LibraryInfo("libreadline-dev", "libreadline"), LibraryInfo("libldns-dev", "ldns"),
+                      LibraryInfo("libexpat1-dev", "expat"),
+                      LibraryInfo("doxygen", "doxygen"), LibraryInfo("qttools5-dev-tools", "lrelease"),
+                      LibraryInfo("graphviz", "graphviz"),
+                      LibraryInfo("libhidapi-dev", "libhidapi"), LibraryInfo("libusb-1.0-0-dev", "libusb"),
+                      LibraryInfo("libudev-dev", "libudev")]
 
-# NEED TO FILL THIS IN WITH YOUR PATH TO DENARII FOR THIS TO WORK SORRY
-workspace_path = "/home/andrew/denarii"
+# windows only uses the bare number of libraries needed to get everything to build...
+win_library_info = [LibraryInfo("liblzma", "liblzma"), LibraryInfo("libsodium", "libsodium"),
+                    LibraryInfo("libreadline", "libreadline"), LibraryInfo("libhidapi", "libhidapi"),
+                    LibraryInfo("libusb", "libusb")]
 
-# A workspace path that works if not suco on EC2
-try:
-    possible_workspace_path = os.environ["HOME"] + "/denarii"
-    if os.path.exists(possible_workspace_path):
-        workspace_path = possible_workspace_path
-        print("USING " + possible_workspace_path)
-except Exception as e:
-    print(e)
-    print("The HOME variable does not point to the directory")
+parser = argparse.ArgumentParser(description="Process command line flags")
+parser.add_argument('--workspace_path', type=str, help='The path to the relevant WORKSPACE file', default='')
 
-# A workspace path that works in sudo on EC2
-try:
-    possible_workspace_path = "/home/" + os.environ["SUDO_USER"] + "/denarii"
+args = parser.parse_args()
 
-    if os.path.exists(possible_workspace_path):
-        workspace_path = possible_workspace_path
-        print("USING " + possible_workspace_path)
-except Exception as e:
-    print(e)
-    print("Not on an EC2 using sudo")
+workspace_path = pathlib.Path()
+
+
+def find_workspace_path():
+    global workspace_path
+
+    if args.workspace_path == '':
+        # Need to explicitly set this or pass it in as a variable.
+        linux_workspace_path = pathlib.Path("/home/andrew/denarii")
+        windows_workspace_path = pathlib.Path("C:/Users/katso/Documents/Github/denarii")
+
+        # A workspace path that works if not sudo on EC2
+        try:
+            possible_workspace_path = os.environ["HOME"] + "/denarii"
+            if os.path.exists(possible_workspace_path):
+                workspace_path = possible_workspace_path
+        except Exception as e:
+            print(e)
+            print("The HOME variable does not point to the directory")
+
+        # A workspace path that works in sudo on EC2
+        try:
+            possible_workspace_path = "home/" + os.environ["SUDO_USER"] + "/denarii"
+
+            if os.path.exists(possible_workspace_path):
+                workspace_path = possible_workspace_path
+        except Exception as e:
+            print(e)
+            print("Not on an EC2 using sudo")
+
+        if os.path.exists(linux_workspace_path):
+            workspace_path = linux_workspace_path
+        elif os.path.exists(windows_workspace_path):
+            workspace_path = windows_workspace_path
+    else:
+        workspace_path = args.workspace_path
 
 
 def download_url(url, save_path, chunk_size=128):
@@ -68,7 +92,7 @@ def download_url(url, save_path, chunk_size=128):
 
 
 def create_build_file(libraries):
-    external_dir_path = workspace_path + "/external"
+    external_dir_path = workspace_path / "external"
 
     for library in libraries:
 
@@ -80,8 +104,22 @@ def create_build_file(libraries):
             os.mknod(path)
 
 
+def create_build_file_win(libraries):
+    external_dir_path = workspace_path / "external"
+
+    for library in libraries:
+
+        build_file_name = "BUILD." + library.foldername
+
+        path = os.path.join(external_dir_path, build_file_name)
+
+        if not os.path.exists(path):
+            with open(path, 'w'):
+                pass
+
+
 def create_folder(libraries):
-    external_dir_path = workspace_path + "/external"
+    external_dir_path = workspace_path / "external"
 
     for library in libraries:
 
@@ -121,6 +159,30 @@ def get_relevant_paths(libraries):
             library.relevant_paths.append(fixed)
 
 
+def get_relevant_paths_win(libraries):
+    base_path = pathlib.Path(R"C:\msys64\mingw64")
+    includes_path = os.path.join(base_path, "include")
+    src_path = os.path.join(base_path, "lib")
+
+    for library in libraries:
+        name = library.libname
+        name = name.replace("lib", "")
+        for subdir, dirs, files in os.walk(includes_path):
+            for directory in dirs:
+                if name in directory:
+                    library.relevant_paths.append(os.path.join(includes_path, directory))
+                    break
+            for file in files:
+                if name in file and file.endswith(".h"):
+                    library.relevant_paths.append(os.path.join(includes_path, file))
+                    break
+        for subdir, dirs, files in os.walk(src_path):
+            for file in files:
+                if name in file and file.endswith(".a"):
+                    library.relevant_paths.append(os.path.join(src_path, file))
+                    break
+
+
 def find_src_files(libraries):
     for library in libraries:
 
@@ -136,6 +198,32 @@ def find_src_files(libraries):
                     try:
                         if not os.path.exists(new_path):
                             os.mknod(new_path)
+                    except:
+                        print("weird this shouldnt happen but is ok")
+                    finally:
+                        print(" ALREADY EXISTS " + new_path)
+                    shutil.copyfile(path, new_path)
+
+                else:
+                    print(path + " does not exist")
+
+
+def find_src_files_win(libraries):
+    for library in libraries:
+
+        for path in library.relevant_paths:
+
+            if ".a" in path or ".so" in path:
+
+                filename = path.split("\\")[-1]
+                new_path = os.path.join(library.folderpath, filename)
+
+                if os.path.exists(path):
+                    print("Moving: " + path + " to " + library.folderpath)
+                    try:
+                        if not os.path.exists(new_path):
+                            with open(new_path, 'w'):
+                                pass
                     except:
                         print("weird this shouldnt happen but is ok")
                     finally:
@@ -174,12 +262,59 @@ def find_includes(libraries):
                     print(e)
 
 
+def copy_file(path, library):
+    if "include" in path:
+        try:
+            filename = path.split("\\")[-1]
+            new_path = os.path.join(library.folderpath + "/include", filename)
+
+            new_path_wo_filename = os.path.join(library.folderpath + "/include")
+
+            # the path plus include directory might not exist
+            if not os.path.exists(new_path_wo_filename):
+                os.makedirs(new_path_wo_filename)
+
+            try:
+                if not os.path.exists(new_path):
+                    with open(new_path, 'w'):
+                        pass
+            except Exception as e:
+                print("ALREADY EXISTS " + new_path)
+
+            shutil.copyfile(path, new_path)
+        except Exception as e:
+            print("Could not copy file " + path)
+            print(e)
+
+
+def find_includes_win(libraries):
+    for library in libraries:
+
+        for path in library.relevant_paths:
+
+            if os.path.isdir(path):
+                for subdir, dirs, files in os.walk(path):
+                    for file in files:
+                        full_path = os.path.join(path, file)
+                        copy_file(full_path, library)
+            else:
+                copy_file(path, library)
+
+
 def import_dependencies():
-    create_folder(library_info)
-    create_build_file(library_info)
-    get_relevant_paths(library_info)
-    find_includes(library_info)
-    find_src_files(library_info)
+    create_folder(linux_library_info)
+    create_build_file(linux_library_info)
+    get_relevant_paths(linux_library_info)
+    find_includes(linux_library_info)
+    find_src_files(linux_library_info)
+
+
+def import_dependencies_win():
+    create_folder(win_library_info)
+    create_build_file_win(win_library_info)
+    get_relevant_paths_win(win_library_info)
+    find_includes_win(win_library_info)
+    find_src_files_win(win_library_info)
 
 
 def miniupnp(external_dir_path):
@@ -200,6 +335,10 @@ def miniupnp(external_dir_path):
     os.system(command)
 
 
+def miniupnp_win(external_dir_path):
+    pass
+
+
 def randomx(external_dir_path):
     randomx_path = external_dir_path + "/randomx"
 
@@ -207,6 +346,10 @@ def randomx(external_dir_path):
 
     command = "mkdir build && cd build && cmake -DARCH=native .. && make"
     os.system(command)
+
+
+def randomx_win(external_dir_path):
+    pass
 
 
 def supercop(external_dir_path):
@@ -245,8 +388,11 @@ def supercop(external_dir_path):
     os.system(second_move_command)
 
 
+def supercop_win(external_dir_path):
+    pass
+
 def unbound(external_dir_path):
-    unbound_path = external_dir_path + "/unbound"
+    unbound_path = external_dir_path / "unbound"
 
     os.chdir(unbound_path)
 
@@ -257,18 +403,21 @@ def unbound(external_dir_path):
     os.system(move_command)
 
 
+def unbound_wind(external_dir_path):
+    pass
+
 def openssl(external_dir_path):
     os.chdir(external_dir_path)
 
-    openssl_zip_path = external_dir_path + "/openssl.zip"
+    openssl_zip_path = external_dir_path / "openssl.zip"
     download_url("https://www.openssl.org/source/openssl-1.1.1i.tar.gz", openssl_zip_path)
 
     unzip_command = "tar -xvzf " + openssl_zip_path + " -C " + external_dir_path
     os.system(unzip_command)
 
-    openssl_path = external_dir_path + "/openssl"
+    openssl_path = external_dir_path / "openssl"
 
-    openssl_wrong_name_path = external_dir_path + "/openssl-1.1.1i"
+    openssl_wrong_name_path = external_dir_path / "openssl-1.1.1i"
     rename_command = "mv " + openssl_wrong_name_path + " " + openssl_path
     os.system(rename_command)
 
@@ -278,11 +427,14 @@ def openssl(external_dir_path):
     os.system(command)
 
 
+def openssl_win(external_dir_path):
+    pass
+
 def libzmq(external_dir_path):
     clone_command = "git clone https://github.com/zeromq/libzmq.git"
     os.system(clone_command)
 
-    libzmq_path = external_dir_path + "/libzmq"
+    libzmq_path = external_dir_path / "libzmq"
 
     os.chdir(libzmq_path)
 
@@ -293,23 +445,37 @@ def libzmq(external_dir_path):
     os.system(move_command)
 
 
+def libzmq_win(external_dir_path):
+    pass
+
 def zlib(external_dir_path):
-    zlib_path = external_dir_path + "/zlib"
+    zlib_path = external_dir_path / "zlib"
 
     os.chdir(zlib_path)
 
     command = "./configure && make test && sudo make install"
     os.system(command)
 
+
+def zlib_win(external_dir_path):
+    pass
+
 def liblmdb(external_dir_path):
-    liblmdb_path = external_dir_path + "/db_drivers/liblmdb"
+    liblmdb_path = external_dir_path / "db_drivers/liblmdb"
 
     os.chdir(liblmdb_path)
     command = "make"
     os.system(command)
 
+def liblmdb_win(external_dir_path):
+    pass
+
+def libunwind(external_dir_path):
+    pass
+
+
 def build_dependencies():
-    external_dir_path = workspace_path + "/external"
+    external_dir_path = workspace_path / "external"
     os.chdir(external_dir_path)
 
     miniupnp(external_dir_path)
@@ -336,6 +502,42 @@ def build_dependencies():
 
     liblmdb(external_dir_path)
     os.chdir(external_dir_path)
+
+
+def build_dependencies_win():
+    external_dir_path = workspace_path / "external"
+
+    os.chdir(external_dir_path)
+
+    miniupnp(external_dir_path)
+
+    os.chdir(external_dir_path)
+    randomx(external_dir_path)
+
+    os.chdir(external_dir_path)
+    supercop(external_dir_path)
+
+    os.chdir(external_dir_path)
+    unbound(external_dir_path)
+
+    os.chdir(external_dir_path)
+    openssl(external_dir_path)
+
+    os.chdir(external_dir_path)
+    libzmq(external_dir_path)
+
+    os.chdir(external_dir_path)
+    zlib(external_dir_path)
+
+    os.chdir(external_dir_path)
+
+    liblmdb(external_dir_path)
+    os.chdir(external_dir_path)
+
+    libunwind(external_dir_path)
+
+    os.chdir(external_dir_path)
+
 
 def trezor_common():
     text = 'load(\"@rules_proto//proto:defs.bzl\", \"proto_library\")  \n\
@@ -383,14 +585,14 @@ proto_library(                                         \n\
  ],                                                 \n\
 )'
 
-    path_to_dir = workspace_path + "/external/trezor-common/protob"
+    path_to_dir = workspace_path / "external/trezor-common/protob"
     os.chdir(path_to_dir)
 
     os.system(f"echo \'{text}\' > BUILD")
-    
-    path_to_workspace_dir = workspace_path + "/external/trezor-common"
+
+    path_to_workspace_dir = workspace_path / "external/trezor-common"
     os.chdir(path_to_workspace_dir)
-    
+
     workspace_text = f'workspace(name = \"trezor_common\") \n\
 load(\"@bazel_tools//tools/build_defs/repo:http.bzl\", \"http_archive\")   \n\
 # rules_proto defines abstract rules for building Protocol Buffers. \n\
@@ -406,7 +608,7 @@ http_archive( \n\
 load(\"@rules_proto//proto:repositories.bzl\", \"rules_proto_dependencies\", \"rules_proto_toolchains\") \n\
 rules_proto_dependencies() \n\
 rules_proto_toolchains()'
-    
+
     os.system(f"echo \'{workspace_text}\' > WORKSPACE")
 
 
@@ -420,7 +622,7 @@ def blocks_generate():
         output_file = output_files[i]
         base_name = base_names[i]
 
-        path_to_blocks = workspace_path + "/src/blocks"
+        path_to_blocks = workspace_path / "src/blocks"
         command = "cd " + path_to_blocks + " && echo '#include\t<stddef.h>' > " + output_file \
                   + " && echo 'const\tunsigned\tchar\t" + base_name + "[]={' >> " + output_file + " && od -v -An -tx1 " \
                   + input_file + " | sed -e 's/[0-9a-fA-F]\\{1,\\}/0x&,/g' -e '$s/.$//' >> " + output_file + " && echo '};' >> " + output_file \
@@ -430,12 +632,12 @@ def blocks_generate():
 
 
 def crypto_wallet_generate():
-    crypto_wallet_path = workspace_path + "/src/crypto/wallet"
+    crypto_wallet_path = workspace_path / "src/crypto/wallet"
     ops_file = "ops.h"
     build_file = "BUILD"
 
-    supercop_path = workspace_path + "/external/supercop"
-    copy_file_path = supercop_path + "/include/monero/crypto.h"
+    supercop_path = workspace_path / "external/supercop"
+    copy_file_path = supercop_path / "include/monero/crypto.h"
 
     # If we are on Linux and have 64 bit processor we can use monero's default crypto libraries
     if re.match(".*nix.*|.*ux.*", platform.system()) and re.match(".*amd64.*|.*AMD64.*|.*x86_64.*",
@@ -543,7 +745,7 @@ def generate_version_file_with_replacement(version_tag, is_release):
     input_file = "version.cpp.in"
     output_file = "version.cpp"
 
-    src_directory = workspace_path + "/src/"
+    src_directory = workspace_path / "src/"
 
     input_file_path = os.path.join(src_directory, input_file)
     with open(input_file_path, "r") as copy:
@@ -588,7 +790,7 @@ def generate_benchmark_file_with_replacement(replacement):
     input_file = "benchmark.h.in"
     output_file = "benchmark.h"
 
-    tests_directory = workspace_path + "/tests/"
+    tests_directory = workspace_path / "tests/"
 
     input_file_path = os.path.join(tests_directory, input_file)
 
@@ -618,7 +820,7 @@ def benchmark_generate():
 
 
 def convert_translation_files():
-    translation_file_dir = workspace_path + "/translations"
+    translation_file_dir = workspace_path / "translations"
 
     os.chdir(translation_file_dir)
 
@@ -640,7 +842,7 @@ def convert_translation_files():
 
 
 def run_translation_generation(translation_files):
-    translation_file_dir = workspace_path + "/translations"
+    translation_file_dir = workspace_path / "translations"
     # create the file first
     create_command = "cd " + translation_file_dir + " && echo > translation_files.h"
     os.system(create_command)
@@ -675,6 +877,12 @@ def generate_files():
     trezor_common()
 
 
-import_dependencies()
-build_dependencies()
-generate_files()
+find_workspace_path()
+print(workspace_path)
+if sys.platform == "linux":
+    import_dependencies()
+    build_dependencies()
+    generate_files()
+elif sys.platform == "win32":
+    import_dependencies_win()
+    build_dependencies_win()
