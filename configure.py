@@ -431,13 +431,13 @@ def build_dependencies_win():
 
     os.chdir(external_dir_path)
 
-    # miniupnp_win(external_dir_path)
+    miniupnp_win(external_dir_path)
 
     os.chdir(external_dir_path)
-    # randomx_win(external_dir_path)
+    randomx_win(external_dir_path)
 
     os.chdir(external_dir_path)
-    # supercop_win(external_dir_path)
+    supercop_win(external_dir_path)
 
     os.chdir(external_dir_path)
 
@@ -831,12 +831,12 @@ def generate_files():
 
 
 def generate_files_win():
-    #blocks_generate()
-    #crypto_wallet_generate()
-    #version_generate()
-    #benchmark_generate()
+    blocks_generate()
+    crypto_wallet_generate()
+    version_generate()
+    benchmark_generate()
     translations_generate_win()
-    #trezor_common()
+    trezor_common()
 
 
 find_workspace_path()
