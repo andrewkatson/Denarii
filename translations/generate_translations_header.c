@@ -37,18 +37,16 @@ static const char *code =
 int main(int argc, char *argv[]) {
   FILE *fp, *foutput;
   int i, j, ch;
-  
 
-  if((foutput = fopen("translation_files.h", "w")) == NULL) {
+  if((foutput = fopen(argv[1], "w")) == NULL) {
     exit(EXIT_FAILURE);
   }
- 
 
   fprintf(foutput, "#ifndef TRANSLATION_FILES_H\n");
   fprintf(foutput, "#define TRANSLATION_FILES_H\n\n");
   fprintf(foutput, "#include <string>\n\n");
 
-  for (i = 1; i < argc; i++) {
+  for (i = 2; i < argc; i++) {
     if ((fp = fopen(argv[i], "rb")) == NULL) {
       fclose(foutput);
       exit(EXIT_FAILURE);
