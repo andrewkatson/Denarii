@@ -338,7 +338,6 @@ def unbound(external_dir_path):
 
 
 def openssl(external_dir_path):
-
     raw_path = str(external_dir_path)
 
     os.chdir(raw_path)
@@ -362,7 +361,6 @@ def openssl(external_dir_path):
 
 
 def libzmq(external_dir_path):
-
     raw_path = str(external_dir_path)
 
     clone_command = "git clone https://github.com/zeromq/libzmq.git"
@@ -380,7 +378,6 @@ def libzmq(external_dir_path):
 
 
 def zlib(external_dir_path):
-
     raw_path = str(external_dir_path)
 
     zlib_path = raw_path + "/zlib"
@@ -397,9 +394,6 @@ def liblmdb(external_dir_path):
     os.chdir(liblmdb_path)
     command = "make"
     os.system(command)
-
-def libunwind(external_dir_path):
-    pass
 
 
 def build_dependencies():
@@ -444,10 +438,6 @@ def build_dependencies_win():
 
     os.chdir(external_dir_path)
     # supercop_win(external_dir_path)
-
-    os.chdir(external_dir_path)
-
-    libunwind(external_dir_path)
 
     os.chdir(external_dir_path)
 
@@ -498,12 +488,12 @@ proto_library(                                         \n\
  ],                                                 \n\
 )'
 
-    path_to_dir = workspace_path / "external/trezor-common/protob"
+    path_to_dir = str(workspace_path) + "/external/trezor-common/protob"
     os.chdir(path_to_dir)
 
     os.system(f"echo \'{text}\' > BUILD")
 
-    path_to_workspace_dir = workspace_path / "external/trezor-common"
+    path_to_workspace_dir = str(workspace_path) + "/external/trezor-common"
     os.chdir(path_to_workspace_dir)
 
     workspace_text = f'workspace(name = \"trezor_common\") \n\
@@ -535,7 +525,7 @@ def blocks_generate():
         output_file = output_files[i]
         base_name = base_names[i]
 
-        path_to_blocks = workspace_path / "src/blocks"
+        path_to_blocks = str(workspace_path) + "/src/blocks"
         command = "cd " + path_to_blocks + " && echo '#include\t<stddef.h>' > " + output_file \
                   + " && echo 'const\tunsigned\tchar\t" + base_name + "[]={' >> " + output_file + " && od -v -An -tx1 " \
                   + input_file + " | sed -e 's/[0-9a-fA-F]\\{1,\\}/0x&,/g' -e '$s/.$//' >> " + output_file + " && echo '};' >> " + output_file \
@@ -545,12 +535,12 @@ def blocks_generate():
 
 
 def crypto_wallet_generate():
-    crypto_wallet_path = workspace_path / "src/crypto/wallet"
+    crypto_wallet_path = str(workspace_path) + "/src/crypto/wallet"
     ops_file = "ops.h"
     build_file = "BUILD"
 
-    supercop_path = workspace_path / "external/supercop"
-    copy_file_path = supercop_path / "include/monero/crypto.h"
+    supercop_path = str(workspace_path) + "/external/supercop"
+    copy_file_path = supercop_path + "/include/monero/crypto.h"
 
     # If we are on Linux and have 64 bit processor we can use monero's default crypto libraries
     if re.match(".*nix.*|.*ux.*", platform.system()) and re.match(".*amd64.*|.*AMD64.*|.*x86_64.*",
@@ -611,7 +601,7 @@ version_re = re.compile('^Version: (.+)$', re.M)
 
 
 def get_version():
-    d = workspace_path
+    d = str(workspace_path)
 
     if os.path.isdir(os.path.join(d, '.git')):
         # Get the version using "git describe".
@@ -658,7 +648,7 @@ def generate_version_file_with_replacement(version_tag, is_release):
     input_file = "version.cpp.in"
     output_file = "version.cpp"
 
-    src_directory = workspace_path / "src/"
+    src_directory = str(workspace_path) + "/src/"
 
     input_file_path = os.path.join(src_directory, input_file)
     with open(input_file_path, "r") as copy:
@@ -703,7 +693,7 @@ def generate_benchmark_file_with_replacement(replacement):
     input_file = "benchmark.h.in"
     output_file = "benchmark.h"
 
-    tests_directory = workspace_path / "tests/"
+    tests_directory = str(workspace_path) + "/tests/"
 
     input_file_path = os.path.join(tests_directory, input_file)
 
@@ -733,7 +723,7 @@ def benchmark_generate():
 
 
 def convert_translation_files():
-    translation_file_dir = workspace_path / "translations"
+    translation_file_dir = str(workspace_path) + "/translations"
 
     os.chdir(translation_file_dir)
 
@@ -754,18 +744,42 @@ def convert_translation_files():
     return converted_files
 
 
+def convert_translation_files_win():
+    translation_file_dir = str(workspace_path) + "/translations"
+
+    os.chdir(translation_file_dir)
+
+    files = []
+    converted_files = []
+
+    for file in glob.glob("*.ts"):
+        files.append(file)
+        converted_files.append(file.replace(".ts", ".qm"))
+
+    for i in range(len(files)):
+        file = files[i]
+        converted_file = converted_files[i]
+
+        conversion_command = "/mingw64/bin/lrelease " + file + " -qm " + converted_file
+        os.system(conversion_command)
+
+    return converted_files
+
+
 def run_translation_generation(translation_files):
-    translation_file_dir = workspace_path / "translations"
+    translation_file_dir = str(workspace_path) + "/translations"
     # create the file first
     create_command = "cd " + translation_file_dir + " && echo > translation_files.h"
     os.system(create_command)
+
+    translation_file_path = translation_file_dir + "/translation_files.h"
 
     # need to build the binary first so the command will work
     build_command = "bazel build :generate_translations"
     os.system(build_command)
 
     # we cannot use bazel run because it just won't cooperate
-    generation_command = workspace_path + "/bazel-bin/translations/generate_translations "
+    generation_command = str(workspace_path) + "/bazel-bin/translations/generate_translations " + translation_file_path + " "
 
     for translation_file in translation_files:
         generation_command = generation_command + " " + translation_file
@@ -773,12 +787,38 @@ def run_translation_generation(translation_files):
     os.system(generation_command)
 
 
+def run_translation_generation_win(translation_files):
+    translation_file_dir = str(workspace_path) + "/translations"
+
+    # create the file first
+    create_command = "cd " + translation_file_dir + " && echo > translation_files.h"
+    os.system(create_command)
+
+    translation_file_path = translation_file_dir + "/translation_files.h"
+
+    # need to build the binary first so the command will work
+    build_command = "bazel build :generate_translations"
+    os.system(build_command)
+
+    # we cannot use bazel run because it just won't cooperate
+    generation_command = "bazel run :generate_translations -- " + translation_file_path + " "
+
+    for translation_file in translation_files:
+        generation_command = generation_command + " " + translation_file_dir + "/" + translation_file
+
+    os.system(generation_command)
+
 def translations_generate():
     # first change all the suffixes of the translations files to .qm
     translations_files = convert_translation_files()
 
     # then run the generation binary with the files as arguments
     run_translation_generation(translations_files)
+
+
+def translations_generate_win():
+    translation_files = convert_translation_files_win()
+    run_translation_generation_win(translation_files)
 
 
 def generate_files():
@@ -790,6 +830,15 @@ def generate_files():
     trezor_common()
 
 
+def generate_files_win():
+    #blocks_generate()
+    #crypto_wallet_generate()
+    #version_generate()
+    #benchmark_generate()
+    translations_generate_win()
+    #trezor_common()
+
+
 find_workspace_path()
 print(workspace_path)
 if sys.platform == "linux":
@@ -798,3 +847,4 @@ if sys.platform == "linux":
     generate_files()
 elif sys.platform == "msys":
     build_dependencies_win()
+    generate_files_win()
