@@ -165,6 +165,7 @@ MinGW: https://sourceforge.net/projects/mingw/files/latest/download
 Perl: https://strawberryperl.com/
 NASM: https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/win64/
 QTtools: https://wiki.qt.io/Install_Qt_5_Dev_Suite_Windows
+Msys2: https://www.msys2.org/
 
 * Download and install the [MSYS2 installer](https://www.msys2.org), either the 64-bit or the 32-bit package, depending on your system.
 * Open the MSYS shell via the `MSYS2 Shell` shortcut

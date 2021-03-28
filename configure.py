@@ -54,7 +54,7 @@ def find_workspace_path():
 
         # A workspace path that works if not sudo on EC2
         try:
-            possible_workspace_path = os.environ["HOME"] + "/denarii"
+            possible_workspace_path = pathlib.Path(os.environ["HOME"] + "/denarii")
             if os.path.exists(possible_workspace_path):
                 workspace_path = possible_workspace_path
         except Exception as e:
@@ -63,7 +63,7 @@ def find_workspace_path():
 
         # A workspace path that works in sudo on EC2
         try:
-            possible_workspace_path = "home/" + os.environ["SUDO_USER"] + "/denarii"
+            possible_workspace_path = pathlib.Path("/home/" + os.environ["SUDO_USER"] + "/denarii")
 
             if os.path.exists(possible_workspace_path):
                 workspace_path = possible_workspace_path
@@ -76,7 +76,7 @@ def find_workspace_path():
         elif os.path.exists(windows_workspace_path):
             workspace_path = windows_workspace_path
     else:
-        workspace_path = args.workspace_path
+        workspace_path = Path(args.workspace_path)
 
 
 def download_url(url, save_path, chunk_size=128):
