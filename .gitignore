@@ -149,3 +149,25 @@ bazel-bin/
 bazel-denarii/
 bazel-out/
 bazel-testlogs/
+.vs/CMake Overview
+.vs/denarii/v16/.suo
+.vs/denarii/v16/Browse.VC.db
+.vs/ProjectSettings.json
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
+external/supercop
+external/trezor-common
+external/unbound
+external/zlib/Makefile
+external/zlib/zconf.h
+out/build/x64-Debug (default)/.cmake/api/v1/query/client-MicrosoftVS/query.json
+out/build/x64-Debug (default)/VSInheritEnvironments.txt
+src/blocks/generated_checkpoints.c
+src/blocks/generated_stagenet_blocks.c
+src/blocks/generated_testnet_blocks.c
+src/crypto/wallet/BUILD
+src/crypto/wallet/ops.h
+src/version.cpp
+tests/benchmark.h
+translations/monero_de.qm
+*.qm
