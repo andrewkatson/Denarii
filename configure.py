@@ -301,12 +301,19 @@ def zlib(external_dir_path):
     command = "./configure && make test && sudo make install"
     os.system(command)
 
+
 def liblmdb(external_dir_path):
     liblmdb_path = external_dir_path + "/db_drivers/liblmdb"
 
     os.chdir(liblmdb_path)
     command = "make"
     os.system(command)
+
+
+def keiros_public(external_dir_path):
+    clone_command = "git clone https://github.com/andrewkatson/KeirosPublic.git"
+    os.system(clone_command)
+
 
 def build_dependencies():
     external_dir_path = workspace_path + "/external"
@@ -336,6 +343,10 @@ def build_dependencies():
 
     liblmdb(external_dir_path)
     os.chdir(external_dir_path)
+
+    keiros_public(external_dir_path)
+    os.chdir(external_dir_path)
+
 
 def trezor_common():
     text = 'load(\"@rules_proto//proto:defs.bzl\", \"proto_library\")  \n\
@@ -387,10 +398,10 @@ proto_library(                                         \n\
     os.chdir(path_to_dir)
 
     os.system(f"echo \'{text}\' > BUILD")
-    
+
     path_to_workspace_dir = workspace_path + "/external/trezor-common"
     os.chdir(path_to_workspace_dir)
-    
+
     workspace_text = f'workspace(name = \"trezor_common\") \n\
 load(\"@bazel_tools//tools/build_defs/repo:http.bzl\", \"http_archive\")   \n\
 # rules_proto defines abstract rules for building Protocol Buffers. \n\
@@ -406,7 +417,7 @@ http_archive( \n\
 load(\"@rules_proto//proto:repositories.bzl\", \"rules_proto_dependencies\", \"rules_proto_toolchains\") \n\
 rules_proto_dependencies() \n\
 rules_proto_toolchains()'
-    
+
     os.system(f"echo \'{workspace_text}\' > WORKSPACE")
 
 

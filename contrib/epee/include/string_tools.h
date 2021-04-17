@@ -229,7 +229,11 @@ POP_WARNINGS
 	inline char* get_workspace_path(bool test) {
       // For some reason they wipe our environment varibales during tests.
       if (test) {
+#ifdef _WIN32
+          return "C:Users\\katso\\Documents\\Github\\denarii";
+#else
           return "/home/andrew/denarii";
+#endif
       }
       return getenv("DENARII_WORKSPACE_PATH");
     }

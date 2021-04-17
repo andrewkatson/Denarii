@@ -254,6 +254,12 @@ new_local_repository(
     path = "external/zlib",
 )
 
+#keiros public
+local_repository(
+    name = "keiros_public",
+    path = "external/KeirosPublic"
+)
+
 load("@rules_cc//cc:repositories.bzl", "rules_cc_dependencies")
 
 rules_cc_dependencies()

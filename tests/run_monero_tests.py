@@ -211,7 +211,7 @@ def test_top_level():
 
 def test_unit_tests():
     data_dir_path = workspace_path + "/tests/data"
-    unit_tests_command = "bazel test tests/unit_tests:unit_tests -- --test_arg=--data-dir=" + data_dir_path
+    unit_tests_command = "bazel test tests/unit_tests:unit_tests --test_timeout=1000 --test_arg=--data-dir=" + data_dir_path
     unit_tests_proc = subprocess.Popen(unit_tests_command, shell=True, stdout=subprocess.PIPE)
     unit_tests_proc.wait()
     report_status_of_test(unit_tests_proc, "unit_tests:unit_tests")
@@ -219,21 +219,21 @@ def test_unit_tests():
 
 os.chdir(workspace_path)
 
-#test_block_weight()
-# Monero doesn't run these
-# test_core_proxy()
+#NEEDS TO BE RUN SEPARATELY
 #test_core_tests()
+
+#test_block_weight()
 #test_crypto()
 #test_difficulty()
 #test_functional_tests()
-# Monero doesnt run these
-# test_fuzz()
 #test_hash()
-# Monero doesnt run these
-# test_performance_tests()
 #test_top_level()
 test_unit_tests()
 
+# Monero doesn't run these
+# test_core_proxy()
+# test_performance_tests()
+# test_fuzz()
 print("\n\n\n\n\n\n")
 if len(failed_tests) == 0:
     print("All tests passed!")

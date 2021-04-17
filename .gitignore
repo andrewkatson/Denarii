@@ -129,6 +129,9 @@ external/zlib
 external/openssl-1.1.1i/
 external/supercop
 external/miniupnp
+external/trezor-common
+external/unbound
+external/KeirosPublic
 
 # Testing stuff
 tests/functional_tests/functional-tests-directory/
