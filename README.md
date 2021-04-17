@@ -156,6 +156,56 @@ invokes cmake commands as needed.
     sudo bazel run :configure
 
     ```
+
+#### On Windows
+* Download and install the following. 
+CMAKE: https://cmake.org/download/
+Make: http://gnuwin32.sourceforge.net/packages/make.htm
+MinGW: https://sourceforge.net/projects/mingw/files/latest/download
+Perl: https://strawberryperl.com/
+NASM: https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/win64/
+QTtools: https://wiki.qt.io/Install_Qt_5_Dev_Suite_Windows
+Msys2: https://www.msys2.org/
+
+* Download and install the [MSYS2 installer](https://www.msys2.org), either the 64-bit or the 32-bit package, depending on your system.
+* Open the MSYS shell via the `MSYS2 Shell` shortcut
+* Update packages using pacman:  
+
+    ```bash
+    pacman -Syu
+    ```
+
+* Exit the MSYS shell using Alt+F4  
+* Edit the properties for the `MSYS2 Shell` shortcut changing "msys2_shell.bat" to "msys2_shell.cmd -mingw64" for 64-bit builds or "msys2_shell.cmd -mingw32" for 32-bit builds. 
+  You could also just open the msys of the appropriate type found under ```C:/Users/%USER%/AppData/Roaming/Micorsoft/Windwos/'Start Menu'/Programs/'Msys 64bit'```
+* Restart MSYS shell via modified shortcut and update packages again using pacman:  
+
+    ```bash
+    pacman -Syu
+    ```
+
+
+* Install dependencies:
+
+    To build for 64-bit Windows:
+
+    ```bash
+    pacman -S mingw-w64-x86_64-toolchain make mingw-w64-x86_64-cmake mingw-w64-x86_64-boost mingw-w64-x86_64-openssl mingw-w64-x86_64-zeromq mingw-w64-x86_64-libsodium mingw-w64-x86_64-hidapi mingw-w64-x86_64-libunwind mingw-w64-x86_64-libusb mingw-w64-x86_64-unbound mingw-w64-i686-lmdb mingw-w64-i686-qt-creator
+    ```
+
+    To build for 32-bit Windows:
+
+    ```bash
+    pacman -S mingw-w64-i686-toolchain make mingw-w64-i686-cmake mingw-w64-i686-boost mingw-w64-i686-openssl mingw-w64-i686-zeromq mingw-w64-i686-libsodium mingw-w64-i686-hidapi mingw-w64-i686-libunwind mingw-w64-i686-libusb mingw-w64-i686-unbound mingw-w64-x86_64-lmdb mingw-w64-x86_64-qt-creator
+    ```
+* Run Configure 
+    
+    Update configure.py and configure_win.py with your workspace path at the top. Also update tests/run_monero_tests.py in the same way. *This step you do from command prompt not msys2*.
+
+    ``` 
+    bazel run :configure_win (run through command prompt)
+    bazel run :configure     (run through msys2)
+    ```
   
 ## Running denariid
 

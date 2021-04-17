@@ -3,6 +3,6 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
    name = "db_drivers",
-   srcs = glob(["**/liblmdb/*.a"]),
+   srcs = glob(["**/*.a"]),
    hdrs = glob(["**/liblmdb/*.h"]),
 )
