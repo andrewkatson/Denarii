@@ -7514,11 +7514,7 @@ uint64_t wallet2::get_fee_multiplier(uint32_t priority, int fee_algorithm)
   const uint32_t max_priority = multipliers[fee_algorithm].count;
   if (priority >= 1 && priority <= max_priority)
   {
-    uint32_t base_multiplier =  multipliers[fee_algorithm].multipliers[priority-1];
-
-    centralnode::dynamic_critical_values dcv;
-
-    return base_multiplier * dcv.get_transaction_fee();
+    return multipliers[fee_algorithm].multipliers[priority-1];
   }
 
   THROW_WALLET_EXCEPTION_IF (false, error::invalid_priority);
