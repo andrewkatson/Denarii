@@ -64,6 +64,7 @@
 #include "src/serialization/string.h"
 #include "src/serialization/pair.h"
 #include "src/serialization/containers.h"
+#include "src/centralnode/dynamic_critical_values.h"
 
 #include "wallet_errors.h"
 #include "src/common/password.h"

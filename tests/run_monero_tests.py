@@ -90,7 +90,7 @@ def test_functional_tests():
     # report_status_of_test(make_test_signature_proc, "functional_tests:make_test_signature")
 
     current_path = workspace_path + "/tests/functional_tests"
-    binary_path = workspace_path + "/bazel-bin/src"
+    binary_path = workspace_path + "/bazel-bin"
     functional_tests_rpc_command = "bazel run tests/functional_tests:functional_tests_rpc -- python3 " + current_path + " " + binary_path + " all"
     functional_tests_rpc_proc = subprocess.Popen(functional_tests_rpc_command, shell=True, stdout=subprocess.PIPE)
     functional_tests_rpc_proc.wait()
@@ -221,14 +221,14 @@ os.chdir(workspace_path)
 
 #NEEDS TO BE RUN SEPARATELY
 #test_core_tests()
+#test_functional_tests()
 
 #test_block_weight()
 #test_crypto()
 #test_difficulty()
-#test_functional_tests()
 #test_hash()
 #test_top_level()
-test_unit_tests()
+#test_unit_tests()
 
 # Monero doesn't run these
 # test_core_proxy()

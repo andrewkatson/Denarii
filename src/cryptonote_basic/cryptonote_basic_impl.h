@@ -33,7 +33,7 @@
 #include "cryptonote_basic.h"
 #include "src/crypto/crypto.h"
 #include "src/crypto/hash.h"
-
+#include "src/centralnode/dynamic_critical_values.h"
 
 namespace cryptonote {
   /************************************************************************/
