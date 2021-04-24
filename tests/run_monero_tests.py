@@ -211,11 +211,16 @@ def test_top_level():
 
 def test_unit_tests():
     data_dir_path = workspace_path + "/tests/data"
+
     unit_tests_command = "bazel test tests/unit_tests:unit_tests --test_timeout=1000 --test_arg=--data-dir=" + data_dir_path
     unit_tests_proc = subprocess.Popen(unit_tests_command, shell=True, stdout=subprocess.PIPE)
     unit_tests_proc.wait()
     report_status_of_test(unit_tests_proc, "unit_tests:unit_tests")
 
+    dcv_unit_tests_command = "bazel test tests/unit_tests/dynamic_critical_values:all"
+    dcv_unit_tests_proc = subprocess.Popen(dcv_unit_tests_command, shell=True, stdout=subprocess.PIPE)
+    dcv_unit_tests_proc.wait()
+    report_status_of_test(dcv_unit_tests_proc, "unit_tests:dynamic_critical_values")
 
 os.chdir(workspace_path)
 
@@ -228,7 +233,7 @@ os.chdir(workspace_path)
 #test_difficulty()
 #test_hash()
 #test_top_level()
-#test_unit_tests()
+test_unit_tests()
 
 # Monero doesn't run these
 # test_core_proxy()

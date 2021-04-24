@@ -11,8 +11,8 @@ namespace centralnode {
     }
 
     dynamic_critical_values::~dynamic_critical_values() {
-        m_io_service.stop();
         m_socket.close();
+        m_io_service.stop();
         if (m_io.joinable()) {
             m_io.join();
         }
@@ -23,6 +23,8 @@ namespace centralnode {
         if (!connected) {
             return 0;
         }
+
+        std::cout << "CONNECTED " << std::endl;
 
         denarii_core::core::CriticalValuesInfoRequest critical_values_request;
         critical_values_request.mutable_requested_values()->add_paths("block_reward");
@@ -38,6 +40,8 @@ namespace centralnode {
             return 0;
         }
 
+        std::cout << "AVAILABLE " << std::endl;
+
         common::reactor::Event response_event;
 
         receive(&response_event);
@@ -49,6 +53,8 @@ namespace centralnode {
         if (!critical_values_info_response.success()) {
             return 0;
         }
+
+        std::cout << "SUCCESS " << std::endl;
 
         return critical_values_info_response.values_calculation().block_reward();
     }

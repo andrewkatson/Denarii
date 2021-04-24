@@ -31,7 +31,6 @@
 #include "gtest/gtest.h"
 
 #include "src/cryptonote_core/blockchain.h"
-
 using namespace cryptonote;
 
 namespace

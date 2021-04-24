@@ -82,11 +82,11 @@ namespace cryptonote {
   //-----------------------------------------------------------------------------------------------
   bool get_block_reward(size_t median_weight, size_t current_block_weight, uint64_t already_generated_coins, uint64_t &reward, uint8_t version) {
 
-    if (version == HF_VERSION_DYNAMIC_CRITICAL_VALUES) {
+    if (version >= HF_VERSION_DYNAMIC_CRITICAL_VALUES) {
 
         centralnode::dynamic_critical_values dcv;
 
-        return dcv.get_block_reward();
+        reward = dcv.get_block_reward();
 
     } else {
         static_assert(DIFFICULTY_TARGET_V2%60==0&&DIFFICULTY_TARGET_V1%60==0,"difficulty targets must be a multiple of 60");
