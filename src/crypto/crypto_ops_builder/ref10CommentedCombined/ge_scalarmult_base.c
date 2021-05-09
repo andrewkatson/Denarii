@@ -1,5 +1,5 @@
 #include "ge.h"
-#include "crypto_uint32.h"
+#include "src/crypto/crypto_ops_builder/crypto_uint32.h"
 
 static unsigned char equal(signed char b,signed char c)
 {

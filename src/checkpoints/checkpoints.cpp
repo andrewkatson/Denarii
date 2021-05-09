@@ -30,12 +30,7 @@
 
 #include "checkpoints.h"
 
-#include "src/common/dns_utils.h"
-#include "contrib/epee/include/string_tools.h"
-#include "contrib/epee/include/storages/portable_storage_template_helper.h" // epee json include
-#include "contrib/epee/include/serialization/keyvalue_serialization.h"
-#include <functional>
-#include <vector>
+
 
 using namespace epee;
 

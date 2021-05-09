@@ -25,7 +25,9 @@
 // INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+#define WIN32_LEAN_AND_MEAN
+#include <chrono>
+#include <thread>
 #include <atomic>
 #include <cstdio>
 #include <algorithm>
@@ -33,7 +35,12 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#ifdef _WIN32
+#include <io.h>
+#include <windows.h>
+#else
 #include <unistd.h>
+#endif
 #include "contrib/epee/include/misc_log_ex.h"
 #include "bootstrap_file.h"
 #include "bootstrap_serialization.h"
@@ -718,7 +725,7 @@ int main(int argc, char* argv[])
       "*****************************************************************************************\n"
       "You have 90 seconds to press ^C or terminate this program before unverified import starts\n"
       "*****************************************************************************************");
-    sleep(90);
+    std::this_thread::sleep_for(std::chrono::seconds(90));
   }
 
   cryptonote::cryptonote_protocol_stub pr; //TODO: stub only for this kind of test, make real validation of relayed objects

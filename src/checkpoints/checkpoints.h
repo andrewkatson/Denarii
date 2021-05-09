@@ -29,11 +29,19 @@
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
+
 #include <map>
 #include "contrib/epee/include/misc_log_ex.h"
 #include "src/crypto/hash.h"
 #include "src/cryptonote_config.h"
 #include "src/cryptonote_basic/difficulty.h"
+#include "src/common/dns_utils.h"
+#include "contrib/epee/include/string_tools.h"
+#include "contrib/epee/include/storages/portable_storage_template_helper.h" // epee json include
+#include "contrib/epee/include/serialization/keyvalue_serialization.h"
+#include <functional>
+#include <vector>
 
 #define ADD_CHECKPOINT(h, hash)  CHECK_AND_ASSERT(add_checkpoint(h,  hash), false);
 #define ADD_CHECKPOINT2(h, hash, difficulty)  CHECK_AND_ASSERT(add_checkpoint(h,  hash, difficulty), false);

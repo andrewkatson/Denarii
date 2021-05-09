@@ -29,6 +29,7 @@
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
 #pragma  once 
+#define WIN32_LEAN_AND_MEAN
 
 #include <memory>
 
@@ -40,6 +41,7 @@
 #include "contrib/epee/include/net/http_client.h"
 #include "core_rpc_server_commands_defs.h"
 #include "src/cryptonote_core/cryptonote_core.h"
+#include "src/cryptonote_core/cryptonote_core_common.h"
 #include "src/p2p/net_node.h"
 #include "src/cryptonote_protocol/cryptonote_protocol_handler.h"
 #include "rpc_payment.h"
@@ -290,6 +292,6 @@ private:
     bool disable_rpc_ban;
     bool m_rpc_payment_allow_free_loopback;
   };
-}
+} // cryptonote
 
 BOOST_CLASS_VERSION(nodetool::node_server<cryptonote::t_cryptonote_protocol_handler<cryptonote::core> >, 1);

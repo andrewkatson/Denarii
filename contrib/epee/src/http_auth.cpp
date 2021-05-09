@@ -113,10 +113,20 @@ namespace
       template<typename T>
       void operator()(const T& arg) const
       {
+#ifdef _WIN32
+        const std::string data(std::begin(arg), std::end(arg));
+#else
         const boost::iterator_range<const char*> data(boost::as_literal(arg));
+#endif
+
+#ifdef _WIN32
+          auto iterator = reinterpret_cast<const std::uint8_t*>(&arg);
+#else
+          auto iterator = reinterpret_cast<const std::uint8_t*>(data.begin());
+#endif
         md5::MD5Update(
           std::addressof(ctx),
-          reinterpret_cast<const std::uint8_t*>(data.begin()),
+          iterator,
           data.size()
         );
       }

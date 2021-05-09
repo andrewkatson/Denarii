@@ -27,19 +27,7 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "message_store.h"
-#include "archive/portable_binary_iarchive.hpp"
-#include <boost/format.hpp>
-#include <boost/algorithm/string.hpp>
-#include <fstream>
-#include <sstream>
-#include "contrib/epee/include/file_io_utils.h"
-#include "contrib/epee/include/storages/http_abstract_invoke.h"
-#include "wallet_errors.h"
-#include "src/serialization/binary_utils.h"
-#include "src/common/base58.h"
-#include "src/common/util.h"
-#include "src/common/utf8.h"
-#include "contrib/epee/include/string_tools.h"
+
 
 
 #undef MONERO_DEFAULT_LOG_CATEGORY

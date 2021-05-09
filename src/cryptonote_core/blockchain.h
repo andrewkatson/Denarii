@@ -29,6 +29,8 @@
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
+
 #include <boost/asio/io_service.hpp>
 #include <boost/function/function_fwd.hpp>
 #if BOOST_VERSION >= 107400
@@ -50,6 +52,7 @@
 #include "contrib/epee/include/syncobj.h"
 #include "contrib/epee/include/string_tools.h"
 #include "contrib/epee/include/rolling_median.h"
+#include "contrib/epee/include/time_helper.h"
 #include "src/cryptonote_basic/cryptonote_basic.h"
 #include "src/common/util.h"
 #include "src/cryptonote_protocol/cryptonote_protocol_defs.h"
@@ -61,6 +64,7 @@
 #include "src/checkpoints/checkpoints.h"
 #include "src/cryptonote_basic/hardfork.h"
 #include "src/blockchain_db/blockchain_db.h"
+#include "cryptonote_core_common.h"
 
 namespace tools { class Notify; }
 
@@ -80,14 +84,6 @@ namespace cryptonote
     db_nosync //!< Leave syncing up to the backing db (safest, but slowest because of disk I/O)
   };
 
-  /** 
-   * @brief Callback routine that returns checkpoints data for specific network type
-   * 
-   * @param network network type
-   * 
-   * @return checkpoints data, empty span if there ain't any checkpoints for specific network type
-   */
-  typedef std::function<const epee::span<const unsigned char>(cryptonote::network_type network)> GetCheckpointsCallback;
 
   /************************************************************************/
   /*                                                                      */

@@ -28,14 +28,7 @@
 //
 // Adapted from Python code by Sarang Noether
 
-#include "contrib/epee/include/misc_log_ex.h"
-#include "src/common/perf_timer.h"
-extern "C"
-{
-#include "src/crypto/crypto-ops.h"
-}
-#include "src/common/aligned.h"
-#include "rctOps.h"
+
 #include "multiexp.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY

@@ -27,6 +27,7 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 
 #include "contrib/epee/include/byte_slice.h"
 #include "daemon_messages.h"
@@ -35,6 +36,19 @@
 #include "src/cryptonote_core/cryptonote_core.h"
 #include "src/cryptonote_protocol/cryptonote_protocol_handler.h"
 #include "src/p2p/net_node.h"
+#include <algorithm>
+#include <cstring>
+#include <stdexcept>
+
+#include <boost/uuid/nil_generator.hpp>
+#include <boost/utility/string_ref.hpp>
+// likely included by daemon_handler.h's includes,
+// but including here for clarity
+#include "src/cryptonote_core/cryptonote_core.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
+#include "src/cryptonote_basic/blobdatatype.h"
+#include "src/ringct/rctSigs.h"
+#include "src/version.h"
 
 namespace
 {

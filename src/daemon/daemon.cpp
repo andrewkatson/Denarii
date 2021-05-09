@@ -28,26 +28,8 @@
 //
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
-#include <memory>
-#include <stdexcept>
-#include <boost/algorithm/string/split.hpp>
-#include "contrib/epee/include/misc_log_ex.h"
-#include "src/daemon/daemon.h"
-#include "src/rpc/daemon_handler.h"
-#include "src/rpc/zmq_pub.h"
-#include "src/rpc/zmq_server.h"
 
-#include "src/common/password.h"
-#include "src/common/util.h"
-#include "src/cryptonote_basic/events.h"
-#include "src/daemon/core.h"
-#include "src/daemon/p2p.h"
-#include "src/daemon/protocol.h"
-#include "src/daemon/rpc.h"
-#include "src/daemon/command_server.h"
-#include "src/daemon/command_line_args.h"
-#include "contrib/epee/include/net/net_ssl.h"
-#include "src/version.h"
+#include "src/daemon/daemon.h"
 
 using namespace epee;
 

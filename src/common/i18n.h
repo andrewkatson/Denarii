@@ -28,6 +28,8 @@
 
 #pragma once
 
+#define WIN32_LEAN_AND_MEAN
+
 #define QT_TRANSLATE_NOOP(context,str) i18n_translate(str,context)
 
 std::string i18n_get_language();

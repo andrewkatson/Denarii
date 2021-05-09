@@ -2558,7 +2558,11 @@ namespace nodetool
   {
     network_zone& zone = m_network_zones.at(context.m_remote_address.get_zone());
     if (!zone.m_net_server.is_stop_signal_sent() && !context.m_is_income) {
+#ifdef _WIN32
+      epee::net_utils::network_address na;
+#else
       epee::net_utils::network_address na = AUTO_VAL_INIT(na);
+#endif
       na = context.m_remote_address;
 
       zone.m_peerlist.remove_from_peer_anchor(na);

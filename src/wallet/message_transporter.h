@@ -27,6 +27,9 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
+
+
 #include "contrib/epee/include/serialization/keyvalue_serialization.h"
 #include "src/cryptonote_basic/cryptonote_basic.h"
 #include "src/cryptonote_basic/cryptonote_boost_serialization.h"
@@ -37,6 +40,12 @@
 #include "src/common/util.h"
 #include "contrib/epee/include/wipeable_string.h"
 #include <vector>
+#include "contrib/epee/include/string_coding.h"
+#include <boost/format.hpp>
+#include "wallet_errors.h"
+#include "contrib/epee/include/net/http_client.h"
+#include "contrib/epee/include/net/net_parse_helpers.h"
+#include <algorithm>
 
 namespace mms
 {

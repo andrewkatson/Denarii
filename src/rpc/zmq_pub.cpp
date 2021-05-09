@@ -214,7 +214,11 @@ namespace
 
     const auto lower = std::lower_bound(contexts.begin(), contexts.end(), value);
     const auto upper = std::upper_bound(lower, contexts.end(), value, not_prefix);
+#ifdef _WIN32
+    return epee::span<const context<T>>(&(*lower), std::size_t(upper - lower));
+#else
     return {lower, std::size_t(upper - lower)};
+#endif
   }
 
   template<std::size_t N, typename T>
@@ -359,12 +363,22 @@ bool zmq_pub::sub_request(boost::string_ref message)
       switch (tag)
       {
       case 0:
+#ifdef _WIN32
+        remove_subscriptions<2, chain_writer>(chain_subs_, chain_range, &(*chain_contexts.begin()));
+        remove_subscriptions<2, txpool_writer>(txpool_subs_, txpool_range, &(*txpool_contexts.begin()));
+#else
         remove_subscriptions(chain_subs_, chain_range, chain_contexts.begin());
         remove_subscriptions(txpool_subs_, txpool_range, txpool_contexts.begin());
+#endif
         return true;
       case 1:
+#ifdef _WIN32
+        add_subscriptions<2, chain_writer>(chain_subs_, chain_range, &(*chain_contexts.begin()));
+        add_subscriptions<2, txpool_writer>(txpool_subs_, txpool_range, &(*txpool_contexts.begin()));
+#else
         add_subscriptions(chain_subs_, chain_range, chain_contexts.begin());
         add_subscriptions(txpool_subs_, txpool_range, txpool_contexts.begin());
+#endif
         return true;
       default:
         break;

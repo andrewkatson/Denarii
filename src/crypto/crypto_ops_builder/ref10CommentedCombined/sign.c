@@ -1,6 +1,6 @@
 #include <string.h>
-#include "crypto_sign.h"
-#include "crypto_hash_sha512.h"
+#include "src/crypto/crypto_ops_builder/crypto_sign.h"
+#include "include/crypto_hash_sha512.h"
 #include "ge.h"
 #include "sc.h"
 

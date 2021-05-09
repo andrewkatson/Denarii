@@ -24,11 +24,13 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-
+#define WIN32_LEAN_AND_MEAN
 #include <string>
 #include <boost/optional/optional.hpp>
 #include "contrib/epee/include/net/http_auth.h"
 #include "contrib/epee/include/net/net_ssl.h"
+#include "contrib/epee/include/net/http_base.h"
+#include "contrib/epee/include/net/net_parse_helpers.h"
 
 namespace epee
 {

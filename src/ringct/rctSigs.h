@@ -32,6 +32,8 @@
 
 //#define DBG
 
+#define WIN32_LEAN_AND_MEAN
+
 #ifndef RCTSIGS_H
 #define RCTSIGS_H
 
@@ -50,6 +52,16 @@ extern "C" {
 
 #include "rctTypes.h"
 #include "rctOps.h"
+
+#include "contrib/epee/include/misc_log_ex.h"
+#include "contrib/epee/include/misc_language.h"
+#include "src/common/perf_timer.h"
+#include "src/common/threadpool.h"
+#include "src/common/util.h"
+#include "bulletproofs.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
+#include "src/cryptonote_config.h"
+
 
 //Define this flag when debugging to get additional info on the console
 #ifdef DBG

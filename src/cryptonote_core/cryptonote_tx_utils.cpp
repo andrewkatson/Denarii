@@ -28,23 +28,8 @@
 // 
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
-#include <unordered_set>
-#include <random>
-#include "contrib/epee/include/include_base_utils.h"
-#include "contrib/epee/include/string_tools.h"
-using namespace epee;
 
-#include "src/common/apply_permutation.h"
 #include "cryptonote_tx_utils.h"
-#include "src/cryptonote_config.h"
-#include "blockchain.h"
-#include "src/cryptonote_basic/miner.h"
-#include "src/cryptonote_basic/tx_extra.h"
-#include "src/crypto/crypto.h"
-#include "src/crypto/hash.h"
-#include "src/ringct/rctSigs.h"
-#include "src/multisig/multisig.h"
-#include "contrib/epee/include/memwipe.h"
 
 using namespace crypto;
 
@@ -334,8 +319,8 @@ namespace cryptonote
       if(!msout && !(in_ephemeral.pub == src_entr.outputs[src_entr.real_output].second.dest) )
       {
         LOG_ERROR("derived public key mismatch with output public key at index " << idx << ", real out " << src_entr.real_output << "! "<< ENDL << "derived_key:"
-          << string_tools::pod_to_hex(in_ephemeral.pub) << ENDL << "real output_public_key:"
-          << string_tools::pod_to_hex(src_entr.outputs[src_entr.real_output].second.dest) );
+          << epee::string_tools::pod_to_hex(in_ephemeral.pub) << ENDL << "real output_public_key:"
+          << epee::string_tools::pod_to_hex(src_entr.outputs[src_entr.real_output].second.dest) );
         LOG_ERROR("amount " << src_entr.amount << ", rct " << src_entr.rct);
         LOG_ERROR("tx pubkey " << src_entr.real_out_tx_key << ", real_output_in_tx_index " << src_entr.real_output_in_tx_index);
         return false;
@@ -656,7 +641,7 @@ namespace cryptonote
     bl = {};
 
     blobdata tx_bl;
-    bool r = string_tools::parse_hexstr_to_binbuff(genesis_tx, tx_bl);
+    bool r = epee::string_tools::parse_hexstr_to_binbuff(genesis_tx, tx_bl);
     CHECK_AND_ASSERT_MES(r, false, "failed to parse coinbase tx from hard coded blob");
     r = parse_and_validate_tx_from_blob(tx_bl, bl.miner_tx);
     CHECK_AND_ASSERT_MES(r, false, "failed to parse coinbase tx from hard coded blob");

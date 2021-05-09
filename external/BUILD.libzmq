@@ -5,5 +5,5 @@ package(default_visibility = ["//visibility:public"])
 cc_library(
  name = "libzmq",
  srcs = glob(["**/libzmq.a"]),
- hdrs = glob(["**/include/**/*.h"]),
+ hdrs = glob(["**/*.h"]),
 )

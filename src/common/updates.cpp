@@ -26,11 +26,13 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
+#include "updates.h"
+
 #include <boost/algorithm/string.hpp>
 #include "contrib/epee/include/misc_log_ex.h"
 #include "util.h"
 #include "dns_utils.h"
-#include "updates.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "updates"

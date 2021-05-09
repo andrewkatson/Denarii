@@ -36,8 +36,12 @@
 #include <vector>
 #include <iostream>
 #include <cinttypes>
-#include <sodium/crypto_verify_32.h>
 
+#ifdef _WIN32
+#include "sodium/crypto_verify_32.h"
+#else
+#include "sodium/crypto_verify_32.h"
+#endif
 extern "C" {
 #include "src/crypto/crypto-ops.h"
 #include "src/crypto/random.h"

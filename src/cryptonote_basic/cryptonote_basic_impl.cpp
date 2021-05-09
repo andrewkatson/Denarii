@@ -28,19 +28,7 @@
 //
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
-#include "contrib/epee/include/include_base_utils.h"
-using namespace epee;
-
 #include "cryptonote_basic_impl.h"
-#include "contrib/epee/include/string_tools.h"
-#include "src/serialization/binary_utils.h"
-#include "cryptonote_format_utils.h"
-#include "src/cryptonote_config.h"
-#include "contrib/epee/include/misc_language.h"
-#include "src/common/base58.h"
-#include "src/crypto/hash.h"
-#include "contrib/epee/include/int-util.h"
-#include "src/common/dns_utils.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "cn"
@@ -258,7 +246,7 @@ namespace cryptonote {
     {
       // Old address format
       std::string buff;
-      if(!string_tools::parse_hexstr_to_binbuff(str, buff))
+      if(!epee::string_tools::parse_hexstr_to_binbuff(str, buff))
         LOG_PRINT_L1("Old address format");
         return false;
 

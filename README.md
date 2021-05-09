@@ -166,6 +166,8 @@ Perl: https://strawberryperl.com/
 NASM: https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/win64/
 QTtools: https://wiki.qt.io/Install_Qt_5_Dev_Suite_Windows
 Msys2: https://www.msys2.org/
+LLVM: http://releases.llvm.org/download.html
+Bazel with gcc: https://github.com/bazelbuild/bazel/issues/12100
 
 * Download and install the [MSYS2 installer](https://www.msys2.org), either the 64-bit or the 32-bit package, depending on your system.
 * Open the MSYS shell via the `MSYS2 Shell` shortcut
@@ -206,6 +208,10 @@ Msys2: https://www.msys2.org/
     bazel run :configure_win (run through command prompt)
     bazel run :configure     (run through msys2)
     ```
+
+## Building 
+
+All builds should use ```--copt="-O3"```
   
 ## Running denariid
 

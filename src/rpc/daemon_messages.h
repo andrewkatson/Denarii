@@ -27,6 +27,7 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 
 #include "include/rapidjson/writer.h"
 #include <unordered_map>
@@ -38,7 +39,7 @@
 #include "src/rpc/message_data_structs.h"
 #include "src/rpc/daemon_rpc_version.h"
 #include "src/cryptonote_basic/cryptonote_basic.h"
-
+#include "src/serialization/json_object.h"
 #define BEGIN_RPC_MESSAGE_CLASS(classname) \
 class classname \
 { \

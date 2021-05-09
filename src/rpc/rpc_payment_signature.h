@@ -27,10 +27,16 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 
 #include <stdint.h>
 #include <string>
 #include "src/crypto/crypto.h"
+#include <cinttypes>
+#include <stdlib.h>
+#include <chrono>
+#include "contrib/epee/include/include_base_utils.h"
+#include "contrib/epee/include/string_tools.h"
 
 namespace cryptonote
 {

@@ -28,12 +28,7 @@
 
 #include "json_object.h"
 
-#include <boost/range/adaptor/transformed.hpp>
-#include <boost/variant/apply_visitor.hpp>
-#include <limits>
-#include <type_traits>
 
-#include "src/cryptonote_basic/cryptonote_basic_impl.h"
 
 // drop macro from windows.h
 #ifdef GetObject

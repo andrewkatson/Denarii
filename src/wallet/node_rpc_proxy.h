@@ -27,6 +27,7 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 
 #include <string>
 #include <boost/thread/mutex.hpp>
@@ -34,6 +35,10 @@
 #include "contrib/epee/include/net/abstract_http_client.h"
 #include "src/rpc/core_rpc_server_commands_defs.h"
 #include "wallet_rpc_helpers.h"
+#include "src/rpc/core_rpc_server_commands_defs.h"
+#include "src/rpc/rpc_payment_signature.h"
+#include "src/rpc/rpc_payment_costs.h"
+#include "contrib/epee/include/storages/http_abstract_invoke.h"
 
 namespace tools
 {

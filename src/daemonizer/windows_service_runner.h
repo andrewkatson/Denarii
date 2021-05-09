@@ -33,7 +33,7 @@
 #undef UNICODE
 #undef _UNICODE
 
-#include "daemonizer/windows_service.h"
+#include "src/daemonizer/windows_service.h"
 #include <memory>
 #include <string>
 #include <vector>

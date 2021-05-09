@@ -28,20 +28,7 @@
 //
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
-#include "contrib/epee/include/string_tools.h"
-#include "src/common/password.h"
-#include "src/common/scoped_message_writer.h"
-#include "src/common/pruning.h"
 #include "src/daemon/rpc_command_executor.h"
-#include "src/rpc/core_rpc_server_commands_defs.h"
-#include "src/cryptonote_core/cryptonote_core.h"
-#include "src/cryptonote_basic/difficulty.h"
-#include "src/cryptonote_basic/hardfork.h"
-#include "src/rpc/rpc_payment_signature.h"
-#include "src/rpc/rpc_version_str.h"
-#include <boost/format.hpp>
-#include <ctime>
-#include <string>
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "daemon"
@@ -1725,7 +1712,7 @@ bool t_rpc_command_executor::ban(const std::string &address, time_t seconds)
     cryptonote::COMMAND_RPC_SETBANS::ban ban;
     ban.host = address;
     ban.ip = 0;
-    ban.ban = true;
+    ban.is_ban = true;
     ban.seconds = seconds;
     req.bans.push_back(ban);
 
@@ -1758,7 +1745,7 @@ bool t_rpc_command_executor::unban(const std::string &address)
     cryptonote::COMMAND_RPC_SETBANS::ban ban;
     ban.host = address;
     ban.ip = 0;
-    ban.ban = false;
+    ban.is_ban = false;
     ban.seconds = 0;
     req.bans.push_back(ban);
 

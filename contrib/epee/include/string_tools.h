@@ -29,11 +29,7 @@
 #ifndef _STRING_TOOLS_H_
 #define _STRING_TOOLS_H_
 
-// Previously pulled in by ASIO, further cleanup still required ...
-#ifdef _WIN32
-# include <winsock2.h>
-# include <windows.h>
-#endif
+#include <boost/asio.hpp>
 
 #include <string.h>
 #include <locale>

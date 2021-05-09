@@ -30,7 +30,11 @@
 #define HAVE_MLOCK 1
 #endif
 
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #if defined HAVE_MLOCK
 #include <sys/mman.h>
 #endif
@@ -58,7 +62,7 @@ static size_t query_page_size()
   }
   return ret;
 #else
-#warning Missing query_page_size implementation
+#pragma message ("Missing query_page_size implementation")
 #endif
   return 0;
 }
@@ -70,7 +74,7 @@ static void do_lock(void *ptr, size_t len)
   if (ret < 0 && !previously_failed.exchange(true))
     MERROR("Error locking page at " << ptr << ": " << strerror(errno) << ", subsequent mlock errors will be silenced");
 #else
-#warning Missing do_lock implementation
+#pragma message ("Missing do_lock implementation")
 #endif
 }
 
@@ -84,7 +88,7 @@ static void do_unlock(void *ptr, size_t len)
   if (ret < 0 && !previously_failed.load())
     MERROR("Error unlocking page at " << ptr << ": " << strerror(errno));
 #else
-#warning Missing implementation of page size detection
+#pragma message ("Missing implementation of page size detection")
 #endif
 }
 

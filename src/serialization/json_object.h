@@ -27,6 +27,7 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 
 #include <boost/utility/string_ref.hpp>
 #include <cstring>
@@ -41,6 +42,13 @@
 #include "src/common/sfinae_helpers.h"
 #include "contrib/epee/include/hex.h"
 #include "contrib/epee/include/span.h"
+
+#include <boost/range/adaptor/transformed.hpp>
+#include <boost/variant/apply_visitor.hpp>
+#include <limits>
+#include <type_traits>
+
+#include "src/cryptonote_basic/cryptonote_basic_impl.h"
 
 #define OBJECT_HAS_MEMBER_OR_THROW(val, key) \
   do \

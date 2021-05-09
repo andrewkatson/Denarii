@@ -28,6 +28,9 @@
 //
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
+
+#include "blockchain.h"
+
 #include <algorithm>
 #include <cstdio>
 #include <boost/filesystem.hpp>
@@ -37,8 +40,6 @@
 #include "contrib/epee/include/include_base_utils.h"
 #include "src/cryptonote_basic/cryptonote_basic_impl.h"
 #include "tx_pool.h"
-#include "blockchain.h"
-#include "src/blockchain_db/blockchain_db.h"
 #include "src/cryptonote_basic/cryptonote_boost_serialization.h"
 #include "src/cryptonote_config.h"
 #include "src/cryptonote_basic/miner.h"
@@ -50,13 +51,12 @@
 #include "src/common/threadpool.h"
 #include "src/common/boost_serialization_helper.h"
 #include "contrib/epee/include/warnings.h"
-#include "src/crypto/hash.h"
-#include "cryptonote_core.h"
 #include "src/ringct/rctSigs.h"
 #include "src/common/perf_timer.h"
 #include "src/common/notify.h"
 #include "src/common/varint.h"
 #include "src/common/pruning.h"
+
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "blockchain"

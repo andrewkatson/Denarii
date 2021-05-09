@@ -28,18 +28,6 @@
 
 #include "tor_address.h"
 
-#include <algorithm>
-#include <boost/spirit/include/karma_generate.hpp>
-#include <boost/spirit/include/karma_uint.hpp>
-#include <cassert>
-#include <cstring>
-#include <limits>
-
-#include "src/net/error.h"
-#include "contrib/epee/include/serialization/keyvalue_serialization.h"
-#include "contrib/epee/include/storages/portable_storage.h"
-#include "contrib/epee/include/string_tools.h"
-
 namespace net
 {
     namespace

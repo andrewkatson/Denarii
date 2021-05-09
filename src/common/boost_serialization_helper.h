@@ -31,8 +31,14 @@
 #pragma once
 
 #include <boost/archive/binary_iarchive.hpp>
+
+#ifdef _WIN32
+#include "portable_binary_oarchive.hpp"
+#include "portable_binary_iarchive.hpp"
+#else
 #include "archive/portable_binary_oarchive.hpp"
 #include "archive/portable_binary_iarchive.hpp"
+#endif
 #include <boost/filesystem/operations.hpp>
 
 

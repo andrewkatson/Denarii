@@ -29,11 +29,25 @@
 // Adapted from Java code by Sarang Noether
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 
 #ifndef BULLETPROOFS_H
 #define BULLETPROOFS_H
 
 #include "rctTypes.h"
+#include <stdlib.h>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
+#include "contrib/epee/include/misc_log_ex.h"
+#include "contrib/epee/include/span.h"
+#include "src/common/perf_timer.h"
+#include "src/cryptonote_config.h"
+extern "C"
+{
+#include "src/crypto/crypto-ops.h"
+}
+#include "rctOps.h"
+#include "multiexp.h"
 
 namespace rct
 {

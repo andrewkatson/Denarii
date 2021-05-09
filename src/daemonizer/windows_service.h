@@ -27,6 +27,18 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
+
+#include "src/common/scoped_message_writer.h"
+#include "contrib/epee/include/string_tools.h"
+#include <chrono>
+#include <iostream>
+#include <utility>
+#include <memory>
+#include <shellapi.h>
+#include <thread>
+#include <boost/chrono/chrono.hpp>
+#include <boost/thread/thread.hpp>
 
 #ifdef WIN32
 

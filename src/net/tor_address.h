@@ -27,6 +27,7 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 
 #include <boost/utility/string_ref.hpp>
 #include <cstdint>
@@ -35,6 +36,18 @@
 #include "src/common/expect.h"
 #include "contrib/epee/include/net/enums.h"
 #include "src/net/error.h"
+
+#include <algorithm>
+#include <boost/spirit/include/karma_generate.hpp>
+#include <boost/spirit/include/karma_uint.hpp>
+#include <cassert>
+#include <cstring>
+#include <limits>
+
+#include "src/net/error.h"
+#include "contrib/epee/include/serialization/keyvalue_serialization.h"
+#include "contrib/epee/include/storages/portable_storage.h"
+#include "contrib/epee/include/string_tools.h"
 
 namespace epee
 {
@@ -121,6 +134,11 @@ namespace net
 
         //! \return `!is_unknown()`.
         bool is_blockable() const noexcept { return !is_unknown(); }
+
+        //! \return Value, \pre `has_value()`.
+        tor_address* operator->() noexcept { return this; }
+        //! \return Value, \pre `has_value()`.
+        tor_address const* operator->() const noexcept { return this; }
     };
 
     inline bool operator==(const tor_address& lhs, const tor_address& rhs) noexcept

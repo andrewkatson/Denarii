@@ -27,19 +27,6 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "src/wallet/wallet_args.h"
 
-#include <boost/filesystem/path.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/format.hpp>
-#include "src/common/i18n.h"
-#include "src/common/util.h"
-#include "contrib/epee/include/misc_log_ex.h"
-#include "contrib/epee/include/string_tools.h"
-#include "src/version.h"
-
-#if defined(WIN32)
-#include <crtdbg.h>
-#endif
-
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "wallet.wallet2"
 

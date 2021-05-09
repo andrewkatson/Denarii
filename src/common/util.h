@@ -29,6 +29,7 @@
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
 #pragma once 
+#define WIN32_LEAN_AND_MEAN
 
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
@@ -42,7 +43,7 @@
 
 #ifdef _WIN32
 #include "windows.h"
-#include "misc_log_ex.h"
+#include "contrib/epee/include/misc_log_ex.h"
 #endif
 
 #include "src/crypto/hash.h"

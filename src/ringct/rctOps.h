@@ -30,6 +30,7 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 
 #ifndef RCTOPS_H
 #define RCTOPS_H
@@ -38,6 +39,9 @@
 #include <tuple>
 
 #include "src/crypto/generic-ops.h"
+#include <boost/lexical_cast.hpp>
+#include "contrib/epee/include/misc_log_ex.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
 
 extern "C" {
 #include "src/crypto/random.h"

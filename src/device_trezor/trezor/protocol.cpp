@@ -27,21 +27,8 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "src/version.h"
 #include "protocol.hpp"
-#include <unordered_map>
-#include <set>
-#include <utility>
-#include <boost/endian/conversion.hpp>
-#include "src/common/apply_permutation.h"
-#include "src/common/json_util.h"
-#include "src/crypto/hmac-keccak.h"
-#include "src/ringct/rctSigs.h"
-#include "src/ringct/bulletproofs.h"
-#include "src/cryptonote_config.h"
-#include <sodium.h>
-#include <sodium/crypto_verify_32.h>
-#include <sodium/crypto_aead_chacha20poly1305.h>
+
 
 #define GET_FIELD_STRING(name, type, jtype) field_##name = std::string(json[#name].GetString(), json[#name].GetStringLength())
 #define GET_FIELD_OTHER(name, type, jtype) field_##name = static_cast<type>(json[#name].Get##jtype())

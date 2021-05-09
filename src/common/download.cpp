@@ -26,35 +26,16 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <string>
-#include <atomic>
-#include <boost/filesystem.hpp>
-#include <boost/thread/thread.hpp>
-#include "contrib/epee/include/file_io_utils.h"
-#include "contrib/epee/include/net/http_client.h"
+
 #include "download.h"
+
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "net.dl"
 
 namespace tools
 {
-  struct download_thread_control
-  {
-    const std::string path;
-    const std::string uri;
-    std::function<void(const std::string&, const std::string&, bool)> result_cb;
-    std::function<bool(const std::string&, const std::string&, size_t, ssize_t)> progress_cb;
-    bool stop;
-    bool stopped;
-    bool success;
-    boost::thread thread;
-    boost::mutex mutex;
 
-    download_thread_control(const std::string &path, const std::string &uri, std::function<void(const std::string&, const std::string&, bool)> result_cb, std::function<bool(const std::string&, const std::string&, size_t, ssize_t)> progress_cb):
-        path(path), uri(uri), result_cb(result_cb), progress_cb(progress_cb), stop(false), stopped(false), success(false) {}
-    ~download_thread_control() { if (thread.joinable()) thread.detach(); }
-  };
 
   static void download_thread(download_async_handle control)
   {

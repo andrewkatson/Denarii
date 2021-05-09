@@ -30,6 +30,8 @@
 
 #pragma once
 
+#define WIN32_LEAN_AND_MEAN
+
 #include <ctime>
 
 #include <boost/function.hpp>
@@ -44,7 +46,6 @@
 #include "src/common/download.h"
 #include "src/common/command_line.h"
 #include "tx_pool.h"
-#include "blockchain.h"
 #include "src/cryptonote_basic/miner.h"
 #include "src/cryptonote_basic/connection_context.h"
 #include "contrib/epee/include/warnings.h"
@@ -52,15 +53,35 @@
 #include "contrib/epee/include/span.h"
 #include "src/rpc/fwd.h"
 
+#include <boost/algorithm/string.hpp>
+#include <boost/uuid/nil_generator.hpp>
+#include "contrib/epee/include/string_tools.h"
+#include <unordered_set>
+#include "src/common/util.h"
+#include "src/common/updates.h"
+#include "src/common/threadpool.h"
+#include "src/cryptonote_basic/events.h"
+#include "src/crypto/crypto.h"
+#include "src/cryptonote_config.h"
+#include "contrib/epee/include/misc_language.h"
+#include "contrib/epee/include/file_io_utils.h"
+#include <csignal>
+#include "src/checkpoints/checkpoints.h"
+#include "src/ringct/rctTypes.h"
+#include "src/blockchain_db/blockchain_db.h"
+#include "src/ringct/rctSigs.h"
+#include "src/rpc/zmq_pub.h"
+#include "src/common/notify.h"
+#include "src/hardforks/hardforks.h"
+#include "src/version.h"
+
+#include "blockchain.h"
+
 PUSH_WARNINGS
 DISABLE_VS_WARNINGS(4355)
 
 namespace cryptonote
 {
-   struct test_options {
-     const std::pair<uint8_t, uint64_t> *hard_forks;
-     const size_t long_term_block_weight_window;
-   };
 
   extern const command_line::arg_descriptor<std::string, false, true, 2> arg_data_dir;
   extern const command_line::arg_descriptor<bool, false> arg_testnet_on;
@@ -277,7 +298,7 @@ namespace cryptonote
       *
       * @return false if one of the init steps fails, otherwise true
       */
-     bool init(const boost::program_options::variables_map& vm, const test_options *test_options = NULL, const GetCheckpointsCallback& get_checkpoints = nullptr);
+     bool init(const boost::program_options::variables_map& vm, const test_options *test_options = nullptr, const GetCheckpointsCallback& get_checkpoints = nullptr);
 
      /**
       * @copydoc Blockchain::reset_and_set_genesis_block

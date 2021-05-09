@@ -27,15 +27,43 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once 
-
+#define WIN32_LEAN_AND_MEAN
 #include <string>
+#include <atomic>
+#include <memory>
+#include <functional>
+#include <boost/filesystem.hpp>
+#include <boost/thread/thread.hpp>
+#include "contrib/epee/include/file_io_utils.h"
+#include "contrib/epee/include/net/http_client.h"
 
+
+
+#include <limits.h>
+#include <stddef.h>
+#include <inttypes.h>
+#include <stdint.h>
 namespace tools
 {
-  struct download_thread_control;
+    struct download_thread_control
+    {
+        const std::string path;
+        const std::string uri;
+        std::function<void(const std::string&, const std::string&, bool)> result_cb;
+        std::function<bool(const std::string&, const std::string&, size_t, ssize_t)> progress_cb;
+        bool stop;
+        bool stopped;
+        bool success;
+        boost::thread thread;
+        boost::mutex mutex;
+
+        download_thread_control(const std::string &path, const std::string &uri, std::function<void(const std::string&, const std::string&, bool)> result_cb, std::function<bool(const std::string&, const std::string&, size_t, ssize_t)> progress_cb):
+                path(path), uri(uri), result_cb(result_cb), progress_cb(progress_cb), stop(false), stopped(false), success(false) {}
+        ~download_thread_control() { if (thread.joinable()) thread.detach(); }
+    };
   typedef std::shared_ptr<download_thread_control> download_async_handle;
 
-  bool download(const std::string &path, const std::string &url, std::function<bool(const std::string&, const std::string&, size_t, ssize_t)> progress = NULL);
+  bool download(const std::string &path, const std::string &url, std::function<bool(const std::string&, const std::string&, size_t, ssize_t)> progress = nullptr);
   download_async_handle download_async(const std::string &path, const std::string &url, std::function<void(const std::string&, const std::string&, bool)> result, std::function<bool(const std::string&, const std::string&, size_t, ssize_t)> progress = NULL);
   bool download_error(const download_async_handle &h);
   bool download_finished(const download_async_handle &h);

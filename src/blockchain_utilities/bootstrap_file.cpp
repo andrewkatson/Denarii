@@ -26,11 +26,9 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "bootstrap_serialization.h"
-#include "src/serialization/binary_utils.h" // dump_binary(), parse_binary()
-#include "src/serialization/json_utils.h" // dump_json()
 
 #include "bootstrap_file.h"
+#include "bootstrap_serialization.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "bcutil"

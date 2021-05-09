@@ -28,6 +28,8 @@
 //
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
+#include "net_node.h"
+
 #include <boost/algorithm/string/find_iterator.hpp>
 #include <boost/algorithm/string/finder.hpp>
 #include <boost/chrono/duration.hpp>
@@ -35,13 +37,10 @@
 #include <boost/optional/optional.hpp>
 #include <boost/thread/future.hpp>
 #include <boost/utility/string_ref.hpp>
-#include <chrono>
-#include <utility>
 
-#include "src/common/command_line.h"
 #include "src/cryptonote_core/cryptonote_core.h"
 #include "src/cryptonote_protocol/cryptonote_protocol_defs.h"
-#include "net_node.h"
+
 #include "contrib/epee/include/net/net_utils_base.h"
 #include "src/net/socks.h"
 #include "src/net/parse.h"

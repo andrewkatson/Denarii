@@ -28,34 +28,9 @@
 //
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
-#include <boost/algorithm/string.hpp>
-#include <boost/uuid/nil_generator.hpp>
 
-#include "contrib/epee/include/string_tools.h"
-using namespace epee;
 
-#include <unordered_set>
 #include "cryptonote_core.h"
-#include "src/common/util.h"
-#include "src/common/updates.h"
-#include "src/common/download.h"
-#include "src/common/threadpool.h"
-#include "src/common/command_line.h"
-#include "src/cryptonote_basic/events.h"
-#include "contrib/epee/include/warnings.h"
-#include "src/crypto/crypto.h"
-#include "src/cryptonote_config.h"
-#include "contrib/epee/include/misc_language.h"
-#include "contrib/epee/include/file_io_utils.h"
-#include <csignal>
-#include "src/checkpoints/checkpoints.h"
-#include "src/ringct/rctTypes.h"
-#include "src/blockchain_db/blockchain_db.h"
-#include "src/ringct/rctSigs.h"
-#include "src/rpc/zmq_pub.h"
-#include "src/common/notify.h"
-#include "src/hardforks/hardforks.h"
-#include "src/version.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "cn"

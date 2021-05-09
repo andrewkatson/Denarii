@@ -33,6 +33,8 @@
 #include <type_traits>
 #include <utility>
 
+#include "contrib/epee/include/net/enums.h"
+
 #include "error.h"
 
 //! If precondition fails, return `::error::kInvalidArgument` in current scope.

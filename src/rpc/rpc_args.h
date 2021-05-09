@@ -27,7 +27,7 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 #pragma once
-
+#define WIN32_LEAN_AND_MEAN
 #include <boost/optional/optional.hpp>
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
@@ -36,6 +36,12 @@
 #include "src/common/command_line.h"
 #include "src/common/password.h"
 #include "contrib/epee/include/net/net_ssl.h"
+
+#include <boost/algorithm/string.hpp>
+#include <functional>
+#include "src/common/i18n.h"
+#include "contrib/epee/include/hex.h"
+#include <boost/asio/ip/address.hpp>
 
 namespace cryptonote
 {
