@@ -9911,10 +9911,15 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_2(std::vector<cryp
       subaddr_indices.insert(i.first);
   }
 
+  // used to get a dynamic fee
+  centralnode::dynamic_critical_values dcv;
+
+  double dynamic_transaction_fee = dcv.get_transaction_fee();
+
   // early out if we know we can't make it anyway
   // we could also check for being within FEE_PER_KB, but if the fee calculation
   // ever changes, this might be missed, so let this go through
-  const uint64_t min_fee = (fee_multiplier * base_fee * estimate_tx_size(use_rct, 1, fake_outs_count, 2, extra.size(), bulletproof, clsag));
+  const uint64_t min_fee = (fee_multiplier * base_fee * dynamic_transaction_fee * estimate_tx_size(use_rct, 1, fake_outs_count, 2, extra.size(), bulletproof, clsag));
   uint64_t balance_subtotal = 0;
   uint64_t unlocked_balance_subtotal = 0;
   for (uint32_t index_minor : subaddr_indices)
@@ -10030,7 +10035,7 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_2(std::vector<cryp
   {
     // this is used to build a tx that's 1 or 2 inputs, and 2 outputs, which
     // will get us a known fee.
-    uint64_t estimated_fee = estimate_fee(use_per_byte_fee, use_rct, 2, fake_outs_count, 2, extra.size(), bulletproof, clsag, base_fee, fee_multiplier, fee_quantization_mask);
+    uint64_t estimated_fee = estimate_fee(use_per_byte_fee, use_rct, 2, fake_outs_count, 2, extra.size(), bulletproof, clsag, base_fee, fee_multiplier, fee_quantization_mask) * dynamic_transaction_fee;
     preferred_inputs = pick_preferred_rct_inputs(needed_money + estimated_fee, subaddr_account, subaddr_indices);
     if (!preferred_inputs.empty())
     {
@@ -10189,7 +10194,7 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_2(std::vector<cryp
       pending_tx test_ptx;
 
       const size_t num_outputs = get_num_outputs(tx.dsts, m_transfers, tx.selected_transfers);
-      needed_fee = estimate_fee(use_per_byte_fee, use_rct ,tx.selected_transfers.size(), fake_outs_count, num_outputs, extra.size(), bulletproof, clsag, base_fee, fee_multiplier, fee_quantization_mask);
+      needed_fee = estimate_fee(use_per_byte_fee, use_rct ,tx.selected_transfers.size(), fake_outs_count, num_outputs, extra.size(), bulletproof, clsag, base_fee, fee_multiplier, fee_quantization_mask) * dynamic_transaction_fee;
 
       uint64_t inputs = 0, outputs = needed_fee;
       for (size_t idx: tx.selected_transfers) inputs += m_transfers[idx].amount();
@@ -10211,7 +10216,7 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_2(std::vector<cryp
         transfer_selected(tx.dsts, tx.selected_transfers, fake_outs_count, outs, unlock_time, needed_fee, extra,
           detail::digit_split_strategy, tx_dust_policy(::config::DEFAULT_DUST_THRESHOLD), test_tx, test_ptx);
       auto txBlob = t_serializable_object_to_blob(test_ptx.tx);
-      needed_fee = calculate_fee(use_per_byte_fee, test_ptx.tx, txBlob.size(), base_fee, fee_multiplier, fee_quantization_mask);
+      needed_fee = calculate_fee(use_per_byte_fee, test_ptx.tx, txBlob.size(), base_fee, fee_multiplier, fee_quantization_mask) * dynamic_transaction_fee;
       available_for_fee = test_ptx.fee + test_ptx.change_dts.amount + (!test_ptx.dust_added_to_fee ? test_ptx.dust : 0);
       LOG_PRINT_L2("Made a " << get_weight_string(test_ptx.tx, txBlob.size()) << " tx, with " << print_money(available_for_fee) << " available for fee (" <<
         print_money(needed_fee) << " needed)");
@@ -10254,7 +10259,7 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_2(std::vector<cryp
             transfer_selected(tx.dsts, tx.selected_transfers, fake_outs_count, outs, unlock_time, needed_fee, extra,
               detail::digit_split_strategy, tx_dust_policy(::config::DEFAULT_DUST_THRESHOLD), test_tx, test_ptx);
           txBlob = t_serializable_object_to_blob(test_ptx.tx);
-          needed_fee = calculate_fee(use_per_byte_fee, test_ptx.tx, txBlob.size(), base_fee, fee_multiplier, fee_quantization_mask);
+          needed_fee = calculate_fee(use_per_byte_fee, test_ptx.tx, txBlob.size(), base_fee, fee_multiplier, fee_quantization_mask) * dynamic_transaction_fee;
           LOG_PRINT_L2("Made an attempt at a  final " << get_weight_string(test_ptx.tx, txBlob.size()) << " tx, with " << print_money(test_ptx.fee) <<
             " fee  and " << print_money(test_ptx.change_dts.amount) << " change");
         }
@@ -10569,6 +10574,11 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_from(const crypton
   accumulated_change = 0;
   needed_fee = 0;
 
+  // grabs dynamic transaction fee modifier
+  centralnode::dynamic_critical_values dcv;
+
+  double dynamic_transaction_fee = dcv.get_transaction_fee();
+
   // while we have something to send
   hwdev.set_mode(hw::device::TRANSACTION_CREATE_FAKE);
   while (!unused_dust_indices.empty() || !unused_transfers_indices.empty()) {
@@ -10619,7 +10629,7 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_from(const crypton
       pending_tx test_ptx;
 
       const size_t num_outputs = get_num_outputs(tx.dsts, m_transfers, tx.selected_transfers);
-      needed_fee = estimate_fee(use_per_byte_fee, use_rct, tx.selected_transfers.size(), fake_outs_count, num_outputs, extra.size(), bulletproof, clsag, base_fee, fee_multiplier, fee_quantization_mask);
+      needed_fee = estimate_fee(use_per_byte_fee, use_rct, tx.selected_transfers.size(), fake_outs_count, num_outputs, extra.size(), bulletproof, clsag, base_fee, fee_multiplier, fee_quantization_mask) * dynamic_transaction_fee;
 
       // add N - 1 outputs for correct initial fee estimation
       for (size_t i = 0; i < ((outputs > 1) ? outputs - 1 : outputs); ++i)
@@ -10634,7 +10644,7 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_from(const crypton
         transfer_selected(tx.dsts, tx.selected_transfers, fake_outs_count, outs, unlock_time, needed_fee, extra,
           detail::digit_split_strategy, tx_dust_policy(::config::DEFAULT_DUST_THRESHOLD), test_tx, test_ptx);
       auto txBlob = t_serializable_object_to_blob(test_ptx.tx);
-      needed_fee = calculate_fee(use_per_byte_fee, test_ptx.tx, txBlob.size(), base_fee, fee_multiplier, fee_quantization_mask);
+      needed_fee = calculate_fee(use_per_byte_fee, test_ptx.tx, txBlob.size(), base_fee, fee_multiplier, fee_quantization_mask) * dynamic_transaction_fee;
       available_for_fee = test_ptx.fee + test_ptx.change_dts.amount;
       for (auto &dt: test_ptx.dests)
         available_for_fee += dt.amount;

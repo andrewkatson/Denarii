@@ -20,6 +20,12 @@ cc_library(
 )
 
 cc_library(
+ name = "ssl",
+ srcs = glob(["**/libssl.a"]),
+ hdrs = glob(["**/ssl/**/*.h"])
+)
+
+cc_library(
  name = "libcrypto",
  srcs = glob(["**/libcrypto.a"]),
  hdrs =

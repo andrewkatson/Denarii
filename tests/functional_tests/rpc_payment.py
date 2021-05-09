@@ -145,7 +145,7 @@ class RPCPaymentTest():
         res = daemon.rpc_access_info(client = self.get_signature())
         assert len(res.hashing_blob) > 39
         assert res.height == 1
-        assert res.top_hash == '526b9ee72cf29508bfce91cb60d660420a0a2c4328c1df812ec2a6a49588dfbd'
+        assert res.top_hash == 'da80837e933e1cc784f4f8a9e6ee1d751748bc346ad7868bda52b872cc856724'
         assert res.credits_per_hash_found == 5000
         assert res.diff == 10
         assert res.credits == 0

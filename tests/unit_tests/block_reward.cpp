@@ -28,9 +28,14 @@
 // 
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
+#include "absl/random/random.h"
+#include "absl/random/uniform_int_distribution.h"
+#include <boost/chrono.hpp>
+#include <boost/thread/thread.hpp>
 #include "gtest/gtest.h"
 
 #include "src/cryptonote_basic/cryptonote_basic_impl.h"
+#include "tests/utils/fake_central_node.h"
 
 using namespace cryptonote;
 
@@ -250,5 +255,45 @@ namespace
     do_test(m_last_block_weights_median * 15 / 8);
     ASSERT_TRUE(m_block_not_too_big);
     ASSERT_EQ(m_block_reward, m_standard_block_reward * 15 / 64);
+  }
+
+  class block_reward_dynamic : public ::testing::Test {
+
+  protected:
+      int get_random_val() {
+          return absl::uniform_int_distribution<int>(
+                  0, 1000)(gen);
+      }
+
+      // Using Abseil Random. We want the generator to be created whenever this file is.
+      absl::BitGen gen;
+  };
+
+  TEST_F(block_reward_dynamic, calculates_regardless_of_inputs) {
+    uint64_t block_reward = -1;
+    ASSERT_TRUE(get_block_reward(get_random_val(), get_random_val(), get_random_val(), block_reward, 15));
+    ASSERT_EQ(block_reward, 0);
+    destroy();
+  }
+
+  TEST_F(block_reward_dynamic, calculates_with_fake_central_node) {
+    create();
+    uint64_t expected_block_reward = 10;
+
+
+    // Since we need to wait for the block reward to be propagated we put this on its own thread
+    // and wait a bit
+    uint64_t block_reward = -1;
+    boost::thread t {[&](){get_block_reward(get_random_val(), get_random_val(), get_random_val(), block_reward, 15);}};
+
+    boost::this_thread::sleep_for(boost::chrono::seconds{2});
+
+
+    send_block_reward(expected_block_reward);
+
+    t.join();
+
+    ASSERT_EQ(block_reward, expected_block_reward);
+    destroy();
   }
 }

@@ -396,6 +396,10 @@ def liblmdb(external_dir_path):
     os.system(command)
 
 
+def keiros_public(external_dir_path):
+    clone_command = "git clone https://github.com/andrewkatson/KeirosPublic.git"
+    os.system(clone_command)
+
 def build_dependencies():
     external_dir_path = workspace_path / "external"
     os.chdir(external_dir_path)
@@ -425,6 +429,7 @@ def build_dependencies():
     liblmdb(external_dir_path)
     os.chdir(external_dir_path)
 
+    keiros_public(external_dir_path)
 
 def build_dependencies_win():
     external_dir_path = workspace_path / "external"
@@ -438,7 +443,6 @@ def build_dependencies_win():
 
     os.chdir(external_dir_path)
     supercop_win(external_dir_path)
-
     os.chdir(external_dir_path)
 
 

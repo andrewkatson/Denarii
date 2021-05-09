@@ -44,6 +44,7 @@
 #include "src/crypto/hash.h"
 #include "contrib/epee/include/int-util.h"
 #include "src/common/dns_utils.h"
+#include "src/centralnode/dynamic_critical_values.h"
 
 namespace cryptonote {
   /************************************************************************/
