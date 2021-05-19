@@ -211,7 +211,7 @@ Bazel with gcc: https://github.com/bazelbuild/bazel/issues/12100
 
 ## Building 
 
-All builds should use ```--copt="-O3"```
+All builds should use ```--copt="-O3"``` and ```--javabase=@bazel_tools//tools/jdk:remote_jdk11```
   
 ## Running denariid
 

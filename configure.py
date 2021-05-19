@@ -445,6 +445,8 @@ def build_dependencies_win():
     supercop_win(external_dir_path)
     os.chdir(external_dir_path)
 
+    keiros_public(external_dir_path)
+
 
 def trezor_common():
     text = 'load(\"@rules_proto//proto:defs.bzl\", \"proto_library\")  \n\
