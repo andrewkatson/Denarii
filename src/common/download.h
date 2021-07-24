@@ -50,21 +50,33 @@ namespace tools
         const std::string path;
         const std::string uri;
         std::function<void(const std::string&, const std::string&, bool)> result_cb;
+#ifdef _WIN32
+        std::function<bool(const std::string&, const std::string&, size_t, long)> progress_cb;
+#else
         std::function<bool(const std::string&, const std::string&, size_t, ssize_t)> progress_cb;
+#endif
         bool stop;
         bool stopped;
         bool success;
         boost::thread thread;
         boost::mutex mutex;
 
+#ifdef _WIN32
+        download_thread_control(const std::string &path, const std::string &uri, std::function<void(const std::string&, const std::string&, bool)> result_cb, std::function<bool(const std::string&, const std::string&, size_t, long)> progress_cb):
+#else
         download_thread_control(const std::string &path, const std::string &uri, std::function<void(const std::string&, const std::string&, bool)> result_cb, std::function<bool(const std::string&, const std::string&, size_t, ssize_t)> progress_cb):
+#endif
                 path(path), uri(uri), result_cb(result_cb), progress_cb(progress_cb), stop(false), stopped(false), success(false) {}
         ~download_thread_control() { if (thread.joinable()) thread.detach(); }
     };
   typedef std::shared_ptr<download_thread_control> download_async_handle;
-
+#ifdef _WIN32
+    bool download(const std::string &path, const std::string &url, std::function<bool(const std::string&, const std::string&, size_t, long)> progress = nullptr);
+  download_async_handle download_async(const std::string &path, const std::string &url, std::function<void(const std::string&, const std::string&, bool)> result, std::function<bool(const std::string&, const std::string&, size_t, long)> progress = NULL);
+#else
   bool download(const std::string &path, const std::string &url, std::function<bool(const std::string&, const std::string&, size_t, ssize_t)> progress = nullptr);
   download_async_handle download_async(const std::string &path, const std::string &url, std::function<void(const std::string&, const std::string&, bool)> result, std::function<bool(const std::string&, const std::string&, size_t, ssize_t)> progress = NULL);
+#endif
   bool download_error(const download_async_handle &h);
   bool download_finished(const download_async_handle &h);
   bool download_wait(const download_async_handle &h);

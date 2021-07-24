@@ -82,7 +82,11 @@ namespace tools
         {
           for (const auto &kv: headers.m_header_info.m_etc_fields)
             MDEBUG("Header: " << kv.first << ": " << kv.second);
+#ifdef _WIN32
+          long length;
+#else
           ssize_t length;
+#endif
           if (epee::string_tools::get_xtype_from_string(length, headers.m_header_info.m_content_length) && length >= 0)
           {
             MINFO("Content-Length: " << length);
@@ -144,7 +148,11 @@ namespace tools
       private:
         download_async_handle control;
         std::ofstream &f;
+#ifdef _WIN32
+        long content_length;
+#else
         ssize_t content_length;
+#endif
         size_t total;
         uint64_t offset;
       } client(control, f, existing_size);
@@ -238,16 +246,22 @@ namespace tools
     boost::lock_guard<boost::mutex> lock(control->mutex);
     control->result_cb(control->path, control->uri, control->success);
   }
-
+#ifdef _WIN32
+  bool download(const std::string &path, const std::string &url, std::function<bool(const std::string&, const std::string&, size_t, long)> cb)
+#else
   bool download(const std::string &path, const std::string &url, std::function<bool(const std::string&, const std::string&, size_t, ssize_t)> cb)
+#endif
   {
     bool success = false;
     download_async_handle handle = download_async(path, url, [&success](const std::string&, const std::string&, bool result) {success = result;}, cb);
     download_wait(handle);
     return success;
   }
-
+#ifdef _WIN32
+  download_async_handle download_async(const std::string &path, const std::string &url, std::function<void(const std::string&, const std::string&, bool)> result, std::function<bool(const std::string&, const std::string&, size_t, long)> progress)
+#else
   download_async_handle download_async(const std::string &path, const std::string &url, std::function<void(const std::string&, const std::string&, bool)> result, std::function<bool(const std::string&, const std::string&, size_t, ssize_t)> progress)
+#endif
   {
     download_async_handle control = std::make_shared<download_thread_control>(path, url, result, progress);
     control->thread = boost::thread([control](){ download_thread(control); });

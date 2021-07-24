@@ -27,33 +27,10 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
-#include <boost/format.hpp>
-#include <boost/asio/ip/address.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/preprocessor/stringize.hpp>
-#include <cstdint>
-#include "contrib/epee/include/include_base_utils.h"
-using namespace epee;
 
-#include "src/version.h"
 #include "wallet_rpc_server.h"
-#include "src/wallet/wallet_args.h"
-#include "src/common/command_line.h"
-#include "src/common/i18n.h"
-#include "src/cryptonote_config.h"
-#include "src/cryptonote_basic/cryptonote_format_utils.h"
-#include "src/cryptonote_basic/account.h"
-#include "src/multisig/multisig.h"
-#include "wallet_rpc_server_commands_defs.h"
-#include "contrib/epee/include/misc_language.h"
-#include "contrib/epee/include/string_coding.h"
-#include "contrib/epee/include/string_tools.h"
-#include "src/crypto/hash.h"
-#include "src/mnemonics/electrum-words.h"
-#include "src/rpc/rpc_args.h"
-#include "src/rpc/core_rpc_server_commands_defs.h"
-#include "src/daemonizer/daemonizer.h"
+
+using namespace epee;
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "wallet.rpc"

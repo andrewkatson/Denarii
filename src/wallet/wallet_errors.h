@@ -893,7 +893,7 @@ namespace tools
 #if !defined(_MSC_VER)
 
     template<typename TException, typename... TArgs>
-    void throw_wallet_ex(std::string&& loc, const TArgs&... args)
+    inline void throw_wallet_ex(std::string&& loc, const TArgs&... args)
     {
       TException e(std::move(loc), args...);
       LOG_PRINT_L0(e.to_string());
@@ -905,14 +905,14 @@ namespace tools
     #include <boost/preprocessor/repetition/enum_params.hpp>
     #include <boost/preprocessor/repetition/repeat_from_to.hpp>
 
-    void throw_wallet_ex(std::string&& loc) {
+    inline void throw_wallet_ex(std::string&& loc) {
         error::wallet_internal_error e(std::move(loc));
         LOG_PRINT_L0(e.to_string());
         throw e;
     }
 
     template<typename TException>
-    void throw_wallet_ex(std::string&& loc)
+    inline void throw_wallet_ex(std::string&& loc)
     {
       TException e(std::move(loc));
       LOG_PRINT_L0(e.to_string());
@@ -921,7 +921,7 @@ namespace tools
 
 #define GEN_throw_wallet_ex(z, n, data)                                                       \
     template<typename TException, BOOST_PP_ENUM_PARAMS(n, typename TArg)>                     \
-    void throw_wallet_ex(std::string&& loc, BOOST_PP_ENUM_BINARY_PARAMS(n, const TArg, &arg)) \
+    inline void throw_wallet_ex(std::string&& loc, BOOST_PP_ENUM_BINARY_PARAMS(n, const TArg, &arg)) \
     {                                                                                         \
       TException e(std::move(loc), BOOST_PP_ENUM_PARAMS(n, arg));                             \
       LOG_PRINT_L0(e.to_string());                                                            \

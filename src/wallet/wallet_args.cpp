@@ -204,8 +204,11 @@ namespace wallet_args
     MINFO(wallet_args::tr("Logging to: ") << log_path);
 
     Print(print) << boost::format(wallet_args::tr("Logging to %s")) % log_path;
-
+#ifdef _WIN32
+    const long lockable_memory = tools::get_lockable_memory();
+#else
     const ssize_t lockable_memory = tools::get_lockable_memory();
+#endif
     if (lockable_memory >= 0 && lockable_memory < 256 * 4096) // 256 pages -> at least 256 secret keys and other such small/medium objects
       Print(print) << tr("WARNING: You may not have a high enough lockable memory limit")
 #ifdef ELPP_OS_UNIX

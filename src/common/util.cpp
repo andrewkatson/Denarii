@@ -796,7 +796,11 @@ std::string get_nix_version_display_string()
     return true;
   }
 
+#ifdef _WIN32
+  long get_lockable_memory()
+#else
   ssize_t get_lockable_memory()
+#endif
   {
 #ifdef __GLIBC__
     struct rlimit rlim;
@@ -840,6 +844,9 @@ std::string get_nix_version_display_string()
   {
 #if defined(__MINGW32__) || defined(__MINGW__)
     // no clue about the odd one out
+#elif defined(_WIN32)
+    bool mode = strict ? 077 : 0;
+    umask(mode);
 #else
     mode_t mode = strict ? 077 : 0;
     umask(mode);

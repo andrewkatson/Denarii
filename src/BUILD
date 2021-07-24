@@ -144,10 +144,10 @@ cc_library(
     srcs = glob([
         "**/crypto/*.c",
         "**/crypto/*.cpp",
-        "**/crypto/*.S",
     ]) +
     select({
             "windows": glob(["**/crypto/wallet/*.c", "**/crypto/wallet/*.cpp"]),
+                         "//conditions:default": glob(["**/crypto/*.S"]),
         }),
     hdrs = glob([
         "**/crypto/*.h",
@@ -596,7 +596,6 @@ cc_library(
         "wallet/wallet_args.h",
         "wallet/wallet_errors.h",
         "wallet/wallet_rpc_helpers.h",
-        "wallet/wallet_rpc_server.h",
         "wallet/wallet_rpc_server_commands_defs.h",
         "wallet/wallet_rpc_server_error_codes.h",
     ],
@@ -681,9 +680,10 @@ cc_library(
     deps = [
         "//contrib/epee",
         "//src:common",
-        "@boost//:asio",
         "@libzmq",
-    ],
+    ] + select({
+                  "//conditions:default" : ["@boost//:asio",]
+              }),
 )
 
 cc_library(
@@ -730,7 +730,10 @@ cc_library(
         "rpc/rpc_handler.h",
         "rpc/rpc_version_str.h",
     ],
-    copts = ["-Wa,-mbig-obj"],
+    copts = select({
+                    "windows": [],
+                    "//conditions:default": ["-Wa,-mbig-obj"],
+                }),
     deps = [
         ":rpc_base",
         "//src:common",

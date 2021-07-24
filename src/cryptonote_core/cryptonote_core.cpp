@@ -1843,7 +1843,11 @@ namespace cryptonote
         }
         if (good)
           MCLOG_CYAN(el::Level::Info, "updates", "New version downloaded to " << path.string());
+#ifdef _WIN32
+      }, [this](const std::string &path, const std::string &uri, size_t length, long content_length) {
+#else
       }, [this](const std::string &path, const std::string &uri, size_t length, ssize_t content_length) {
+#endif
         if (length >= m_last_update_length + 1024 * 1024 * 10)
         {
           m_last_update_length = length;

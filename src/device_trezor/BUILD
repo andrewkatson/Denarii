@@ -35,6 +35,7 @@ cc_library(
         "//src:cryptonote_core",
         "//src:device",
         "//src:ringct_basic",
+        "//src:rpc",
         "@boost//:chrono",
         "@libsodium",
         "@libusb",
