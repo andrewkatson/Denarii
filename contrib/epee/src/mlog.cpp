@@ -28,13 +28,6 @@
 #ifndef _MLOG_H_
 #define _MLOG_H_
 
-#ifdef _WIN32
-#include <windows.h>
-#ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
-#define ENABLE_VIRTUAL_TERMINAL_PROCESSING  0x0004
-#endif
-#endif
-
 #include <time.h>
 #include <atomic>
 #include <boost/filesystem.hpp>
@@ -42,6 +35,14 @@
 #include "contrib/epee/include/string_tools.h"
 #include "contrib/epee/include/misc_os_dependent.h"
 #include "contrib/epee/include/misc_log_ex.h"
+
+#ifdef _WIN32
+#include <io.h>
+#ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
+#define ENABLE_VIRTUAL_TERMINAL_PROCESSING  0x0004
+#endif
+#endif
+
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "logging"

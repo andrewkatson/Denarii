@@ -27,12 +27,19 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 
 #include <vector>
 #include <unordered_map>
 #include "src/crypto/crypto.h"
 #include "src/cryptonote_basic/cryptonote_format_utils.h"
 #include "src/ringct/rctTypes.h"
+#include <unordered_set>
+#include "contrib/epee/include/include_base_utils.h"
+#include "src/ringct/rctOps.h"
+#include "src/cryptonote_basic/account.h"
+#include "src/cryptonote_config.h"
+
 
 namespace cryptonote
 {

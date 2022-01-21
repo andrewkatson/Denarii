@@ -17,7 +17,12 @@
 #define EASYLOGGING_CC
 #include "easylogging++.h"
 
+
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 // We cheat and make it always initialized because we cannot do this in the cmake files.
 INITIALIZE_EASYLOGGINGPP

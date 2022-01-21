@@ -3866,7 +3866,11 @@ boost::optional<wallet2::keys_file_data> wallet2::get_keys_file_data(const epee:
 
   bool r = epee::serialization::store_t_to_binary(account, account_data);
   CHECK_AND_ASSERT_MES(r, boost::none, "failed to serialize wallet keys");
+#ifdef _WIN32
+  boost::optional<wallet2::keys_file_data> keys_file_data = wallet2::keys_file_data();
+#else
   boost::optional<wallet2::keys_file_data> keys_file_data = (wallet2::keys_file_data) {};
+#endif
 
   // Create a JSON object with "key_data" and "seed_language" as keys.
   rapidjson::Document json;
@@ -6024,7 +6028,11 @@ boost::optional<wallet2::cache_file_data> wallet2::get_cache_file_data(const epe
     if (!::serialization::serialize(ar, *this))
       return boost::none;
 
+#ifdef _WIN32
+    boost::optional<wallet2::cache_file_data> cache_file_data = wallet2::cache_file_data();
+#else
     boost::optional<wallet2::cache_file_data> cache_file_data = (wallet2::cache_file_data) {};
+#endif
     cache_file_data.get().cache_data = oss.str();
     std::string cipher;
     cipher.resize(cache_file_data.get().cache_data.size());

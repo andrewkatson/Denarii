@@ -73,6 +73,14 @@ http_archive(
     urls = ["https://github.com/grpc/grpc/archive/v1.28.1.zip"],
 )
 
+# proto libraries for grpc. this gives us all the esoteric languages that can be used
+http_archive(
+    name = "rules_proto_grpc",
+   sha256 = "7954abbb6898830cd10ac9714fbcacf092299fda00ed2baf781172f545120419",
+    strip_prefix = "rules_proto_grpc-3.1.1",
+    urls = ["https://github.com/rules-proto-grpc/rules_proto_grpc/archive/3.1.1.tar.gz"],
+)
+
 # boost
 git_repository(
     name = "com_github_nelhage_rules_boost",
@@ -299,3 +307,21 @@ grpc_deps()
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
 
 boost_deps()
+
+
+load("@keiros_public//:bazel/keiros_public.bzl", "keiros_public_deps")
+
+keiros_public_deps()
+
+
+load("@rules_proto_grpc//js:repositories.bzl", rules_proto_grpc_js_repos = "js_repos")
+
+rules_proto_grpc_js_repos()
+
+load("@build_bazel_rules_nodejs//:index.bzl", "yarn_install")
+
+yarn_install(
+    name = "npm",
+    package_json = "@rules_proto_grpc//js:requirements/package.json",  # This should be changed to your local package.json which should contain the dependencies required
+    yarn_lock = "@rules_proto_grpc//js:requirements/yarn.lock",
+)

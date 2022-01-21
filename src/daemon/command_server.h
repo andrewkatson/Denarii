@@ -39,11 +39,19 @@ Passing RPC commands:
 
 #pragma once
 
+#define WIN32_LEAN_AND_MEAN
+
+
 #include <boost/optional/optional_fwd.hpp>
 #include "src/common/common_fwd.h"
 #include "contrib/epee/include/console_handler.h"
 #include "src/daemon/command_parser_executor.h"
 #include "contrib/epee/include/net/net_fwd.h"
+
+#include <boost/algorithm/string.hpp>
+#include "src/cryptonote_config.h"
+#include "src/version.h"
+#include "contrib/epee/include/string_tools.h"
 
 namespace daemonize {
 

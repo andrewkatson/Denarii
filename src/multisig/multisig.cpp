@@ -26,14 +26,8 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <unordered_set>
-#include "contrib/epee/include/include_base_utils.h"
-#include "src/crypto/crypto.h"
-#include "src/ringct/rctOps.h"
-#include "src/cryptonote_basic/account.h"
-#include "src/cryptonote_basic/cryptonote_format_utils.h"
 #include "multisig.h"
-#include "src/cryptonote_config.h"
+
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "multisig"

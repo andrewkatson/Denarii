@@ -25,10 +25,15 @@
 // INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#define WIN32_LEAN_AND_MEAN
 
 #include <set>
 #include "src/cryptonote_basic/blobdatatype.h"
-
+#include <stdint.h>
+#include <vector>
+#include "src/cryptonote_basic/cryptonote_basic.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
+#include "blockchain.h"
 namespace cryptonote
 {
   bool tx_sanity_check(const cryptonote::blobdata &tx_blob, uint64_t rct_outs_available);

@@ -27,15 +27,8 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "src/version.h"
 #include "device_ledger.hpp"
-#include "src/ringct/rctOps.h"
-#include "src/cryptonote_basic/account.h"
-#include "src/cryptonote_basic/subaddress_index.h"
-#include "src/cryptonote_core/cryptonote_tx_utils.h"
 
-#include <boost/thread/locks.hpp> 
-#include <boost/thread/lock_guard.hpp>
 
 namespace hw {
 

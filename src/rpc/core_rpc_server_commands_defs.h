@@ -1849,13 +1849,13 @@ namespace cryptonote
     {
       std::string host;
       uint32_t ip;
-      bool ban;
+      bool is_ban;
       uint32_t seconds;
 
       BEGIN_KV_SERIALIZE_MAP()
         KV_SERIALIZE(host)
         KV_SERIALIZE(ip)
-        KV_SERIALIZE(ban)
+        KV_SERIALIZE(is_ban)
         KV_SERIALIZE(seconds)
       END_KV_SERIALIZE_MAP()
     };

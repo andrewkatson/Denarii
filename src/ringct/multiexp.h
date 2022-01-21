@@ -30,6 +30,9 @@
 
 #pragma once
 
+#define WIN32_LEAN_AND_MEAN
+
+
 #ifndef MULTIEXP_H
 #define MULTIEXP_H
 
@@ -37,6 +40,14 @@
 #include "src/crypto/crypto.h"
 #include "rctTypes.h"
 #include "contrib/epee/include/misc_log_ex.h"
+
+#include "src/common/perf_timer.h"
+extern "C"
+{
+#include "src/crypto/crypto-ops.h"
+}
+#include "src/common/aligned.h"
+#include "rctOps.h"
 
 namespace rct
 {

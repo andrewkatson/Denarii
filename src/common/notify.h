@@ -28,8 +28,16 @@
 
 #pragma once 
 
+#define WIN32_LEAN_AND_MEAN
+
+
 #include <string>
 #include <vector>
+#include <boost/algorithm/string.hpp>
+#include <stdarg.h>
+#include "contrib/epee/include/misc_log_ex.h"
+#include "contrib/epee/include/file_io_utils.h"
+#include "spawn.h"
 
 namespace tools
 {

@@ -33,8 +33,12 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-#include <unistd.h>
 
+#ifdef _WIN32
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
 #include "contrib/epee/include/int-util.h"
 #include "hash-ops.h"
 #include "oaes_lib.h"

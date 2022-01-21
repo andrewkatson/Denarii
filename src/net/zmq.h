@@ -31,8 +31,12 @@
 #include <memory>
 #include <string>
 #include <system_error>
-#include <zmq.h>
 
+#ifdef _WIN32
+#include "src/net/include/zmq.h"
+#else
+#include <zmq.h>
+#endif
 #include "src/common/expect.h"
 #include "contrib/epee/include/span.h"
 

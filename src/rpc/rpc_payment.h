@@ -27,6 +27,7 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 
 #include <string>
 #include <unordered_set>
@@ -43,6 +44,19 @@
 #include "src/serialization/pair.h"
 #include "src/serialization/containers.h"
 
+
+#include "archive/portable_binary_iarchive.hpp"
+#include "src/cryptonote_config.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "contrib/epee/include/string_tools.h"
+#include "contrib/epee/include/file_io_utils.h"
+#include "contrib/epee/include/int-util.h"
+#include "src/common/util.h"
+#include "src/common/unordered_containers_boost_serialization.h"
+#include "src/cryptonote_basic/cryptonote_boost_serialization.h"
+#include "src/cryptonote_basic/cryptonote_format_utils.h"
+#include "src/cryptonote_basic/difficulty.h"
+#include "core_rpc_server_error_codes.h"
 namespace cryptonote
 {
   class rpc_payment

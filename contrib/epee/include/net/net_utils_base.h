@@ -29,6 +29,8 @@
 #ifndef _NET_UTILS_BASE_H_
 #define _NET_UTILS_BASE_H_
 
+#include <memory>
+
 #include <boost/uuid/uuid.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/address_v6.hpp>
@@ -104,6 +106,11 @@ namespace net_utils
 			}
 			KV_SERIALIZE(m_port)
 		END_KV_SERIALIZE_MAP()
+
+        //! \return Value, \pre `has_value()`.
+        ipv4_network_address* operator->() noexcept { return this; }
+        //! \return Value, \pre `has_value()`.
+        ipv4_network_address const* operator->() const noexcept { return this; }
 	};
 
 	inline bool operator==(const ipv4_network_address& lhs, const ipv4_network_address& rhs) noexcept
@@ -151,6 +158,11 @@ namespace net_utils
 			KV_SERIALIZE(m_ip)
 			KV_SERIALIZE(m_mask)
 		END_KV_SERIALIZE_MAP()
+
+        //! \return Value, \pre `has_value()`.
+        ipv4_network_subnet* operator->() noexcept { return this; }
+        //! \return Value, \pre `has_value()`.
+        ipv4_network_subnet const* operator->() const noexcept { return this; }
 	};
 
 	inline bool operator==(const ipv4_network_subnet& lhs, const ipv4_network_subnet& rhs) noexcept
@@ -204,6 +216,11 @@ namespace net_utils
 			const_cast<boost::asio::ip::address_v6&>(this_ref.m_address) = boost::asio::ip::address_v6(bytes);
 			KV_SERIALIZE(m_port)
 		END_KV_SERIALIZE_MAP()
+
+        //! \return Value, \pre `has_value()`.
+        ipv6_network_address* operator->() noexcept { return this; }
+        //! \return Value, \pre `has_value()`.
+        ipv6_network_address const* operator->() const noexcept { return this; }
 	};
 
 	inline bool operator==(const ipv6_network_address& lhs, const ipv6_network_address& rhs) noexcept
@@ -223,7 +240,7 @@ namespace net_utils
 	{
 		struct interface
 		{
-                        virtual ~interface() {};
+           virtual ~interface() {};
 
 			virtual bool equal(const interface&) const = 0;
 			virtual bool less(const interface&) const = 0;
@@ -251,21 +268,21 @@ namespace net_utils
 			{ return static_cast<const implementation<T>&>(src).value; }
 
 			virtual bool equal(const interface& other) const override
-			{ return value.equal(cast(other)); }
+			{ return value->equal(cast(other)); }
 
 			virtual bool less(const interface& other) const override
-			{ return value.less(cast(other)); }
+			{ return value->less(cast(other)); }
 
 			virtual bool is_same_host(const interface& other) const override
-			{ return value.is_same_host(cast(other)); }
+			{ return value->is_same_host(cast(other)); }
 
-			virtual std::string str() const override { return value.str(); }
-			virtual std::string host_str() const override { return value.host_str(); }
-			virtual bool is_loopback() const override { return value.is_loopback(); }
-			virtual bool is_local() const override { return value.is_local(); }
-			virtual address_type get_type_id() const override { return value.get_type_id(); }
-			virtual zone get_zone() const override { return value.get_zone(); }
-			virtual bool is_blockable() const override { return value.is_blockable(); }
+			virtual std::string str() const override { return value->str(); }
+			virtual std::string host_str() const override { return value->host_str(); }
+			virtual bool is_loopback() const override { return value->is_loopback(); }
+			virtual bool is_local() const override { return value->is_local(); }
+			virtual address_type get_type_id() const override { return value->get_type_id(); }
+			virtual zone get_zone() const override { return value->get_zone(); }
+			virtual bool is_blockable() const override { return value->is_blockable(); }
 		};
 
 		std::shared_ptr<interface> self;

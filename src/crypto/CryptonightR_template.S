@@ -7,6 +7,8 @@
 #ifdef __APPLE__
 #   define FN_PREFIX(fn) _ ## fn
 .text
+#elif __WIN32
+#   define FN_PREFIX(fn) fn
 #else
 #   define FN_PREFIX(fn) fn
 .section .text

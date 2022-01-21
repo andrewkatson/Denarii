@@ -1,5 +1,13 @@
 package(default_visibility = ["//visibility:public"])
 
+config_setting(
+    name = "windows",
+    constraint_values = [
+        "@bazel_tools//platforms:windows",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 cc_library(
     name = "device_trezor",
     srcs = [
@@ -18,13 +26,16 @@ cc_library(
         "trezor/protocol.hpp",
         "trezor/transport.hpp",
         "trezor/trezor_defs.hpp",
-    ],
+    ] + select({
+                   "windows" : glob(["**/trezor/include/*.h"])
+               }),
     deps = [
         "//src:cncrypto",
         "//src:common",
         "//src:cryptonote_core",
         "//src:device",
         "//src:ringct_basic",
+        "//src:rpc",
         "@boost//:chrono",
         "@libsodium",
         "@libusb",

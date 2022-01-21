@@ -46,6 +46,20 @@
 #include "contrib/epee/include/net/net_fwd.h"
 #include "src/rpc/core_rpc_server.h"
 
+#include "contrib/epee/include/string_tools.h"
+#include "src/common/password.h"
+#include "src/common/scoped_message_writer.h"
+#include "src/common/pruning.h"
+#include "src/rpc/core_rpc_server_commands_defs.h"
+#include "src/cryptonote_core/cryptonote_core.h"
+#include "src/cryptonote_basic/difficulty.h"
+#include "src/cryptonote_basic/hardfork.h"
+#include "src/rpc/rpc_payment_signature.h"
+#include "src/rpc/rpc_version_str.h"
+#include <boost/format.hpp>
+#include <ctime>
+#include <string>
+
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "daemon"
 

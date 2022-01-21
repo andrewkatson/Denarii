@@ -28,6 +28,7 @@
 
 #include "src/common/dns_utils.h"
 // check local first (in the event of static or in-source compilation of libunbound)
+
 #include "unbound.h"
 
 #include <stdlib.h>
@@ -37,6 +38,8 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/optional.hpp>
+#include <deque>
+
 using namespace epee;
 
 #undef MONERO_DEFAULT_LOG_CATEGORY

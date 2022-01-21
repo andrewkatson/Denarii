@@ -29,10 +29,21 @@
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 
 #include "cryptonote_basic.h"
 #include "src/crypto/crypto.h"
 #include "src/crypto/hash.h"
+#include "contrib/epee/include/include_base_utils.h"
+#include "contrib/epee/include/string_tools.h"
+#include "src/serialization/binary_utils.h"
+#include "cryptonote_format_utils.h"
+#include "src/cryptonote_config.h"
+#include "contrib/epee/include/misc_language.h"
+#include "src/common/base58.h"
+#include "src/crypto/hash.h"
+#include "contrib/epee/include/int-util.h"
+#include "src/common/dns_utils.h"
 #include "src/centralnode/dynamic_critical_values.h"
 
 namespace cryptonote {

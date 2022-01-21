@@ -27,7 +27,27 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
+
 #include <boost/program_options.hpp>
+#include "src/rpc/daemon_handler.h"
+#include "src/rpc/zmq_pub.h"
+#include "src/rpc/zmq_server.h"
+#include <memory>
+#include <stdexcept>
+#include <boost/algorithm/string/split.hpp>
+#include "contrib/epee/include/misc_log_ex.h"
+#include "src/common/password.h"
+#include "src/common/util.h"
+#include "src/cryptonote_basic/events.h"
+#include "src/daemon/core.h"
+#include "src/daemon/p2p.h"
+#include "src/daemon/protocol.h"
+#include "src/daemon/rpc.h"
+#include "src/daemon/command_server.h"
+#include "src/daemon/command_line_args.h"
+#include "contrib/epee/include/net/net_ssl.h"
+#include "src/version.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "daemon"

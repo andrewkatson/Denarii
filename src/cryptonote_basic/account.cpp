@@ -28,19 +28,13 @@
 // 
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
-#include <fstream>
-
-#include "contrib/epee/include/include_base_utils.h"
 #include "account.h"
-#include "contrib/epee/include/warnings.h"
-#include "src/crypto/crypto.h"
+
 extern "C"
 {
 #include "src/crypto/keccak.h"
 }
-#include "cryptonote_basic_impl.h"
-#include "cryptonote_format_utils.h"
-#include "src/cryptonote_config.h"
+
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "account"

@@ -26,20 +26,7 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <errno.h>
-#include <unistd.h>
-#include <sys/types.h>
-#ifdef _WIN32
-#include <boost/algorithm/string/join.hpp>
-#include <boost/scope_exit.hpp>
-#include <windows.h>
-#else
-#include <sys/wait.h>
-#include <signal.h>
-#endif
 
-#include "contrib/epee/include/misc_log_ex.h"
-#include "util.h"
 #include "spawn.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY

@@ -1,6 +1,12 @@
 #include "contrib/epee/include/readline_buffer.h"
-#include <readline/readline.h>
-#include <readline/history.h>
+
+#ifdef _WIN32
+#include "readline/readline.h"
+#include "readline/history.h"
+#else
+#include "readline/readline.h"
+#include "readline/history.h"
+#endif
 #include <iostream>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/lock_guard.hpp>

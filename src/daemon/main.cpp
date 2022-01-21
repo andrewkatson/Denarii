@@ -27,6 +27,7 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
+#define WIN32_LEAN_AND_MEAN
 
 #include "src/common/command_line.h"
 #include "src/common/scoped_message_writer.h"

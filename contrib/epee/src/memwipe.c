@@ -32,15 +32,22 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #ifdef HAVE_EXPLICIT_BZERO
 #include <strings.h>
 #endif
 #include "contrib/epee/include/memwipe.h"
 
-#if defined(_MSC_VER)
+#ifdef _WIN64
+#define SCARECROW
+#elif _WIN32
 #define SCARECROW \
-    __asm;
+    __asm {};
 #else
 #define SCARECROW \
     __asm__ __volatile__("" : : "r"(ptr) : "memory");

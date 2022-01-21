@@ -28,6 +28,10 @@
 
 #include "blocksdat_file.h"
 
+#include "bootstrap_serialization.h"
+#include "src/serialization/binary_utils.h" // dump_binary(), parse_binary()
+#include "src/serialization/json_utils.h" // dump_json()
+
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "bcutil"
 

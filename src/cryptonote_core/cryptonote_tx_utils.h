@@ -29,10 +29,27 @@
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
+
 #include "src/cryptonote_basic/cryptonote_format_utils.h"
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/utility.hpp>
 #include "src/ringct/rctOps.h"
+
+#include "src/common/apply_permutation.h"
+#include "src/cryptonote_config.h"
+#include "blockchain.h"
+#include "src/cryptonote_basic/miner.h"
+#include "src/cryptonote_basic/tx_extra.h"
+#include "src/crypto/crypto.h"
+#include "src/crypto/hash.h"
+#include "src/ringct/rctSigs.h"
+#include "src/multisig/multisig.h"
+#include "contrib/epee/include/memwipe.h"
+#include <unordered_set>
+#include <random>
+#include "contrib/epee/include/include_base_utils.h"
+#include "contrib/epee/include/string_tools.h"
 
 namespace cryptonote
 {

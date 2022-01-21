@@ -36,12 +36,18 @@
 
 #pragma once
 
+#define WIN32_LEAN_AND_MEAN
+
+
 #include <boost/optional/optional.hpp>
 
 #include "src/daemon/rpc_command_executor.h"
 #include "src/common/common_fwd.h"
 #include "contrib/epee/include/net/net_fwd.h"
 #include "src/rpc/core_rpc_server.h"
+
+#include "src/common/dns_utils.h"
+#include "src/common/command_line.h"
 
 namespace daemonize {
 

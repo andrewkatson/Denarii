@@ -168,9 +168,9 @@ out/build/x64-Debug (default)/VSInheritEnvironments.txt
 src/blocks/generated_checkpoints.c
 src/blocks/generated_stagenet_blocks.c
 src/blocks/generated_testnet_blocks.c
-src/crypto/wallet/BUILD
 src/crypto/wallet/ops.h
 src/version.cpp
 tests/benchmark.h
 translations/monero_de.qm
+*.qm
 *.qm

@@ -2,6 +2,14 @@ package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])  # BSD/MIT-like license (for zlib)
 
+config_setting(
+    name = "windows",
+    constraint_values = [
+        "@bazel_tools//platforms:windows",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 _ZLIB_HEADERS = [
     "crc32.h",
     "deflate.h",
@@ -52,9 +60,12 @@ cc_library(
         # choice of <> or "" delimiter when including itself.
     ] + _ZLIB_HEADERS,
     hdrs = _ZLIB_PREFIXED_HEADERS,
-    copts = [
-        "-Wno-unused-variable",
-        "-Wno-implicit-function-declaration",
-    ],
+    copts = select({
+        "windows": [],
+        "//conditions:default": [
+            "-Wno-unused-variable",
+            "-Wno-implicit-function-declaration",
+        ],
+    }),
     includes = ["zlib/include/"],
 )

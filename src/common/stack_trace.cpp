@@ -33,14 +33,23 @@
 #endif
 #include "easylogging++.h"
 
+#include <iomanip>
 #include <stdexcept>
 #ifdef USE_UNWIND
 #define UNW_LOCAL_ONLY
+#ifdef _WIN32
+#include "include/libunwind.h"
+#else
 #include <libunwind.h>
+#endif
+#ifndef _WIN32
 #include <cxxabi.h>
 #endif
+#endif
 #ifndef STATICLIB
+#ifndef _WIN32
 #include <dlfcn.h>
+#endif
 #endif
 #include <boost/algorithm/string.hpp>
 #include "src/common/stack_trace.h"
@@ -86,20 +95,37 @@ void (cxa_throw_t)(void *ex, CXA_THROW_INFO_T *info, void (*dest)(void*));
 #endif // !STATICLIB
 
 extern "C"
+#ifdef _WIN32
+__declspec(noreturn)
+#else
 __attribute__((noreturn))
+#endif
 void CXA_THROW(void *ex, CXA_THROW_INFO_T *info, void (*dest)(void*))
 {
 
   int status;
+#ifdef _WIN32
+  const char* dsym = ((const std::type_info*)info)->name();
+#else
   char *dsym = abi::__cxa_demangle(((const std::type_info*)info)->name(), NULL, NULL, &status);
+#endif
   tools::log_stack_trace((std::string("Exception: ")+((!status && dsym) ? dsym : (const char*)info)).c_str());
+#ifdef _WIN32
+  free(const_cast<char*>(dsym));
+#else
   free(dsym);
-
+#endif
 #ifndef STATICLIB
 #ifndef __clang__ // for GCC the attr can't be applied in typedef like for clang
+#ifndef _WIN32
   __attribute__((noreturn))
+#endif
 #endif // !__clang__
+#ifdef _WIN32
+   cxa_throw_t * __real___cxa_throw = (cxa_throw_t*)GetProcAddress(GetModuleHandleA(NULL), "__cxa_throw");
+#else
    cxa_throw_t *__real___cxa_throw = (cxa_throw_t*)dlsym(RTLD_NEXT, "__cxa_throw");
+#endif
 #endif // !STATICLIB
   __real___cxa_throw(ex, info, dest);
 }
@@ -158,7 +184,11 @@ void log_stack_trace(const char *msg)
       ST_LOG("  " << std::setw(4) << level << std::setbase(16) << std::setw(20) << "0x" << ip);
       continue;
     }
+#ifdef _WIN32
+    dsym = sym;
+#else
     dsym = abi::__cxa_demangle(sym, NULL, NULL, &status);
+#endif
     ST_LOG("  " << std::setw(4) << level << std::setbase(16) << std::setw(20) << "0x" << ip << " " << (!status && dsym ? dsym : sym) << " + " << "0x" << off);
     free(dsym);
   }

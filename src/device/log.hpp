@@ -28,6 +28,7 @@
 //
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 
 #include <cstddef>
 #include <string>
@@ -37,6 +38,7 @@
 #include "src/cryptonote_basic/account.h"
 
 #include "device.hpp"
+#include "contrib/epee/include/misc_log_ex.h"
 
 namespace hw {
 

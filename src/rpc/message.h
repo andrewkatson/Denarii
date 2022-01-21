@@ -27,6 +27,7 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 
 #include "include/rapidjson/document.h"
 #include "include/rapidjson/writer.h"
@@ -35,6 +36,8 @@
 #include "contrib/epee/include/byte_slice.h"
 #include "contrib/epee/include/byte_stream.h"
 #include "src/rpc/message_data_structs.h"
+#include "daemon_rpc_version.h"
+#include "src/serialization/json_object.h"
 
 namespace cryptonote
 {

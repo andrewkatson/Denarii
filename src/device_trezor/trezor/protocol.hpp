@@ -29,12 +29,34 @@
 
 #ifndef MONERO_PROTOCOL_H
 #define MONERO_PROTOCOL_H
+#define WIN32_LEAN_AND_MEAN
 
 #include "trezor_defs.hpp"
 #include "src/device/device_cold.hpp"
 #include "messages_map.hpp"
 #include "transport.hpp"
 #include "src/wallet/wallet2.h"
+#include "src/version.h"
+#include <unordered_map>
+#include <set>
+#include <utility>
+#include <boost/endian/conversion.hpp>
+#include "src/common/apply_permutation.h"
+#include "src/common/json_util.h"
+#include "src/crypto/hmac-keccak.h"
+#include "src/ringct/rctSigs.h"
+#include "src/ringct/bulletproofs.h"
+#include "src/cryptonote_config.h"
+
+#ifdef _WIN32
+#include "src/device_trezor/trezor/include/sodium.h"
+#include "src/device_trezor/trezor/include/crypto_verify_32.h"
+#include "src/device_trezor/trezor/include/crypto_aead_chacha20poly1305.h"
+#else
+#include <sodium.h>
+#include <sodium/crypto_verify_32.h>
+#include <sodium/crypto_aead_chacha20poly1305.h>
+#endif
 
 namespace hw{
 namespace trezor{

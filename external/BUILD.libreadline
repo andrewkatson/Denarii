@@ -4,5 +4,5 @@ package(default_visibility = ["//visibility:public"])
 cc_library(
   name = "libreadline",
   srcs = glob(["**/*.a"]),
-  hdrs = glob(["**/include/**/*.h"])
+  hdrs = glob(["**/*.h"])
 )

@@ -28,7 +28,11 @@
 // 
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <cstdio>
 #include <wchar.h>
 
@@ -54,16 +58,10 @@
   #include <fstream>
 #endif
 
-#include "unbound.h"
-
-#include "contrib/epee/include/include_base_utils.h"
-#include "contrib/epee/include/file_io_utils.h"
-#include "contrib/epee/include/wipeable_string.h"
-#include "contrib/epee/include/misc_os_dependent.h"
-using namespace epee;
+#include "util.h"
 
 #include "src/crypto/crypto.h"
-#include "util.h"
+
 #include "stack_trace.h"
 #include "contrib/epee/include/memwipe.h"
 #include "contrib/epee/include/net/http_client.h"                        // epee::net_utils::...
@@ -73,19 +71,45 @@ using namespace epee;
 #ifndef STRSAFE_NO_DEPRECATE
 #define STRSAFE_NO_DEPRECATE
 #endif
-  #include <windows.h>
   #include <shlobj.h>
   #include <strsafe.h>
-#else 
-  #include <sys/file.h>
-  #include <sys/utsname.h>
-  #include <sys/stat.h>
+#else
+#include <sys/file.h>
+#include <sys/utsname.h>
+#include <sys/stat.h>
 #endif
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/asio.hpp>
+#ifdef _WIN32
+#  ifdef USE_ASIO
+//     Set the proper SDK version before including boost/Asio
+#      include <SDKDDKVer.h>
+//     Note boost/ASIO includes Windows.h.
+#      include <boost/asio.hpp>
+#   else //  USE_ASIO
+#      include <Windows.h>
+#   endif //  USE_ASIO
+#else // _WIN32
+#  ifdef USE_ASIO
+#     include <boost/asio.hpp>
+#  endif // USE_ASIO
+#endif //_WIN32
 #include <boost/format.hpp>
 #include <openssl/sha.h>
+
+#include "unbound.h"
+
+#include "contrib/epee/include/include_base_utils.h"
+#include "contrib/epee/include/file_io_utils.h"
+#include "contrib/epee/include/wipeable_string.h"
+#include "contrib/epee/include/misc_os_dependent.h"
+
+#include <limits.h>
+#include <stddef.h>
+#include <inttypes.h>
+#include <stdint.h>
+
+using namespace epee;
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "util"
@@ -710,7 +734,7 @@ std::string get_nix_version_display_string()
     }
     catch (...)
     {
-#if defined(__MINGW32__) || defined(__MINGW__)
+#if defined(__MINGW32__) || defined(__MINGW__) || defined(_WIN32)
       putenv("LC_ALL=C");
       putenv("LANG=C");
 #else
@@ -772,7 +796,11 @@ std::string get_nix_version_display_string()
     return true;
   }
 
+#ifdef _WIN32
+  long get_lockable_memory()
+#else
   ssize_t get_lockable_memory()
+#endif
   {
 #ifdef __GLIBC__
     struct rlimit rlim;
@@ -816,6 +844,9 @@ std::string get_nix_version_display_string()
   {
 #if defined(__MINGW32__) || defined(__MINGW__)
     // no clue about the odd one out
+#elif defined(_WIN32)
+    bool mode = strict ? 077 : 0;
+    umask(mode);
 #else
     mode_t mode = strict ? 077 : 0;
     umask(mode);

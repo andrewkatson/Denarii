@@ -28,8 +28,7 @@
 
 #include "message.h"
 
-#include "daemon_rpc_version.h"
-#include "src/serialization/json_object.h"
+
 
 namespace cryptonote
 {

@@ -27,10 +27,17 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 
 #include "src/daemon/daemon.h"
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
+#include <string>
+
+#include "contrib/epee/include/misc_log_ex.h"
+#include "src/cryptonote_config.h"
+#include "src/version.h"
+
 #include <string>
 
 #undef MONERO_DEFAULT_LOG_CATEGORY

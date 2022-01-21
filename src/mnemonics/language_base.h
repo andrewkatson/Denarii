@@ -42,6 +42,7 @@
 #include "contrib/epee/include/misc_log_ex.h"
 #include "contrib/epee/include/fnv1.h"
 #include "src/common/utf8.h"
+#include <cwctype>
 
 /*!
  * \namespace Language

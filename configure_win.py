@@ -31,7 +31,7 @@ win_library_info = [LibraryInfo("liblzma", "liblzma"), LibraryInfo("libsodium", 
                     LibraryInfo("libreadline", "libreadline"), LibraryInfo("libhidapi", "libhidapi"),
                     LibraryInfo("libusb", "libusb"), LibraryInfo("libunbound", "unbound"),
                     LibraryInfo("libopenssl", "openssl"), LibraryInfo("libzmq", "libzmq"),
-                    LibraryInfo("zlib", "zlib"), LibraryInfo("liblmdb", "db_drivers", False),
+                    LibraryInfo("liblmdb", "db_drivers", False),
                     LibraryInfo("libunwind", "libunwind", False)]
 
 parser = argparse.ArgumentParser(description="Process command line flags")
@@ -83,7 +83,23 @@ def get_libunwind():
 
     os.chdir(raw_path)
 
-    clone_command = "git clone https://github.com/libunwind/libunwind.git"
+    clone_command = "git clone https://github.com/llvm-mirror/libunwind.git"
+    os.system(clone_command)
+
+    #need to modify the libunwind.h we are using
+    source = str(workspace_path) + "/libunwind.h"
+    dest = raw_path + "/libunwind/include/libunwind.h"
+
+    move_command = "mv " + source + " " + dest
+    os.system(move_command)
+
+
+def get_zlib():
+    raw_path = str(workspace_path / "external")
+
+    os.chdir(raw_path)
+
+    clone_command = "git clone git@github.com:andrewkatson/zlib.git"
     os.system(clone_command)
 
 
@@ -184,7 +200,16 @@ def copy_file(path, library):
             filename = path.split("\\")[-1]
             new_path = os.path.join(library.folderpath + "/include", filename)
 
-            new_path_wo_filename = os.path.join(library.folderpath + "/include")
+            new_path_wo_filename = ""
+            # openssl requires it be in a directory called openssl
+            if "openssl" in library.libname:
+                new_path_wo_filename = os.path.join(library.folderpath, "openssl")
+            elif "readline" in library.libname:
+                new_path_wo_filename = os.path.join(library.folderpath, "readline")
+            elif "sodium" in library.libname:
+                new_path_wo_filename = os.path.join(library.folderpath, "sodium")
+            else:
+                new_path_wo_filename = os.path.join(library.folderpath, "include")
 
             # the path plus include directory might not exist
             if not os.path.exists(new_path_wo_filename):
@@ -221,6 +246,7 @@ def find_includes_win(libraries):
 
 def import_dependencies_win():
     get_libunwind()
+    get_zlib()
     create_folder_win(win_library_info)
     create_build_file_win(win_library_info)
     get_relevant_paths_win(win_library_info)

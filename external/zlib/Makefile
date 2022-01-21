@@ -18,16 +18,16 @@
 
 CC=gcc
 
-CFLAGS=-O3 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN
+CFLAGS=-O3
 #CFLAGS=-O -DMAX_WBITS=14 -DMAX_MEM_LEVEL=7
 #CFLAGS=-g -DZLIB_DEBUG
 #CFLAGS=-O3 -Wall -Wwrite-strings -Wpointer-arith -Wconversion \
 #           -Wstrict-prototypes -Wmissing-prototypes
 
-SFLAGS=-O3 -fPIC -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN
+SFLAGS=-O3 -fPIC
 LDFLAGS=
 TEST_LDFLAGS=-L. libz.a
-LDSHARED=gcc -shared -Wl,-soname,libz.so.1,--version-script,zlib.map
+LDSHARED=gcc -shared
 CPP=gcc -E
 
 STATICLIB=libz.a
@@ -73,7 +73,7 @@ OBJS = $(OBJC) $(OBJA)
 
 PIC_OBJS = $(PIC_OBJC) $(PIC_OBJA)
 
-all: static shared all64
+all: static shared
 
 static: example$(EXE) minigzip$(EXE)
 
@@ -83,7 +83,7 @@ all64: example64$(EXE) minigzip64$(EXE)
 
 check: test
 
-test: all teststatic testshared test64
+test: all teststatic testshared
 
 teststatic: static
 	@TMPST=tmpst_$$; \

@@ -1,5 +1,5 @@
 #include "fe.h"
-#include "crypto_verify_32.h"
+#include "src/crypto/crypto_ops_builder/crypto_verify_32.h"
 
 /*
 return 1 if f == 0

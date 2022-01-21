@@ -27,19 +27,6 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "src/wallet/wallet_args.h"
 
-#include <boost/filesystem/path.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/format.hpp>
-#include "src/common/i18n.h"
-#include "src/common/util.h"
-#include "contrib/epee/include/misc_log_ex.h"
-#include "contrib/epee/include/string_tools.h"
-#include "src/version.h"
-
-#if defined(WIN32)
-#include <crtdbg.h>
-#endif
-
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "wallet.wallet2"
 
@@ -217,8 +204,11 @@ namespace wallet_args
     MINFO(wallet_args::tr("Logging to: ") << log_path);
 
     Print(print) << boost::format(wallet_args::tr("Logging to %s")) % log_path;
-
+#ifdef _WIN32
+    const long lockable_memory = tools::get_lockable_memory();
+#else
     const ssize_t lockable_memory = tools::get_lockable_memory();
+#endif
     if (lockable_memory >= 0 && lockable_memory < 256 * 4096) // 256 pages -> at least 256 secret keys and other such small/medium objects
       Print(print) << tr("WARNING: You may not have a high enough lockable memory limit")
 #ifdef ELPP_OS_UNIX

@@ -51,8 +51,8 @@ int main(int argc, char *argv[]) {
       fclose(foutput);
       exit(EXIT_FAILURE);
     } else {
-      fprintf(foutput, "static const std::string translation_file_name_%d = \"%s\";\n", i, argv[i]);
-      fprintf(foutput, "static const std::string translation_file_data_%d = std::string(", i);
+      fprintf(foutput, "static const std::string translation_file_name_%d = \"%s\";\n", i - 1, argv[i]);
+      fprintf(foutput, "static const std::string translation_file_data_%d = std::string(", i - 1);
       for (j = 0; (ch = fgetc(fp)) != EOF; j++) {
         if ((j % 16) == 0) {
           if (j > 0) {
@@ -72,8 +72,8 @@ int main(int argc, char *argv[]) {
   fprintf(foutput, "%s", "  const std::string *data;\n");
   fprintf(foutput, "%s", "} embedded_files[] = {\n");
 
-  for (i = 1; i < argc; i++) {
-    fprintf(foutput, "  {&translation_file_name_%d, &translation_file_data_%d},\n", i, i);
+  for (i = 2; i < argc; i++) {
+    fprintf(foutput, "  {&translation_file_name_%d, &translation_file_data_%d},\n", i - 1, i - 1);
   }
   fprintf(foutput, "%s", "  {NULL, NULL}\n");
   fprintf(foutput, "%s", "};\n\n");

@@ -30,6 +30,7 @@
 #ifndef MONERO_DEVICE_TREZOR_BASE_H
 #define MONERO_DEVICE_TREZOR_BASE_H
 
+#define WIN32_LEAN_AND_MEAN
 
 #include <cstddef>
 #include <string>
@@ -41,6 +42,10 @@
 #include <boost/thread/recursive_mutex.hpp>
 #include "src/cryptonote_config.h"
 #include "trezor.hpp"
+#include "contrib/epee/include/memwipe.h"
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/regex.hpp>
 
 #ifdef WITH_TREZOR_DEBUGGING
 #include "trezor/debug_link.hpp"

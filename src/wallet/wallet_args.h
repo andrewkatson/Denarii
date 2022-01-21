@@ -25,12 +25,29 @@
 // INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#define WIN32_LEAN_AND_MEAN
+
+
 #include <boost/optional/optional.hpp>
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/positional_options.hpp>
 #include <boost/program_options/variables_map.hpp>
 
 #include "src/common/command_line.h"
+
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/format.hpp>
+#include "src/common/i18n.h"
+#include "src/common/util.h"
+#include "contrib/epee/include/misc_log_ex.h"
+#include "contrib/epee/include/string_tools.h"
+#include "src/version.h"
+
+#if defined(WIN32)
+#include <crtdbg.h>
+#endif
 
 namespace wallet_args
 {

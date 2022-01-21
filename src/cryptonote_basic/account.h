@@ -29,10 +29,18 @@
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 
 #include "cryptonote_basic.h"
 #include "src/crypto/crypto.h"
 #include "contrib/epee/include/serialization/keyvalue_serialization.h"
+#include <fstream>
+#include "contrib/epee/include/include_base_utils.h"
+#include "contrib/epee/include/warnings.h"
+#include "src/crypto/crypto.h"
+#include "cryptonote_basic_impl.h"
+#include "cryptonote_format_utils.h"
+#include "src/cryptonote_config.h"
 
 namespace cryptonote
 {

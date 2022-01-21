@@ -29,6 +29,9 @@
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
 #pragma once
+#define WIN32_LEAN_AND_MEAN
+
+
 #include "contrib/epee/include/include_base_utils.h"
 
 #include <atomic>
@@ -51,6 +54,21 @@
 #include "src/crypto/hash.h"
 #include "src/rpc/core_rpc_server_commands_defs.h"
 #include "src/rpc/message_data_structs.h"
+
+#include <algorithm>
+#include <boost/filesystem.hpp>
+#include <vector>
+#include "cryptonote_tx_utils.h"
+#include "src/cryptonote_basic/cryptonote_boost_serialization.h"
+#include "src/cryptonote_config.h"
+#include "blockchain.h"
+#include "src/blockchain_db/locked_txn.h"
+#include "src/common/boost_serialization_helper.h"
+#include "contrib/epee/include/int-util.h"
+#include "contrib/epee/include/misc_language.h"
+#include "contrib/epee/include/warnings.h"
+#include "src/common/perf_timer.h"
+#include "src/crypto/duration.h"
 
 namespace cryptonote
 {

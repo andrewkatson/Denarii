@@ -30,6 +30,8 @@
 
 #pragma once
 
+#define WIN32_LEAN_AND_MEAN
+
 #include <cstddef>
 #include <string>
 #include "device.hpp"
@@ -37,6 +39,15 @@
 #include "device_io_hid.hpp"
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/recursive_mutex.hpp>
+
+#include "src/version.h"
+#include "src/ringct/rctOps.h"
+#include "src/cryptonote_basic/account.h"
+#include "src/cryptonote_basic/subaddress_index.h"
+#include "src/cryptonote_core/cryptonote_tx_utils.h"
+
+#include <boost/thread/locks.hpp>
+#include <boost/thread/lock_guard.hpp>
 
 namespace hw {
 

@@ -1,5 +1,51 @@
 package(default_visibility = ["//visibility:public"])
 
+constraint_setting(name = "cpu")
+
+constraint_value(
+    name = "i386",
+    constraint_setting = ":cpu",
+)
+
+constraint_value(
+    name = "amd64",
+    constraint_setting = ":cpu",
+)
+
+config_setting(
+    name = "amd64_config",
+    constraint_values = [
+        ":amd64",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+
+config_setting(
+    name = "i386_config",
+    constraint_values = [
+        ":i386",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+
+config_setting(
+    name = "x86_64",
+    constraint_values = [
+        "@bazel_tools//platforms:x86_64",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "windows",
+    constraint_values = [
+        "@bazel_tools//platforms:windows",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 cc_binary(
     name = "denariid",
     srcs = glob(
@@ -60,7 +106,7 @@ cc_binary(
         "//src/daemonizer",
         "//src/device_trezor",
         "//src/mnemonics",
-        "//src/multisig",
+        "//src:multisig",
         "@boost//:asio_ssl",
         "@boost//:chrono",
         "@boost//:filesystem",
@@ -75,6 +121,7 @@ cc_binary(
         "@libsodium",
         "@miniupnp//:miniupnpc",
         "@unbound",
+        "@libunwind//:libunwind",
     ],
 )
 
@@ -96,14 +143,20 @@ cc_library(
     name = "cncrypto",
     srcs = glob([
         "**/crypto/*.c",
-        "**/crypto/*.S",
         "**/crypto/*.cpp",
-    ]),
+    ]) +
+    select({
+            "windows": glob(["**/crypto/wallet/*.c", "**/crypto/wallet/*.cpp"]),
+                         "//conditions:default": glob(["**/crypto/*.S"]),
+        }),
     hdrs = glob([
         "**/crypto/*.h",
         "**/varint.h",
         "**/pod-class.h",
-    ]),
+    ]) +
+          select({
+                  "windows": glob(["**/crypto/wallet/*.h"]),
+              }),
     copts = [
         "-msse4.1",
         "-maes",
@@ -150,16 +203,24 @@ cc_library(
         "**/common/*.cc",
         "**/common/*.cpp",
     ]),
-    hdrs = glob(["**/common/*.h"]),
+    hdrs = glob(["**/common/*.h"])
+    + select({
+              "windows" : ["cryptonote_basic/portable_binary_archive.hpp",
+                           "cryptonote_basic/portable_binary_iarchive.hpp",
+                           "cryptonote_basic/portable_binary_oarchive.hpp"]
+      }),
     linkopts = [
         "-lssl",
         "-lcrypto",
-        "-ldl",
-    ],
+    ] + select({
+             "windows": [],
+             "//conditions:default": ["-ldl"],
+         }),
     deps = [
         "//src:cncrypto",
         "//src:config",
         "//translations",
+        "//contrib/epee:epee",
         "@boost//:chrono",
         "@boost//:date_time",
         "@boost//:filesystem",
@@ -171,6 +232,7 @@ cc_library(
         "@openssl//:libcrypto",
         "@openssl//:libssl",
         "@unbound",
+        "@libsodium",
     ],
 )
 
@@ -230,6 +292,7 @@ cc_library(
         "cryptonote_basic/cryptonote_format_utils.h",
         "cryptonote_basic/subaddress_index.h",
         "cryptonote_basic/tx_extra.h",
+        "serialization/binary_utils.h",
         "device/device.hpp",
         "ringct/bulletproofs.cc",
         "ringct/multiexp.cc",
@@ -255,8 +318,10 @@ cc_library(
     linkopts = [
         "-lssl",
         "-lcrypto",
-        "-ldl",
-    ],
+    ] + select({
+             "windows": [],
+             "//conditions:default": ["-ldl"],
+         }),
     deps = [
         "//src:cncrypto",
         "//src:common",
@@ -273,8 +338,10 @@ cc_library(
     linkopts = [
         "-lssl",
         "-lcrypto",
-        "-ldl",
-    ],
+    ] + select({
+             "windows": [],
+             "//conditions:default": ["-ldl"],
+         }),
     deps = [
         "//src:cncrypto",
         "//src:common",
@@ -337,13 +404,17 @@ cc_library(
         "cryptonote_basic/miner.h",
         "cryptonote_basic/tx_extra.h",
         "cryptonote_basic/verification_context.h",
-    ],
+    ] + select({
+        "windows" : ["cryptonote_basic/portable_binary_archive.hpp",
+                     "cryptonote_basic/portable_binary_iarchive.hpp",
+                     "cryptonote_basic/portable_binary_oarchive.hpp"]
+    }),
     deps = [
         "//src:cncrypto",
         "//src:common",
         "//src:device",
+        "//src:hardforks",
         "//src/centralnode:dynamic_critical_values",
-        "//src/hardforks",
         "@boost//:date_time",
         "@boost//:filesystem",
         "@boost//:program_options",
@@ -368,6 +439,28 @@ cc_library(
         "device/log.cpp",
         "rpc/core_rpc_server_error_codes.h",
         "serialization/pair.h",
+        "cryptonote_core/blockchain.h",
+        "cryptonote_protocol/cryptonote_protocol_defs.h",
+        "rpc/core_rpc_server_commands_defs.h",
+        "cryptonote_basic/difficulty.h",
+        "rpc/rpc_handler.h",
+        "cryptonote_basic/verification_context.h",
+        "cryptonote_protocol/enums.h",
+        "cryptonote_basic/hardfork.h",
+        "blockchain_db/blockchain_db.h",
+        "cryptonote_core/tx_pool.h",
+        "rpc/message_data_structs.h",
+        "ringct/rctSigs.h",
+        "cryptonote_basic/cryptonote_boost_serialization.h",
+        "blockchain_db/locked_txn.h",
+        "common/portable_binary_oarchive.hpp",
+        "common/portable_binary_iarchive.hpp",
+        "cryptonote_basic/miner.h",
+        "cryptonote_core/cryptonote_core_common.h",
+        "hardforks/hardforks.h",
+        "multisig/multisig.h",
+        "crypto/wallet/crypto.h",
+        "crypto/wallet/ops.h",
         "wallet/message_store.h",
         "wallet/message_transporter.h",
         "wallet/node_rpc_proxy.h",
@@ -375,6 +468,7 @@ cc_library(
         "wallet/wallet_errors.h",
         "wallet/wallet_light_rpc.h",
         "wallet/wallet_rpc_helpers.h",
+        "checkpoints/checkpoints.h",
     ],
     hdrs = [
         "device/device.hpp",
@@ -388,15 +482,16 @@ cc_library(
     linkopts = [
         "-lssl",
         "-lcrypto",
-        "-ldl",
-    ],
+    ] + select({
+             "windows": [],
+             "//conditions:default": ["-ldl"],
+         }),
     deps = [
         "//src:cncrypto",
         "//src:ringct_basic",
         "//src:version",
         "//src/blocks",
         "//src/centralnode:dynamic_critical_values",
-        "//src/crypto/wallet:wallet_crypto",
         "@boost//:serialization",
         "@libhidapi",
         "@openssl//:libcrypto",
@@ -433,6 +528,7 @@ cc_library(
         "cryptonote_core/i_core_events.h",
         "cryptonote_core/tx_pool.h",
         "cryptonote_core/tx_sanity_check.h",
+        "cryptonote_core/cryptonote_core_common.h"
     ],
     deps = [
         "//contrib/epee",
@@ -443,9 +539,9 @@ cc_library(
         "//src:net",
         "//src:ringct",
         "//src:version",
-        "//src/checkpoints",
-        "//src/hardforks",
-        "//src/multisig",
+        "//src:checkpoints",
+        "//src:hardforks",
+        "//src:multisig",
         "@boost//:date_time",
         "@boost//:filesystem",
         "@boost//:program_options",
@@ -500,7 +596,6 @@ cc_library(
         "wallet/wallet_args.h",
         "wallet/wallet_errors.h",
         "wallet/wallet_rpc_helpers.h",
-        "wallet/wallet_rpc_server.h",
         "wallet/wallet_rpc_server_commands_defs.h",
         "wallet/wallet_rpc_server_error_codes.h",
     ],
@@ -512,7 +607,7 @@ cc_library(
         "//src/centralnode:dynamic_critical_values",
         "//src/device_trezor",
         "//src/mnemonics",
-        "//src/multisig",
+        "//src:multisig",
         "@boost//:chrono",
         "@boost//:filesystem",
         "@boost//:regex",
@@ -579,13 +674,16 @@ cc_library(
         "net/socks_connect.h",
         "net/tor_address.h",
         "net/zmq.h",
-    ],
+    ] + select({
+             "windows" : ["net/include/zmq.h"]
+         }),
     deps = [
         "//contrib/epee",
         "//src:common",
-        "@boost//:asio",
         "@libzmq",
-    ],
+    ] + select({
+                  "//conditions:default" : ["@boost//:asio",]
+              }),
 )
 
 cc_library(
@@ -621,7 +719,8 @@ cc_library(
         "rpc/core_rpc_server.h",
         "rpc/core_rpc_server_error_codes.h",
         "rpc/fwd.h",
-        "rpc/instanciations.cpp",
+        "rpc/cryptonote_instantiations.cpp",
+        "rpc/nodetool_instantiations.cpp",
         "rpc/rpc_payment.cpp",
         "rpc/rpc_payment.h",
         "rpc/rpc_payment_costs.h",
@@ -631,6 +730,10 @@ cc_library(
         "rpc/rpc_handler.h",
         "rpc/rpc_version_str.h",
     ],
+    copts = select({
+                    "windows": [],
+                    "//conditions:default": ["-Wa,-mbig-obj"],
+                }),
     deps = [
         ":rpc_base",
         "//src:common",
@@ -750,8 +853,10 @@ cc_binary(
     linkopts = [
         "-lssl",
         "-lcrypto",
-        "-ldl",
-    ],
+    ] + select({
+        "windows": [],
+        "//conditions:default": ["-ldl"],
+    }),
     deps = [
         "//contrib/epee",
         "//src:blockchain_db",
@@ -788,6 +893,7 @@ cc_binary(
         "@boost//:filesystem",
         "@boost//:thread",
         "@liblzma",
+        "@boost//:asio_ssl"
     ],
 )
 
@@ -905,7 +1011,6 @@ cc_binary(
         "cannot_catch_exception.cpp",
     ],
     linkopts = [
-        "-llzma",
     ],
     deps = [
         "@libunwind",
@@ -928,4 +1033,48 @@ cc_binary(
 cc_binary(
     name = "what_is_argv",
     srcs = ["what_is_argv.cpp"],
+)
+
+cc_library(
+    name = "checkpoints",
+    srcs = ["checkpoints/checkpoints.cpp"],
+    hdrs = ["checkpoints/checkpoints.h"],
+    deps = [
+        "//src:cncrypto",
+        "//src:common",
+        "//src:cryptonote_basic",
+        "@boost//:date_time",
+        "@boost//:filesystem",
+        "@boost//:program_options",
+        "@boost//:serialization",
+        "@boost//:system",
+        "@boost//:thread",
+    ],
+)
+
+# WORKAROUND TO GET TESTS WORKING DO NOT USE
+cc_library(
+    name = "checkpoints_for_tests",
+    srcs = [],
+    hdrs = ["checkpoints/checkpoints.cpp"],
+    deps = [],
+)
+
+cc_library(
+    name = "hardforks",
+    srcs = ["hardforks/hardforks.cpp"],
+    hdrs = ["hardforks/hardforks.h"],
+    deps = ["//src:version"],
+)
+
+cc_library(
+    name = "multisig",
+    srcs = ["multisig/multisig.cpp"],
+    hdrs = ["multisig/multisig.h"],
+    deps = [
+        "//src:cncrypto",
+        "//src:common",
+        "//src:cryptonote_basic",
+        "//src:ringct",
+    ],
 )

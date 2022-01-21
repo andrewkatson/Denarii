@@ -26,11 +26,6 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <stdint.h>
-#include <vector>
-#include "src/cryptonote_basic/cryptonote_basic.h"
-#include "src/cryptonote_basic/cryptonote_format_utils.h"
-#include "blockchain.h"
 #include "tx_sanity_check.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY

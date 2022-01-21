@@ -445,6 +445,8 @@ def build_dependencies_win():
     supercop_win(external_dir_path)
     os.chdir(external_dir_path)
 
+    keiros_public(external_dir_path)
+
 
 def trezor_common():
     text = 'load(\"@rules_proto//proto:defs.bzl\", \"proto_library\")  \n\
@@ -530,10 +532,10 @@ def blocks_generate():
         base_name = base_names[i]
 
         path_to_blocks = str(workspace_path) + "/src/blocks"
-        command = "cd " + path_to_blocks + " && echo '#include\t<stddef.h>' > " + output_file \
+        command = "cd " + path_to_blocks + " && echo '#include\t<stddef.h>\n#ifndef _WIN32' > " + output_file \
                   + " && echo 'const\tunsigned\tchar\t" + base_name + "[]={' >> " + output_file + " && od -v -An -tx1 " \
                   + input_file + " | sed -e 's/[0-9a-fA-F]\\{1,\\}/0x&,/g' -e '$s/.$//' >> " + output_file + " && echo '};' >> " + output_file \
-                  + " && echo 'const\tsize_t\t" + base_name + "_len\t=\tsizeof(" + base_name + ");' >> " + output_file
+                  + " && echo 'const\tsize_t\t" + base_name + "_len\t=\tsizeof(" + base_name + ");\n#endif' >> " + output_file
 
         os.system(command)
 
@@ -572,15 +574,6 @@ def crypto_wallet_generate():
                 elif seen_license_info:
                     copy_line_command = "cd " + crypto_wallet_path + " && echo '" + line + "' >> " + ops_file
                     os.system(copy_line_command)
-    else:
-        # If not then we create an empty file
-        command = "cd " + crypto_wallet_path + " && echo > " + ops_file
-        os.system(command)
-        # and create an alias for wallet that just points to cnccrypto
-        alias_file_command = " cd " + crypto_wallet_path \
-                             + " && echo 'package(default_visibility = [\"//visibility:public\"])\n' > " + build_file \
-                             + " && echo 'alias(\n\tname = \"wallet_crypto\",\n\tactual = \"//src:cncrypto\"\n)' >> " + build_file
-        os.system(alias_file_command)
 
 
 def is_git_repo():
@@ -786,7 +779,7 @@ def run_translation_generation(translation_files):
     generation_command = str(workspace_path) + "/bazel-bin/translations/generate_translations " + translation_file_path + " "
 
     for translation_file in translation_files:
-        generation_command = generation_command + " " + translation_file
+        generation_command = generation_command + " " + translation_file_dir + "/" + translation_file
 
     os.system(generation_command)
 

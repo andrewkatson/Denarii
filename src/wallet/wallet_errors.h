@@ -164,6 +164,9 @@ namespace tools
         : wallet_runtime_error(std::move(loc), message)
       {
       }
+      explicit wallet_internal_error(std::string&& loc) : wallet_runtime_error(std::move(loc), "placeholder because of windows :(")
+      {
+      }
     };
     //----------------------------------------------------------------------------------------------------
     struct unexpected_txin_type : public wallet_internal_error
@@ -890,7 +893,7 @@ namespace tools
 #if !defined(_MSC_VER)
 
     template<typename TException, typename... TArgs>
-    void throw_wallet_ex(std::string&& loc, const TArgs&... args)
+    inline void throw_wallet_ex(std::string&& loc, const TArgs&... args)
     {
       TException e(std::move(loc), args...);
       LOG_PRINT_L0(e.to_string());
@@ -902,8 +905,14 @@ namespace tools
     #include <boost/preprocessor/repetition/enum_params.hpp>
     #include <boost/preprocessor/repetition/repeat_from_to.hpp>
 
+    inline void throw_wallet_ex(std::string&& loc) {
+        error::wallet_internal_error e(std::move(loc));
+        LOG_PRINT_L0(e.to_string());
+        throw e;
+    }
+
     template<typename TException>
-    void throw_wallet_ex(std::string&& loc)
+    inline void throw_wallet_ex(std::string&& loc)
     {
       TException e(std::move(loc));
       LOG_PRINT_L0(e.to_string());
@@ -912,7 +921,7 @@ namespace tools
 
 #define GEN_throw_wallet_ex(z, n, data)                                                       \
     template<typename TException, BOOST_PP_ENUM_PARAMS(n, typename TArg)>                     \
-    void throw_wallet_ex(std::string&& loc, BOOST_PP_ENUM_BINARY_PARAMS(n, const TArg, &arg)) \
+    inline void throw_wallet_ex(std::string&& loc, BOOST_PP_ENUM_BINARY_PARAMS(n, const TArg, &arg)) \
     {                                                                                         \
       TException e(std::move(loc), BOOST_PP_ENUM_PARAMS(n, arg));                             \
       LOG_PRINT_L0(e.to_string());                                                            \
@@ -929,13 +938,22 @@ namespace tools
 
 #define THROW_WALLET_EXCEPTION(err_type, ...)                                                               \
   do {                                                                                                      \
-    LOG_ERROR("THROW EXCEPTION: " << #err_type);                                                 \
+    LOG_ERROR("THROW EXCEPTION: " << #err_type);                                                            \
     tools::error::throw_wallet_ex<err_type>(std::string(__FILE__ ":" STRINGIZE(__LINE__)), ## __VA_ARGS__); \
   } while(0)
 
+#ifdef _WIN32
 #define THROW_WALLET_EXCEPTION_IF(cond, err_type, ...)                                                      \
   if (cond)                                                                                                 \
   {                                                                                                         \
     LOG_ERROR(#cond << ". THROW EXCEPTION: " << #err_type);                                                 \
-    tools::error::throw_wallet_ex<err_type>(std::string(__FILE__ ":" STRINGIZE(__LINE__)), ## __VA_ARGS__); \
+    tools::error::throw_wallet_ex(std::move(std::string(__FILE__ ":" STRINGIZE(__LINE__))));                \
   }
+#else
+#define THROW_WALLET_EXCEPTION_IF(cond, err_type, ...)                                                      \
+  if (cond)                                                                                                 \
+  {                                                                                                         \
+    LOG_ERROR(#cond << ". THROW EXCEPTION: " << #err_type);                                                 \
+    tools::error::throw_wallet_ex<err_type>(std::string(__FILE__ ":" STRINGIZE(__LINE__))); \
+  }
+#endif

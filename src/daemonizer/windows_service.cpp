@@ -26,22 +26,11 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <boost/chrono/chrono.hpp>
-#include <boost/thread/thread.hpp>
-
 #undef UNICODE
 #undef _UNICODE
 
-#include "common/scoped_message_writer.h"
-#include "daemonizer/windows_service.h"
-#include "string_tools.h"
-#include <chrono>
-#include <iostream>
-#include <utility>
-#include <memory>
-#include <shellapi.h>
-#include <thread>
-#include <windows.h>
+#include "src/daemonizer/windows_service.h"
+
 
 namespace windows {
 

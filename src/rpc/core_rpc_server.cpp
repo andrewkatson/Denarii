@@ -28,13 +28,18 @@
 // 
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
+
+#include "core_rpc_server.h"
+
+#include "src/rpc/rpc_args.h"
+#include "src/rpc/rpc_handler.h"
+#include "src/rpc/rpc_payment_costs.h"
+#include "src/rpc/rpc_payment_signature.h"
+#include "core_rpc_server_error_codes.h"
 #include <boost/preprocessor/stringize.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include "contrib/epee/include/include_base_utils.h"
 #include "contrib/epee/include/string_tools.h"
-using namespace epee;
-
-#include "core_rpc_server.h"
 #include "src/common/command_line.h"
 #include "src/common/updates.h"
 #include "src/common/download.h"
@@ -49,12 +54,7 @@ using namespace epee;
 #include "src/net/parse.h"
 #include "contrib/epee/include/storages/http_abstract_invoke.h"
 #include "src/crypto/hash.h"
-#include "src/rpc/rpc_args.h"
-#include "src/rpc/rpc_handler.h"
-#include "src/rpc/rpc_payment_costs.h"
-#include "src/rpc/rpc_payment_signature.h"
-#include "core_rpc_server_error_codes.h"
-#include "src/p2p/net_node.h"
+
 #include "src/version.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
@@ -229,7 +229,7 @@ namespace cryptonote
     }
     else if (address == "auto")
     {
-      auto get_nodes = [this]() {
+      auto get_nodes = [&]() {
         return get_public_nodes(credits_per_hash_threshold);
       };
       m_bootstrap_daemon.reset(new bootstrap_daemon(std::move(get_nodes), rpc_payment_enabled));
@@ -2434,7 +2434,7 @@ namespace cryptonote
         auto ns_parsed = net::get_ipv4_subnet_address(i->host);
         if (ns_parsed)
         {
-          if (i->ban)
+          if (i->is_ban)
             m_p2p.block_subnet(*ns_parsed, i->seconds);
           else
             m_p2p.unblock_subnet(*ns_parsed);
@@ -2458,7 +2458,7 @@ namespace cryptonote
       {
         na = epee::net_utils::ipv4_network_address{i->ip, 0};
       }
-      if (i->ban)
+      if (i->is_ban)
         m_p2p.block_host(na, i->seconds);
       else
         m_p2p.unblock_host(na);

@@ -28,9 +28,7 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <boost/lexical_cast.hpp>
-#include "contrib/epee/include/misc_log_ex.h"
-#include "src/cryptonote_basic/cryptonote_format_utils.h"
+
 #include "rctOps.h"
 using namespace crypto;
 using namespace std;
