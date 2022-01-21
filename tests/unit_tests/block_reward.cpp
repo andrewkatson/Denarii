@@ -35,7 +35,6 @@
 #include "gtest/gtest.h"
 
 #include "src/cryptonote_basic/cryptonote_basic_impl.h"
-#include "tests/utils/fake_central_node.h"
 
 using namespace cryptonote;
 
@@ -269,31 +268,11 @@ namespace
       absl::BitGen gen;
   };
 
-  TEST_F(block_reward_dynamic, calculates_regardless_of_inputs) {
+  TEST_F(block_reward_dynamic, calculate_with_new_protocol) {
+
     uint64_t block_reward = -1;
-    ASSERT_TRUE(get_block_reward(get_random_val(), get_random_val(), get_random_val(), block_reward, 15));
-    ASSERT_EQ(block_reward, 0);
-    destroy();
-  }
+    get_block_reward(get_random_val(), get_random_val(), get_random_val(), block_reward, 15);
 
-  TEST_F(block_reward_dynamic, calculates_with_fake_central_node) {
-    create();
-    uint64_t expected_block_reward = 10;
-
-
-    // Since we need to wait for the block reward to be propagated we put this on its own thread
-    // and wait a bit
-    uint64_t block_reward = -1;
-    boost::thread t {[&](){get_block_reward(get_random_val(), get_random_val(), get_random_val(), block_reward, 15);}};
-
-    boost::this_thread::sleep_for(boost::chrono::seconds{2});
-
-
-    send_block_reward(expected_block_reward);
-
-    t.join();
-
-    ASSERT_EQ(block_reward, expected_block_reward);
-    destroy();
+    ASSERT_EQ(block_reward, 1.0);
   }
 }

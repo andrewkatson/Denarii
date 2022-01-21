@@ -1,0 +1,12 @@
+/*
+ * A proto that holds the critical values needed for denarii to function. The block rewward and the transaction fee.
+ */
+
+syntax = "proto3";
+
+package denarii;
+
+message CriticalValues {
+  double block_reward = 1;
+  double transaction_fee = 2;
+}

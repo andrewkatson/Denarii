@@ -42,7 +42,6 @@ cc_test(
         "//src/simplewallet:denarii_wallet_cli",
         "//src/wallet/api:wallet_api",
         "//tests:io",
-        "//tests/utils:fake_central_node",
         "@boost//:chrono",
         "@boost//:thread",
         "@com_google_absl//absl/random",

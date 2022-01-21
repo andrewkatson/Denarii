@@ -233,7 +233,7 @@ os.chdir(workspace_path)
 #test_difficulty()
 #test_hash()
 #test_top_level()
-test_unit_tests()
+#test_unit_tests()
 
 # Monero doesn't run these
 # test_core_proxy()
