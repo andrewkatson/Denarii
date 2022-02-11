@@ -6,11 +6,10 @@ Portions Copyright (c) 2012-2013 The Cryptonote developers.
 
 ## Table of Contents
 
-  - [Vulnerability response](#vulnerability-response)
   - [Translations](#translations)
   - [Introduction](#introduction)
   - [License](#license)
-  - [Compiling Monero from source](#compiling-monero-from-source)
+  - [Compiling Monero from source](#compiling-denarii-from-source)
     - [Dependencies](#dependencies)
   - [Internationalization](#Internationalization)
   - [Using Tor](#using-tor)
@@ -18,16 +17,8 @@ Portions Copyright (c) 2012-2013 The Cryptonote developers.
   - [Debugging](#Debugging)
   - [Known issues](#known-issues)
 
-## Vulnerability response
-
-- Our [Vulnerability Response Process](https://github.com/monero-project/meta/blob/master/VULNERABILITY_RESPONSE_PROCESS.md) encourages responsible disclosure
-- We are also available via [HackerOne](https://hackerone.com/monero)
-
 ## Translations
-The CLI wallet is available in different languages. If you want to help translate it, see our self-hosted localization platform, Weblate, on [translate.getmonero.org]( https://translate.getmonero.org/projects/monero/cli-wallet/). Every translation *must* be uploaded on the platform, pull requests directly editing the code in this repository will be closed. If you need help with Weblate, you can find a guide with screenshots [here](https://github.com/monero-ecosystem/monero-translations/blob/master/weblate.md).
-&nbsp;
-
-If you need help/support/info about translations, contact the localization workgroup. You can find the complete list of contacts on the repository of the workgroup: [monero-translations](https://github.com/monero-ecosystem/monero-translations#contacts).
+The CLI wallet is available in different languages. 
 
 ## Introduction
 
@@ -41,7 +32,8 @@ Denarii is a private, secure, untraceable, decentralised digital currency. You a
 
 **Decentralization:** The utility of Denarii depends on its decentralised peer-to-peer consensus network - anyone should be able to run the denarii software, validate the integrity of the blockchain, and participate in all aspects of the monero network using consumer-grade commodity hardware. Decentralization of the monero network is maintained by software development that minimizes the costs of running the monero software and inhibits the proliferation of specialized, non-commodity hardware.  
 
-**Stability:** Denarii is a stable currency through the adoption of proven modern monetary policy. In the same way every cryptocurrency has a development team we have a team of elected economic managers.
+**Stability:** Denarii is a stable currency through the adoption of proven modern monetary policy. 
+
 ## License
 
 See [LICENSE](LICENSE).
@@ -70,12 +62,6 @@ See [LICENSE](LICENSE).
 * Trezor-common: Do not need to do anything
 * Unbound: Build according to its instructions in its README. Then, move libunbound.a from /usr/local/lib to the unbound directory
 
-#### Manually pulled in
-* openssl: https://github.com/openssl/openssl. Build according to the instructions in its README. 
-* libzmq: https://github.com/zeromq/libzmq. Build according to the instruction in its README (it will direct you to the INSTALL file). Then move libzmq.a 
-from /usr/local/lib to the libzmq directory. Also need to run it with ```./configure --with-libsodium```
-* zlib: https://zlib.net. Just unpack it. 
-* All others you should follow the instructions to install below. 
 
 ### Dependencies
 
@@ -211,10 +197,20 @@ Bazel with gcc: https://github.com/bazelbuild/bazel/issues/12100
 
 ## Building 
 
-All builds should use ```--copt="-O3"``` and ```--javabase=@bazel_tools//tools/jdk:remote_jdk11```
+All builds should use ```--compiler=mingw-gcc``` and  ```--copt="-O3"``` and ```--javabase=@bazel_tools//tools/jdk:remote_jdk11``` and ```--copt="-static-libgcc"``` and  ```--copt="-static-libstdc++"``` and ```--copt="-static"```
 
 Need to set JAVA_HOME in msys. Mine is ```export JAVA_HOME=/c/'Program Files'/Java/jdk-10.0.2```
-  
+
+Protoc works weird with mingw-gcc so you have to fix it. There are two ways. 
+
+1. Need to add to PATH ```C:\Windows\SYSTEM32``` and ```C:\msys64\usr\bin```. You can now build through the command prompt
+2. Add the following files to `C:\msys64\mingw-gcc\bin`
+* `ntdll.dll`
+* `KERNEL32.DLL`
+* `KERNELBASE.dll`
+* `msvcrt.dll` 
+
+These can all be found under `C:\Windows\SYSTEM32` 
 ## Running denariid
 
 The build places the binary in `bazel-bin/` sub-directory. To run in the

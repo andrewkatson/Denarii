@@ -3,6 +3,18 @@ workspace(name = "denarii")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
+http_archive(
+    name = "bazel_skylib",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.1.1/bazel-skylib-1.1.1.tar.gz",
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.1.1/bazel-skylib-1.1.1.tar.gz",
+    ],
+    sha256 = "c6966ec828da198c5d9adbaa94c05e3a1c7f21bd012a0b29ba8ddbccb2c93b0d",
+)
+load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
+bazel_skylib_workspace()
+
+
 # abseil-cpp
 http_archive(
     name = "com_google_absl",
@@ -60,9 +72,9 @@ http_archive(
 # the base google protocol buffer code.
 http_archive(
     name = "com_google_protobuf",
-    sha256 = "60d2012e3922e429294d3a4ac31f336016514a91e5a63fd33f35743ccfe1bd7d",
-    strip_prefix = "protobuf-3.11.0",
-    urls = ["https://github.com/protocolbuffers/protobuf/archive/v3.11.0.zip"],
+    sha256 = "25680843adf0c3302648d35f744e38cc3b6b05a6c77a927de5aea3e1c2e36106",
+    strip_prefix = "protobuf-3.19.4",
+    urls = ["https://github.com/protocolbuffers/protobuf/archive/v3.19.4.zip"],
 )
 
 # gRPC code -- has py_proto_library rule which is useful.
