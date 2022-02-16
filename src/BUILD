@@ -81,6 +81,8 @@ cc_binary(
         "-lunwind",
         "-lssl",
         "-lcrypto",
+        "-lws2_32",
+        "-lwsock32",
         "-lcrypt",
         "-ldl",
         "-lpthread",
@@ -212,6 +214,8 @@ cc_library(
     linkopts = [
         "-lssl",
         "-lcrypto",
+        "-lws2_32",
+        "-lwsock32",
     ] + select({
              "windows": [],
              "//conditions:default": ["-ldl"],
@@ -318,6 +322,8 @@ cc_library(
     linkopts = [
         "-lssl",
         "-lcrypto",
+        "-lws2_32",
+        "-lwsock32"
     ] + select({
              "windows": [],
              "//conditions:default": ["-ldl"],
@@ -338,6 +344,8 @@ cc_library(
     linkopts = [
         "-lssl",
         "-lcrypto",
+        "-lws2_32",
+        "-lwsock32"
     ] + select({
              "windows": [],
              "//conditions:default": ["-ldl"],
@@ -482,6 +490,8 @@ cc_library(
     linkopts = [
         "-lssl",
         "-lcrypto",
+        "-lws2_32",
+        "-lwsock32"
     ] + select({
              "windows": [],
              "//conditions:default": ["-ldl"],
@@ -627,6 +637,8 @@ cc_binary(
     linkopts = [
         "-lssl",
         "-lcrypto",
+        "-lws2_32",
+        "-lwsock32",
         "-lcrypt",
         "-ldl",
         "-lpthread",
@@ -853,6 +865,8 @@ cc_binary(
     linkopts = [
         "-lssl",
         "-lcrypto",
+        "-lws2_32",
+        "-lwsock32"
     ] + select({
         "windows": [],
         "//conditions:default": ["-ldl"],

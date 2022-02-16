@@ -11,8 +11,15 @@ cc_library(
         "**/*.hpp",
         "**/*.inl",
     ]),
+    linkopts = [
+        "-lssl",
+        "-lcrypto",
+        "-lws2_32",
+        "-lwsock32",
+    ],
     deps = [
         "@boost//:chrono",
+        "@boost//:asio_ssl",
         "@boost//:filesystem",
         "@boost//:thread",
         "@easy_logging",

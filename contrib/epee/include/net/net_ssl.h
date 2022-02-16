@@ -36,6 +36,7 @@
 #include <boost/utility/string_ref.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ssl.hpp>
+#include <boost/lambda/lambda.hpp>
 #include <boost/system/error_code.hpp>
 
 #define SSL_FINGERPRINT_SIZE 32

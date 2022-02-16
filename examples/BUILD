@@ -29,16 +29,18 @@ cc_binary(
 cc_binary(
     name = "asio_stuff",
     srcs = [":asio_stuff.cpp"],
-    deps = ["@boost//:asio_ssl","//src:wallet",
-            "//src:cncrypto",
-                                         "//src:common",
-                                         "//src:cryptonote_core",
-                                         "//src:rpc_base",
-                                         "//src:version",
-                                         "//src/daemonizer",
-                                         "@boost//:chrono",
-                                         "@boost//:filesystem",
-                                         "@boost//:program_options",
-                                         "@boost//:thread",
-                                         "@liblzma",],
+    deps = [
+        "//contrib/epee:epee",
+                "@boost//:asio_ssl",
+                "@boost//:chrono",
+                "@boost//:filesystem",
+                "@boost//:program_options",
+                "@boost//:thread",
+                "@liblzma",],
+            linkopts = [
+                "-lssl",
+                "-lcrypto",
+                "-lws2_32",
+                "-lwsock32",
+            ]
 )

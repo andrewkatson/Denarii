@@ -28,8 +28,6 @@
 
 #include <string.h>
 #include <thread>
-#include <boost/asio/ssl.hpp>
-#include <boost/lambda/lambda.hpp>
 #include <openssl/ssl.h>
 #include <openssl/pem.h>
 #include "contrib/epee/include/misc_log_ex.h"
