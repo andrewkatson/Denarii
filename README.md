@@ -197,7 +197,7 @@ Bazel with gcc: https://github.com/bazelbuild/bazel/issues/12100
 
 ## Building 
 
-All builds should use ```--compiler=mingw-gcc``` and  ```--copt="-O3"``` and ```--javabase=@bazel_tools//tools/jdk:remote_jdk11``` and ```--copt="-static-libgcc"``` and  ```--copt="-static-libstdc++"``` and ```--copt="-static"```
+All builds should use ```--compiler=mingw-gcc``` and  ```--copt="-O3"``` and ```--javabase=@bazel_tools//tools/jdk:remote_jdk11``` and ```--copt="-static-libgcc"``` and  ```--copt="-static-libstdc++"``` and ```--copt="-static"``` and ```--copt="-Wa"``` and ```--copt="-mbig-obj```
 
 Need to set JAVA_HOME in msys. Mine is ```export JAVA_HOME=/c/'Program Files'/Java/jdk-10.0.2```
 

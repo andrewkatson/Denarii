@@ -928,7 +928,7 @@ namespace tools
       throw e;                                                                                \
     }
 
-    BOOST_PP_REPEAT_FROM_TO(1, 6, GEN_throw_wallet_ex, ~)
+BOOST_PP_REPEAT_FROM_TO(1, 6, GEN_throw_wallet_ex, ~)
 #endif
   }
 }
@@ -942,18 +942,18 @@ namespace tools
     tools::error::throw_wallet_ex<err_type>(std::string(__FILE__ ":" STRINGIZE(__LINE__)), ## __VA_ARGS__); \
   } while(0)
 
-#ifdef _WIN32
+#if !defined(_MSV_VER)
 #define THROW_WALLET_EXCEPTION_IF(cond, err_type, ...)                                                      \
   if (cond)                                                                                                 \
   {                                                                                                         \
     LOG_ERROR(#cond << ". THROW EXCEPTION: " << #err_type);                                                 \
-    tools::error::throw_wallet_ex(std::move(std::string(__FILE__ ":" STRINGIZE(__LINE__))));                \
+    tools::error::throw_wallet_ex<err_type>(std::string(__FILE__ ":" STRINGIZE(__LINE__)), ## __VA_ARGS__); \
   }
 #else
 #define THROW_WALLET_EXCEPTION_IF(cond, err_type, ...)                                                      \
   if (cond)                                                                                                 \
   {                                                                                                         \
     LOG_ERROR(#cond << ". THROW EXCEPTION: " << #err_type);                                                 \
-    tools::error::throw_wallet_ex<err_type>(std::string(__FILE__ ":" STRINGIZE(__LINE__))); \
+    tools::error::throw_wallet_ex(std::move(std::string(__FILE__ ":" STRINGIZE(__LINE__))));                \
   }
 #endif
