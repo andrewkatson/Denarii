@@ -11,20 +11,20 @@ namespace centralnode {
     }
 
     double dynamic_critical_values::get_block_reward() {
-        denarii::CriticalValues criticalValues;
+      denarii::CriticalValues criticalValues;
 
-        protobuf::keiros::readTextProto("src/centralnode/critical_values.textpb", &criticalValues);
+      protobuf::keiros::readTextProto("src/centralnode/critical_values.textpb", &criticalValues);
 
-        return criticalValues.block_reward();
+      return criticalValues.block_reward();
     }
 
     double dynamic_critical_values::get_transaction_fee() {
 
-        denarii::CriticalValues criticalValues;
+      denarii::CriticalValues criticalValues;
 
-        protobuf::keiros::readTextProto("src/centralnode/critical_values.textpb", &criticalValues);
+      protobuf::keiros::readTextProto("src/centralnode/critical_values.textpb", &criticalValues);
 
-        return criticalValues.transaction_fee();
+      return criticalValues.transaction_fee();
     }
 
 
