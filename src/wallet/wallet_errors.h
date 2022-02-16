@@ -954,6 +954,6 @@ namespace tools
   if (cond)                                                                                                 \
   {                                                                                                         \
     LOG_ERROR(#cond << ". THROW EXCEPTION: " << #err_type);                                                 \
-    tools::error::throw_wallet_ex<err_type>(std::string(__FILE__ ":" STRINGIZE(__LINE__))); \
+    tools::error::throw_wallet_ex<err_type>(std::string(__FILE__ ":" STRINGIZE(__LINE__)), ## __VA_ARGS__); \
   }
 #endif

@@ -27,8 +27,9 @@ cc_library(
         "trezor/transport.hpp",
         "trezor/trezor_defs.hpp",
     ] + select({
-                   "windows" : glob(["**/trezor/include/*.h"])
-               }),
+        "windows": glob(["**/trezor/include/*.h"]),
+        "//conditions:default": [],
+    }),
     deps = [
         "//src:cncrypto",
         "//src:common",
