@@ -79,11 +79,7 @@ cc_binary(
         "-lunwind",
         "-lssl",
         "-lcrypto",
-        "-lcrypt",
-        "-ldl",
         "-lpthread",
-        "-lboost_system",
-        "-lboost_thread",
     ],
     deps = [
         "//contrib/epee",
