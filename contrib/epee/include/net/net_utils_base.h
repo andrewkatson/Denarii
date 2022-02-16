@@ -107,10 +107,12 @@ namespace net_utils
 			KV_SERIALIZE(m_port)
 		END_KV_SERIALIZE_MAP()
 
+#ifdef __MINGW32__
         //! \return Value, \pre `has_value()`.
         ipv4_network_address* operator->() noexcept { return this; }
         //! \return Value, \pre `has_value()`.
         ipv4_network_address const* operator->() const noexcept { return this; }
+#endif
 	};
 
 	inline bool operator==(const ipv4_network_address& lhs, const ipv4_network_address& rhs) noexcept
@@ -158,11 +160,12 @@ namespace net_utils
 			KV_SERIALIZE(m_ip)
 			KV_SERIALIZE(m_mask)
 		END_KV_SERIALIZE_MAP()
-
+#ifdef __MINGW32__
         //! \return Value, \pre `has_value()`.
         ipv4_network_subnet* operator->() noexcept { return this; }
         //! \return Value, \pre `has_value()`.
         ipv4_network_subnet const* operator->() const noexcept { return this; }
+#endif
 	};
 
 	inline bool operator==(const ipv4_network_subnet& lhs, const ipv4_network_subnet& rhs) noexcept
@@ -217,10 +220,12 @@ namespace net_utils
 			KV_SERIALIZE(m_port)
 		END_KV_SERIALIZE_MAP()
 
+#ifdef __MINGW32__
         //! \return Value, \pre `has_value()`.
         ipv6_network_address* operator->() noexcept { return this; }
         //! \return Value, \pre `has_value()`.
         ipv6_network_address const* operator->() const noexcept { return this; }
+#endif
 	};
 
 	inline bool operator==(const ipv6_network_address& lhs, const ipv6_network_address& rhs) noexcept
@@ -267,7 +272,8 @@ namespace net_utils
 			static const T& cast(const interface& src) noexcept
 			{ return static_cast<const implementation<T>&>(src).value; }
 
-			virtual bool equal(const interface& other) const override
+#ifdef __MINGW32__
+            virtual bool equal(const interface& other) const override
 			{ return value->equal(cast(other)); }
 
 			virtual bool less(const interface& other) const override
@@ -283,6 +289,24 @@ namespace net_utils
 			virtual address_type get_type_id() const override { return value->get_type_id(); }
 			virtual zone get_zone() const override { return value->get_zone(); }
 			virtual bool is_blockable() const override { return value->is_blockable(); }
+#else
+			virtual bool equal(const interface& other) const override
+			{ return value.equal(cast(other)); }
+
+			virtual bool less(const interface& other) const override
+			{ return value.less(cast(other)); }
+
+			virtual bool is_same_host(const interface& other) const override
+			{ return value.is_same_host(cast(other)); }
+
+			virtual std::string str() const override { return value.str(); }
+			virtual std::string host_str() const override { return value.host_str(); }
+			virtual bool is_loopback() const override { return value.is_loopback(); }
+			virtual bool is_local() const override { return value.is_local(); }
+			virtual address_type get_type_id() const override { return value.get_type_id(); }
+			virtual zone get_zone() const override { return value.get_zone(); }
+			virtual bool is_blockable() const override { return value.is_blockable(); }
+#endif
 		};
 
 		std::shared_ptr<interface> self;

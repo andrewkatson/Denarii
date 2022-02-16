@@ -135,10 +135,13 @@ namespace net
         //! \return `!is_unknown()`.
         bool is_blockable() const noexcept { return !is_unknown(); }
 
+#ifdef __MINGW32__
+
         //! \return Value, \pre `has_value()`.
         i2p_address* operator->() noexcept { return this; }
         //! \return Value, \pre `has_value()`.
         i2p_address const* operator->() const noexcept { return this; }
+#endif
     };
 
     inline bool operator==(const i2p_address& lhs, const i2p_address& rhs) noexcept

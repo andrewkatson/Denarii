@@ -88,7 +88,7 @@ http_archive(
 # proto libraries for grpc. this gives us all the esoteric languages that can be used
 http_archive(
     name = "rules_proto_grpc",
-   sha256 = "7954abbb6898830cd10ac9714fbcacf092299fda00ed2baf781172f545120419",
+    sha256 = "7954abbb6898830cd10ac9714fbcacf092299fda00ed2baf781172f545120419",
     strip_prefix = "rules_proto_grpc-3.1.1",
     urls = ["https://github.com/rules-proto-grpc/rules_proto_grpc/archive/3.1.1.tar.gz"],
 )
@@ -320,11 +320,9 @@ load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
 
 boost_deps()
 
-
 load("@keiros_public//:bazel/keiros_public.bzl", "keiros_public_deps")
 
 keiros_public_deps()
-
 
 load("@rules_proto_grpc//js:repositories.bzl", rules_proto_grpc_js_repos = "js_repos")
 

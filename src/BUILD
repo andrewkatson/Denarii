@@ -20,7 +20,6 @@ config_setting(
     visibility = ["//visibility:public"],
 )
 
-
 config_setting(
     name = "i386_config",
     constraint_values = [
@@ -28,7 +27,6 @@ config_setting(
     ],
     visibility = ["//visibility:public"],
 )
-
 
 config_setting(
     name = "x86_64",
@@ -83,11 +81,7 @@ cc_binary(
         "-lcrypto",
         "-lws2_32",
         "-lwsock32",
-        "-lcrypt",
-        "-ldl",
         "-lpthread",
-        "-lboost_system",
-        "-lboost_thread",
     ],
     deps = [
         "//contrib/epee",
@@ -97,6 +91,7 @@ cc_binary(
         "//src:cryptonote_core",
         "//src:cryptonote_protocol",
         "//src:daemon_rpc_server",
+        "//src:multisig",
         "//src:net",
         "//src:p2p",
         "//src:rpc",
@@ -108,7 +103,6 @@ cc_binary(
         "//src/daemonizer",
         "//src/device_trezor",
         "//src/mnemonics",
-        "//src:multisig",
         "@boost//:asio_ssl",
         "@boost//:chrono",
         "@boost//:filesystem",
@@ -121,9 +115,9 @@ cc_binary(
         "@liblzma",
         "@libreadline",
         "@libsodium",
+        "@libunwind",
         "@miniupnp//:miniupnpc",
         "@unbound",
-        "@libunwind//:libunwind",
     ],
 )
 
@@ -146,19 +140,21 @@ cc_library(
     srcs = glob([
         "**/crypto/*.c",
         "**/crypto/*.cpp",
-    ]) +
-    select({
-            "windows": glob(["**/crypto/wallet/*.c", "**/crypto/wallet/*.cpp"]),
-                         "//conditions:default": glob(["**/crypto/*.S"]),
-        }),
+    ]) + select({
+        "windows": glob([
+            "**/crypto/wallet/*.c",
+            "**/crypto/wallet/*.cpp",
+        ]),
+        "//conditions:default": glob(["**/crypto/*.S"]),
+    }),
     hdrs = glob([
         "**/crypto/*.h",
         "**/varint.h",
         "**/pod-class.h",
-    ]) +
-          select({
-                  "windows": glob(["**/crypto/wallet/*.h"]),
-              }),
+    ]) + select({
+        "windows": glob(["**/crypto/wallet/*.h"]),
+        "//conditions:default": [],
+    }),
     copts = [
         "-msse4.1",
         "-maes",
@@ -205,26 +201,29 @@ cc_library(
         "**/common/*.cc",
         "**/common/*.cpp",
     ]),
-    hdrs = glob(["**/common/*.h"])
-    + select({
-              "windows" : ["cryptonote_basic/portable_binary_archive.hpp",
-                           "cryptonote_basic/portable_binary_iarchive.hpp",
-                           "cryptonote_basic/portable_binary_oarchive.hpp"]
-      }),
+    hdrs = glob(["**/common/*.h"]) +
+           select({
+               "windows": [
+                   "cryptonote_basic/portable_binary_archive.hpp",
+                   "cryptonote_basic/portable_binary_iarchive.hpp",
+                   "cryptonote_basic/portable_binary_oarchive.hpp",
+               ],
+               "//conditions:default": [],
+           }),
     linkopts = [
         "-lssl",
         "-lcrypto",
         "-lws2_32",
         "-lwsock32",
     ] + select({
-             "windows": [],
-             "//conditions:default": ["-ldl"],
-         }),
+        ":windows": [],
+        "//conditions:default": ["-ldl"],
+    }),
     deps = [
+        "//contrib/epee",
         "//src:cncrypto",
         "//src:config",
         "//translations",
-        "//contrib/epee:epee",
         "@boost//:chrono",
         "@boost//:date_time",
         "@boost//:filesystem",
@@ -232,11 +231,11 @@ cc_library(
         "@boost//:system",
         "@boost//:thread",
         "@easy_logging",
+        "@libsodium",
         "@libunwind",
         "@openssl//:libcrypto",
         "@openssl//:libssl",
         "@unbound",
-        "@libsodium",
     ],
 )
 
@@ -296,7 +295,6 @@ cc_library(
         "cryptonote_basic/cryptonote_format_utils.h",
         "cryptonote_basic/subaddress_index.h",
         "cryptonote_basic/tx_extra.h",
-        "serialization/binary_utils.h",
         "device/device.hpp",
         "ringct/bulletproofs.cc",
         "ringct/multiexp.cc",
@@ -304,6 +302,7 @@ cc_library(
         "ringct/rctOps.cpp",
         "ringct/rctTypes.cpp",
         "serialization/binary_archive.h",
+        "serialization/binary_utils.h",
         "serialization/container.h",
         "serialization/containers.h",
         "serialization/crypto.h",
@@ -325,9 +324,9 @@ cc_library(
         "-lws2_32",
         "-lwsock32"
     ] + select({
-             "windows": [],
-             "//conditions:default": ["-ldl"],
-         }),
+        "windows": [],
+        "//conditions:default": ["-ldl"],
+    }),
     deps = [
         "//src:cncrypto",
         "//src:common",
@@ -347,9 +346,9 @@ cc_library(
         "-lws2_32",
         "-lwsock32"
     ] + select({
-             "windows": [],
-             "//conditions:default": ["-ldl"],
-         }),
+        "windows": [],
+        "//conditions:default": ["-ldl"],
+    }),
     deps = [
         "//src:cncrypto",
         "//src:common",
@@ -413,9 +412,12 @@ cc_library(
         "cryptonote_basic/tx_extra.h",
         "cryptonote_basic/verification_context.h",
     ] + select({
-        "windows" : ["cryptonote_basic/portable_binary_archive.hpp",
-                     "cryptonote_basic/portable_binary_iarchive.hpp",
-                     "cryptonote_basic/portable_binary_oarchive.hpp"]
+        "windows": [
+            "cryptonote_basic/portable_binary_archive.hpp",
+            "cryptonote_basic/portable_binary_iarchive.hpp",
+            "cryptonote_basic/portable_binary_oarchive.hpp",
+        ],
+        "//conditions:default": [],
     }),
     deps = [
         "//src:cncrypto",
@@ -436,39 +438,40 @@ cc_library(
 cc_library(
     name = "device",
     srcs = [
+        "blockchain_db/blockchain_db.h",
+        "blockchain_db/locked_txn.h",
+        "checkpoints/checkpoints.h",
+        "common/portable_binary_iarchive.hpp",
+        "common/portable_binary_oarchive.hpp",
+        "crypto/wallet/crypto.h",
+        "crypto/wallet/ops.h",
         "cryptonote_basic/account.h",
+        "cryptonote_basic/cryptonote_boost_serialization.h",
+        "cryptonote_basic/difficulty.h",
+        "cryptonote_basic/hardfork.h",
+        "cryptonote_basic/miner.h",
         "cryptonote_basic/subaddress_index.h",
         "cryptonote_basic/tx_extra.h",
+        "cryptonote_basic/verification_context.h",
+        "cryptonote_core/blockchain.h",
+        "cryptonote_core/cryptonote_core_common.h",
         "cryptonote_core/cryptonote_tx_utils.h",
+        "cryptonote_core/tx_pool.h",
+        "cryptonote_protocol/cryptonote_protocol_defs.h",
+        "cryptonote_protocol/enums.h",
         "device/device.cpp",
         "device/device_default.cpp",
         "device/device_io_hid.cpp",
         "device/device_ledger.cpp",
         "device/log.cpp",
-        "rpc/core_rpc_server_error_codes.h",
-        "serialization/pair.h",
-        "cryptonote_core/blockchain.h",
-        "cryptonote_protocol/cryptonote_protocol_defs.h",
-        "rpc/core_rpc_server_commands_defs.h",
-        "cryptonote_basic/difficulty.h",
-        "rpc/rpc_handler.h",
-        "cryptonote_basic/verification_context.h",
-        "cryptonote_protocol/enums.h",
-        "cryptonote_basic/hardfork.h",
-        "blockchain_db/blockchain_db.h",
-        "cryptonote_core/tx_pool.h",
-        "rpc/message_data_structs.h",
-        "ringct/rctSigs.h",
-        "cryptonote_basic/cryptonote_boost_serialization.h",
-        "blockchain_db/locked_txn.h",
-        "common/portable_binary_oarchive.hpp",
-        "common/portable_binary_iarchive.hpp",
-        "cryptonote_basic/miner.h",
-        "cryptonote_core/cryptonote_core_common.h",
         "hardforks/hardforks.h",
         "multisig/multisig.h",
-        "crypto/wallet/crypto.h",
-        "crypto/wallet/ops.h",
+        "ringct/rctSigs.h",
+        "rpc/core_rpc_server_commands_defs.h",
+        "rpc/core_rpc_server_error_codes.h",
+        "rpc/message_data_structs.h",
+        "rpc/rpc_handler.h",
+        "serialization/pair.h",
         "wallet/message_store.h",
         "wallet/message_transporter.h",
         "wallet/node_rpc_proxy.h",
@@ -476,7 +479,6 @@ cc_library(
         "wallet/wallet_errors.h",
         "wallet/wallet_light_rpc.h",
         "wallet/wallet_rpc_helpers.h",
-        "checkpoints/checkpoints.h",
     ],
     hdrs = [
         "device/device.hpp",
@@ -493,9 +495,9 @@ cc_library(
         "-lws2_32",
         "-lwsock32"
     ] + select({
-             "windows": [],
-             "//conditions:default": ["-ldl"],
-         }),
+        "windows": [],
+        "//conditions:default": ["-ldl"],
+    }),
     deps = [
         "//src:cncrypto",
         "//src:ringct_basic",
@@ -534,24 +536,24 @@ cc_library(
         "cryptonote_core/blockchain.h",
         "cryptonote_core/blockchain_storage_boost_serialization.h",
         "cryptonote_core/cryptonote_core.h",
+        "cryptonote_core/cryptonote_core_common.h",
         "cryptonote_core/cryptonote_tx_utils.h",
         "cryptonote_core/i_core_events.h",
         "cryptonote_core/tx_pool.h",
         "cryptonote_core/tx_sanity_check.h",
-        "cryptonote_core/cryptonote_core_common.h"
     ],
     deps = [
         "//contrib/epee",
         "//src:blockchain_db",
+        "//src:checkpoints",
         "//src:cncrypto",
         "//src:common",
         "//src:device",
+        "//src:hardforks",
+        "//src:multisig",
         "//src:net",
         "//src:ringct",
         "//src:version",
-        "//src:checkpoints",
-        "//src:hardforks",
-        "//src:multisig",
         "@boost//:date_time",
         "@boost//:filesystem",
         "@boost//:program_options",
@@ -612,12 +614,12 @@ cc_library(
     deps = [
         "//src:common",
         "//src:cryptonote_core",
+        "//src:multisig",
         "//src:net",
         "//src:rpc_base",
         "//src/centralnode:dynamic_critical_values",
         "//src/device_trezor",
         "//src/mnemonics",
-        "//src:multisig",
         "@boost//:chrono",
         "@boost//:filesystem",
         "@boost//:regex",
@@ -639,11 +641,7 @@ cc_binary(
         "-lcrypto",
         "-lws2_32",
         "-lwsock32",
-        "-lcrypt",
-        "-ldl",
         "-lpthread",
-        "-lboost_system",
-        "-lboost_thread",
     ],
     deps = [
         ":wallet",
@@ -687,15 +685,16 @@ cc_library(
         "net/tor_address.h",
         "net/zmq.h",
     ] + select({
-             "windows" : ["net/include/zmq.h"]
-         }),
+        "windows": ["net/include/zmq.h"],
+        "//conditions:default": [],
+    }),
     deps = [
         "//contrib/epee",
         "//src:common",
         "@libzmq",
     ] + select({
-                  "//conditions:default" : ["@boost//:asio",]
-              }),
+        "//conditions:default": ["@boost//:asio"],
+    }),
 )
 
 cc_library(
@@ -730,8 +729,8 @@ cc_library(
         "rpc/core_rpc_server.cpp",
         "rpc/core_rpc_server.h",
         "rpc/core_rpc_server_error_codes.h",
-        "rpc/fwd.h",
         "rpc/cryptonote_instantiations.cpp",
+        "rpc/fwd.h",
         "rpc/nodetool_instantiations.cpp",
         "rpc/rpc_payment.cpp",
         "rpc/rpc_payment.h",
@@ -742,10 +741,6 @@ cc_library(
         "rpc/rpc_handler.h",
         "rpc/rpc_version_str.h",
     ],
-    copts = select({
-                    "windows": [],
-                    "//conditions:default": ["-Wa,-mbig-obj"],
-                }),
     deps = [
         ":rpc_base",
         "//src:common",
@@ -904,10 +899,10 @@ cc_binary(
         "//src:cryptonote_core",
         "//src:version",
         "//src/blocks",
+        "@boost//:asio_ssl",
         "@boost//:filesystem",
         "@boost//:thread",
         "@liblzma",
-        "@boost//:asio_ssl"
     ],
 )
 
