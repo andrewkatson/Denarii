@@ -16,6 +16,7 @@ cc_library(
         "-lcrypto",
         "-lws2_32",
         "-lwsock32",
+        "-lcrypt32",
     ],
     deps = [
         "@boost//:chrono",

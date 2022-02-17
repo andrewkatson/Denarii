@@ -9,12 +9,16 @@ config_setting(
     visibility = ["//visibility:public"],
 )
 
-
+# This doesn't work with all platforms. It only works with x86_64
 cc_library(
   name = "randomx",
-  srcs =  select({
-                     "windows": glob(["**/randomx.a"]),
-                     "//conditions:default": glob(["**/librandomx.a"]),
-                 }),
-  hdrs = glob(["**/randomx.h"])
+  srcs =  glob(["**/*.cpp", "**/*.c", "**/jit_compiler_x86_static.S"], exclude = ["**/tests/*"]),
+  hdrs = glob(["**/*.h", "**/*.hpp"])
+)
+
+cc_library(
+  name = "randomx_lib",
+  srcs = glob(["**/*.a"]),
+  hdrs = glob(["**/randomx.h"]),
+  linkstatic = True
 )

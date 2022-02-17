@@ -44,3 +44,18 @@ cc_binary(
                 "-lwsock32",
             ]
 )
+
+cc_library(
+    name = "include_this",
+    srcs = ["include_this.cpp"],
+    hdrs = ["include_this.h"],
+    deps = [],
+)
+
+cc_binary(
+    name = "randomx_stuff",
+    srcs = ["randomx_stuff.cpp", "randomx_stuff.h"],
+    deps = [
+        "@randomx//:randomx_lib",
+    ],
+)

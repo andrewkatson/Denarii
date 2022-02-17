@@ -82,6 +82,7 @@ cc_binary(
         "-lws2_32",
         "-lwsock32",
         "-lpthread",
+        "-lunbound",
     ],
     deps = [
         "//contrib/epee",
@@ -140,12 +141,13 @@ cc_library(
     srcs = glob([
         "**/crypto/*.c",
         "**/crypto/*.cpp",
+        "**/crypto/*.S"
     ]) + select({
         "windows": glob([
             "**/crypto/wallet/*.c",
             "**/crypto/wallet/*.cpp",
         ]),
-        "//conditions:default": glob(["**/crypto/*.S"]),
+        "//conditions:default": [],
     }),
     hdrs = glob([
         "**/crypto/*.h",
@@ -215,6 +217,8 @@ cc_library(
         "-lcrypto",
         "-lws2_32",
         "-lwsock32",
+        "-lunbound",
+        "-lunwind",
     ] + select({
         ":windows": [],
         "//conditions:default": ["-ldl"],
@@ -639,6 +643,7 @@ cc_binary(
     linkopts = [
         "-lssl",
         "-lcrypto",
+        "-lbcrypt",
         "-lws2_32",
         "-lwsock32",
         "-lpthread",
