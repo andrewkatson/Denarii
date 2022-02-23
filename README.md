@@ -127,8 +127,7 @@ If you already have a repo cloned, initialize and update:
 
 ### Build instructions
 
-Monero uses the CMake build system and a top-level [Makefile](Makefile) that
-invokes cmake commands as needed.
+Denarii uses bazel
 
 #### On Linux and macOS
 
@@ -148,11 +147,7 @@ invokes cmake commands as needed.
 CMAKE: https://cmake.org/download/
 Make: http://gnuwin32.sourceforge.net/packages/make.htm
 MinGW: https://sourceforge.net/projects/mingw/files/latest/download
-Perl: https://strawberryperl.com/
-NASM: https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/win64/
-QTtools: https://wiki.qt.io/Install_Qt_5_Dev_Suite_Windows
 Msys2: https://www.msys2.org/
-LLVM: http://releases.llvm.org/download.html
 Bazel with gcc: https://github.com/bazelbuild/bazel/issues/12100
 
 * Download and install the [MSYS2 installer](https://www.msys2.org), either the 64-bit or the 32-bit package, depending on your system.
@@ -197,6 +192,14 @@ Bazel with gcc: https://github.com/bazelbuild/bazel/issues/12100
 
 ## Building 
 
+### On Linux 
+
+
+Do `bazel build target` for all targets
+
+
+### On Windows  
+
 All builds should use ```--compiler=mingw-gcc``` and  ```--copt="-O3"``` and ```--copt="-Wa"``` and ```--copt="-mbig-obj``` and ```--copt="-DWIN32_LEAN_AND_MEAN"``` and ```--copt="-DMINIUPNP_STATICLIB"```
 
 Need to set JAVA_HOME in msys. Mine is ```export JAVA_HOME=/c/'Program Files'/Java/jdk-10.0.2```
@@ -217,6 +220,7 @@ The build places the binary in `bazel-bin/` sub-directory. To run in the
 foreground:
 
 ```bash
+bazel build src:denariid
 ./bazel-bin/src/denariid
 ```
 

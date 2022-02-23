@@ -174,3 +174,6 @@ tests/benchmark.h
 translations/monero_de.qm
 *.qm
 *.qm
+
+# Clion 
+.clwb/
