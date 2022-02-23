@@ -192,12 +192,12 @@ Bazel with gcc: https://github.com/bazelbuild/bazel/issues/12100
 
     ``` 
     bazel run :configure_win (run through command prompt)
-    bazel run :configure     (run through msys2)
+    bazel run :configure     (run through msys2) (youll need to manually ctrl-c it to exit because one file just hangs during build)
     ```
 
 ## Building 
 
-All builds should use ```--compiler=mingw-gcc``` and  ```--copt="-O3"``` and ```--javabase=@bazel_tools//tools/jdk:remote_jdk11``` and ```--copt="-static-libgcc"``` and  ```--copt="-static-libstdc++"``` and ```--copt="-static"``` and ```--copt="-Wa"``` and ```--copt="-mbig-obj``` and ```--copt="-DWIN32_LEAN_AND_MEAN```
+All builds should use ```--compiler=mingw-gcc``` and  ```--copt="-O3"``` and ```--copt="-Wa"``` and ```--copt="-mbig-obj``` and ```--copt="-DWIN32_LEAN_AND_MEAN"``` and ```--copt="-DMINIUPNP_STATICLIB"```
 
 Need to set JAVA_HOME in msys. Mine is ```export JAVA_HOME=/c/'Program Files'/Java/jdk-10.0.2```
 

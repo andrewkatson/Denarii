@@ -28,6 +28,10 @@
 // 
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
+#include "src/device/device_cold.hpp"
+#include "src/device_trezor/device_trezor.hpp"
+
+
 #include <numeric>
 #include <tuple>
 #include <boost/format.hpp>
@@ -42,19 +46,13 @@
 #include <openssl/evp.h>
 #include "contrib/epee/include/include_base_utils.h"
 using namespace epee;
-
 #include "src/cryptonote_config.h"
 #include "src/cryptonote_core/tx_sanity_check.h"
-#include "wallet_rpc_helpers.h"
-#include "wallet2.h"
-#include "src/cryptonote_basic/cryptonote_format_utils.h"
 #include "src/net/parse.h"
-#include "src/rpc/core_rpc_server_commands_defs.h"
 #include "src/rpc/core_rpc_server_error_codes.h"
 #include "src/rpc/rpc_payment_signature.h"
 #include "src/rpc/rpc_payment_costs.h"
 #include "contrib/epee/include/misc_language.h"
-#include "src/cryptonote_basic/cryptonote_basic_impl.h"
 #include "src/multisig/multisig.h"
 #include "src/common/boost_serialization_helper.h"
 #include "src/common/command_line.h"
@@ -63,11 +61,9 @@ using namespace epee;
 #include "contrib/epee/include/profile_tools.h"
 #include "src/crypto/crypto.h"
 #include "src/serialization/binary_utils.h"
-#include "src/serialization/string.h"
 #include "src/cryptonote_basic/blobdatatype.h"
 #include "src/mnemonics/electrum-words.h"
 #include "src/common/i18n.h"
-#include "src/common/util.h"
 #include "src/common/apply_permutation.h"
 #include "include/rapidjson/document.h"
 #include "include/rapidjson/writer.h"
@@ -81,8 +77,6 @@ using namespace epee;
 #include "src/common/perf_timer.h"
 #include "src/ringct/rctSigs.h"
 #include "ringdb.h"
-#include "src/device/device_cold.hpp"
-#include "src/device_trezor/device_trezor.hpp"
 #include "src/net/socks_connect.h"
 
 extern "C"

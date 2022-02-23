@@ -5,7 +5,7 @@
 #ifndef DENARII_INCLUDE_THIS_H
 #define DENARII_INCLUDE_THIS_H
 
-#include <string>
+#include <iostream>
 
 extern "C" {
 class include_this {

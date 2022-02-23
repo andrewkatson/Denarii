@@ -254,6 +254,20 @@ def import_dependencies_win():
     find_src_files_win(win_library_info)
 
 
+def randomx_win(external_dir_path):
+    raw_path = str(external_dir_path)
+
+    randomx_path = raw_path + "/randomx"
+
+    os.chdir(randomx_path)
+
+    command = "mkdir build && cd build && cmake -DARCH=native -G 'MinGW Makefiles' .. && mingw32-make"
+    os.system(command)
+
+
 find_workspace_path()
 
 import_dependencies_win()
+
+external_dir_path = workspace_path / "/external"
+randomx_win(external_dir_path)

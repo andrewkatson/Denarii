@@ -22,3 +22,9 @@ cc_library(
   hdrs = glob(["**/randomx.h"]),
   linkstatic = True
 )
+
+cc_library(
+  name = "sources",
+  srcs =  glob(["**/*.cpp", "**/*.c", "**/jit_compiler_x86_static.S"], exclude = ["**/tests/*", "**/randomx.cpp"]),
+  hdrs = glob(["**/*.h", "**/*.hpp"], exclude = ["**/randomx.hpp"])
+)

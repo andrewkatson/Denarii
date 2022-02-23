@@ -35,7 +35,7 @@
 #ifdef _WIN32
 #include "src/net/include/zmq.h"
 #else
-#include <zmq.h>
+#include "include/zmq.h"
 #endif
 #include "src/common/expect.h"
 #include "contrib/epee/include/span.h"

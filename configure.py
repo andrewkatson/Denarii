@@ -237,22 +237,11 @@ def miniupnp_win(external_dir_path):
 
     os.chdir(miniupnp_path)
 
-    command = "make install"
+    command = "cmake . && make && ./mingw32make.bat"
     os.system(command)
 
 
 def randomx(external_dir_path):
-    raw_path = str(external_dir_path)
-
-    randomx_path = raw_path + "/randomx"
-
-    os.chdir(randomx_path)
-
-    command = "mkdir build && cd build && cmake -DARCH=native .. && make"
-    os.system(command)
-
-
-def randomx_win(external_dir_path):
     raw_path = str(external_dir_path)
 
     randomx_path = raw_path + "/randomx"
@@ -400,6 +389,7 @@ def keiros_public(external_dir_path):
     clone_command = "git clone https://github.com/andrewkatson/KeirosPublic.git"
     os.system(clone_command)
 
+
 def build_dependencies():
     external_dir_path = workspace_path / "external"
     os.chdir(external_dir_path)
@@ -431,15 +421,9 @@ def build_dependencies():
 
     keiros_public(external_dir_path)
 
+
 def build_dependencies_win():
     external_dir_path = workspace_path / "external"
-
-    os.chdir(external_dir_path)
-
-    miniupnp_win(external_dir_path)
-
-    os.chdir(external_dir_path)
-    randomx_win(external_dir_path)
 
     os.chdir(external_dir_path)
     supercop_win(external_dir_path)
@@ -776,7 +760,8 @@ def run_translation_generation(translation_files):
     os.system(build_command)
 
     # we cannot use bazel run because it just won't cooperate
-    generation_command = str(workspace_path) + "/bazel-bin/translations/generate_translations " + translation_file_path + " "
+    generation_command = str(
+        workspace_path) + "/bazel-bin/translations/generate_translations " + translation_file_path + " "
 
     for translation_file in translation_files:
         generation_command = generation_command + " " + translation_file_dir + "/" + translation_file
@@ -804,6 +789,7 @@ def run_translation_generation_win(translation_files):
         generation_command = generation_command + " " + translation_file_dir + "/" + translation_file
 
     os.system(generation_command)
+
 
 def translations_generate():
     # first change all the suffixes of the translations files to .qm
@@ -845,3 +831,8 @@ if sys.platform == "linux":
 elif sys.platform == "msys":
     build_dependencies_win()
     generate_files_win()
+
+    # We have to do this last because it will just hang.
+    external_dir_path = workspace_path / "external"
+    os.chdir(external_dir_path)
+    miniupnp_win(workspace_path)

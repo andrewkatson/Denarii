@@ -83,6 +83,10 @@ cc_binary(
         "-lwsock32",
         "-lpthread",
         "-lunbound",
+        "-L external/randomx/build", "-lrandomx",
+        "-lzmq",
+        "-lbcrypt",
+        "-L external/miniupnp/miniupnpc", "-lminiupnpc",
     ],
     deps = [
         "//contrib/epee",
@@ -162,6 +166,7 @@ cc_library(
         "-maes",
         "-march=native",
     ],
+    linkopts = ["-L external/randomx/build", "-lrandomx"],
     deps = [
         ":config",
         "//contrib/epee",
@@ -647,6 +652,7 @@ cc_binary(
         "-lws2_32",
         "-lwsock32",
         "-lpthread",
+        "-L external/randomx/build", "-lrandomx"
     ],
     deps = [
         ":wallet",
@@ -746,6 +752,7 @@ cc_library(
         "rpc/rpc_handler.h",
         "rpc/rpc_version_str.h",
     ],
+    linkopts = ["-L external/miniupnp/miniupnpc", "-lminiupnpc"],
     deps = [
         ":rpc_base",
         "//src:common",
@@ -756,6 +763,7 @@ cc_library(
         "@boost//:regex",
         "@boost//:thread",
         "@rapidjson",
+        "@miniupnp//:miniupnpc",
     ],
 )
 

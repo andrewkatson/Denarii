@@ -49,13 +49,34 @@ cc_library(
     name = "include_this",
     srcs = ["include_this.cpp"],
     hdrs = ["include_this.h"],
-    deps = [],
+    deps = ["@randomx//:randomx_lib",],
 )
 
 cc_binary(
     name = "randomx_stuff",
     srcs = ["randomx_stuff.cpp", "randomx_stuff.h"],
+    linkopts = [
+        "-lssl",
+        "-lcrypto",
+        "-lbcrypt",
+        "-lws2_32",
+        "-lwsock32",
+        "-lpthread",
+        "-L external/randomx/build", "-lrandomx"
+    ],
     deps = [
-        "@randomx//:randomx_lib",
+        "//src:wallet",
+        "//src:cncrypto",
+        "//src:common",
+        "//src:cryptonote_core",
+        "//src:rpc_base",
+        "//src:version",
+        "//src/daemonizer",
+        "@boost//:asio_ssl",
+        "@boost//:chrono",
+        "@boost//:filesystem",
+        "@boost//:program_options",
+        "@boost//:thread",
+        "@liblzma",
     ],
 )
