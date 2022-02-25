@@ -148,7 +148,7 @@ void print_genesis_tx_hex(uint8_t nettype) {
   wal->set_seed_language("English");
   wal->set_refresh_from_block_height(0);
   crypto::secret_key dummy_key;
-  wal->generate("/home/andrew/denarii/genesis", password, dummy_key, false, false);
+  wal->generate("/home/denarii/genesis", password, dummy_key, false, false);
   wal->store();
 
   //Prepare genesis_tx
@@ -157,6 +157,9 @@ void print_genesis_tx_hex(uint8_t nettype) {
 
   std::cout << "Object:" << std::endl;
   std::cout << obj_to_json_str(tx_genesis) << std::endl << std::endl;
+  
+  std::cout << "Spend public key " << wal->get_account().get_keys().m_account_address.m_spend_public_key << std::endl;
+  std::cout << "View public key " << wal->get_account().get_keys().m_account_address.m_view_public_key << std::endl;
 
 
   std::stringstream ss;
