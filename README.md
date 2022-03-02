@@ -119,7 +119,7 @@ FreeBSD 12.1 one-liner required to build dependencies:
 
 Clone recursively to pull-in needed submodule(s):
 
-`$ git clone --recursive https://github.com/DrewGlinsman/denarii.git`
+`$ git clone --recursive https://github.com/andrewkatson/denarii.git`
 
 If you already have a repo cloned, initialize and update:
 
