@@ -44,6 +44,13 @@ args = parser.parse_args()
 workspace_path = pathlib.Path()
 
 
+def chdir(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    os.chdir(path)
+
+
 def find_workspace_path():
     global workspace_path
 
@@ -215,7 +222,7 @@ def miniupnp(external_dir_path):
     # we only need to build one of the subdirectories
     miniupnp_path = raw_path + "/miniupnp/miniupnpc"
 
-    os.chdir(miniupnp_path)
+    chdir(miniupnp_path)
 
     command = "sudo make install"
     os.system(command)
@@ -225,7 +232,7 @@ def miniupnp_win(external_dir_path):
     raw_path = str(external_dir_path)
 
     # remove the empty directory
-    remove_command = "rm -rf " + raw_path + "/miniupnp"
+    remove_command = "rm -rf " + raw_path + "/external/miniupnp"
     os.system(remove_command)
 
     # For now we have to clone this because miniupnp fails to download :(
@@ -233,9 +240,9 @@ def miniupnp_win(external_dir_path):
     os.system(clone_command)
 
     # we only need to build one of the subdirectories
-    miniupnp_path = raw_path + "/miniupnp/miniupnpc"
+    miniupnp_path = raw_path + "/external/miniupnp/miniupnpc"
 
-    os.chdir(miniupnp_path)
+    chdir(miniupnp_path)
 
     command = "cmake . && make && ./mingw32make.bat"
     os.system(command)
@@ -246,7 +253,7 @@ def randomx(external_dir_path):
 
     randomx_path = raw_path + "/randomx"
 
-    os.chdir(randomx_path)
+    chdir(randomx_path)
 
     command = "mkdir build && cd build && cmake -DARCH=native .. && make"
     os.system(command)
@@ -255,7 +262,7 @@ def randomx(external_dir_path):
 def supercop(external_dir_path):
     raw_path = str(external_dir_path)
 
-    os.chdir(raw_path)
+    chdir(raw_path)
 
     supercop_path = raw_path + "/supercop"
 
@@ -265,7 +272,7 @@ def supercop(external_dir_path):
     clone_command = "git clone https://github.com/andrewkatson/supercop.git"
     os.system(clone_command)
 
-    os.chdir(supercop_path)
+    chdir(supercop_path)
 
     # need to create the first crypto library 
     first_create_command = "cmake . && make && sudo make install"
@@ -285,7 +292,7 @@ def supercop(external_dir_path):
 def supercop_win(external_dir_path):
     raw_path = str(external_dir_path)
 
-    os.chdir(raw_path)
+    chdir(raw_path)
 
     supercop_path = raw_path + "/supercop"
 
@@ -295,7 +302,7 @@ def supercop_win(external_dir_path):
     clone_command = "git clone https://github.com/andrewkatson/supercop.git"
     os.system(clone_command)
 
-    os.chdir(supercop_path)
+    chdir(supercop_path)
 
     # need to create the first crypto library
     first_create_command = "cmake . && make && make install"
@@ -317,7 +324,7 @@ def unbound(external_dir_path):
 
     unbound_path = raw_path + "/unbound"
 
-    os.chdir(unbound_path)
+    chdir(unbound_path)
 
     command = "./configure && make && sudo make install"
     os.system(command)
@@ -329,7 +336,7 @@ def unbound(external_dir_path):
 def openssl(external_dir_path):
     raw_path = str(external_dir_path)
 
-    os.chdir(raw_path)
+    chdir(raw_path)
 
     openssl_zip_path = raw_path + "/openssl.zip"
     download_url("https://www.openssl.org/source/openssl-1.1.1i.tar.gz", openssl_zip_path)
@@ -343,7 +350,7 @@ def openssl(external_dir_path):
     rename_command = "mv " + openssl_wrong_name_path + " " + openssl_path
     os.system(rename_command)
 
-    os.chdir(openssl_path)
+    chdir(openssl_path)
 
     command = "./config && make && make test"
     os.system(command)
@@ -357,7 +364,7 @@ def libzmq(external_dir_path):
 
     libzmq_path = raw_path + "/libzmq"
 
-    os.chdir(libzmq_path)
+    chdir(libzmq_path)
 
     command = "./autogen.sh && ./configure --with-libsodium && make && sudo make install"
     os.system(command)
@@ -371,7 +378,7 @@ def zlib(external_dir_path):
 
     zlib_path = raw_path + "/zlib"
 
-    os.chdir(zlib_path)
+    chdir(zlib_path)
 
     command = "./configure && make test && sudo make install"
     os.system(command)
@@ -380,56 +387,47 @@ def zlib(external_dir_path):
 def liblmdb(external_dir_path):
     liblmdb_path = external_dir_path / "db_drivers/liblmdb"
 
-    os.chdir(liblmdb_path)
+    chdir(liblmdb_path)
     command = "make"
     os.system(command)
 
 
-def keiros_public(external_dir_path):
-    clone_command = "git clone https://github.com/andrewkatson/KeirosPublic.git"
-    os.system(clone_command)
-
-
 def build_dependencies():
     external_dir_path = workspace_path / "external"
-    os.chdir(external_dir_path)
+    chdir(external_dir_path)
 
     miniupnp(external_dir_path)
 
-    os.chdir(external_dir_path)
+    chdir(external_dir_path)
     randomx(external_dir_path)
 
-    os.chdir(external_dir_path)
+    chdir(external_dir_path)
     supercop(external_dir_path)
 
-    os.chdir(external_dir_path)
+    chdir(external_dir_path)
     unbound(external_dir_path)
 
-    os.chdir(external_dir_path)
+    chdir(external_dir_path)
     openssl(external_dir_path)
 
-    os.chdir(external_dir_path)
+    chdir(external_dir_path)
     libzmq(external_dir_path)
 
-    os.chdir(external_dir_path)
+    chdir(external_dir_path)
     zlib(external_dir_path)
 
-    os.chdir(external_dir_path)
+    chdir(external_dir_path)
 
     liblmdb(external_dir_path)
-    os.chdir(external_dir_path)
-
-    keiros_public(external_dir_path)
+    chdir(external_dir_path)
 
 
 def build_dependencies_win():
     external_dir_path = workspace_path / "external"
 
-    os.chdir(external_dir_path)
+    chdir(external_dir_path)
     supercop_win(external_dir_path)
-    os.chdir(external_dir_path)
-
-    keiros_public(external_dir_path)
+    chdir(external_dir_path)
 
 
 def trezor_common():
@@ -479,12 +477,12 @@ proto_library(                                         \n\
 )'
 
     path_to_dir = str(workspace_path) + "/external/trezor-common/protob"
-    os.chdir(path_to_dir)
+    chdir(path_to_dir)
 
     os.system(f"echo \'{text}\' > BUILD")
 
     path_to_workspace_dir = str(workspace_path) + "/external/trezor-common"
-    os.chdir(path_to_workspace_dir)
+    chdir(path_to_workspace_dir)
 
     workspace_text = f'workspace(name = \"trezor_common\") \n\
 load(\"@bazel_tools//tools/build_defs/repo:http.bzl\", \"http_archive\")   \n\
@@ -706,7 +704,7 @@ def benchmark_generate():
 def convert_translation_files():
     translation_file_dir = str(workspace_path) + "/translations"
 
-    os.chdir(translation_file_dir)
+    chdir(translation_file_dir)
 
     files = []
     converted_files = []
@@ -728,7 +726,7 @@ def convert_translation_files():
 def convert_translation_files_win():
     translation_file_dir = str(workspace_path) + "/translations"
 
-    os.chdir(translation_file_dir)
+    chdir(translation_file_dir)
 
     files = []
     converted_files = []
@@ -825,14 +823,24 @@ def generate_files_win():
 find_workspace_path()
 print(workspace_path)
 if sys.platform == "linux":
+    print("Importing dependencies \n\n\n\n\n")
     import_dependencies()
+
+    print("Building dependencies \n\n\n\n\n")
     build_dependencies()
+
+    print ("Generating files \n\n\n\n\n")
     generate_files()
 elif sys.platform == "msys":
+
+    print("Building dependencies Windows \n\n\n\n\n")
     build_dependencies_win()
+
+    print("Generating files Windows \n\n\n\n\n")
     generate_files_win()
 
+    print("Miniupnp Windows \n\n\n\n\n")
     # We have to do this last because it will just hang.
     external_dir_path = workspace_path / "external"
-    os.chdir(external_dir_path)
+    chdir(external_dir_path)
     miniupnp_win(workspace_path)

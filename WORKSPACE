@@ -283,9 +283,11 @@ new_local_repository(
 )
 
 #keiros public
-local_repository(
-    name = "keiros_public",
-    path = "external/KeirosPublic",
+git_repository (
+	name = "keiros_public",
+	commit = "21e01a20a0d20c584eb7c441a95e3cbcbb1d85f7",
+	remote = "https://github.com/andrewkatson/KeirosPublic.git",
+	shallow_since = "1646013575 -0500"
 )
 
 load("@rules_cc//cc:repositories.bzl", "rules_cc_dependencies")

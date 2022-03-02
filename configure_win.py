@@ -42,6 +42,13 @@ args = parser.parse_args()
 workspace_path = pathlib.Path()
 
 
+def chdir(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    os.chdir(path)
+
+
 def find_workspace_path():
     global workspace_path
 
@@ -81,23 +88,23 @@ def get_libunwind():
     # libunwind wants to be special so we need to download its source files first
     raw_path = str(workspace_path / "external")
 
-    os.chdir(raw_path)
+    chdir(raw_path)
 
     clone_command = "git clone https://github.com/llvm-mirror/libunwind.git"
     os.system(clone_command)
 
-    #need to modify the libunwind.h we are using
+    # need to modify the libunwind.h we are using
     source = str(workspace_path) + "/libunwind.h"
     dest = raw_path + "/libunwind/include/libunwind.h"
 
-    move_command = "mv " + source + " " + dest
+    move_command = "move " + source + " " + dest
     os.system(move_command)
 
 
 def get_zlib():
     raw_path = str(workspace_path / "external")
 
-    os.chdir(raw_path)
+    chdir(raw_path)
 
     clone_command = "git clone git@github.com:andrewkatson/zlib.git"
     os.system(clone_command)
@@ -259,15 +266,17 @@ def randomx_win(external_dir_path):
 
     randomx_path = raw_path + "/randomx"
 
-    os.chdir(randomx_path)
+    chdir(randomx_path)
 
-    command = "mkdir build && cd build && cmake -DARCH=native -G 'MinGW Makefiles' .. && mingw32-make"
+    build_path = randomx_path + "/build"
+    chdir(build_path)
+    command = "cmake -DARCH=native -G \"MinGW Makefiles\" .. && mingw32-make"
     os.system(command)
 
 
 find_workspace_path()
-
+print(workspace_path)
 import_dependencies_win()
 
-external_dir_path = workspace_path / "/external"
+external_dir_path = workspace_path / "external"
 randomx_win(external_dir_path)
