@@ -79,15 +79,14 @@ cc_binary(
         "-lunwind",
         "-lssl",
         "-lcrypto",
-        "-lws2_32",
-        "-lwsock32",
         "-lpthread",
         "-lunbound",
-        "-L external/randomx/build", "-lrandomx",
         "-lzmq",
-        "-lbcrypt",
         "-L external/miniupnp/miniupnpc", "-lminiupnpc",
-    ],
+    ]  + select({
+        "windows": ["-L external/randomx/build", "-lrandomx", "-lws2_32","-lwsock32","-lbcrypt"],
+        "//conditions:default": [],
+    }),
     deps = [
         "//contrib/epee",
         "//src:blockchain_db",
@@ -166,14 +165,19 @@ cc_library(
         "-maes",
         "-march=native",
     ],
-    linkopts = ["-L external/randomx/build", "-lrandomx"],
+    linkopts = select({
+        "windows": ["-L external/randomx/build", "-lrandomx"],
+        "//conditions:default": [],
+    }),
     deps = [
         ":config",
         "//contrib/epee",
         "@boost//:system",
         "@libsodium",
-        "@randomx",
-    ],
+    ]  + select({
+        "windows": ["@randomx"],
+        "//conditions:default": ["@randomx//:randomx_lib"],
+    }),
 )
 
 # ONLY USE IN TESTS THIS IS A WORKAROUND BECAUSE CMAKE IS WEIRD
@@ -192,13 +196,19 @@ cc_library(
         "-maes",
         "-march=native",
     ],
+    linkopts = select({
+        "windows": ["-L external/randomx/build", "-lrandomx"],
+        "//conditions:default": [],
+    }),
     deps = [
         ":config",
         "//contrib/epee",
         "@boost//:system",
         "@libsodium",
-        "@randomx",
-    ],
+    ] + select({
+        "windows": ["@randomx"],
+        "//conditions:default": ["@randomx//:randomx_lib"],
+    }),
 )
 
 cc_library(
@@ -220,12 +230,10 @@ cc_library(
     linkopts = [
         "-lssl",
         "-lcrypto",
-        "-lws2_32",
-        "-lwsock32",
         "-lunbound",
         "-lunwind",
     ] + select({
-        ":windows": [],
+        ":windows": ["-lws2_32", "-lwsock32"],
         "//conditions:default": ["-ldl"],
     }),
     deps = [
@@ -330,10 +338,8 @@ cc_library(
     linkopts = [
         "-lssl",
         "-lcrypto",
-        "-lws2_32",
-        "-lwsock32"
     ] + select({
-        "windows": [],
+        "windows": ["-lws2_32","-lwsock32"],
         "//conditions:default": ["-ldl"],
     }),
     deps = [
@@ -352,10 +358,8 @@ cc_library(
     linkopts = [
         "-lssl",
         "-lcrypto",
-        "-lws2_32",
-        "-lwsock32"
     ] + select({
-        "windows": [],
+        "windows": ["-lws2_32","-lwsock32"],
         "//conditions:default": ["-ldl"],
     }),
     deps = [
@@ -501,10 +505,8 @@ cc_library(
     linkopts = [
         "-lssl",
         "-lcrypto",
-        "-lws2_32",
-        "-lwsock32"
     ] + select({
-        "windows": [],
+        "windows": ["-lws2_32","-lwsock32"],
         "//conditions:default": ["-ldl"],
     }),
     deps = [
@@ -517,7 +519,10 @@ cc_library(
         "@libhidapi",
         "@openssl//:libcrypto",
         "@openssl//:libssl",
-    ],
+    ]  + select({
+        "windows": [],
+        "//conditions:default": ["@supercop//:supercop64", "@supercop//:supercop51"],
+    }),
 )
 
 cc_library(
@@ -648,12 +653,11 @@ cc_binary(
     linkopts = [
         "-lssl",
         "-lcrypto",
-        "-lbcrypt",
-        "-lws2_32",
-        "-lwsock32",
         "-lpthread",
-        "-L external/randomx/build", "-lrandomx"
-    ],
+    ] + select({
+        "windows": ["-L external/randomx/build", "-lrandomx","-lws2_32","-lwsock32","-lbcrypt"],
+        "//conditions:default": [],
+    }),
     deps = [
         ":wallet",
         "//src:cncrypto",
@@ -873,10 +877,8 @@ cc_binary(
     linkopts = [
         "-lssl",
         "-lcrypto",
-        "-lws2_32",
-        "-lwsock32"
     ] + select({
-        "windows": [],
+        "windows": ["-lws2_32","-lwsock32"],
         "//conditions:default": ["-ldl"],
     }),
     deps = [

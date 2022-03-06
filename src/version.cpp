@@ -1,5 +1,5 @@
 
-#define DEF_MONERO_VERSION_TAG "c41cad1c0"
+#define DEF_MONERO_VERSION_TAG "5b27ac195"
 
 #define DEF_MONERO_VERSION "0.17.1.5"
 

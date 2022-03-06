@@ -53,11 +53,19 @@ cc_binary(
 py_binary(
     name = "configure",
     srcs = ["configure.py"],
-    deps = [],
+    deps = [":workspace_path_finder"],
+    imports = [":workspace_path_finder"],
 )
 
 py_binary(
     name = "configure_win",
     srcs = ["configure_win.py"],
+    deps = [":workspace_path_finder"],
+    imports = [":workspace_path_finder"],
+)
+
+py_library(
+    name = "workspace_path_finder",
+    srcs = ["workspace_path_finder.py"],
     deps = [],
 )

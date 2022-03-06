@@ -6,7 +6,6 @@ Portions Copyright (c) 2012-2013 The Cryptonote developers.
 
 ## Table of Contents
 
-  - [Translations](#translations)
   - [Introduction](#introduction)
   - [License](#license)
   - [Compiling Monero from source](#compiling-denarii-from-source)
@@ -16,10 +15,7 @@ Portions Copyright (c) 2012-2013 The Cryptonote developers.
   - [Pruning](#Pruning)
   - [Debugging](#Debugging)
   - [Known issues](#known-issues)
-
-## Translations
-The CLI wallet is available in different languages. 
-
+  
 ## Introduction
 
 Denarii is a private, secure, untraceable, decentralised digital currency. You are your bank, you control your funds, and nobody can trace your transfers unless you allow them to do so.
@@ -107,7 +103,7 @@ build the library binary manually. This can be done with the following command `
 
 Install all dependencies at once on Debian/Ubuntu:
 
-``` sudo apt update && sudo apt install build-essential cmake pkg-config libboost-all-dev libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev doxygen graphviz libpgm-dev qttools5-dev-tools libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev```
+``` sudo apt update && sudo apt install build-essential cmake pkg-config libboost-all-dev libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev doxygen graphviz libpgm-dev qttools5-dev-tools libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev && pip install tk ```
 
 Install all dependencies at once on macOS with the provided Brewfile:
 ``` brew update && brew bundle --file=contrib/brew/Brewfile ```
@@ -139,7 +135,7 @@ Denarii uses bazel
     cd denarii
     git checkout release-v0.17
     sudo bazel run :configure
-
+    chmod -R 777 /path/to/denarii
     ```
 
 #### On Windows
@@ -195,7 +191,7 @@ Bazel with gcc: https://github.com/bazelbuild/bazel/issues/12100
 ### On Linux 
 
 
-Do `bazel build target` for all targets
+Do `sudo bazel build target` for all targets
 
 
 ### On Windows  
@@ -214,6 +210,7 @@ Protoc works weird with mingw-gcc so you have to fix it. There are two ways.
 * `msvcrt.dll` 
 
 These can all be found under `C:\Windows\SYSTEM32` 
+
 ## Running denariid
 
 The build places the binary in `bazel-bin/` sub-directory. To run in the

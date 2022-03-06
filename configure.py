@@ -12,6 +12,7 @@ import requests
 import shutil
 import subprocess
 import sys
+import workspace_path_finder
 import zipfile
 
 
@@ -36,54 +37,13 @@ linux_library_info = [LibraryInfo("libnorm-dev", "libnorm"), LibraryInfo("libunb
                       LibraryInfo("libhidapi-dev", "libhidapi"), LibraryInfo("libusb-1.0-0-dev", "libusb"),
                       LibraryInfo("libudev-dev", "libudev")]
 
-parser = argparse.ArgumentParser(description="Process command line flags")
-parser.add_argument('--workspace_path', type=str, help='The path to the relevant WORKSPACE file', default='')
-
-args = parser.parse_args()
-
 workspace_path = pathlib.Path()
-
 
 def chdir(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
     os.chdir(path)
-
-
-def find_workspace_path():
-    global workspace_path
-
-    if args.workspace_path == '':
-        # Need to explicitly set this or pass it in as a variable.
-        linux_workspace_path = pathlib.Path("/home/andrew/denarii")
-        windows_workspace_path = pathlib.Path("C:/Users/katso/Documents/Github/denarii")
-
-        # A workspace path that works if not sudo on EC2
-        try:
-            possible_workspace_path = pathlib.Path(os.environ["HOME"] + "/denarii")
-            if os.path.exists(possible_workspace_path):
-                workspace_path = possible_workspace_path
-        except Exception as e:
-            print(e)
-            print("The HOME variable does not point to the directory")
-
-        # A workspace path that works in sudo on EC2
-        try:
-            possible_workspace_path = pathlib.Path("/home/" + os.environ["SUDO_USER"] + "/denarii")
-
-            if os.path.exists(possible_workspace_path):
-                workspace_path = possible_workspace_path
-        except Exception as e:
-            print(e)
-            print("Not on an EC2 using sudo")
-
-        if os.path.exists(linux_workspace_path):
-            workspace_path = linux_workspace_path
-        elif os.path.exists(windows_workspace_path):
-            workspace_path = windows_workspace_path
-    else:
-        workspace_path = Path(args.workspace_path)
 
 
 def download_url(url, save_path, chunk_size=128):
@@ -269,7 +229,7 @@ def supercop(external_dir_path):
     remove_command = "rm -rf " + supercop_path
     os.system(remove_command)
 
-    clone_command = "git clone https://github.com/andrewkatson/supercop.git"
+    clone_command = "git clone --recursive https://github.com/andrewkatson/supercop.git && git submodule init && git submodule update"
     os.system(clone_command)
 
     chdir(supercop_path)
@@ -820,7 +780,7 @@ def generate_files_win():
     trezor_common()
 
 
-find_workspace_path()
+workspace_path = workspace_path_finder.find_workspace_path()
 print(workspace_path)
 if sys.platform == "linux":
     print("Importing dependencies \n\n\n\n\n")

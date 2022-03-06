@@ -13,6 +13,7 @@ import requests
 import shutil
 import subprocess
 import sys
+import workspace_path_finder
 import zipfile
 
 
@@ -34,11 +35,6 @@ win_library_info = [LibraryInfo("liblzma", "liblzma"), LibraryInfo("libsodium", 
                     LibraryInfo("liblmdb", "db_drivers", False),
                     LibraryInfo("libunwind", "libunwind", False)]
 
-parser = argparse.ArgumentParser(description="Process command line flags")
-parser.add_argument('--workspace_path', type=str, help='The path to the relevant WORKSPACE file', default='')
-
-args = parser.parse_args()
-
 workspace_path = pathlib.Path()
 
 
@@ -47,42 +43,6 @@ def chdir(path):
         os.makedirs(path)
 
     os.chdir(path)
-
-
-def find_workspace_path():
-    global workspace_path
-
-    if args.workspace_path == '':
-        # Need to explicitly set this or pass it in as a variable.
-        linux_workspace_path = pathlib.Path("/home/andrew/denarii")
-        windows_workspace_path = pathlib.Path("C:/Users/katso/Documents/Github/denarii")
-
-        # A workspace path that works if not sudo on EC2
-        try:
-            possible_workspace_path = pathlib.Path(os.environ["HOME"] + "/denarii")
-            if os.path.exists(possible_workspace_path):
-                workspace_path = possible_workspace_path
-        except Exception as e:
-            print(e)
-            print("The HOME variable does not point to the directory")
-
-        # A workspace path that works in sudo on EC2
-        try:
-            possible_workspace_path = pathlib.Path("/home/" + os.environ["SUDO_USER"] + "/denarii")
-
-            if os.path.exists(possible_workspace_path):
-                workspace_path = possible_workspace_path
-        except Exception as e:
-            print(e)
-            print("Not on an EC2 using sudo")
-
-        if os.path.exists(linux_workspace_path):
-            workspace_path = linux_workspace_path
-        elif os.path.exists(windows_workspace_path):
-            workspace_path = windows_workspace_path
-    else:
-        workspace_path = Path(args.workspace_path)
-
 
 def get_libunwind():
     # libunwind wants to be special so we need to download its source files first
@@ -273,8 +233,7 @@ def randomx_win(external_dir_path):
     command = "cmake -DARCH=native -G \"MinGW Makefiles\" .. && mingw32-make"
     os.system(command)
 
-
-find_workspace_path()
+workspace_path = workspace_path_finder.find_workspace_path()
 print(workspace_path)
 import_dependencies_win()
 
