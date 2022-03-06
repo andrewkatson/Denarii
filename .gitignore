@@ -171,8 +171,6 @@ src/blocks/generated_testnet_blocks.c
 src/crypto/wallet/ops.h
 src/version.cpp
 tests/benchmark.h
-translations/monero_de.qm
-*.qm
 *.qm
 
 # Clion 

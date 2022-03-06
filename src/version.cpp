@@ -1,4 +1,5 @@
 
+
 #define DEF_MONERO_VERSION_TAG "44d9a705c"
 
 #define DEF_MONERO_VERSION "0.17.1.5"

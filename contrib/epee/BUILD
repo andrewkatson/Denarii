@@ -1,5 +1,13 @@
 package(default_visibility = ["//visibility:public"])
 
+config_setting(
+    name = "windows",
+    constraint_values = [
+        "@bazel_tools//platforms:windows",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 cc_library(
     name = "epee",
     srcs = glob([
@@ -14,10 +22,10 @@ cc_library(
     linkopts = [
         "-lssl",
         "-lcrypto",
-        "-lws2_32",
-        "-lwsock32",
-        "-lcrypt32",
-    ],
+    ]   + select({
+        "windows": ["lcrypt32", "-lws2_32","-lwsock32"],
+        "//conditions:default": [],
+    }),
     deps = [
         "@boost//:chrono",
         "@boost//:asio_ssl",
