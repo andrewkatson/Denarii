@@ -1,0 +1,17 @@
+/**
+ * Represent a user of the Denarii gui and all their information
+ */
+
+syntax = "proto3";
+
+import "Proto/wallet.proto";
+
+package denarii.gui;
+
+message GuiUser {
+  string name = 1;
+
+  string language = 2;
+
+  common.Wallet wallet = 3;
+}
