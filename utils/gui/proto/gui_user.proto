@@ -14,4 +14,6 @@ message GuiUser {
   string language = 2;
 
   common.Wallet wallet = 3;
+
+  string email = 4;
 }

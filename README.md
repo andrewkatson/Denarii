@@ -43,6 +43,9 @@ See [LICENSE](LICENSE).
 
 ### Real Dependencies 
 
+#### Manually pulled in 
+* PyQt5 (for the gui) `pip install pyqt5`
+ 
 #### Automatically pulled in 
 * Boost Archive: Do not need to do anything 
 * DB_Driver (liblmdb): Do not need to do anything 

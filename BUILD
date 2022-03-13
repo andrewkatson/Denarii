@@ -61,3 +61,9 @@ py_binary(
     srcs = ["configure_win.py"],
     deps = [],
 )
+
+py_binary(
+  name = "workspace_path_finder",
+  srcs = ["workspace_path_finder.py"],
+  deps = [],
+)
