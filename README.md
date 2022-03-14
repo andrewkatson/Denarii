@@ -138,7 +138,7 @@ Denarii uses bazel
     cd denarii
     git checkout release-v0.17
     sudo bazel run :configure
-    chmod -R 777 /path/to/denarii
+    sudo chmod -R 777 /path/to/denarii
     ```
 
 #### On Windows
@@ -221,7 +221,7 @@ foreground:
 
 ```bash
 bazel build src:denariid
-./bazel-bin/src/denariid
+sudo ./bazel-bin/src/denariid
 ```
 
 To list all available options, run `./bazel-bin/src/denariid--help`.  Options can be
@@ -233,18 +233,20 @@ of the argument without the leading dashes, for example, `log-level=1`.
 To run in background:
 
 ```bash
-./bazel-bin/src/denariid --log-file monerod.log --detach
+sudo ./bazel-bin/src/denariid --log-file monerod.log --detach
 ```
-
-To run as a systemd service, copy
-[monerod.service](utils/systemd/monerod.service) to `/etc/systemd/system/` and
-[monerod.conf](utils/conf/monerod.conf) to `/etc/`. The [example
-service](utils/systemd/monerod.service) assumes that the user `monero` exists
-and its home is the data directory specified in the [example
-config](utils/conf/monerod.conf).
 
 If you're on Mac, you may need to add the `--max-concurrency 1` option to
 monero-wallet-cli, and possibly monerod, if you get crashes refreshing.
+
+## Running denarii wallet rpc server
+
+The build places the binary in `bazel-bin` sub-directory: To run in the foreground: 
+
+```bash
+bazel build src:denarii_wallet_rpc_server
+sudo ./bazel-bin/src/denarii_wallet_rpc_server --rpc-bind-port=8080 --wallet-dir=/some/existing/path
+```
 
 ## Internationalization
 

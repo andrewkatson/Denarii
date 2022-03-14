@@ -82,9 +82,16 @@ cc_binary(
         "-lpthread",
         "-lunbound",
         "-lzmq",
-        "-L external/miniupnp/miniupnpc", "-lminiupnpc",
-    ]  + select({
-        "windows": ["-L external/randomx/build", "-lrandomx", "-lws2_32","-lwsock32","-lbcrypt"],
+        "-L external/miniupnp/miniupnpc",
+        "-lminiupnpc",
+    ] + select({
+        "windows": [
+            "-L external/randomx/build",
+            "-lrandomx",
+            "-lws2_32",
+            "-lwsock32",
+            "-lbcrypt",
+        ],
         "//conditions:default": [],
     }),
     deps = [
@@ -119,9 +126,9 @@ cc_binary(
         "@liblzma",
         "@libreadline",
         "@libsodium",
+        "@libunbound",
         "@libunwind",
         "@miniupnp//:miniupnpc",
-        "@unbound",
     ],
 )
 
@@ -144,7 +151,7 @@ cc_library(
     srcs = glob([
         "**/crypto/*.c",
         "**/crypto/*.cpp",
-        "**/crypto/*.S"
+        "**/crypto/*.S",
     ]) + select({
         "windows": glob([
             "**/crypto/wallet/*.c",
@@ -166,7 +173,10 @@ cc_library(
         "-march=native",
     ],
     linkopts = select({
-        "windows": ["-L external/randomx/build", "-lrandomx"],
+        "windows": [
+            "-L external/randomx/build",
+            "-lrandomx",
+        ],
         "//conditions:default": [],
     }),
     deps = [
@@ -174,7 +184,7 @@ cc_library(
         "//contrib/epee",
         "@boost//:system",
         "@libsodium",
-    ]  + select({
+    ] + select({
         "windows": ["@randomx"],
         "//conditions:default": ["@randomx//:randomx_lib"],
     }),
@@ -197,7 +207,10 @@ cc_library(
         "-march=native",
     ],
     linkopts = select({
-        "windows": ["-L external/randomx/build", "-lrandomx"],
+        "windows": [
+            "-L external/randomx/build",
+            "-lrandomx",
+        ],
         "//conditions:default": [],
     }),
     deps = [
@@ -233,7 +246,10 @@ cc_library(
         "-lunbound",
         "-lunwind",
     ] + select({
-        ":windows": ["-lws2_32", "-lwsock32"],
+        ":windows": [
+            "-lws2_32",
+            "-lwsock32",
+        ],
         "//conditions:default": ["-ldl"],
     }),
     deps = [
@@ -249,10 +265,10 @@ cc_library(
         "@boost//:thread",
         "@easy_logging",
         "@libsodium",
+        "@libunbound",
         "@libunwind",
         "@openssl//:libcrypto",
         "@openssl//:libssl",
-        "@unbound",
     ],
 )
 
@@ -339,7 +355,10 @@ cc_library(
         "-lssl",
         "-lcrypto",
     ] + select({
-        "windows": ["-lws2_32","-lwsock32"],
+        "windows": [
+            "-lws2_32",
+            "-lwsock32",
+        ],
         "//conditions:default": ["-ldl"],
     }),
     deps = [
@@ -359,7 +378,10 @@ cc_library(
         "-lssl",
         "-lcrypto",
     ] + select({
-        "windows": ["-lws2_32","-lwsock32"],
+        "windows": [
+            "-lws2_32",
+            "-lwsock32",
+        ],
         "//conditions:default": ["-ldl"],
     }),
     deps = [
@@ -506,7 +528,10 @@ cc_library(
         "-lssl",
         "-lcrypto",
     ] + select({
-        "windows": ["-lws2_32","-lwsock32"],
+        "windows": [
+            "-lws2_32",
+            "-lwsock32",
+        ],
         "//conditions:default": ["-ldl"],
     }),
     deps = [
@@ -519,9 +544,12 @@ cc_library(
         "@libhidapi",
         "@openssl//:libcrypto",
         "@openssl//:libssl",
-    ]  + select({
+    ] + select({
         "windows": [],
-        "//conditions:default": ["@supercop//:supercop64", "@supercop//:supercop51"],
+        "//conditions:default": [
+            "@supercop//:supercop64",
+            "@supercop//:supercop51",
+        ],
     }),
 )
 
@@ -655,7 +683,13 @@ cc_binary(
         "-lcrypto",
         "-lpthread",
     ] + select({
-        "windows": ["-L external/randomx/build", "-lrandomx","-lws2_32","-lwsock32","-lbcrypt"],
+        "windows": [
+            "-L external/randomx/build",
+            "-lrandomx",
+            "-lws2_32",
+            "-lwsock32",
+            "-lbcrypt",
+        ],
         "//conditions:default": [],
     }),
     deps = [
@@ -756,7 +790,10 @@ cc_library(
         "rpc/rpc_handler.h",
         "rpc/rpc_version_str.h",
     ],
-    linkopts = ["-L external/miniupnp/miniupnpc", "-lminiupnpc"],
+    linkopts = [
+        "-L external/miniupnp/miniupnpc",
+        "-lminiupnpc",
+    ],
     deps = [
         ":rpc_base",
         "//src:common",
@@ -766,8 +803,8 @@ cc_library(
         "//src:version",
         "@boost//:regex",
         "@boost//:thread",
-        "@rapidjson",
         "@miniupnp//:miniupnpc",
+        "@rapidjson",
     ],
 )
 
@@ -878,7 +915,10 @@ cc_binary(
         "-lssl",
         "-lcrypto",
     ] + select({
-        "windows": ["-lws2_32","-lwsock32"],
+        "windows": [
+            "-lws2_32",
+            "-lwsock32",
+        ],
         "//conditions:default": ["-ldl"],
     }),
     deps = [

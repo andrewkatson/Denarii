@@ -44,6 +44,7 @@ def chdir(path):
 
     os.chdir(path)
 
+
 def get_libunwind():
     # libunwind wants to be special so we need to download its source files first
     raw_path = str(workspace_path / "external")
@@ -232,6 +233,7 @@ def randomx_win(external_dir_path):
     chdir(build_path)
     command = "cmake -DARCH=native -G \"MinGW Makefiles\" .. && mingw32-make"
     os.system(command)
+
 
 workspace_path = workspace_path_finder.find_workspace_path()
 print(workspace_path)

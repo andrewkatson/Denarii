@@ -4,6 +4,7 @@
 
 import pickle as pkl
 import os
+import subprocess
 import sys
 import workspace_path_finder
 
@@ -29,18 +30,37 @@ from proto import gui_user_pb2
 
 gui_user = gui_user_pb2.GuiUser()
 
-user_settings_path = str(workspace_path_finder.find_workspace_path() / "utils" / "gui" / "user_settings.pkl")
+USER_SETTINGS_PATH = str(workspace_path_finder.find_workspace_path() / "utils" / "gui" / "user_settings.pkl")
 
+MAIN_DENARII_PATH_LINUX = "denariid"
+
+MAIN_DENARII_PATH_WINDOWS = "denariid.exe"
+
+DENARIID_PATH_LINUX = str(workspace_path_finder.find_workspace_path() / "utils" / "gui" / "denariid")
+
+DENARIID_PATH_WINDOWS = str(workspace_path_finder.find_workspace_path() / "utils" / "gui" / "denariid.exe")
+
+MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX = "denarii_wallet_rpc_server"
+
+MAIN_DENARII_WALLET_RPC_SERVER_PATH_WINDOWS = "denarii_wallet_rpc_server.exe"
+
+DENARII_WALLET_RPC_SERVER_PATH_LINUX = str(
+    workspace_path_finder.find_workspace_path() / "utils" / "gui" / "denarii_wallet_rpc_server")
+
+DENARII_WALLET_RPC_SERVER_PATH_WINDOWS = str(
+    workspace_path_finder.find_workspace_path() / "utils" / "gui" / "denarii_wallet_rpc_server.exe")
+
+DENARIID_WALLET_PATH = str(workspace_path_finder.find_workspace_path() / "utils" / "gui" / "denarii" / "wallet")
 
 def store_user():
-    with open(user_settings_path, "wb") as output_file:
+    with open(USER_SETTINGS_PATH, "wb") as output_file:
         pkl.dump(gui_user.SerializeToString(), output_file)
 
 
 def load_user():
     global gui_user
 
-    with open(user_settings_path, "rb") as input_file:
+    with open(USER_SETTINGS_PATH, "rb") as input_file:
         gui_user.ParseFromString(pkl.load(input_file))
 
 
@@ -49,6 +69,14 @@ class Widget(QWidget):
         super().__init__(parent)
 
         self.denarii_client = denarii_client.DenariiClient()
+
+        self.denariid = self.setup_denariid()
+        if self.denariid is None:
+            print("No denarii daemon. This will not work")
+
+        self.denarii_wallet_rpc_server = self.setup_denarii_wallet_rpc_server()
+        if self.denarii_wallet_rpc_server is None:
+            print("No denarii wallet rpc server. This will not work")
 
         self.next_button = QPushButton("Next Page", self)
         self.next_button.setStyleSheet("color:black")
@@ -123,7 +151,7 @@ class Widget(QWidget):
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
 
         self.restore_wallet_push_button = PushButton("Restore Wallet", self)
-        self.restore_wallet_push_button.clicked.connect(self.on_create_wallet_clicked)
+        self.restore_wallet_push_button.clicked.connect(self.on_restore_wallet_pushed)
         self.restore_wallet_push_button.setVisible(False)
         self.restore_wallet_push_button.setStyleSheet(
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
@@ -135,7 +163,7 @@ class Widget(QWidget):
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
 
         self.restore_wallet_submit_push_button = PushButton("Submit", self)
-        self.restore_wallet_submit_push_button.clicked.connect(self.on_create_wallet_submit_clicked)
+        self.restore_wallet_submit_push_button.clicked.connect(self.on_restore_wallet_submit_clicked)
         self.restore_wallet_submit_push_button.setVisible(False)
         self.restore_wallet_submit_push_button.setStyleSheet(
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
@@ -143,7 +171,7 @@ class Widget(QWidget):
         self.main_layout = QVBoxLayout()
         self.setLayout(self.main_layout)
 
-        if os.path.exists(user_settings_path):
+        if os.path.exists(USER_SETTINGS_PATH):
             load_user()
 
         # Widgets
@@ -185,7 +213,49 @@ class Widget(QWidget):
 
         self.success = False
 
+    def setup_denariid(self):
+        if os.path.exists(MAIN_DENARII_PATH_LINUX):
+            return subprocess.Popen("sudo " + MAIN_DENARII_PATH_LINUX, shell=True)
+        elif os.path.exists(MAIN_DENARII_PATH_WINDOWS):
+            return subprocess.Popen(MAIN_DENARII_PATH_WINDOWS, shell=True)
+        elif os.path.exists(DENARIID_PATH_LINUX):
+            return subprocess.Popen("sudo " + DENARIID_PATH_LINUX, shell=True)
+        elif os.path.exists(DENARIID_PATH_WINDOWS):
+            return subprocess.Popen(DENARIID_PATH_WINDOWS, shell=True)
+
+        return None
+
+    def setup_denarii_wallet_rpc_server(self):
+        if not os.path.exists(DENARIID_WALLET_PATH):
+            os.makedirs(DENARIID_WALLET_PATH)
+
+        if os.path.exists(MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX):
+            return subprocess.Popen(
+                ["sudo " + MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX + "--rpc-bind-port=8080" + f"--wallet-dir={DENARIID_WALLET_PATH}"],
+                shell=True)
+        elif os.path.exists(MAIN_DENARII_WALLET_RPC_SERVER_PATH_WINDOWS):
+            return subprocess.Popen(
+                [MAIN_DENARII_WALLET_RPC_SERVER_PATH_WINDOWS + "--rpc-bind-port=8080" + f"--wallet-dir={DENARIID_WALLET_PATH}"],
+                shell=True)
+        elif os.path.exists(DENARII_WALLET_RPC_SERVER_PATH_LINUX):
+            return subprocess.Popen(
+                ["sudo " + DENARII_WALLET_RPC_SERVER_PATH_LINUX + "--rpc-bind-port=8080" + f"--wallet-dir={DENARIID_WALLET_PATH}"],
+                shell=True)
+        elif os.path.exists(DENARII_WALLET_RPC_SERVER_PATH_WINDOWS):
+            return subprocess.Popen(
+                [DENARII_WALLET_RPC_SERVER_PATH_WINDOWS + "--rpc-bind-port=8080" + f"--wallet-dir={DENARIID_WALLET_PATH}"],
+                shell=True)
+
+    def shutdown_denariid(self):
+        self.denariid.terminate()
+
+    def shutdown_denarii_wallet_rpc_server(self):
+        self.denarii_wallet_rpc_server.terminate()
+
     def setup_lang_select_screen(self):
+        """
+        Setup the language selection screen
+        """
         self.main_layout.addLayout(self.first_horizontal_layout)
         self.main_layout.addLayout(self.second_horizontal_layout)
         self.main_layout.addLayout(self.third_horizontal_layout)
@@ -201,6 +271,9 @@ class Widget(QWidget):
         self.third_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
 
     def setup_user_info_screen(self):
+        """
+        Setup the user information screen
+        """
         # Remove anything on the screen
         self.remove_all_widgets(self.main_layout)
 
@@ -214,6 +287,9 @@ class Widget(QWidget):
         self.form_layout.addRow("Email", self.email_line_edit)
 
     def setup_wallet_info_screen(self):
+        """
+        Setup the wallet information screen where the user can choose to create or restore a wallet
+        """
         self.remove_all_widgets(self.main_layout)
 
         self.main_layout.addLayout(self.first_horizontal_layout)
@@ -229,6 +305,9 @@ class Widget(QWidget):
         self.third_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
 
     def setup_create_wallet_screen(self):
+        """
+        Setup the wallet creation screen
+        """
         self.remove_all_widgets(self.main_layout)
 
         self.main_layout.addLayout(self.first_horizontal_layout)
@@ -246,9 +325,12 @@ class Widget(QWidget):
         self.second_horizontal_layout.addWidget(self.wallet_info_text_box, alignment=Qt.AlignCenter)
         self.third_horizontal_layout.addWidget(self.create_wallet_text_box, alignment=Qt.AlignCenter)
         self.fourth_horizontal_layout.addWidget(self.create_wallet_submit_push_button, alignment=Qt.AlignCenter)
-        self.first_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
+        self.fifth_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
 
     def setup_restore_wallet_screen(self):
+        """
+        Setup the restore wallet screen
+        """
         self.remove_all_widgets(self.main_layout)
 
         self.main_layout.addLayout(self.first_horizontal_layout)
@@ -268,9 +350,15 @@ class Widget(QWidget):
         self.fourth_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
 
     def setup_wallet_scene_screen(self):
+        """
+        Setup the wallet scene where the user can transfer funds and check their own funds
+        """
         self.remove_all_widgets(self.main_layout)
 
     def remove_all_widgets(self, layout):
+        """
+        Remove all widgets and layouts
+        """
         while layout.count():
             item = layout.takeAt(0)
             widget = item.widget()
@@ -280,19 +368,29 @@ class Widget(QWidget):
                 self.remove_all_widgets(item.layout())
 
     def store_user_info(self):
+        """
+        Store the user's input information in the user proto
+        """
         gui_user.name = self.name_line_edit.text()
         gui_user.email = self.email_line_edit.text()
 
     def create_wallet(self):
-        wallet = Wallet()
+        """
+        Try to create a denarii wallet
+        """
+        wallet = wallet_pb2.Wallet()
         wallet.name = self.name_line_edit.text()
         wallet.password = self.password_line_edit.text()
 
-        self.denarii_client.create_wallet(wallet)
+        success = False
+        try:
+            self.denarii_client.create_wallet(wallet)
 
-        self.denarii_client.set_current_wallet(wallet)
+            self.denarii_client.set_current_wallet(wallet)
 
-        success = self.denarii_client.query_seed(wallet)
+            success = self.denarii_client.query_seed(wallet)
+        except Exception as e:
+            print(e)
 
         if success:
             self.wallet_info_text_box.setText(gui_user.wallet.phrase)
@@ -301,19 +399,30 @@ class Widget(QWidget):
             self.create_wallet_text_box.setText("Failure")
 
     def restore_wallet(self):
+        """
+        Try to restore a denarii wallet
+        """
+        wallet = wallet_pb2.Wallet()
+        wallet.name = self.name_line_edit.text()
+        wallet.password = self.password_line_edit.text()
+        wallet.phrase = self.seed_line_edit.text()
 
-        wallet = gui_user.wallet
-
-        success = self.denarii_client.restore_wallet(wallet)
+        success = False
+        try:
+            success = self.denarii_client.restore_wallet(wallet)
+        except Exception as e:
+            print(e)
 
         if success:
-            self.create_wallet_text_box.setText("Success")
+            self.restore_wallet_text_box.setText("Success")
         else:
-            self.create_wallet_text_box.setText("Failure")
+            self.restore_wallet_text_box.setText("Failure")
 
     @pyqtSlot()
     def next_clicked(self):
-
+        """
+        What to do when the next page button is clicked depending on the current screen
+        """
         if self.current_widget == self.LANG_SELECT:
             self.current_widget = self.USER_INFO
         elif self.current_widget == self.USER_INFO:
@@ -337,20 +446,32 @@ class Widget(QWidget):
 
     @pyqtSlot()
     def on_create_wallet_clicked(self):
+        """
+        Setup the wallet creation screen when the user decides to create one
+        """
         self.current_widget = self.CREATE_WALLET
         self.setup_create_wallet_screen()
 
     @pyqtSlot()
     def on_restore_wallet_pushed(self):
+        """
+        Setup the restore wallet screen when the user decides to restore one
+        """
         self.current_widget = self.RESTORE_WALLET
         self.setup_restore_wallet_screen()
 
     @pyqtSlot()
     def on_create_wallet_submit_clicked(self):
+        """
+        Create the wallet based on the user's input information
+        """
         self.create_wallet()
 
     @pyqtSlot()
     def on_restore_wallet_submit_clicked(self):
+        """
+        Restore a wallet based on the user's input information
+        """
         self.restore_wallet()
 
 
@@ -358,6 +479,9 @@ class RadioButton(QRadioButton):
 
     @pyqtSlot()
     def on_lang_select_clicked(self):
+        """
+        Set the user's language when they choose one
+        """
         button = self.sender()
 
         gui_user.language = button.language
@@ -377,6 +501,9 @@ class Label(QLabel):
 
 
 def get_main_window():
+    """
+    Get the main window of the program and set its style
+    """
     window = QMainWindow()
 
     stylesheet = """
@@ -394,6 +521,9 @@ def get_main_window():
 
 
 def create_central_widget(window):
+    """
+    Create the central widget for the main window
+    """
     window.setCentralWidget(Widget(window))
     central_widget = window.centralWidget()
     central_widget.setGeometry(QRect(0, 0, 4000, 4000))
@@ -408,7 +538,12 @@ def main():
 
     window.show()
 
-    sys.exit(app.exec_())
+    app.exec_()
+
+    window.centralWidget().shutdown_denariid()
+    window.centralWidget().shutdown_denarii_wallet_rpc_server()
+    app.exit(0)
+    sys.exit()
 
 
 if __name__ == "__main__":
