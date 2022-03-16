@@ -83,10 +83,6 @@ def get_zlib():
 
     chdir(raw_path)
 
-    zlib_path = raw_path + "/zlib"
-
-    os.removedirs(zlib_path)
-
     clone_command = "git clone git@github.com:andrewkatson/zlib.git"
     os.system(clone_command)
 
