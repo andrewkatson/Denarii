@@ -13,5 +13,5 @@
 	url = https://github.com/tevador/RandomX
 [submodule "external/supercop"]
 	path = external/supercop
-	url = https://github.com/monero-project/supercop
-	branch = monero
+	url = https://github.com/andrewkatson/supercop
+	branch = main
