@@ -12,8 +12,8 @@ config_setting(
 # This doesn't work with all platforms. It only works with x86_64
 cc_library(
   name = "randomx",
-  srcs =  glob(["**/*.cpp", "**/*.c", "**/jit_compiler_x86_static.S"], exclude = ["**/tests/*"]),
-  hdrs = glob(["**/*.h", "**/*.hpp"])
+  srcs =  glob(["**/*.cpp", "**/*.c", "**/jit_compiler_x86_static.S"], exclude = ["**/tests/*", "**/jit_compiler_a64.cpp", "**/jit_compiler_a64_static.cpp"]),
+  hdrs = glob(["**/*.h", "**/*.hpp"], exclude = ["**/jit_compiler_a64.hpp", "**/jit_compiler_a64_static.hpp"])
 )
 
 cc_library(
@@ -21,10 +21,4 @@ cc_library(
   srcs = glob(["**/*.a"]),
   hdrs = glob(["**/randomx.h"]),
   linkstatic = True
-)
-
-cc_library(
-  name = "sources",
-  srcs =  glob(["**/*.cpp", "**/*.c", "**/jit_compiler_x86_static.S"], exclude = ["**/tests/*", "**/randomx.cpp"]),
-  hdrs = glob(["**/*.h", "**/*.hpp"], exclude = ["**/randomx.hpp"])
 )

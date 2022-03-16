@@ -12,9 +12,6 @@ config_setting(
 
 cc_library(
   name = "libunwind",
-  srcs = select({
-   ":x84_64": glob(["**/libunwind-x84_64.so"]),
-    "//conditions:default": glob(["**/libunwind.so"])
-   }),
+  srcs = glob(["**/libunwind.so", "**/libunwind.a"]),
   hdrs = glob(["**/include/**/*.h"])
 )

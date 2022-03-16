@@ -517,6 +517,10 @@ def crypto_wallet_generate():
                 elif seen_license_info:
                     copy_line_command = "cd " + crypto_wallet_path + " && echo '" + line + "' >> " + ops_file
                     os.system(copy_line_command)
+    else:
+        # Otherwise create an empty file.
+        command = "cd " + crypto_wallet_path + " && touch " + ops_file + " && echo \"#pragma once\" >> " + ops_file
+        os.system(command)
 
 
 def is_git_repo():

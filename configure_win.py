@@ -61,11 +61,31 @@ def get_libunwind():
     move_command = "move " + source + " " + dest
     os.system(move_command)
 
+    # Need to modify an include of libunwind to use "" instead of <>
+    # opening the file in read mode
+    file = open(dest, "r")
+    replacement = ""
+    # using the for loop
+    for line in file:
+        line = line.strip()
+        changes = line.replace("<__libunwind_config.h>", "\"__libunwind_config.h\"")
+        replacement = replacement + changes + "\n"
+
+    file.close()
+    # opening the file in write mode
+    fout = open(dest, "w")
+    fout.write(replacement)
+    fout.close()
+
 
 def get_zlib():
     raw_path = str(workspace_path / "external")
 
     chdir(raw_path)
+
+    zlib_path = raw_path + "/zlib"
+
+    os.removedirs(zlib_path)
 
     clone_command = "git clone git@github.com:andrewkatson/zlib.git"
     os.system(clone_command)
@@ -131,7 +151,7 @@ def get_relevant_paths_win(libraries):
                         break
             for subdir, dirs, files in os.walk(src_path):
                 for file in files:
-                    if name in file and file.endswith(".a"):
+                    if name in file and file.endswith(".a") or file.endswith(".so"):
                         library.relevant_paths.append(os.path.join(src_path, file))
                         break
 

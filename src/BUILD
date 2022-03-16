@@ -184,10 +184,8 @@ cc_library(
         "//contrib/epee",
         "@boost//:system",
         "@libsodium",
-    ] + select({
-        "windows": ["@randomx"],
-        "//conditions:default": ["@randomx//:randomx_lib"],
-    }),
+        "@randomx//:randomx_lib",
+    ]
 )
 
 # ONLY USE IN TESTS THIS IS A WORKAROUND BECAUSE CMAKE IS WEIRD
@@ -218,10 +216,8 @@ cc_library(
         "//contrib/epee",
         "@boost//:system",
         "@libsodium",
-    ] + select({
-        "windows": ["@randomx"],
-        "//conditions:default": ["@randomx//:randomx_lib"],
-    }),
+        "@randomx//:randomx_lib"
+        ]
 )
 
 cc_library(
