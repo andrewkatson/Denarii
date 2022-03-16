@@ -1,6 +1,6 @@
 # Configures some of the install files for denarii.
-# This assumes that denarii has been cloned into your $HOME repository.
-# To see what that is try 'printenv HOME'
+# This assumes that denarii has been cloned into your $HOME repository. Or on Windows your %HOMEDRIVE%%HOMEPATH%
+# To see what that is try 'printenv HOME' or 'printenv HOMEDRIVE' and 'printenve HOMEPATH'
 
 import argparse
 import glob
@@ -38,6 +38,7 @@ linux_library_info = [LibraryInfo("libnorm-dev", "libnorm"), LibraryInfo("libunb
                       LibraryInfo("libudev-dev", "libudev")]
 
 workspace_path = pathlib.Path()
+
 
 def chdir(path):
     if not os.path.exists(path):
@@ -259,7 +260,7 @@ def supercop_win(external_dir_path):
     remove_command = "rm -rf " + supercop_path
     os.system(remove_command)
 
-    clone_command = "git clone https://github.com/andrewkatson/supercop.git"
+    clone_command = "git clone --recursive https://github.com/andrewkatson/supercop.git && git submodule init && git submodule update"
     os.system(clone_command)
 
     chdir(supercop_path)
@@ -789,7 +790,7 @@ if sys.platform == "linux":
     print("Building dependencies \n\n\n\n\n")
     build_dependencies()
 
-    print ("Generating files \n\n\n\n\n")
+    print("Generating files \n\n\n\n\n")
     generate_files()
 elif sys.platform == "msys":
 

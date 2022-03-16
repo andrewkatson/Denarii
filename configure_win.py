@@ -1,6 +1,6 @@
 # Configures some of the install files for denarii.
-# This assumes that denarii has been cloned into your $HOME repository.
-# To see what that is try 'printenv HOME'
+# This assumes that denarii has been cloned into your %HOMEDRIVE%%HOMEPATH% repository.
+# To see what that is try 'printenv HOMEDRIVE' and 'printenve HOMEPATH'
 # This is only for windows
 
 import argparse
@@ -30,7 +30,7 @@ class LibraryInfo:
 # windows only uses the bare number of libraries needed to get everything to build...
 win_library_info = [LibraryInfo("liblzma", "liblzma"), LibraryInfo("libsodium", "libsodium"),
                     LibraryInfo("libreadline", "libreadline"), LibraryInfo("libhidapi", "libhidapi"),
-                    LibraryInfo("libusb", "libusb"), LibraryInfo("libunbound", "unbound"),
+                    LibraryInfo("libusb", "libusb"), LibraryInfo("libunbound", "libunbound"),
                     LibraryInfo("libopenssl", "openssl"), LibraryInfo("libzmq", "libzmq"),
                     LibraryInfo("liblmdb", "db_drivers", False),
                     LibraryInfo("libunwind", "libunwind", False)]
