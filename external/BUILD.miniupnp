@@ -23,7 +23,7 @@ cc_library(
                 ]),
                 "//conditions:default": glob(["**/miniupnpc/*.a"]),
                 }),
- hdrs = glob(["**/miniupnpc/*.h"]),
+ hdrs = glob(["**/miniupnpc/**/*.h"]),
 )
 
 cc_library(

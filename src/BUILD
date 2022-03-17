@@ -1008,7 +1008,7 @@ cc_binary(
 )
 
 cc_binary(
-    name = "denarii_blockchain_prune_know_spent_data",
+    name = "denarii_blockchain_prune_known_spent_data",
     srcs = ["blockchain_utilities/blockchain_prune_known_spent_data.cpp"],
     deps = [
         "//contrib/epee",

@@ -23,7 +23,7 @@ cc_library(
         "-lssl",
         "-lcrypto",
     ]   + select({
-        "windows": ["lcrypt32", "-lws2_32","-lwsock32"],
+        "windows": ["-lcrypt32", "-lws2_32","-lwsock32"],
         "//conditions:default": [],
     }),
     deps = [
