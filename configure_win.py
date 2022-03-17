@@ -140,16 +140,13 @@ def get_relevant_paths_win(libraries):
                 for directory in dirs:
                     if name in directory:
                         library.relevant_paths.append(os.path.join(includes_path, directory))
-                        break
                 for file in files:
                     if name in file and file.endswith(".h"):
                         library.relevant_paths.append(os.path.join(includes_path, file))
-                        break
             for subdir, dirs, files in os.walk(src_path):
                 for file in files:
                     if name in file and file.endswith(".a") or file.endswith(".so"):
                         library.relevant_paths.append(os.path.join(src_path, file))
-                        break
 
 
 def find_src_files_win(libraries):
@@ -253,6 +250,7 @@ def randomx_win(external_dir_path):
 
 workspace_path = workspace_path_finder.find_workspace_path()
 print(workspace_path)
+
 import_dependencies_win()
 
 external_dir_path = workspace_path / "external"
