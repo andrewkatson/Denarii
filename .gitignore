@@ -172,6 +172,7 @@ src/crypto/wallet/ops.h
 src/version.cpp
 tests/benchmark.h
 *.qm
+translations/translation_files.h
 utils/gui/user_settings.pkl
 utils/gui/denariid
 utils/gui/denarii_wallet_rpc_server
