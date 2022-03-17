@@ -3,6 +3,7 @@
 # %HOME/denarii or %HOMEDRIVE%%HOMEPATH%/Documents/Github/denarii
 
 import pickle as pkl
+import psutil
 import os
 import subprocess
 import sys
@@ -231,26 +232,41 @@ class Widget(QWidget):
 
         if os.path.exists(MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX):
             return subprocess.Popen(
-                ["sudo " + MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}"],
+                ["sudo " + MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login"],
                 shell=True)
         elif os.path.exists(MAIN_DENARII_WALLET_RPC_SERVER_PATH_WINDOWS):
             return subprocess.Popen(
-                [MAIN_DENARII_WALLET_RPC_SERVER_PATH_WINDOWS + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}"],
+                [MAIN_DENARII_WALLET_RPC_SERVER_PATH_WINDOWS + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login"],
                 shell=True)
         elif os.path.exists(DENARII_WALLET_RPC_SERVER_PATH_LINUX):
             return subprocess.Popen(
-                ["sudo " + DENARII_WALLET_RPC_SERVER_PATH_LINUX + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}"],
+                ["sudo " + DENARII_WALLET_RPC_SERVER_PATH_LINUX + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login"],
                 shell=True)
         elif os.path.exists(DENARII_WALLET_RPC_SERVER_PATH_WINDOWS):
             return subprocess.Popen(
-                [DENARII_WALLET_RPC_SERVER_PATH_WINDOWS + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}"],
+                [DENARII_WALLET_RPC_SERVER_PATH_WINDOWS + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login"],
                 shell=True)
 
     def shutdown_denariid(self):
         self.denariid.terminate()
 
+        # Redundant method of killing
+        for proc in psutil.process_iter():
+            if proc.name == "denariid":
+                proc.kill()
+            elif proc.name == "denariid.exe":
+                proc.kill()
+
     def shutdown_denarii_wallet_rpc_server(self):
         self.denarii_wallet_rpc_server.terminate()
+
+        # Redundant method of killing
+        for proc in psutil.process_iter():
+            if proc.name == "denarii_wallet_rpc_server":
+                print("Killing denarii_wallet_rpc_server")
+                proc.kill()
+            elif proc.name == "denarii_wallet_rpc_server.exe":
+                proc.kill()
 
     def setup_lang_select_screen(self):
         """
