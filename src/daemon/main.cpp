@@ -131,6 +131,7 @@ void print_genesis_tx_hex(uint8_t nettype) {
 
   // Need to fill in a password
   const std::string password = "";
+  const std::string filename = "";
 
   po::variables_map vm2;
   po::options_description desc("dummy");
@@ -148,7 +149,7 @@ void print_genesis_tx_hex(uint8_t nettype) {
   wal->set_seed_language("English");
   wal->set_refresh_from_block_height(0);
   crypto::secret_key dummy_key;
-  wal->generate("/home/denarii/genesis", password, dummy_key, false, false);
+  wal->generate(filename, password, dummy_key, false, false);
   wal->store();
 
   //Prepare genesis_tx
@@ -158,6 +159,8 @@ void print_genesis_tx_hex(uint8_t nettype) {
   std::cout << "Object:" << std::endl;
   std::cout << obj_to_json_str(tx_genesis) << std::endl << std::endl;
 
+  std::cout << "Filename " << filename << std::endl;
+  std::cout << "Password " << password << std::endl;
   std::cout << "Spend secret key " << wal->get_account().get_keys().m_spend_secret_key << std::endl;
   std::cout << "View secret key " << wal->get_account().get_keys().m_view_secret_key << std::endl;
   std::cout << "Spend public key " << wal->get_account().get_keys().m_account_address.m_spend_public_key << std::endl;
