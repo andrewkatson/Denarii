@@ -519,10 +519,10 @@ class Widget(QWidget):
         self.main_layout.addLayout(self.form_layout)
         self.main_layout.addLayout(self.sixth_horizontal_layout)
         self.main_layout.addLayout(self.seventh_horizontal_layout)
-        self.main_layout.addLayout(self.eight_horizontal_layout)
 
         self.transfer_push_button.setVisible(True)
         self.create_sub_address_push_button.setVisible(True)
+        self.next_button.setVisible(False)
 
         self.first_horizontal_layout.addWidget(self.wallet_info_label, alignment=Qt.AlignCenter)
         self.second_horizontal_layout.addWidget(self.your_balance_label, alignment=Qt.AlignCenter)
@@ -536,7 +536,6 @@ class Widget(QWidget):
         self.form_layout.addRow("Amount", self.amount_line_edit)
         self.sixth_horizontal_layout.addWidget(self.transfer_push_button, alignment=Qt.AlignCenter)
         self.seventh_horizontal_layout.addWidget(self.wallet_transfer_status_text_box, alignment=Qt.AlignCenter)
-        self.eight_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
 
         self.populate_wallet_screen()
 
@@ -565,6 +564,7 @@ class Widget(QWidget):
                 font.setFamily("Arial")
                 font.setPixelSize(50)
                 sub_address_text_box.setFont(font)
+                sub_address_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
                 self.vertical_layout.addWidget(sub_address_text_box, alignment=Qt.AlignCenter)
                 self.sub_address_text_boxes.append(sub_address_text_box)
             
@@ -695,6 +695,7 @@ class Widget(QWidget):
             font.setFamily("Arial")
             font.setPixelSize(50)
             sub_address_text_box.setFont(font)
+            sub_address_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
             self.vertical_layout.addWidget(sub_address_text_box, alignment=Qt.AlignCenter)
             self.sub_address_text_boxes.append(sub_address_text_box)
             self.wallet_info_status_text_box.setText("Success creating sub address. Use this to send to other people.")
