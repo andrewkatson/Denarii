@@ -153,11 +153,13 @@ void print_genesis_tx_hex(uint8_t nettype) {
 
   //Prepare genesis_tx
   cryptonote::transaction tx_genesis;
-  cryptonote::construct_miner_tx(0, 0, 0, 50000, 0, wal->get_account().get_keys().m_account_address, tx_genesis, blobdata(), 1);
+  cryptonote::construct_miner_tx(0, 0, 50000, 10, 0, wal->get_account().get_keys().m_account_address, tx_genesis, blobdata(), 1);
 
   std::cout << "Object:" << std::endl;
   std::cout << obj_to_json_str(tx_genesis) << std::endl << std::endl;
-  
+
+  std::cout << "Spend secret key " << wal->get_account().get_keys().m_spend_secret_key << std::endl;
+  std::cout << "View secret key " << wal->get_account().get_keys().m_view_secret_key << std::endl;
   std::cout << "Spend public key " << wal->get_account().get_keys().m_account_address.m_spend_public_key << std::endl;
   std::cout << "View public key " << wal->get_account().get_keys().m_account_address.m_view_public_key << std::endl;
 
@@ -252,7 +254,7 @@ int main(int argc, char const * argv[])
         //. added by codestar.j
     if (command_line::get_arg(vm, daemon_args::arg_print_genesis_tx))
     {
-      std::cout << "codestar.j: " << "I love huang!!!" << ENDL;
+      std::cout << "PRINTING GENESIS TX AND OTHER INFO" << std::endl;
       print_genesis_tx_hex(0);
       return 0;
     }

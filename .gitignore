@@ -174,9 +174,11 @@ tests/benchmark.h
 *.qm
 translations/translation_files.h
 utils/gui/user_settings.pkl
-utils/gui/denariid
-utils/gui/denarii_wallet_rpc_server
+utils/gui/denariid*
+utils/gui/denarii_wallet_rpc_server*
+utils/gui/denarii_wallet_rpc_server.log
 translations/translation_files.h
+wallet/
 
 # Clion 
 .clwb/

@@ -2,6 +2,7 @@
 # It assumes that https://github.com/andrewkatson/KeirosPublic is located at either
 # %HOME/denarii or %HOMEDRIVE%%HOMEPATH%/Documents/Github/denarii
 
+import pathlib
 import pickle as pkl
 import psutil
 import os
@@ -51,7 +52,10 @@ DENARII_WALLET_RPC_SERVER_PATH_LINUX = str(
 DENARII_WALLET_RPC_SERVER_PATH_WINDOWS = str(
     workspace_path_finder.find_workspace_path() / "utils" / "gui" / "denarii_wallet_rpc_server.exe")
 
-DENARIID_WALLET_PATH = str(workspace_path_finder.find_workspace_path() / "utils" / "gui" / "denarii" / "wallet")
+DENARIID_WALLET_PATH = str(workspace_path_finder.get_home() / "denarii" / "wallet")
+if not os.path.exists(DENARIID_WALLET_PATH):
+    os.makedirs(DENARIID_WALLET_PATH)
+
 
 def store_user():
     with open(USER_SETTINGS_PATH, "wb") as output_file:
@@ -115,11 +119,49 @@ class Widget(QWidget):
         font.setPixelSize(50)
         self.restore_wallet_label.setFont(font)
 
+        self.set_wallet_label = Label("Set Wallet")
+        font = QFont()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.set_wallet_label.setFont(font)
+
+        self.wallet_info_label = Label("Wallet")
+        font = QFont()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.wallet_info_label.setFont(font)
+
+        self.your_balance_label = Label("Your Balance:")
+        font = QFont()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.your_balance_label.setFont(font)
+
+        self.your_address_label = Label("Your Address:")
+        font = QFont()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.your_address_label.setFont(font)
+        
+        self.your_sub_address_label = Label("Your Subaddresses:")
+        font = QFont()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.your_sub_address_label.setFont(font)
+
         self.wallet_info_text_box = Label("")
         font = QFont()
         font.setFamily("Arial")
         font.setPixelSize(50)
         self.wallet_info_text_box.setFont(font)
+        self.wallet_info_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
+
+        self.wallet_save_file_text_box = Label("")
+        font = QFont()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.wallet_save_file_text_box.setFont(font)
+        self.wallet_save_file_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
 
         self.create_wallet_text_box = Label("")
         font = QFont()
@@ -133,6 +175,39 @@ class Widget(QWidget):
         font.setPixelSize(50)
         self.restore_wallet_text_box.setFont(font)
 
+        self.set_wallet_text_box = Label("")
+        font = QFont()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.set_wallet_text_box.setFont(font)
+
+        self.balance_text_box = Label("")
+        font = QFont()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.balance_text_box.setFont(font)
+
+        self.address_text_box = Label("")
+        font = QFont()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.address_text_box.setFont(font)
+        self.address_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
+
+        self.wallet_info_status_text_box = Label("")
+        font = QFont()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.wallet_info_status_text_box.setFont(font)
+        
+        self.wallet_transfer_status_text_box = Label("")
+        font = QFont()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.wallet_transfer_status_text_box.setFont(font)
+        
+        self.sub_address_text_boxes = []
+
         self.english_radio_button = RadioButton("English", self)
         self.english_radio_button.toggled.connect(self.english_radio_button.on_lang_select_clicked)
         self.english_radio_button.language = "English"
@@ -144,6 +219,8 @@ class Widget(QWidget):
         self.email_line_edit = QLineEdit()
         self.password_line_edit = QLineEdit()
         self.seed_line_edit = QLineEdit()
+        self.address_line_edit = QLineEdit()
+        self.amount_line_edit = QLineEdit()
 
         self.create_wallet_push_button = PushButton("Create Wallet", self)
         self.create_wallet_push_button.clicked.connect(self.on_create_wallet_clicked)
@@ -155,6 +232,12 @@ class Widget(QWidget):
         self.restore_wallet_push_button.clicked.connect(self.on_restore_wallet_pushed)
         self.restore_wallet_push_button.setVisible(False)
         self.restore_wallet_push_button.setStyleSheet(
+            'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
+
+        self.set_wallet_push_button = PushButton("Set Wallet", self)
+        self.set_wallet_push_button.clicked.connect(self.on_set_wallet_pushed)
+        self.set_wallet_push_button.setVisible(False)
+        self.set_wallet_push_button.setStyleSheet(
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
 
         self.create_wallet_submit_push_button = PushButton("Submit", self)
@@ -169,6 +252,24 @@ class Widget(QWidget):
         self.restore_wallet_submit_push_button.setStyleSheet(
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
 
+        self.set_wallet_submit_push_button = PushButton("Submit", self)
+        self.set_wallet_submit_push_button.clicked.connect(self.on_set_wallet_submit_clicked)
+        self.set_wallet_submit_push_button.setVisible(False)
+        self.set_wallet_submit_push_button.setStyleSheet(
+            'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
+
+        self.transfer_push_button = PushButton("Transfer", self)
+        self.transfer_push_button.clicked.connect(self.on_transfer_clicked)
+        self.transfer_push_button.setVisible(False)
+        self.transfer_push_button.setStyleSheet(
+            'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
+        
+        self.create_sub_address_push_button = PushButton("Create Subaddress", self)
+        self.create_sub_address_push_button.clicked.connect(self.on_create_sub_address_clicked)
+        self.create_sub_address_push_button.setVisible(False)
+        self.create_sub_address_push_button.setStyleSheet(
+            'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
+
         self.main_layout = QVBoxLayout()
         self.setLayout(self.main_layout)
 
@@ -181,6 +282,7 @@ class Widget(QWidget):
         self.WALLET_INFO = "WalletInfo"
         self.CREATE_WALLET = "CreateWallet"
         self.RESTORE_WALLET = "RestoreWallet"
+        self.SET_WALLET = "SetWallet"
         self.WALLET_SCENE = "WalletScene"
 
         # Determine what scene we are on based on what info the stored user has
@@ -198,6 +300,10 @@ class Widget(QWidget):
         self.third_horizontal_layout = QHBoxLayout()
         self.fourth_horizontal_layout = QHBoxLayout()
         self.fifth_horizontal_layout = QHBoxLayout()
+        self.sixth_horizontal_layout = QHBoxLayout()
+        self.seventh_horizontal_layout = QHBoxLayout()
+        self.eight_horizontal_layout = QHBoxLayout()
+        self.vertical_layout = QVBoxLayout()
         self.form_layout = QFormLayout()
 
         # Add some other layouts depending on the current widget
@@ -213,6 +319,8 @@ class Widget(QWidget):
         self.parent = parent
 
         self.success = False
+
+        self.wallet = wallet_pb2.Wallet()
 
     def setup_denariid(self):
         if os.path.exists(MAIN_DENARII_PATH_LINUX):
@@ -232,19 +340,23 @@ class Widget(QWidget):
 
         if os.path.exists(MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX):
             return subprocess.Popen(
-                ["sudo " + MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login"],
+                [
+                    "sudo " + MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login"],
                 shell=True)
         elif os.path.exists(MAIN_DENARII_WALLET_RPC_SERVER_PATH_WINDOWS):
             return subprocess.Popen(
-                [MAIN_DENARII_WALLET_RPC_SERVER_PATH_WINDOWS + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login"],
+                [
+                    MAIN_DENARII_WALLET_RPC_SERVER_PATH_WINDOWS + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login"],
                 shell=True)
         elif os.path.exists(DENARII_WALLET_RPC_SERVER_PATH_LINUX):
             return subprocess.Popen(
-                ["sudo " + DENARII_WALLET_RPC_SERVER_PATH_LINUX + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login"],
+                [
+                    "sudo " + DENARII_WALLET_RPC_SERVER_PATH_LINUX + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login"],
                 shell=True)
         elif os.path.exists(DENARII_WALLET_RPC_SERVER_PATH_WINDOWS):
             return subprocess.Popen(
-                [DENARII_WALLET_RPC_SERVER_PATH_WINDOWS + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login"],
+                [
+                    DENARII_WALLET_RPC_SERVER_PATH_WINDOWS + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login"],
                 shell=True)
 
     def shutdown_denariid(self):
@@ -314,10 +426,12 @@ class Widget(QWidget):
 
         self.create_wallet_push_button.setVisible(True)
         self.restore_wallet_push_button.setVisible(True)
+        self.set_wallet_push_button.setVisible(True)
 
         self.first_horizontal_layout.addWidget(self.wallet_info_label, alignment=Qt.AlignCenter)
         self.second_horizontal_layout.addWidget(self.create_wallet_push_button, alignment=Qt.AlignCenter)
         self.second_horizontal_layout.addWidget(self.restore_wallet_push_button, alignment=Qt.AlignCenter)
+        self.second_horizontal_layout.addWidget(self.set_wallet_push_button, alignment=Qt.AlignCenter)
         self.third_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
 
     def setup_create_wallet_screen(self):
@@ -332,6 +446,7 @@ class Widget(QWidget):
         self.main_layout.addLayout(self.third_horizontal_layout)
         self.main_layout.addLayout(self.fourth_horizontal_layout)
         self.main_layout.addLayout(self.fifth_horizontal_layout)
+        self.main_layout.addLayout(self.sixth_horizontal_layout)
 
         self.create_wallet_submit_push_button.setVisible(True)
 
@@ -339,9 +454,10 @@ class Widget(QWidget):
         self.form_layout.addRow("Name", self.name_line_edit)
         self.form_layout.addRow("Password", self.password_line_edit)
         self.second_horizontal_layout.addWidget(self.wallet_info_text_box, alignment=Qt.AlignCenter)
-        self.third_horizontal_layout.addWidget(self.create_wallet_text_box, alignment=Qt.AlignCenter)
-        self.fourth_horizontal_layout.addWidget(self.create_wallet_submit_push_button, alignment=Qt.AlignCenter)
-        self.fifth_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
+        self.third_horizontal_layout.addWidget(self.wallet_save_file_text_box, alignment=Qt.AlignCenter)
+        self.fourth_horizontal_layout.addWidget(self.create_wallet_text_box, alignment=Qt.AlignCenter)
+        self.fifth_horizontal_layout.addWidget(self.create_wallet_submit_push_button, alignment=Qt.AlignCenter)
+        self.sixth_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
 
     def setup_restore_wallet_screen(self):
         """
@@ -354,6 +470,7 @@ class Widget(QWidget):
         self.main_layout.addLayout(self.second_horizontal_layout)
         self.main_layout.addLayout(self.third_horizontal_layout)
         self.main_layout.addLayout(self.fourth_horizontal_layout)
+        self.main_layout.addLayout(self.fifth_horizontal_layout)
 
         self.restore_wallet_submit_push_button.setVisible(True)
 
@@ -361,8 +478,30 @@ class Widget(QWidget):
         self.form_layout.addRow("Name", self.name_line_edit)
         self.form_layout.addRow("Password", self.password_line_edit)
         self.form_layout.addRow("Seed", self.seed_line_edit)
-        self.second_horizontal_layout.addWidget(self.restore_wallet_text_box, alignment=Qt.AlignCenter)
-        self.third_horizontal_layout.addWidget(self.restore_wallet_submit_push_button, alignment=Qt.AlignCenter)
+        self.second_horizontal_layout.addWidget(self.wallet_save_file_text_box, alignment=Qt.AlignCenter)
+        self.third_horizontal_layout.addWidget(self.restore_wallet_text_box, alignment=Qt.AlignCenter)
+        self.fourth_horizontal_layout.addWidget(self.restore_wallet_submit_push_button, alignment=Qt.AlignCenter)
+        self.fifth_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
+
+    def setup_set_wallet_screen(self):
+        """
+        Setup the set wallet screen
+        """
+        self.remove_all_widgets(self.main_layout)
+
+        self.main_layout.addLayout(self.first_horizontal_layout)
+        self.main_layout.addLayout(self.form_layout)
+        self.main_layout.addLayout(self.second_horizontal_layout)
+        self.main_layout.addLayout(self.third_horizontal_layout)
+        self.main_layout.addLayout(self.fourth_horizontal_layout)
+
+        self.set_wallet_submit_push_button.setVisible(True)
+
+        self.first_horizontal_layout.addWidget(self.set_wallet_label, alignment=Qt.AlignCenter)
+        self.form_layout.addRow("Name", self.name_line_edit)
+        self.form_layout.addRow("Password", self.password_line_edit)
+        self.second_horizontal_layout.addWidget(self.set_wallet_text_box, alignment=Qt.AlignCenter)
+        self.third_horizontal_layout.addWidget(self.set_wallet_submit_push_button, alignment=Qt.AlignCenter)
         self.fourth_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
 
     def setup_wallet_scene_screen(self):
@@ -370,6 +509,68 @@ class Widget(QWidget):
         Setup the wallet scene where the user can transfer funds and check their own funds
         """
         self.remove_all_widgets(self.main_layout)
+
+        self.main_layout.addLayout(self.first_horizontal_layout)
+        self.main_layout.addLayout(self.second_horizontal_layout)
+        self.main_layout.addLayout(self.third_horizontal_layout)
+        self.main_layout.addLayout(self.fourth_horizontal_layout)
+        self.main_layout.addLayout(self.vertical_layout)
+        self.main_layout.addLayout(self.fifth_horizontal_layout)
+        self.main_layout.addLayout(self.form_layout)
+        self.main_layout.addLayout(self.sixth_horizontal_layout)
+        self.main_layout.addLayout(self.seventh_horizontal_layout)
+        self.main_layout.addLayout(self.eight_horizontal_layout)
+
+        self.transfer_push_button.setVisible(True)
+        self.create_sub_address_push_button.setVisible(True)
+
+        self.first_horizontal_layout.addWidget(self.wallet_info_label, alignment=Qt.AlignCenter)
+        self.second_horizontal_layout.addWidget(self.your_balance_label, alignment=Qt.AlignCenter)
+        self.second_horizontal_layout.addWidget(self.balance_text_box, alignment=Qt.AlignCenter)
+        self.third_horizontal_layout.addWidget(self.your_address_label, alignment=Qt.AlignCenter)
+        self.third_horizontal_layout.addWidget(self.address_text_box, alignment=Qt.AlignCenter)
+        self.fourth_horizontal_layout.addWidget(self.your_sub_address_label, alignment=Qt.AlignCenter)
+        self.fourth_horizontal_layout.addWidget(self.create_sub_address_push_button, alignment=Qt.AlignCenter)
+        self.fifth_horizontal_layout.addWidget(self.wallet_info_status_text_box, alignment=Qt.AlignCenter)
+        self.form_layout.addRow("Address", self.address_line_edit)
+        self.form_layout.addRow("Amount", self.amount_line_edit)
+        self.sixth_horizontal_layout.addWidget(self.transfer_push_button, alignment=Qt.AlignCenter)
+        self.seventh_horizontal_layout.addWidget(self.wallet_transfer_status_text_box, alignment=Qt.AlignCenter)
+        self.eight_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
+
+        self.populate_wallet_screen()
+
+    def populate_wallet_screen(self):
+        """
+        Populate the wallet scene with user wallet information
+        """
+
+        success = False
+        balance = 0
+        try:
+            success = self.denarii_client.get_address(self.wallet)
+
+            balance = self.denarii_client.get_balance_of_wallet(self.wallet)
+        except Exception as e:
+            print(e)
+
+        if success:
+            self.balance_text_box.setText(str(balance))
+            self.address_text_box.setText(str(self.wallet.address))
+            
+            # Add all the subaddresses to the vertical layout
+            for sub_address in self.wallet.sub_addresses:
+                sub_address_text_box = Label(str(sub_address))
+                font = QFont()
+                font.setFamily("Arial")
+                font.setPixelSize(50)
+                sub_address_text_box.setFont(font)
+                self.vertical_layout.addWidget(sub_address_text_box, alignment=Qt.AlignCenter)
+                self.sub_address_text_boxes.append(sub_address_text_box)
+            
+            self.wallet_info_status_text_box.setText("Success loading wallet info")
+        else:
+            self.wallet_info_status_text_box.setText("Failure loading wallet info")
 
     def remove_all_widgets(self, layout):
         """
@@ -394,45 +595,111 @@ class Widget(QWidget):
         """
         Try to create a denarii wallet
         """
-        wallet = wallet_pb2.Wallet()
-        wallet.name = self.name_line_edit.text()
-        wallet.password = self.password_line_edit.text()
+        self.wallet.name = self.name_line_edit.text()
+        self.wallet.password = self.password_line_edit.text()
 
         success = False
         try:
-            self.denarii_client.create_wallet(wallet)
+            success = self.denarii_client.create_wallet(self.wallet)
 
-            self.denarii_client.set_current_wallet(wallet)
+            success = self.denarii_client.set_current_wallet(self.wallet) and success
 
-            success = self.denarii_client.query_seed(wallet)
+            success = self.denarii_client.query_seed(self.wallet) and success
         except Exception as e:
             print(e)
 
         if success:
-            self.wallet_info_text_box.setText(gui_user.wallet.phrase)
-            self.create_wallet_text_box.setText("Success")
+            self.wallet_info_text_box.setText(self.wallet.phrase)
+            self.wallet_save_file_text_box.setText("Wallet saved to: " + DENARIID_WALLET_PATH)
+            self.create_wallet_text_box.setText(
+                "Success. Make sure to write down your information. It will not be saved on this device.")
         else:
             self.create_wallet_text_box.setText("Failure")
+
+    def set_wallet(self):
+        """
+        Set the wallet based on the user's information
+        """
+
+        self.wallet.name = self.name_line_edit.text()
+        self.wallet.password = self.password_line_edit.text()
+
+        success = False
+
+        try:
+            success = self.denarii_client.set_current_wallet(self.wallet)
+        except Exception as e:
+            print(e)
+
+        if success:
+            self.set_wallet_text_box.setText("Success")
+        else:
+            self.set_wallet_text_box.setText("Failure")
 
     def restore_wallet(self):
         """
         Try to restore a denarii wallet
         """
-        wallet = wallet_pb2.Wallet()
-        wallet.name = self.name_line_edit.text()
-        wallet.password = self.password_line_edit.text()
-        wallet.phrase = self.seed_line_edit.text()
+
+        self.wallet.name = self.name_line_edit.text()
+        self.wallet.password = self.password_line_edit.text()
+        self.wallet.phrase = self.seed_line_edit.text()
 
         success = False
         try:
-            success = self.denarii_client.restore_wallet(wallet)
+            success = self.denarii_client.restore_wallet(self.wallet)
         except Exception as e:
             print(e)
 
         if success:
+            self.wallet_save_file_text_box.setText("Wallet saved to: " + DENARIID_WALLET_PATH)
             self.restore_wallet_text_box.setText("Success")
         else:
+            self.wallet_save_file_text_box.setText("Wallet already at: " + DENARIID_WALLET_PATH)
             self.restore_wallet_text_box.setText("Failure")
+
+    def transfer_money(self):
+        """
+        Transfer money between two wallets.
+        """
+        success = False
+        
+        other_wallet = wallet_pb2.Wallet()
+        other_wallet.address = bytes(self.address_line_edit.text(), 'utf-8')
+        
+        try:
+            success = self.denarii_client.transfer_money(int(self.amount_line_edit.text()), self.wallet, other_wallet)
+        except Exception as e:
+            print(e)
+            
+        if success:
+            self.wallet_transfer_status_text_box.setText("Success transferring money")
+        else:    
+            self.wallet_transfer_status_text_box.setText("Failure transferring money")
+
+    def create_sub_address(self):
+        """
+        Create a sub address
+        """
+
+        success = False
+
+        try:
+            success = self.denarii_client.create_no_label_address(self.wallet)
+        except Exception as e:
+            print(e)
+
+        if success:
+            sub_address_text_box = Label(str(self.wallet.sub_addresses[len(self.wallet.sub_addresses) - 1]))
+            font = QFont()
+            font.setFamily("Arial")
+            font.setPixelSize(50)
+            sub_address_text_box.setFont(font)
+            self.vertical_layout.addWidget(sub_address_text_box, alignment=Qt.AlignCenter)
+            self.sub_address_text_boxes.append(sub_address_text_box)
+            self.wallet_info_status_text_box.setText("Success creating sub address. Use this to send to other people.")
+        else:
+            self.wallet_info_status_text_box.setText("Failure creating sub address.")
 
     @pyqtSlot()
     def next_clicked(self):
@@ -449,6 +716,8 @@ class Widget(QWidget):
         elif self.current_widget == self.CREATE_WALLET:
             self.current_widget = self.WALLET_SCENE
         elif self.current_widget == self.RESTORE_WALLET:
+            self.current_widget = self.WALLET_SCENE
+        elif self.current_widget == self.SET_WALLET:
             self.current_widget = self.WALLET_SCENE
 
         if self.current_widget == self.USER_INFO:
@@ -477,6 +746,15 @@ class Widget(QWidget):
         self.setup_restore_wallet_screen()
 
     @pyqtSlot()
+    def on_set_wallet_pushed(self):
+        """
+        Setup the set wallet to set one saved to disk
+        """
+        print("SETTING WALLET")
+        self.current_widget = self.SET_WALLET
+        self.setup_set_wallet_screen()
+
+    @pyqtSlot()
     def on_create_wallet_submit_clicked(self):
         """
         Create the wallet based on the user's input information
@@ -489,6 +767,27 @@ class Widget(QWidget):
         Restore a wallet based on the user's input information
         """
         self.restore_wallet()
+
+    @pyqtSlot()
+    def on_set_wallet_submit_clicked(self):
+        """
+        Set a wallet based on the user's input information
+        """
+        self.set_wallet()
+
+    @pyqtSlot()
+    def on_transfer_clicked(self):
+        """
+        Transfer money to another person's wallet
+        """
+        self.transfer_money()
+        
+    @pyqtSlot()
+    def on_create_sub_address_clicked(self):
+        """
+        Create a subaddress
+        """
+        self.create_sub_address()
 
 
 class RadioButton(QRadioButton):

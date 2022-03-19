@@ -28,6 +28,7 @@
 #ifndef _FILE_IO_UTILS_H_
 #define _FILE_IO_UTILS_H_
 
+#include <iostream>
 #include <fstream>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -96,8 +97,9 @@ namespace file_io_utils
 			return true;
 		}
 
-		catch(...)
+		catch(const std::ifstream::failure& e)
 		{
+		    std::cout << "Failure with saving string to file was " << e.what() << std::endl;
 			return false;
 		}
 #endif
