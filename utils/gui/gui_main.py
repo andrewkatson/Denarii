@@ -2,6 +2,7 @@
 # It assumes that https://github.com/andrewkatson/KeirosPublic is located at either
 # %HOME/denarii or %HOMEDRIVE%%HOMEPATH%/Documents/Github/denarii
 
+import multiprocessing
 import pathlib
 import pickle as pkl
 import psutil
@@ -14,6 +15,9 @@ from PyQt5 import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+
+# Modify PATH to include the path to where we are so in production we can find all our files.
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
 # Modify the PATH to include the path to the denarii python client
 sys.path.append(str(workspace_path_finder.find_other_workspace_path("KeirosPublic") / "Client" / "Denarii"))
@@ -222,19 +226,19 @@ class Widget(QWidget):
         self.address_line_edit = QLineEdit()
         self.amount_line_edit = QLineEdit()
 
-        self.create_wallet_push_button = PushButton("Create Wallet", self)
+        self.create_wallet_push_button = PushButton("Create wallet", self)
         self.create_wallet_push_button.clicked.connect(self.on_create_wallet_clicked)
         self.create_wallet_push_button.setVisible(False)
         self.create_wallet_push_button.setStyleSheet(
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
 
-        self.restore_wallet_push_button = PushButton("Restore Wallet", self)
+        self.restore_wallet_push_button = PushButton("Restore wallet", self)
         self.restore_wallet_push_button.clicked.connect(self.on_restore_wallet_pushed)
         self.restore_wallet_push_button.setVisible(False)
         self.restore_wallet_push_button.setStyleSheet(
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
 
-        self.set_wallet_push_button = PushButton("Set Wallet", self)
+        self.set_wallet_push_button = PushButton("Set wallet", self)
         self.set_wallet_push_button.clicked.connect(self.on_set_wallet_pushed)
         self.set_wallet_push_button.setVisible(False)
         self.set_wallet_push_button.setStyleSheet(
@@ -264,10 +268,22 @@ class Widget(QWidget):
         self.transfer_push_button.setStyleSheet(
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
         
-        self.create_sub_address_push_button = PushButton("Create Subaddress", self)
+        self.create_sub_address_push_button = PushButton("Create subaddress", self)
         self.create_sub_address_push_button.clicked.connect(self.on_create_sub_address_clicked)
         self.create_sub_address_push_button.setVisible(False)
         self.create_sub_address_push_button.setStyleSheet(
+            'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
+
+        self.start_mining_push_button = PushButton("Start mining", self)
+        self.start_mining_push_button.clicked.connect(self.on_start_mining_clicked)
+        self.start_mining_push_button.setVisible(False)
+        self.start_mining_push_button.setStyleSheet(
+            'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
+
+        self.stop_mining_push_button = PushButton("Stop mining", self)
+        self.stop_mining_push_button.clicked.connect(self.on_stop_mining_clicked)
+        self.stop_mining_push_button.setVisible(False)
+        self.stop_mining_push_button.setStyleSheet(
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
 
         self.main_layout = QVBoxLayout()
@@ -522,6 +538,8 @@ class Widget(QWidget):
 
         self.transfer_push_button.setVisible(True)
         self.create_sub_address_push_button.setVisible(True)
+        self.start_mining_push_button.setVisible(True)
+        self.stop_mining_push_button.setVisible(True)
         self.next_button.setVisible(False)
 
         self.first_horizontal_layout.addWidget(self.wallet_info_label, alignment=Qt.AlignCenter)
@@ -535,7 +553,9 @@ class Widget(QWidget):
         self.form_layout.addRow("Address", self.address_line_edit)
         self.form_layout.addRow("Amount", self.amount_line_edit)
         self.sixth_horizontal_layout.addWidget(self.transfer_push_button, alignment=Qt.AlignCenter)
-        self.seventh_horizontal_layout.addWidget(self.wallet_transfer_status_text_box, alignment=Qt.AlignCenter)
+        self.seventh_horizontal_layout.addWidget(self.start_mining_push_button, alignment=Qt.AlignCenter)
+        self.seventh_horizontal_layout.addWidget(self.stop_mining_push_button, alignment=Qt.AlignCenter)
+        self.eight_horizontal_layout.addWidget(self.wallet_transfer_status_text_box, alignment=Qt.AlignCenter)
 
         self.populate_wallet_screen()
 
@@ -702,6 +722,40 @@ class Widget(QWidget):
         else:
             self.wallet_info_status_text_box.setText("Failure creating sub address.")
 
+    def start_mining(self):
+        """
+        Start mining
+        """
+
+        success = False
+
+        try:
+            success = self.denarii_client.start_mining(True, False, multiprocessing.cpu_count() - 2)
+        except Exception as e:
+            print(e)
+
+        if success:
+            self.wallet_info_status_text_box.setText("Started mining")
+        else:
+            self.wallet_info_status_text_box.setText("Failed to start mining")
+
+    def stop_mining(self):
+        """
+        Stop mining
+        """
+
+        success = False
+
+        try:
+            success = self.denarii_client.stop_mining()
+        except Exception as e:
+            print(e)
+
+        if success:
+            self.wallet_info_status_text_box.setText("Stopped mining")
+        else:
+            self.wallet_info_status_text_box.setText("Failed to stop mining")
+
     @pyqtSlot()
     def next_clicked(self):
         """
@@ -751,7 +805,6 @@ class Widget(QWidget):
         """
         Setup the set wallet to set one saved to disk
         """
-        print("SETTING WALLET")
         self.current_widget = self.SET_WALLET
         self.setup_set_wallet_screen()
 
@@ -789,6 +842,20 @@ class Widget(QWidget):
         Create a subaddress
         """
         self.create_sub_address()
+        
+    @pyqtSlot()
+    def on_start_mining_clicked(self):
+        """
+        Start mining
+        """
+        self.start_mining()
+
+    @pyqtSlot()
+    def on_stop_mining_clicked(self):
+        """
+        Stop mining
+        """
+        self.stop_mining()
 
 
 class RadioButton(QRadioButton):

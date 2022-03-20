@@ -3042,7 +3042,7 @@ namespace tools
     if (!r || daemon_res.status != CORE_RPC_STATUS_OK)
     {
       er.code = WALLET_RPC_ERROR_CODE_UNKNOWN_ERROR;
-      er.message = "Couldn't start mining due to unknown error.";
+      er.message = daemon_res.status;
       return false;
     }
     return true;
@@ -3230,7 +3230,7 @@ namespace tools
     }
     catch (const std::exception& e)
     {
-      LOG_PRINT_L0("caught eception");
+      LOG_PRINT_L0("caught exception");
       handle_rpc_exception(std::current_exception(), er, WALLET_RPC_ERROR_CODE_UNKNOWN_ERROR);
     }
     if (!wal)

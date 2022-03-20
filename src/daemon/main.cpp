@@ -129,9 +129,10 @@ void print_genesis_tx_hex(uint8_t nettype) {
 
   using namespace cryptonote;
 
-  // Need to fill in a password
-  const std::string password = "";
+  // Need to fill in a password and a filename.
+  // The name of the wallet is the last part of the filename
   const std::string filename = "";
+  const std::string password = "";
 
   po::variables_map vm2;
   po::options_description desc("dummy");
@@ -149,12 +150,12 @@ void print_genesis_tx_hex(uint8_t nettype) {
   wal->set_seed_language("English");
   wal->set_refresh_from_block_height(0);
   crypto::secret_key dummy_key;
-  wal->generate(filename, password, dummy_key, false, false);
-  wal->store();
+  wal->generate(filename, password, dummy_key, false, false, false, true);
+
 
   //Prepare genesis_tx
   cryptonote::transaction tx_genesis;
-  cryptonote::construct_miner_tx(0, 0, 50000, 10, 0, wal->get_account().get_keys().m_account_address, tx_genesis, blobdata(), 1);
+  cryptonote::construct_miner_tx(0, 0, 0, 10, 0, wal->get_account().get_keys().m_account_address, tx_genesis, blobdata(), 1);
 
   std::cout << "Object:" << std::endl;
   std::cout << obj_to_json_str(tx_genesis) << std::endl << std::endl;
@@ -172,7 +173,14 @@ void print_genesis_tx_hex(uint8_t nettype) {
   ::serialization::serialize(ba, tx_genesis);
   std::string tx_hex = ss.str();
   std::cout << "Insert this line into your coin configuration file: " << std::endl;
-  std::cout << "std::string const GENESIS_TX = \"" << string_tools::buff_to_hex_nodelimer(tx_hex) << "\";" << std::endl;
+
+  std::string genesis_tx = string_tools::buff_to_hex_nodelimer(tx_hex);
+
+  std::cout << "std::string const GENESIS_TX = \"" << genesis_tx << "\";" << std::endl;
+
+  wal->setup_new_blockchain(true, genesis_tx);
+
+  wal->store();
 
   return;
 }

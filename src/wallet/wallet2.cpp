@@ -625,6 +625,7 @@ boost::optional<tools::password_container> get_password(const boost::program_opt
 
 std::pair<std::unique_ptr<tools::wallet2>, tools::password_container> generate_from_json(const std::string& json_file, const boost::program_options::variables_map& vm, bool unattended, const options& opts, const std::function<boost::optional<tools::password_container>(const char *, bool)> &password_prompter)
 {
+  std::cout << "Here" << std::endl;
   const bool testnet = command_line::get_arg(vm, opts.testnet);
   const bool stagenet = command_line::get_arg(vm, opts.stagenet);
   const network_type nettype = testnet ? TESTNET : stagenet ? STAGENET : MAINNET;
@@ -4579,10 +4580,16 @@ void wallet2::decrypt_keys(const epee::wipeable_string &password)
   decrypt_keys(key);
 }
 
-void wallet2::setup_new_blockchain()
+void wallet2::setup_new_blockchain(bool is_genesis, std::string genesis_tx)
 {
   cryptonote::block b;
-  generate_genesis(b);
+
+  if (is_genesis) {
+    generate_genesis(b, genesis_tx);
+  } else {
+    generate_genesis(b);
+  }
+
   m_blockchain.push_back(get_block_hash(b));
   m_last_block_reward = cryptonote::get_outs_money_amount(b.miner_tx);
   add_subaddress_account(tr("Primary account"));
@@ -4675,9 +4682,10 @@ void wallet2::init_type(hw::device::device_type device_type)
  * \param  password             Password of wallet file
  * \param  multisig_data        The multisig restore info and keys
  * \param  create_address_file  Whether to create an address file
+ * \param  is_genesis           Whether this is the genesis wallet or not
  */
 void wallet2::generate(const std::string& wallet_, const epee::wipeable_string& password,
-  const epee::wipeable_string& multisig_data, bool create_address_file)
+  const epee::wipeable_string& multisig_data, bool create_address_file, bool is_genesis)
 {
   clear();
   prepare_file_names(wallet_);
@@ -4748,7 +4756,10 @@ void wallet2::generate(const std::string& wallet_, const epee::wipeable_string& 
   setup_keys(password);
 
   create_keys_file(wallet_, false, password, m_nettype != MAINNET || create_address_file);
-  setup_new_blockchain();
+
+  if (!is_genesis) {
+    setup_new_blockchain();
+  }
 
   if (!wallet_.empty())
     store();
@@ -4762,10 +4773,11 @@ void wallet2::generate(const std::string& wallet_, const epee::wipeable_string& 
  * \param  recover                 Whether it is a restore
  * \param  two_random              Whether it is a non-deterministic wallet
  * \param  create_address_file     Whether to create an address file
+ * \param  is_genesis              Whether this is the genesis wallet or not
  * \return                         The secret key of the generated wallet
  */
 crypto::secret_key wallet2::generate(const std::string& wallet_, const epee::wipeable_string& password,
-  const crypto::secret_key& recovery_param, bool recover, bool two_random, bool create_address_file)
+  const crypto::secret_key& recovery_param, bool recover, bool two_random, bool create_address_file, bool is_genesis)
 {
   clear();
   prepare_file_names(wallet_);
@@ -4789,7 +4801,9 @@ crypto::secret_key wallet2::generate(const std::string& wallet_, const epee::wip
 
   create_keys_file(wallet_, false, password, m_nettype != MAINNET || create_address_file);
 
-  setup_new_blockchain();
+  if (!is_genesis) {
+    setup_new_blockchain();
+  }
 
   if (!wallet_.empty())
     store();
@@ -4846,10 +4860,11 @@ crypto::secret_key wallet2::generate(const std::string& wallet_, const epee::wip
 * \param  account_public_address  The account's public address
 * \param  viewkey                 view secret key
 * \param  create_address_file     Whether to create an address file
+* \param  is_genesis              Whether this is the genesis wallet or not
 */
 void wallet2::generate(const std::string& wallet_, const epee::wipeable_string& password,
   const cryptonote::account_public_address &account_public_address,
-  const crypto::secret_key& viewkey, bool create_address_file)
+  const crypto::secret_key& viewkey, bool create_address_file, bool is_genesis)
 {
   clear();
   prepare_file_names(wallet_);
@@ -4869,7 +4884,9 @@ void wallet2::generate(const std::string& wallet_, const epee::wipeable_string& 
 
   create_keys_file(wallet_, true, password, m_nettype != MAINNET || create_address_file);
 
-  setup_new_blockchain();
+  if (!is_genesis) {
+    setup_new_blockchain();
+  }
 
   if (!wallet_.empty())
     store();
@@ -4883,10 +4900,11 @@ void wallet2::generate(const std::string& wallet_, const epee::wipeable_string& 
 * \param  spendkey                spend secret key
 * \param  viewkey                 view secret key
 * \param  create_address_file     Whether to create an address file
+* \param  is_genesis              Whether this is the genesis wallet or not
 */
 void wallet2::generate(const std::string& wallet_, const epee::wipeable_string& password,
   const cryptonote::account_public_address &account_public_address,
-  const crypto::secret_key& spendkey, const crypto::secret_key& viewkey, bool create_address_file)
+  const crypto::secret_key& spendkey, const crypto::secret_key& viewkey, bool create_address_file, bool is_genesis)
 {
   clear();
   prepare_file_names(wallet_);
@@ -4905,7 +4923,9 @@ void wallet2::generate(const std::string& wallet_, const epee::wipeable_string& 
 
   create_keys_file(wallet_, false, password, create_address_file);
 
-  setup_new_blockchain();
+  if (!is_genesis) {
+    setup_new_blockchain();
+  }
 
   if (!wallet_.empty())
     store();
@@ -5882,7 +5902,6 @@ void wallet2::trim_hashchain()
 //----------------------------------------------------------------------------------------------------
 void wallet2::check_genesis(const crypto::hash& genesis_hash) const {
   std::string what("Genesis block mismatch. You probably use wallet without testnet (or stagenet) flag with blockchain from test (or stage) network or vice versa");
-
   THROW_WALLET_EXCEPTION_IF(genesis_hash != m_blockchain.genesis(), error::wallet_internal_error, what);
 }
 //----------------------------------------------------------------------------------------------------
@@ -14007,8 +14026,12 @@ uint64_t wallet2::get_segregation_fork_height() const
   return SEGREGATION_FORK_HEIGHT;
 }
 //----------------------------------------------------------------------------------------------------
-void wallet2::generate_genesis(cryptonote::block& b) const {
-  cryptonote::generate_genesis_block(b, get_config(m_nettype).GENESIS_TX, get_config(m_nettype).GENESIS_NONCE);
+void wallet2::generate_genesis(cryptonote::block& b, std::string genesis_tx) const {
+  if (genesis_tx.empty()) {
+    cryptonote::generate_genesis_block(b, get_config(m_nettype).GENESIS_TX, get_config(m_nettype).GENESIS_NONCE);
+  } else {
+    cryptonote::generate_genesis_block(b, genesis_tx, get_config(m_nettype).GENESIS_NONCE);
+  }
 }
 //----------------------------------------------------------------------------------------------------
 mms::multisig_wallet_state wallet2::get_multisig_wallet_state() const

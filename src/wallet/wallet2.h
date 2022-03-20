@@ -194,7 +194,14 @@ private:
     size_t size() const { return m_blockchain.size() + m_offset; }
     size_t offset() const { return m_offset; }
     const crypto::hash &genesis() const { return m_genesis; }
-    void push_back(const crypto::hash &hash) { if (m_offset == 0 && m_blockchain.empty()) m_genesis = hash; m_blockchain.push_back(hash); }
+    void push_back(const crypto::hash &hash) {
+        if (m_offset == 0 && m_blockchain.empty()) {
+            // Copy over the hash of the genesis tx. Needed when genreating the genesis tx.
+            // memcpy(const_cast<char*>(hash.data), "7a76b04b180b76e0ef4382cb22975a27b8888dcc6e48d39146642d1899312857", 32);
+            m_genesis = hash;
+        }
+        m_blockchain.push_back(hash);
+    }
     bool is_in_bounds(size_t idx) const { return idx >= m_offset && idx < size(); }
     const crypto::hash &operator[](size_t idx) const { return m_blockchain[idx - m_offset]; }
     crypto::hash &operator[](size_t idx) { return m_blockchain[idx - m_offset]; }
@@ -202,7 +209,10 @@ private:
     void clear() { m_offset = 0; m_blockchain.clear(); }
     bool empty() const { return m_blockchain.empty() && m_offset == 0; }
     void trim(size_t height) { while (height > m_offset && m_blockchain.size() > 1) { m_blockchain.pop_front(); ++m_offset; } m_blockchain.shrink_to_fit(); }
-    void refill(const crypto::hash &hash) { m_blockchain.push_back(hash); --m_offset; }
+    void refill(const crypto::hash &hash) {
+        m_blockchain.push_back(hash);
+        --m_offset;
+    }
 
     template <class t_archive>
     inline void serialize(t_archive &a, const unsigned int ver)
@@ -219,9 +229,10 @@ private:
       FIELD(m_blockchain)
     END_SERIALIZE()
 
+    crypto::hash m_genesis;
+
   private:
     size_t m_offset;
-    crypto::hash m_genesis;
     std::deque<crypto::hash> m_blockchain;
   };
 
@@ -697,15 +708,24 @@ private:
       bool empty() const { return tx_extra_fields.empty() && primary.empty() && additional.empty(); }
     };
 
+    /**
+     * Setup a new blockchain
+     * /param is_genesis Whether this is the genesis block setup or not.
+     * /param genesis_tx The genesis tx to use if this is the genesis setup
+     */
+    void setup_new_blockchain(bool is_genesis = false, std::string genesis_tx=std::string());
+
+
     /*!
      * \brief  Generates a wallet or restores one.
      * \param  wallet_              Name of wallet file
      * \param  password             Password of wallet file
      * \param  multisig_data        The multisig restore info and keys
      * \param  create_address_file  Whether to create an address file
+     * \param  is_genesis           Whether this is the genesis wallet or not
      */
     void generate(const std::string& wallet_, const epee::wipeable_string& password,
-      const epee::wipeable_string& multisig_data, bool create_address_file = false);
+      const epee::wipeable_string& multisig_data, bool create_address_file = false, bool is_genesis = false);
 
     /*!
      * \brief Generates a wallet or restores one.
@@ -715,11 +735,12 @@ private:
      * \param  recover              Whether it is a restore
      * \param  two_random           Whether it is a non-deterministic wallet
      * \param  create_address_file  Whether to create an address file
+     * \param  is_genesis           Whether this is the genesis wallet or not
      * \return                      The secret key of the generated wallet
      */
     crypto::secret_key generate(const std::string& wallet, const epee::wipeable_string& password,
       const crypto::secret_key& recovery_param = crypto::secret_key(), bool recover = false,
-      bool two_random = false, bool create_address_file = false);
+      bool two_random = false, bool create_address_file = false, bool is_genesis = false);
     /*!
      * \brief Creates a wallet from a public address and a spend/view secret key pair.
      * \param  wallet_                 Name of wallet file
@@ -728,10 +749,11 @@ private:
      * \param  spendkey                spend secret key
      * \param  viewkey                 view secret key
      * \param  create_address_file     Whether to create an address file
+     * \param  is_genesis           Whether this is the genesis wallet or not
      */
     void generate(const std::string& wallet, const epee::wipeable_string& password,
       const cryptonote::account_public_address &account_public_address,
-      const crypto::secret_key& spendkey, const crypto::secret_key& viewkey, bool create_address_file = false);
+      const crypto::secret_key& spendkey, const crypto::secret_key& viewkey, bool create_address_file = false, bool is_genesis = false);
     /*!
      * \brief Creates a watch only wallet from a public address and a view secret key.
      * \param  wallet_                 Name of wallet file
@@ -739,10 +761,11 @@ private:
      * \param  account_public_address  The account's public address
      * \param  viewkey                 view secret key
      * \param  create_address_file     Whether to create an address file
+     * \param  is_genesis           Whether this is the genesis wallet or not
      */
     void generate(const std::string& wallet, const epee::wipeable_string& password,
       const cryptonote::account_public_address &account_public_address,
-      const crypto::secret_key& viewkey = crypto::secret_key(), bool create_address_file = false);
+      const crypto::secret_key& viewkey = crypto::secret_key(), bool create_address_file = false, bool is_genesis = false);
     /*!
      * \brief Restore a wallet hold by an HW.
      * \param  wallet_        Name of wallet file
@@ -1592,7 +1615,7 @@ private:
     void process_unconfirmed(const crypto::hash &txid, const cryptonote::transaction& tx, uint64_t height);
     void process_outgoing(const crypto::hash &txid, const cryptonote::transaction& tx, uint64_t height, uint64_t ts, uint64_t spent, uint64_t received, uint32_t subaddr_account, const std::set<uint32_t>& subaddr_indices);
     void add_unconfirmed_tx(const cryptonote::transaction& tx, uint64_t amount_in, const std::vector<cryptonote::tx_destination_entry> &dests, const crypto::hash &payment_id, uint64_t change_amount, uint32_t subaddr_account, const std::set<uint32_t>& subaddr_indices);
-    void generate_genesis(cryptonote::block& b) const;
+    void generate_genesis(cryptonote::block& b, std::string genesis_tx = std::string()) const;
     void check_genesis(const crypto::hash& genesis_hash) const; //throws
     bool generate_chacha_key_from_secret_keys(crypto::chacha_key &key) const;
     void generate_chacha_key_from_password(const epee::wipeable_string &pass, crypto::chacha_key &key) const;
@@ -1647,7 +1670,6 @@ private:
     std::shared_ptr<std::map<std::pair<uint64_t, uint64_t>, size_t>> create_output_tracker_cache() const;
 
     void init_type(hw::device::device_type device_type);
-    void setup_new_blockchain();
     void create_keys_file(const std::string &wallet_, bool watch_only, const epee::wipeable_string &password, bool create_address_file);
 
     wallet_device_callback * get_device_callback();
