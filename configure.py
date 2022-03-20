@@ -514,6 +514,13 @@ def crypto_wallet_generate():
                     copy_line_command = "cd " + crypto_wallet_path + " && echo '" + modified_line + "' >> " + ops_file
                     os.system(copy_line_command)
 
+                elif seen_license_info and "#include \"monero/crypto/amd64-51-30k.h\"" in line:
+                    # we have to output a different line than the include in this line because
+                    # bazel will not be viewing that dependency in the same way that cmake does
+                    modified_line = "#include \"include/monero/crypto/amd64-51-30k.h\""
+                    copy_line_command = "cd " + crypto_wallet_path + " && echo '" + modified_line + "' >> " + ops_file
+                    os.system(copy_line_command)
+
                 elif seen_license_info:
                     copy_line_command = "cd " + crypto_wallet_path + " && echo '" + line + "' >> " + ops_file
                     os.system(copy_line_command)
