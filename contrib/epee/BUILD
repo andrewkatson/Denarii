@@ -28,12 +28,6 @@ cc_library(
     }),
     deps = [
         "@boost//:context",
-        "@boost//:fiber",
-        "@boost//:pool",
-        "@boost//:accumulators",
-        "@boost//:algorithm",
-        "@boost//:any",
-        "@boost//:assign",
         "@boost//:chrono",
         "@boost//:asio_ssl",
         "@boost//:filesystem",
