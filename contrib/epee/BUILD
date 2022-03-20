@@ -27,7 +27,6 @@ cc_library(
         "//conditions:default": [],
     }),
     deps = [
-        "@boost//:fiber",
         "@boost//:chrono",
         "@boost//:asio_ssl",
         "@boost//:filesystem",
