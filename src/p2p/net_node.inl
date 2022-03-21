@@ -664,8 +664,8 @@ namespace nodetool
     }
     else
     {
-      full_addrs.insert("204.236.222.28:15688");
-      full_addrs.insert("54.226.129.94:15668");
+      full_addrs.insert("107.20.71.167:15688");
+      full_addrs.insert("3.86.2.59:15668");
     }
     return full_addrs;
   }
@@ -782,6 +782,7 @@ namespace nodetool
   template<class t_payload_net_handler>
   std::set<std::string> node_server<t_payload_net_handler>::get_seed_nodes(epee::net_utils::zone zone)
   {
+    // TODO update this with the right seed nodes for tor...
     switch (zone)
     {
     case epee::net_utils::zone::public_:
