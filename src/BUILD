@@ -84,7 +84,7 @@ cc_binary(
         "-lzmq",
         "-L external/miniupnp/miniupnpc",
         "-lminiupnpc",
-        "-llzma"
+        "-llzma",
     ] + select({
         "windows": [
             "-L external/randomx/build",
@@ -186,7 +186,7 @@ cc_library(
         "@boost//:system",
         "@libsodium",
         "@randomx//:randomx_lib",
-    ]
+    ],
 )
 
 # ONLY USE IN TESTS THIS IS A WORKAROUND BECAUSE CMAKE IS WEIRD
@@ -217,8 +217,8 @@ cc_library(
         "//contrib/epee",
         "@boost//:system",
         "@libsodium",
-        "@randomx//:randomx_lib"
-        ]
+        "@randomx//:randomx_lib",
+    ],
 )
 
 cc_library(
@@ -541,13 +541,9 @@ cc_library(
         "@libhidapi",
         "@openssl//:libcrypto",
         "@openssl//:libssl",
-    ] + select({
-        "windows": [],
-        "//conditions:default": [
-            "@supercop//:supercop64",
-            "@supercop//:supercop51",
-        ],
-    }),
+        "@supercop//:supercop51",
+        "@supercop//:supercop64",
+    ],
 )
 
 cc_library(
@@ -947,7 +943,7 @@ cc_binary(
         "serialization/difficulty_type.h",
         "serialization/json_utils.h",
     ],
-    linkopts = ["-llzma",],
+    linkopts = ["-llzma"],
     deps = [
         "//contrib/epee",
         "//src:blockchain_db",
@@ -971,7 +967,7 @@ cc_binary(
         "blockchain_utilities/bootstrap_serialization.h",
         "serialization/difficulty_type.h",
     ],
-    linkopts = ["-llzma",],
+    linkopts = ["-llzma"],
     deps = [
         "//contrib/epee",
         "//src:blockchain_db",
@@ -987,7 +983,7 @@ cc_binary(
 cc_binary(
     name = "denarii_blockchain_usage",
     srcs = ["blockchain_utilities/blockchain_usage.cpp"],
-    linkopts = ["-llzma",],
+    linkopts = ["-llzma"],
     deps = [
         "//contrib/epee",
         "//src:blockchain_db",
@@ -1002,7 +998,7 @@ cc_binary(
 cc_binary(
     name = "denarii_blockchain_ancestry",
     srcs = ["blockchain_utilities/blockchain_ancestry.cpp"],
-    linkopts = ["-llzma",],
+    linkopts = ["-llzma"],
     deps = [
         "//contrib/epee",
         "//src:blockchain_db",
@@ -1017,7 +1013,7 @@ cc_binary(
 cc_binary(
     name = "denarii_blockchain_prune_known_spent_data",
     srcs = ["blockchain_utilities/blockchain_prune_known_spent_data.cpp"],
-    linkopts = ["-llzma",],
+    linkopts = ["-llzma"],
     deps = [
         "//contrib/epee",
         "//src:blockchain_db",
@@ -1033,7 +1029,7 @@ cc_binary(
 cc_binary(
     name = "denarii_blockchain_prune",
     srcs = ["blockchain_utilities/blockchain_prune.cpp"],
-    linkopts = ["-llzma",],
+    linkopts = ["-llzma"],
     deps = [
         "//contrib/epee",
         "//src:blockchain_db",
@@ -1049,7 +1045,7 @@ cc_binary(
 cc_binary(
     name = "denarii_blockchain_depth",
     srcs = ["blockchain_utilities/blockchain_depth.cpp"],
-    linkopts = ["-llzma",],
+    linkopts = ["-llzma"],
     deps = [
         "//contrib/epee",
         "//src:blockchain_db",
@@ -1064,7 +1060,7 @@ cc_binary(
 cc_binary(
     name = "denarii_blockchain_stats",
     srcs = ["blockchain_utilities/blockchain_stats.cpp"],
-    linkopts = ["-llzma",],
+    linkopts = ["-llzma"],
     deps = [
         "//contrib/epee",
         "//src:blockchain_db",
@@ -1082,7 +1078,7 @@ cc_binary(
         "cannot_catch_exception.cpp",
     ],
     linkopts = [
-       "-llzma"
+        "-llzma",
     ],
     deps = [
         "@libunwind",
