@@ -230,7 +230,7 @@ def supercop(external_dir_path):
     remove_command = "rm -rf " + supercop_path
     os.system(remove_command)
 
-    clone_command = "git clone --recursive https://github.com/andrewkatson/supercop.git && git submodule init && git submodule update"
+    clone_command = "git clone --recursive https://github.com/andrewkatson/supercop.git && cd supercop && git submodule init && git submodule update"
     os.system(clone_command)
 
     chdir(supercop_path)
@@ -357,6 +357,7 @@ def build_dependencies():
     external_dir_path = workspace_path / "external"
     chdir(external_dir_path)
     supercop(external_dir_path)
+
 
 
 
