@@ -356,9 +356,31 @@ def liblmdb(external_dir_path):
 def build_dependencies():
     external_dir_path = workspace_path / "external"
     chdir(external_dir_path)
+
+    miniupnp(external_dir_path)
+
+    chdir(external_dir_path)
+    randomx(external_dir_path)
+
+    chdir(external_dir_path)
     supercop(external_dir_path)
 
+    chdir(external_dir_path)
+    unbound(external_dir_path)
 
+    chdir(external_dir_path)
+    openssl(external_dir_path)
+
+    chdir(external_dir_path)
+    libzmq(external_dir_path)
+
+    chdir(external_dir_path)
+    zlib(external_dir_path)
+
+    chdir(external_dir_path)
+
+    liblmdb(external_dir_path)
+    chdir(external_dir_path)
 
 
 def build_dependencies_win():
@@ -773,8 +795,14 @@ def generate_files_win():
 workspace_path = workspace_path_finder.find_workspace_path()
 print(workspace_path)
 if sys.platform == "linux":
+    print("Importing dependencies \n\n\n\n\n")
+    import_dependencies()
+
     print("Building dependencies \n\n\n\n\n")
     build_dependencies()
+
+    print("Generating files \n\n\n\n\n")
+    generate_files()
 elif sys.platform == "msys":
 
     print("Building dependencies Windows \n\n\n\n\n")
