@@ -340,13 +340,13 @@ class Widget(QWidget):
 
     def setup_denariid(self):
         if os.path.exists(MAIN_DENARII_PATH_LINUX):
-            return subprocess.Popen("sudo " + MAIN_DENARII_PATH_LINUX, shell=True)
+            return subprocess.Popen("sudo " + MAIN_DENARII_PATH_LINUX + " --no-igd", shell=True)
         elif os.path.exists(MAIN_DENARII_PATH_WINDOWS):
-            return subprocess.Popen(MAIN_DENARII_PATH_WINDOWS, shell=True)
+            return subprocess.Popen(MAIN_DENARII_PATH_WINDOWS + " --no-igd", shell=True)
         elif os.path.exists(DENARIID_PATH_LINUX):
-            return subprocess.Popen("sudo " + DENARIID_PATH_LINUX, shell=True)
+            return subprocess.Popen("sudo " + DENARIID_PATH_LINUX + " --no-igd", shell=True)
         elif os.path.exists(DENARIID_PATH_WINDOWS):
-            return subprocess.Popen(DENARIID_PATH_WINDOWS, shell=True)
+            return subprocess.Popen(DENARIID_PATH_WINDOWS + " --no-igd", shell=True)
 
         return None
 

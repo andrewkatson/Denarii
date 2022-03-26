@@ -233,11 +233,11 @@ of the argument without the leading dashes, for example, `log-level=1`.
 To run in background:
 
 ```bash
-sudo ./bazel-bin/src/denariid --log-file monerod.log --detach
+sudo ./bazel-bin/src/denariid --log-file denariid.log --detach
 ```
 
 If you're on Mac, you may need to add the `--max-concurrency 1` option to
-monero-wallet-cli, and possibly monerod, if you get crashes refreshing.
+monero-wallet-cli, and possibly monerod, if you get crashes refreshing. You also might need `--no-igd`.
 
 ## Running denarii wallet rpc server
 
