@@ -146,7 +146,7 @@ class Widget(QWidget):
         font.setFamily("Arial")
         font.setPixelSize(50)
         self.your_address_label.setFont(font)
-        
+
         self.your_sub_address_label = Label("Your Subaddresses:")
         font = QFont()
         font.setFamily("Arial")
@@ -184,6 +184,7 @@ class Widget(QWidget):
         font.setFamily("Arial")
         font.setPixelSize(50)
         self.set_wallet_text_box.setFont(font)
+        self.set_wallet_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
 
         self.balance_text_box = Label("")
         font = QFont()
@@ -203,13 +204,13 @@ class Widget(QWidget):
         font.setFamily("Arial")
         font.setPixelSize(50)
         self.wallet_info_status_text_box.setFont(font)
-        
+
         self.wallet_transfer_status_text_box = Label("")
         font = QFont()
         font.setFamily("Arial")
         font.setPixelSize(50)
         self.wallet_transfer_status_text_box.setFont(font)
-        
+
         self.sub_address_text_boxes = []
 
         self.english_radio_button = RadioButton("English", self)
@@ -267,7 +268,7 @@ class Widget(QWidget):
         self.transfer_push_button.setVisible(False)
         self.transfer_push_button.setStyleSheet(
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
-        
+
         self.create_sub_address_push_button = PushButton("Create subaddress", self)
         self.create_sub_address_push_button.clicked.connect(self.on_create_sub_address_clicked)
         self.create_sub_address_push_button.setVisible(False)
@@ -576,7 +577,7 @@ class Widget(QWidget):
         if success:
             self.balance_text_box.setText(str(balance))
             self.address_text_box.setText(str(self.wallet.address))
-            
+
             # Add all the subaddresses to the vertical layout
             for sub_address in self.wallet.sub_addresses:
                 sub_address_text_box = Label(str(sub_address))
@@ -587,7 +588,7 @@ class Widget(QWidget):
                 sub_address_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
                 self.vertical_layout.addWidget(sub_address_text_box, alignment=Qt.AlignCenter)
                 self.sub_address_text_boxes.append(sub_address_text_box)
-            
+
             self.wallet_info_status_text_box.setText("Success loading wallet info")
         else:
             self.wallet_info_status_text_box.setText("Failure loading wallet info")
@@ -648,11 +649,12 @@ class Widget(QWidget):
 
         try:
             success = self.denarii_client.set_current_wallet(self.wallet)
+            success = self.denarii_client.query_seed(self.wallet) and success
         except Exception as e:
             print(e)
 
         if success:
-            self.set_wallet_text_box.setText("Success")
+            self.set_wallet_text_box.setText("Success. Your seed is \n" + self.wallet.phrase)
         else:
             self.set_wallet_text_box.setText("Failure")
 
@@ -683,18 +685,18 @@ class Widget(QWidget):
         Transfer money between two wallets.
         """
         success = False
-        
+
         other_wallet = wallet_pb2.Wallet()
         other_wallet.address = bytes(self.address_line_edit.text(), 'utf-8')
-        
+
         try:
             success = self.denarii_client.transfer_money(int(self.amount_line_edit.text()), self.wallet, other_wallet)
         except Exception as e:
             print(e)
-            
+
         if success:
             self.wallet_transfer_status_text_box.setText("Success transferring money")
-        else:    
+        else:
             self.wallet_transfer_status_text_box.setText("Failure transferring money")
 
     def create_sub_address(self):
@@ -835,14 +837,14 @@ class Widget(QWidget):
         Transfer money to another person's wallet
         """
         self.transfer_money()
-        
+
     @pyqtSlot()
     def on_create_sub_address_clicked(self):
         """
         Create a subaddress
         """
         self.create_sub_address()
-        
+
     @pyqtSlot()
     def on_start_mining_clicked(self):
         """
