@@ -119,6 +119,9 @@ namespace cryptonote {
         assert(reward_lo < base_reward);
 
         reward = reward_lo;
+
+        // Used when doing genesis tx
+        // reward = 50000000000000000;
     }
     return true;
   }

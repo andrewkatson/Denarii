@@ -80,12 +80,8 @@ class Widget(QWidget):
         self.denarii_client = denarii_client.DenariiClient()
 
         self.denariid = self.setup_denariid()
-        if self.denariid is None:
-            print("No denarii daemon. This will not work")
 
         self.denarii_wallet_rpc_server = self.setup_denarii_wallet_rpc_server()
-        if self.denarii_wallet_rpc_server is None:
-            print("No denarii wallet rpc server. This will not work")
 
         self.next_button = QPushButton("Next Page", self)
         self.next_button.setStyleSheet("color:black")
@@ -339,7 +335,31 @@ class Widget(QWidget):
 
         self.wallet = wallet_pb2.Wallet()
 
+    def already_started_denariid(self):
+
+        for proc in psutil.process_iter():
+            if proc.name() == "denariid":
+                return True
+            elif proc.name() == "denariid.exe":
+                return True
+
+        return False
+
+    def already_started_denarii_wallet_rpc_server(self):
+
+        for proc in psutil.process_iter():
+            if proc.name() == "denarii_wallet_rpc_server":
+                return True
+            elif proc.name() == "denarii_wallet_rpc_server.exe":
+                return True
+
+        return False
+
     def setup_denariid(self):
+
+        if self.already_started_denariid():
+            return None
+
         if os.path.exists(MAIN_DENARII_PATH_LINUX):
             return subprocess.Popen("sudo " + MAIN_DENARII_PATH_LINUX + " --no-igd", shell=True)
         elif os.path.exists(MAIN_DENARII_PATH_WINDOWS):
@@ -352,6 +372,9 @@ class Widget(QWidget):
         return None
 
     def setup_denarii_wallet_rpc_server(self):
+        if self.already_started_denarii_wallet_rpc_server():
+            return None
+
         if not os.path.exists(DENARIID_WALLET_PATH):
             os.makedirs(DENARIID_WALLET_PATH)
 
@@ -377,24 +400,30 @@ class Widget(QWidget):
                 shell=True)
 
     def shutdown_denariid(self):
+
+        if self.denariid is None:
+            return
+
         self.denariid.terminate()
 
         # Redundant method of killing
         for proc in psutil.process_iter():
-            if proc.name == "denariid":
+            if proc.name() == "denariid":
                 proc.kill()
-            elif proc.name == "denariid.exe":
+            elif proc.name() == "denariid.exe":
                 proc.kill()
 
     def shutdown_denarii_wallet_rpc_server(self):
+        if self.denarii_wallet_rpc_server is None:
+            return
+
         self.denarii_wallet_rpc_server.terminate()
 
         # Redundant method of killing
         for proc in psutil.process_iter():
-            if proc.name == "denarii_wallet_rpc_server":
-                print("Killing denarii_wallet_rpc_server")
+            if proc.name() == "denarii_wallet_rpc_server":
                 proc.kill()
-            elif proc.name == "denarii_wallet_rpc_server.exe":
+            elif proc.name() == "denarii_wallet_rpc_server.exe":
                 proc.kill()
 
     def setup_lang_select_screen(self):

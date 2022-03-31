@@ -180,6 +180,8 @@ void print_genesis_tx_hex(uint8_t nettype) {
 
   wal->setup_new_blockchain(true, genesis_tx);
 
+  wal->set_is_genesis(true);
+
   wal->store();
 
   return;

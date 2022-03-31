@@ -1032,6 +1032,9 @@ private:
     bool is_transfer_unlocked(const transfer_details& td);
     bool is_transfer_unlocked(uint64_t unlock_time, uint64_t block_height);
 
+    void set_is_genesis(bool is_genesis) { m_is_genesis = is_genesis; }
+    bool is_genesis() { return m_is_genesis; }
+
     uint64_t get_last_block_reward() const { return m_last_block_reward; }
     uint64_t get_device_last_key_image_sync() const { return m_device_last_key_image_sync; }
 
@@ -1057,6 +1060,7 @@ private:
       {
         a & m_blockchain;
       }
+      a & m_is_genesis;
       a & m_transfers;
       a & m_account_public_address;
       a & m_key_images.parent();
@@ -1187,6 +1191,7 @@ private:
       FIELD(m_device_last_key_image_sync)
       FIELD(m_cold_key_images)
       FIELD(m_rpc_client_secret_key)
+      FIELD(m_is_genesis)
     END_SERIALIZE()
 
     /*!
@@ -1723,6 +1728,7 @@ private:
 
     boost::recursive_mutex m_daemon_rpc_mutex;
 
+    bool m_is_genesis;
     bool m_trusted_daemon;
     i_wallet2_callback* m_callback;
     hw::device::device_type m_key_device_type;

@@ -625,7 +625,6 @@ boost::optional<tools::password_container> get_password(const boost::program_opt
 
 std::pair<std::unique_ptr<tools::wallet2>, tools::password_container> generate_from_json(const std::string& json_file, const boost::program_options::variables_map& vm, bool unattended, const options& opts, const std::function<boost::optional<tools::password_container>(const char *, bool)> &password_prompter)
 {
-  std::cout << "Here" << std::endl;
   const bool testnet = command_line::get_arg(vm, opts.testnet);
   const bool stagenet = command_line::get_arg(vm, opts.stagenet);
   const network_type nettype = testnet ? TESTNET : stagenet ? STAGENET : MAINNET;
@@ -1964,11 +1963,14 @@ bool wallet2::spends_one_of_ours(const cryptonote::transaction &tx) const
 //----------------------------------------------------------------------------------------------------
 void wallet2::process_new_transaction(const crypto::hash &txid, const cryptonote::transaction& tx, const std::vector<uint64_t> &o_indices, uint64_t height, uint8_t block_version, uint64_t ts, bool miner_tx, bool pool, bool double_spend_seen, const tx_cache_data &tx_cache_data, std::map<std::pair<uint64_t, uint64_t>, size_t> *output_tracker_cache)
 {
+  std::cout << "PROCESSING NEW TRANSACTION " << std::endl;
   PERF_TIMER(process_new_transaction);
   // In this function, tx (probably) only contains the base information
   // (that is, the prunable stuff may or may not be included)
-  if (!miner_tx && !pool)
+  if (!miner_tx && !pool) {
+    std::cout << "MINER TRANSACTION " << std::endl;
     process_unconfirmed(txid, tx, height);
+  }
 
   // per receiving subaddress index
   std::unordered_map<cryptonote::subaddress_index, uint64_t> tx_money_got_in_outs;
@@ -2183,6 +2185,7 @@ void wallet2::process_new_transaction(const crypto::hash &txid, const cryptonote
           uint64_t amount = tx.vout[o].amount ? tx.vout[o].amount : tx_scan_info[o].amount;
           if (!pool)
           {
+        std::cout << "NEW TRANSFER! " << std::endl;
 	    m_transfers.push_back(transfer_details{});
 	    transfer_details& td = m_transfers.back();
 	    td.m_block_height = height;
@@ -2623,9 +2626,11 @@ void wallet2::process_new_blockchain_entry(const cryptonote::block& b, const cry
       " not match with daemon response size=" + std::to_string(parsed_block.o_indices.indices.size()));
 
   //handle transactions from new block
-    
-  //optimization: seeking only for blocks that are not older then the wallet creation time plus 1 day. 1 day is for possible user incorrect time setup
-  if (!should_skip_block(b, height))
+
+  std::cout << "PROCESSING NEW BLOCK " << std::endl;
+  std::cout << std::boolalpha << m_is_genesis << std::endl;
+  //optimization: seeking only for blocks that are younger than the wallet creation time plus 1 day. 1 day is for possible user incorrect time setup
+  if (!should_skip_block(b, height) || m_is_genesis)
   {
     TIME_MEASURE_START(miner_tx_handle_time);
     if (m_refresh_type != RefreshNoCoinbase)
@@ -2636,6 +2641,7 @@ void wallet2::process_new_blockchain_entry(const cryptonote::block& b, const cry
     TIME_MEASURE_START(txs_handle_time);
     THROW_WALLET_EXCEPTION_IF(bche.txs.size() != b.tx_hashes.size(), error::wallet_internal_error, "Wrong amount of transactions for block");
     THROW_WALLET_EXCEPTION_IF(bche.txs.size() != parsed_block.txes.size(), error::wallet_internal_error, "Wrong amount of transactions for block");
+    std::cout << "NOT SKIPPING BLOCK " << std::endl;
     for (size_t idx = 0; idx < b.tx_hashes.size(); ++idx)
     {
       process_new_transaction(b.tx_hashes[idx], parsed_block.txes[idx], parsed_block.o_indices.indices[idx+1].indices, height, b.major_version, b.timestamp, false, false, false, tx_cache_data[tx_cache_data_offset++], output_tracker_cache);
@@ -6093,15 +6099,21 @@ uint64_t wallet2::unlocked_balance(uint32_t index_major, bool strict, uint64_t *
 std::map<uint32_t, uint64_t> wallet2::balance_per_subaddress(uint32_t index_major, bool strict) const
 {
   std::map<uint32_t, uint64_t> amount_per_subaddr;
+  std::cout << "LOOKING FOR BALANCES PER SUBADDRESS " << std::endl;
   for (const auto& td: m_transfers)
   {
+    std::cout << "TRANSFER" << std::endl;
     if (td.m_subaddr_index.major == index_major && !is_spent(td, strict) && !td.m_frozen)
     {
       auto found = amount_per_subaddr.find(td.m_subaddr_index.minor);
-      if (found == amount_per_subaddr.end())
+      if (found == amount_per_subaddr.end()) {
+        std::cout << "FOUND ONE " << std::to_string(amount_per_subaddr[td.m_subaddr_index.minor]) << std::endl;
         amount_per_subaddr[td.m_subaddr_index.minor] = td.amount();
-      else
+      }
+      else {
+        std::cout << "FOUND TWO " << std::to_string(found->second) << std::endl;
         found->second += td.amount();
+      }
     }
   }
   if (!strict)
