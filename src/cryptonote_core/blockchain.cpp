@@ -1450,6 +1450,13 @@ double Blockchain::get_last_n_blocks_reward_average(const crypto::hash &h, size_
   LOG_PRINT_L3("Blockchain::" << __func__);
   CRITICAL_REGION_LOCAL(m_blockchain_lock);
 
+  auto h = m_db->height();
+
+  // If we cannot get any previous blocks return a ridiculously high number
+  if (h == 0) {
+    return 1000000000000000000.0; // 1,000,000 in denarii
+  }
+
   double average = 0.0;
 
   block bl;
