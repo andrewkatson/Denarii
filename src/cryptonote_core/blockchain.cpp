@@ -1392,7 +1392,11 @@ bool Blockchain::validate_miner_transaction(const block& b, size_t cumulative_bl
     MERROR_VER("block weight " << cumulative_block_weight << " is bigger than allowed for this blockchain");
     return false;
   }
-  if(base_reward + fee < money_in_use)
+
+  double relative_height_block_reward = get_last_n_blocks_reward_average(CRYPTONOTE_REWARD_BLOCKS_WINDOW);
+
+  // From hard fork 15 we allow any size of block reward if it is within a range of other blocks around it.
+  if(base_reward + fee < money_in_use || (version >= HF_VERSION_DYNAMIC_CRITICAL_VALUES && (relative_height_block_reward + CRYPTONOTE_REWARD_EPSILON) < money_in_use))
   {
     MERROR_VER("coinbase transaction spend too much money (" << print_money(money_in_use) << "). Block reward is " << print_money(base_reward + fee) << "(" << print_money(base_reward) << "+" << print_money(fee) << "), cumulative_block_weight " << cumulative_block_weight);
     return false;
@@ -1433,6 +1437,38 @@ void Blockchain::get_last_n_blocks_weights(std::vector<uint64_t>& weights, size_
   // add weight of last <count> blocks to vector <weights> (or less, if blockchain size < count)
   size_t start_offset = h - std::min<size_t>(h, count);
   weights = m_db->get_block_weights(start_offset, count);
+}
+//------------------------------------------------------------------
+// get the average block reward of the last <count> blocks
+double Blockchain::get_last_n_blocks_reward_average(size_t count)
+{
+  LOG_PRINT_L3("Blockchain::" << __func__);
+  CRITICAL_REGION_LOCAL(m_blockchain_lock);
+  auto h = m_db->height();
+
+  // this function is meaningless for an empty blockchain...granted it should never be empty
+  // So return a high number.
+  if(h == 0)
+    // 1,000,000 denarii
+    return 1000000000000000000.0;
+
+  double average = 0.0;
+
+  int height_to_get_from = h - count;
+
+  for (int height = height_to_get_from; height < h; height++) {
+
+    block bl;
+    bool found_block = get_block_by_hash(get_block_id_by_height(height), bl);
+    if (!found_block) {
+       continue;
+    }
+    for (auto& vout : bl.miner_tx.vout) {
+      average += vout.amount;
+    }
+  }
+
+  return average / count;
 }
 //------------------------------------------------------------------
 uint64_t Blockchain::get_long_term_block_weight_median(uint64_t start_height, size_t count) const

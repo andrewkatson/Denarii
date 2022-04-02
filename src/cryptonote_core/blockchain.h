@@ -1367,6 +1367,14 @@ namespace cryptonote
     void get_last_n_blocks_weights(std::vector<uint64_t>& weights, size_t count) const;
 
     /**
+     * @brief gets the average block rewards for the last n blocks.
+     *
+     * @param count the number of blocks to get the reward for
+     * @return the average block reward
+     */
+    double get_last_n_blocks_reward_average(size_t count);
+
+    /**
      * @brief gets block long term weight median
      *
      * get the block long term weight median of <count> blocks starting at <start_height>
