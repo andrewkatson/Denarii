@@ -1275,7 +1275,8 @@ wallet2::wallet2(network_type nettype, uint64_t kdf_rounds, bool unattended, std
   m_rpc_version(0),
   m_export_format(ExportFormat::Binary),
   m_load_deprecated_formats(false),
-  m_credits_target(0)
+  m_credits_target(0),
+  m_is_genesis(false)
 {
   set_rpc_client_secret_key(rct::rct2sk(rct::skGen()));
 }
@@ -1437,7 +1438,7 @@ bool wallet2::get_seed(epee::wipeable_string& electrum_words, const epee::wipeab
   }
   if (seed_language.empty())
   {
-    LOG_PRINT_L2"seed_language not set");
+    LOG_PRINT_L2("seed_language not set");
     return false;
   }
 
@@ -2869,6 +2870,7 @@ void wallet2::process_parsed_blocks(uint64_t start_height, const std::vector<cry
 
     if(current_index >= m_blockchain.size())
     {
+      std::cout << "Processing new entry " << std::endl;
       process_new_blockchain_entry(bl, blocks[i], parsed_blocks[i], bl_id, current_index, tx_cache_data, tx_cache_data_offset, output_tracker_cache);
       ++blocks_added;
     }
@@ -2881,6 +2883,7 @@ void wallet2::process_parsed_blocks(uint64_t start_height, const std::vector<cry
         string_tools::pod_to_hex(m_blockchain[current_index]));
 
       detach_blockchain(current_index, output_tracker_cache);
+      std::cout << "Processing other block" << std::endl;
       process_new_blockchain_entry(bl, blocks[i], parsed_blocks[i], bl_id, current_index, tx_cache_data, tx_cache_data_offset, output_tracker_cache);
     }
     else
@@ -3363,6 +3366,8 @@ std::shared_ptr<std::map<std::pair<uint64_t, uint64_t>, size_t>> wallet2::create
 //----------------------------------------------------------------------------------------------------
 void wallet2::refresh(bool trusted_daemon, uint64_t start_height, uint64_t & blocks_fetched, bool& received_money, bool check_pool)
 {
+  std::cout << "REFRESH" << std::endl;
+
   if (m_offline)
   {
     blocks_fetched = 0;
@@ -3420,9 +3425,12 @@ void wallet2::refresh(bool trusted_daemon, uint64_t start_height, uint64_t & blo
   // pull the first set of blocks
   get_short_chain_history(short_chain_history, (m_first_refresh_done || trusted_daemon) ? 1 : FIRST_REFRESH_GRANULARITY);
   m_run.store(true, std::memory_order_relaxed);
+  m_refresh_from_block_height = 1;
   if (start_height > m_blockchain.size() || m_refresh_from_block_height > m_blockchain.size()) {
+    std::cout << "START HEIGHT TOO HIGH " << std::to_string(start_height) << " " << std::to_string(m_refresh_from_block_height) << std::endl;
     if (!start_height)
       start_height = m_refresh_from_block_height;
+    std::cout << "START HEIGHT " << std::to_string(start_height) << std::endl;
     // we can shortcut by only pulling hashes up to the start_height
     fast_refresh(start_height, blocks_start_height, short_chain_history);
     // regenerate the history now that we've got a full set of hashes
@@ -3431,7 +3439,6 @@ void wallet2::refresh(bool trusted_daemon, uint64_t start_height, uint64_t & blo
     start_height = 0;
     // and then fall through to regular refresh processing
   }
-
   // If stop() is called during fast refresh we don't need to continue
   if(!m_run.load(std::memory_order_relaxed))
     return;
@@ -3459,6 +3466,7 @@ void wallet2::refresh(bool trusted_daemon, uint64_t start_height, uint64_t & blo
   bool first = true, last = false;
   while(m_run.load(std::memory_order_relaxed))
   {
+    std::cout << "Trying to parse blocks" << std::endl;
     uint64_t next_blocks_start_height;
     std::vector<cryptonote::block_complete_entry> next_blocks;
     std::vector<parsed_block> next_parsed_blocks;
