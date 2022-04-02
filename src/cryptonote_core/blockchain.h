@@ -1370,9 +1370,10 @@ namespace cryptonote
      * @brief gets the average block rewards for the last n blocks.
      *
      * @param count the number of blocks to get the reward for
+     * @param the block's hash
      * @return the average block reward
      */
-    double get_last_n_blocks_reward_average(size_t count);
+    double get_last_n_blocks_reward_average(const crypto::hash &h, size_t count);
 
     /**
      * @brief gets block long term weight median
