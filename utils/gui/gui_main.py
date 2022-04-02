@@ -604,7 +604,8 @@ class Widget(QWidget):
             print(e)
 
         if success:
-            self.balance_text_box.setText(str(balance))
+            # We need to adjust the balance because it is in picomonero
+            self.balance_text_box.setText(str(balance * 0.000000000001))
             self.address_text_box.setText(str(self.wallet.address))
 
             # Add all the subaddresses to the vertical layout
