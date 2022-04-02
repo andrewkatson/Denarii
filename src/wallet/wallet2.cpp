@@ -1432,12 +1432,12 @@ bool wallet2::get_seed(epee::wipeable_string& electrum_words, const epee::wipeab
   bool keys_deterministic = is_deterministic();
   if (!keys_deterministic)
   {
-    std::cout << "This is not a deterministic wallet" << std::endl;
+    LOG_PRINT_L2("This is not a deterministic wallet");
     return false;
   }
   if (seed_language.empty())
   {
-    std::cout << "seed_language not set" << std::endl;
+    LOG_PRINT_L2"seed_language not set");
     return false;
   }
 
@@ -1446,7 +1446,7 @@ bool wallet2::get_seed(epee::wipeable_string& electrum_words, const epee::wipeab
     key = cryptonote::encrypt_key(key, passphrase);
   if (!crypto::ElectrumWords::bytes_to_words(key, electrum_words, seed_language))
   {
-    std::cout << "Failed to create seed from key for language: " << seed_language << std::endl;
+    LOG_PRINT_L2("Failed to create seed from key for language: " << seed_language);
     return false;
   }
 
@@ -1459,17 +1459,17 @@ bool wallet2::get_multisig_seed(epee::wipeable_string& seed, const epee::wipeabl
   uint32_t threshold, total;
   if (!multisig(&ready, &threshold, &total))
   {
-    std::cout << "This is not a multisig wallet" << std::endl;
+    LOG_PRINT_L2("This is not a multisig wallet");
     return false;
   }
   if (!ready)
   {
-    std::cout << "This multisig wallet is not yet finalized" << std::endl;
+    LOG_PRINT_L2("This multisig wallet is not yet finalized");
     return false;
   }
   if (!raw && seed_language.empty())
   {
-    std::cout << "seed_language not set" << std::endl;
+    LOG_PRINT_L2("seed_language not set");
     return false;
   }
 
@@ -1508,7 +1508,7 @@ bool wallet2::get_multisig_seed(epee::wipeable_string& seed, const epee::wipeabl
   {
     if (!crypto::ElectrumWords::bytes_to_words(data.data(), data.size(), seed, seed_language))
     {
-      std::cout << "Failed to encode seed";
+      LOG_PRINT_L2("Failed to encode seed");
       return false;
     }
   }
@@ -1963,12 +1963,10 @@ bool wallet2::spends_one_of_ours(const cryptonote::transaction &tx) const
 //----------------------------------------------------------------------------------------------------
 void wallet2::process_new_transaction(const crypto::hash &txid, const cryptonote::transaction& tx, const std::vector<uint64_t> &o_indices, uint64_t height, uint8_t block_version, uint64_t ts, bool miner_tx, bool pool, bool double_spend_seen, const tx_cache_data &tx_cache_data, std::map<std::pair<uint64_t, uint64_t>, size_t> *output_tracker_cache)
 {
-  std::cout << "PROCESSING NEW TRANSACTION " << std::endl;
   PERF_TIMER(process_new_transaction);
   // In this function, tx (probably) only contains the base information
   // (that is, the prunable stuff may or may not be included)
   if (!miner_tx && !pool) {
-    std::cout << "MINER TRANSACTION " << std::endl;
     process_unconfirmed(txid, tx, height);
   }
 
@@ -2185,7 +2183,6 @@ void wallet2::process_new_transaction(const crypto::hash &txid, const cryptonote
           uint64_t amount = tx.vout[o].amount ? tx.vout[o].amount : tx_scan_info[o].amount;
           if (!pool)
           {
-        std::cout << "NEW TRANSFER! " << std::endl;
 	    m_transfers.push_back(transfer_details{});
 	    transfer_details& td = m_transfers.back();
 	    td.m_block_height = height;
@@ -2626,9 +2623,6 @@ void wallet2::process_new_blockchain_entry(const cryptonote::block& b, const cry
       " not match with daemon response size=" + std::to_string(parsed_block.o_indices.indices.size()));
 
   //handle transactions from new block
-
-  std::cout << "PROCESSING NEW BLOCK " << std::endl;
-  std::cout << std::boolalpha << m_is_genesis << std::endl;
   //optimization: seeking only for blocks that are younger than the wallet creation time plus 1 day. 1 day is for possible user incorrect time setup
   if (!should_skip_block(b, height) || m_is_genesis)
   {
@@ -2641,7 +2635,6 @@ void wallet2::process_new_blockchain_entry(const cryptonote::block& b, const cry
     TIME_MEASURE_START(txs_handle_time);
     THROW_WALLET_EXCEPTION_IF(bche.txs.size() != b.tx_hashes.size(), error::wallet_internal_error, "Wrong amount of transactions for block");
     THROW_WALLET_EXCEPTION_IF(bche.txs.size() != parsed_block.txes.size(), error::wallet_internal_error, "Wrong amount of transactions for block");
-    std::cout << "NOT SKIPPING BLOCK " << std::endl;
     for (size_t idx = 0; idx < b.tx_hashes.size(); ++idx)
     {
       process_new_transaction(b.tx_hashes[idx], parsed_block.txes[idx], parsed_block.o_indices.indices[idx+1].indices, height, b.major_version, b.timestamp, false, false, false, tx_cache_data[tx_cache_data_offset++], output_tracker_cache);
@@ -6099,19 +6092,15 @@ uint64_t wallet2::unlocked_balance(uint32_t index_major, bool strict, uint64_t *
 std::map<uint32_t, uint64_t> wallet2::balance_per_subaddress(uint32_t index_major, bool strict) const
 {
   std::map<uint32_t, uint64_t> amount_per_subaddr;
-  std::cout << "LOOKING FOR BALANCES PER SUBADDRESS " << std::endl;
   for (const auto& td: m_transfers)
   {
-    std::cout << "TRANSFER" << std::endl;
     if (td.m_subaddr_index.major == index_major && !is_spent(td, strict) && !td.m_frozen)
     {
       auto found = amount_per_subaddr.find(td.m_subaddr_index.minor);
       if (found == amount_per_subaddr.end()) {
-        std::cout << "FOUND ONE " << std::to_string(amount_per_subaddr[td.m_subaddr_index.minor]) << std::endl;
         amount_per_subaddr[td.m_subaddr_index.minor] = td.amount();
       }
       else {
-        std::cout << "FOUND TWO " << std::to_string(found->second) << std::endl;
         found->second += td.amount();
       }
     }
