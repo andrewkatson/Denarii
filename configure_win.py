@@ -248,6 +248,25 @@ def randomx_win(external_dir_path):
     os.system(command)
 
 
+def miniupnp_win(external_dir_path):
+    raw_path = str(external_dir_path)
+
+    # remove the empty directory
+    remove_command = "rm -rf " + raw_path + "/external/miniupnp"
+    os.system(remove_command)
+
+    # For now we have to clone this because miniupnp fails to download :(
+    clone_command = "git clone https://github.com/miniupnp/miniupnp.git"
+    os.system(clone_command)
+
+    # we only need to build one of the subdirectories
+    miniupnp_path = raw_path + "/external/miniupnp/miniupnpc"
+
+    chdir(miniupnp_path)
+
+    command = "cmake -G \"MinGW Makefiles\" . && mingw32-make"
+    os.system(command)
+
 workspace_path = workspace_path_finder.find_workspace_path()
 print(workspace_path)
 
@@ -255,3 +274,5 @@ import_dependencies_win()
 
 external_dir_path = workspace_path / "external"
 randomx_win(external_dir_path)
+
+miniupnp_win(external_dir_path)

@@ -19,11 +19,16 @@ cc_library(
   name = "miniupnpc",
  srcs =  select({
                 "windows": glob([
-                   "**/miniupnpc/*dll.a"
+                   "**/miniupnpc/*.a",
                 ]),
                 "//conditions:default": glob(["**/miniupnpc/*.a"]),
                 }),
  hdrs = glob(["**/miniupnpc/**/*.h"]),
+ linkstatic = True,
+ linkopts =  select({
+                "windows": ["-liphlpapi"],
+                "//conditions:default": [],
+                }),
 )
 
 cc_library(

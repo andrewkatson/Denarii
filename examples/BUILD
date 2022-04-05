@@ -80,3 +80,8 @@ cc_binary(
         "@liblzma",
     ],
 )
+
+cc_binary(
+  name = "broken_entry",
+  srcs = glob(["**/broken_entry*"]),
+)

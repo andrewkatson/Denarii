@@ -1,15 +1,6 @@
 
 package(default_visibility = ["//visibility:public"])
 
-
-config_setting(
-    name = "x84_64",
-    constraint_values = [
-        "@bazel_tools//platforms:x86_64",
-    ],
-    visibility = ["//visibility:public"],
-)
-
 cc_library(
   name = "libunwind",
   srcs = glob(["**/libunwind.so", "**/libunwind.a"]),

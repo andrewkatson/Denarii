@@ -189,26 +189,6 @@ def miniupnp(external_dir_path):
     os.system(command)
 
 
-def miniupnp_win(external_dir_path):
-    raw_path = str(external_dir_path)
-
-    # remove the empty directory
-    remove_command = "rm -rf " + raw_path + "/external/miniupnp"
-    os.system(remove_command)
-
-    # For now we have to clone this because miniupnp fails to download :(
-    clone_command = "git clone https://github.com/miniupnp/miniupnp.git"
-    os.system(clone_command)
-
-    # we only need to build one of the subdirectories
-    miniupnp_path = raw_path + "/external/miniupnp/miniupnpc"
-
-    chdir(miniupnp_path)
-
-    command = "cmake . && make && ./mingw32make.bat"
-    os.system(command)
-
-
 def randomx(external_dir_path):
     raw_path = str(external_dir_path)
 
@@ -810,9 +790,3 @@ elif sys.platform == "msys":
 
     print("Generating files Windows \n\n\n\n\n")
     generate_files_win()
-
-    print("Miniupnp Windows \n\n\n\n\n")
-    # We have to do this last because it will just hang.
-    external_dir_path = workspace_path / "external"
-    chdir(external_dir_path)
-    miniupnp_win(workspace_path)
