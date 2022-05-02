@@ -1168,7 +1168,6 @@ namespace nodetool
         flags_context.support_flags = support_flags;
       });
     }
-
     return hsh_result;
   }
   //-----------------------------------------------------------------------------------
@@ -1345,7 +1344,6 @@ namespace nodetool
     con->m_anchor = peer_type == anchor;
     peerid_type pi = AUTO_VAL_INIT(pi);
     bool res = do_handshake_with_peer(pi, *con, just_take_peerlist);
-
     if(!res)
     {
       bool is_priority = is_priority_node(na);

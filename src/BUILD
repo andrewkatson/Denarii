@@ -76,7 +76,6 @@ cc_binary(
         "wallet/wallet_rpc_server_error_codes.h",
     ],
     linkopts = [
-        "-lunwind",
         "-lssl",
         "-lcrypto",
         "-lpthread",
@@ -85,6 +84,8 @@ cc_binary(
         "-L external/miniupnp/miniupnpc",
         "-lminiupnpc",
         "-llzma",
+		"-L external/db_drivers",
+		"-llmdb",
     ] + select({
         "windows": [
             "-L external/randomx/build",
@@ -93,7 +94,7 @@ cc_binary(
             "-lwsock32",
             "-lbcrypt",
         ],
-        "//conditions:default": [],
+        "//conditions:default": ["-lunwind",],
     }),
     deps = [
         "//contrib/epee",
@@ -128,9 +129,12 @@ cc_binary(
         "@libreadline",
         "@libsodium",
         "@libunbound",
-        "@libunwind",
         "@miniupnp//:miniupnpc",
-    ],
+    ] + select({
+        "windows": [
+        ],
+        "//conditions:default": ["@libunwind",],
+    }),
 )
 
 cc_library(
@@ -228,26 +232,18 @@ cc_library(
         "**/common/*.cc",
         "**/common/*.cpp",
     ]),
-    hdrs = glob(["**/common/*.h"]) +
-           select({
-               "windows": [
-                   "cryptonote_basic/portable_binary_archive.hpp",
-                   "cryptonote_basic/portable_binary_iarchive.hpp",
-                   "cryptonote_basic/portable_binary_oarchive.hpp",
-               ],
-               "//conditions:default": [],
-           }),
+    hdrs = glob(["**/common/*.h"]),
     linkopts = [
         "-lssl",
         "-lcrypto",
         "-lunbound",
-        "-lunwind",
     ] + select({
         ":windows": [
             "-lws2_32",
             "-lwsock32",
+			"-ldbghelp",
         ],
-        "//conditions:default": ["-ldl"],
+        "//conditions:default": ["-ldl","-lunwind",],
     }),
     deps = [
         "//contrib/epee",
@@ -260,13 +256,17 @@ cc_library(
         "@boost//:regex",
         "@boost//:system",
         "@boost//:thread",
+		"@boost_extra",
         "@easy_logging",
         "@libsodium",
         "@libunbound",
-        "@libunwind",
         "@openssl//:libcrypto",
         "@openssl//:libssl",
-    ],
+    ] + select({
+        ":windows": [
+        ],
+        "//conditions:default": ["@libunwind",],
+    }),
 )
 
 # ANOTHER WORKAROUND FOR TESTS. DO NOT USE NORMALLY.
@@ -443,14 +443,7 @@ cc_library(
         "cryptonote_basic/miner.h",
         "cryptonote_basic/tx_extra.h",
         "cryptonote_basic/verification_context.h",
-    ] + select({
-        "windows": [
-            "cryptonote_basic/portable_binary_archive.hpp",
-            "cryptonote_basic/portable_binary_iarchive.hpp",
-            "cryptonote_basic/portable_binary_oarchive.hpp",
-        ],
-        "//conditions:default": [],
-    }),
+    ],
     deps = [
         "//src:cncrypto",
         "//src:common",
@@ -1085,8 +1078,11 @@ cc_binary(
         "-llzma",
     ],
     deps = [
-        "@libunwind",
-    ],
+    ]  + select({
+        "windows": [
+        ],
+        "//conditions:default": ["@libunwind",],
+    }),
 )
 
 cc_binary(
@@ -1098,8 +1094,11 @@ cc_binary(
     deps = [
         "@boost//:thread",
         "@liblzma",
-        "@libunwind",
-    ],
+    ]  + select({
+        "windows": [
+        ],
+        "//conditions:default": ["@libunwind",],
+    }),
 )
 
 cc_binary(

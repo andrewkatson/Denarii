@@ -199,7 +199,9 @@ Do `sudo bazel build target` for all targets
 
 ### On Windows  
 
-All builds should use ```--compiler=mingw-gcc``` and  ```--copt="-O3"``` and ```--copt="-Wa"``` and ```--copt="-mbig-obj``` and ```--copt="-DWIN32_LEAN_AND_MEAN"``` and ```--copt="-DMINIUPNP_STATICLIB"``` and ```--copt="-DZMQ_STATIC``` and ```--linkopt="-static"``` and ```--linkopt="-Wl,-allow-multiple-definition"```
+All builds should use ```--compiler=mingw-gcc``` and  ```--copt="-O3"``` and  ```--copt="-DWIN32_LEAN_AND_MEAN"``` and ```--copt="-DMINIUPNP_STATICLIB"``` and ```--copt="-DZMQ_STATIC``` and ```--linkopt="-static"```
+
+If you want to build in debug mode use `--compilation_mode=dbg` instead of `--copt="-O3"` and also add in `--linkopt="mcmodel=medium"` and `--copt="=Wa,-mbig-obj"`
 
 Need to set JAVA_HOME in msys. Mine is ```export JAVA_HOME=/c/'Program Files'/Java/jdk-10.0.2```
 
@@ -247,6 +249,10 @@ The build places the binary in `bazel-bin` sub-directory: To run in the foregrou
 bazel build src:denarii_wallet_rpc_server
 sudo ./bazel-bin/src/denarii_wallet_rpc_server --rpc-bind-port=8080 --wallet-dir=/some/existing/path
 ```
+
+## Stack Traces on Windows 
+
+Linux has stack traces by default. Windows crashes when there is a stack trace so we by default do not log them. However, you can enable them with `--copt="-DSTACK_TRACE_DENARII`
 
 ## Internationalization
 

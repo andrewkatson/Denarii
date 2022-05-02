@@ -4501,7 +4501,7 @@ public:
 
 std::string const t_executor::NAME = "Wallet RPC Daemon";
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv) {	
   TRY_ENTRY();
 
   namespace po = boost::program_options;
@@ -4539,6 +4539,7 @@ int main(int argc, char** argv) {
     "monero-wallet-rpc.log",
     true
   );
+  
   if (!vm)
   {
     return 1;
@@ -4547,7 +4548,6 @@ int main(int argc, char** argv) {
   {
     return 0;
   }
-
   return daemonizer::daemonize(argc, const_cast<const char**>(argv), t_executor{}, *vm) ? 0 : 1;
   CATCH_ENTRY_L0("main", 1);
 }

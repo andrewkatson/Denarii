@@ -26,6 +26,7 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
 #if !defined __GNUC__ || defined __MINGW32__ || defined __MINGW64__ || defined __ANDROID__
 #define USE_UNWIND
 #else
@@ -37,9 +38,7 @@
 #include <stdexcept>
 #ifdef USE_UNWIND
 #define UNW_LOCAL_ONLY
-#ifdef _WIN32
-#include "include/libunwind.h"
-#else
+#ifndef _WIN32
 #include <libunwind.h>
 #endif
 #ifndef _WIN32
@@ -58,6 +57,7 @@
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "stacktrace"
 
+#ifndef _WIN32
 #define ST_LOG(x) \
   do { \
     auto elpp = ELPP; \
@@ -68,7 +68,7 @@
       std::cout << x << std::endl; \
     } \
   } while(0)
-
+#endif
 // from https://stackoverflow.com/questions/11665829/how-can-i-print-stack-trace-for-caught-exceptions-in-c-code-injection-in-c
 
 // The decl of __cxa_throw in /usr/include/.../cxxabi.h uses
@@ -79,6 +79,7 @@
 #define CXA_THROW_INFO_T void
 #endif // !__clang__
 
+#ifndef _WIN32
 #ifdef STATICLIB
 #define CXA_THROW __wrap___cxa_throw
 extern "C"
@@ -93,43 +94,41 @@ __attribute__((noreturn))
 #endif // __clang__
 void (cxa_throw_t)(void *ex, CXA_THROW_INFO_T *info, void (*dest)(void*));
 #endif // !STATICLIB
-
 extern "C"
 #ifdef _WIN32
 __declspec(noreturn)
 #else
 __attribute__((noreturn))
 #endif
+#endif
+
+#ifndef _WIN32
 void CXA_THROW(void *ex, CXA_THROW_INFO_T *info, void (*dest)(void*))
 {
+	
+// I dont know how this function ever works on Windows so just disable it entirely. Otherwise we just crash.
+#ifndef _WIN32
 
   int status;
-#ifdef _WIN32
-  const char* dsym = ((const std::type_info*)info)->name();
-#else
+
   char *dsym = abi::__cxa_demangle(((const std::type_info*)info)->name(), NULL, NULL, &status);
-#endif
+
   tools::log_stack_trace((std::string("Exception: ")+((!status && dsym) ? dsym : (const char*)info)).c_str());
-#ifdef _WIN32
-  free(const_cast<char*>(dsym));
-#else
+
   free(dsym);
-#endif
+
 #ifndef STATICLIB
 #ifndef __clang__ // for GCC the attr can't be applied in typedef like for clang
 #ifndef _WIN32
   __attribute__((noreturn))
 #endif
 #endif // !__clang__
-#ifdef _WIN32
-   cxa_throw_t * __real___cxa_throw = (cxa_throw_t*)GetProcAddress(GetModuleHandleA(NULL), "__cxa_throw");
-#else
    cxa_throw_t *__real___cxa_throw = (cxa_throw_t*)dlsym(RTLD_NEXT, "__cxa_throw");
-#endif
-#endif // !STATICLIB
-  __real___cxa_throw(ex, info, dest);
-}
+   __real___cxa_throw(ex, info, dest);
 
+#endif  // !STATICLIB
+}
+#endif
 namespace
 {
   std::string stack_trace_log;
@@ -145,7 +144,7 @@ void set_stack_trace_log(const std::string &log)
 
 void log_stack_trace(const char *msg)
 {
-#ifdef USE_UNWIND
+#if defined(USE_UNWIND) && !defined(_WIN32)
   unw_context_t ctx;
   unw_cursor_t cur;
   unw_word_t ip, off;
@@ -155,11 +154,16 @@ void log_stack_trace(const char *msg)
   const char *log = stack_trace_log.empty() ? NULL : stack_trace_log.c_str();
 #endif
 
+#ifndef _WIN32
   if (msg)
     ST_LOG(msg);
   ST_LOG("Unwound call stack:");
+#else 
+  std::cout << msg << std::endl;
+  std::cout << "Unwound call stack:" << std::endl;
+#endif
 
-#ifdef USE_UNWIND
+#if defined(USE_UNWIND) && !defined(_WIN32)
   if (unw_getcontext(&ctx) < 0) {
     ST_LOG("Failed to create unwind context");
     return;
@@ -184,23 +188,251 @@ void log_stack_trace(const char *msg)
       ST_LOG("  " << std::setw(4) << level << std::setbase(16) << std::setw(20) << "0x" << ip);
       continue;
     }
-#ifdef _WIN32
-    dsym = sym;
-#else
     dsym = abi::__cxa_demangle(sym, NULL, NULL, &status);
-#endif
+
     ST_LOG("  " << std::setw(4) << level << std::setbase(16) << std::setw(20) << "0x" << ip << " " << (!status && dsym ? dsym : sym) << " + " << "0x" << off);
     free(dsym);
   }
-#else
+#elif !defined(_WIN32)
   std::stringstream ss;
   ss << el::base::debug::StackTrace();
   std::vector<std::string> lines;
   std::string s = ss.str();
   boost::split(lines, s, boost::is_any_of("\n"));
-  for (const auto &line: lines)
+  
+  for (const auto &line: lines) {
     ST_LOG(line);
+  }
 #endif
 }
+#endif
+
+// FROM: rioki.org/2017/01/09/windows_stacktrace.html
+//
+// Debug Helpers
+// 
+// Copyright (c) 2015 - 2017 Sean Farrell <sean.farrell@rioki.org>
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+// 
+
+#ifdef _WIN32
+namespace tools {
+namespace dbg
+{    
+#define DBG_TRACE(MSG, ...)  trace(MSG, ## __VA_ARGS__)
+
+#define DBG_SOFT_ASSERT(COND) if ((COND) == false) { \
+                                  DBG_TRACE(__FUNCTION__ ": Assertion '" #COND "' failed!\n"); \
+                              }
+
+#define DBG_ASSERT(COND) if ((COND) == false) { \
+                            DBG_TRACE(__FUNCTION__ ": Assertion '" #COND "' failed!\n"); \
+                            handle_assert(__FUNCTION__, #COND); \
+                         }
+
+#define DBG_FAIL(MSG) DBG_TRACE(__FUNCTION__ MSG "\n"); \
+                      fail(__FUNCTION__, MSG);
+
+
+    inline 
+    void trace(const char* msg, ...)
+    {
+        char buff[1024];
+
+        va_list args;
+        va_start(args, msg);
+        vsnprintf(buff, 1024, msg, args);
+
+        OutputDebugStringA(buff);
+
+        va_end(args);
+    }
+
+    inline
+    std::string basename(const std::string& file)
+    {
+        unsigned int i = file.find_last_of("\\/");
+        if (i == std::string::npos)
+        {
+            return file;
+        }
+        else
+        {
+            return file.substr(i + 1);
+        }
+    }
+
+    std::vector<StackFrame> stack_trace()
+    {
+        #if _WIN64
+        DWORD machine = IMAGE_FILE_MACHINE_AMD64;
+        #else
+        DWORD machine = IMAGE_FILE_MACHINE_I386;
+        #endif
+        HANDLE process = GetCurrentProcess();
+        HANDLE thread  = GetCurrentThread();
+                
+        if (SymInitialize(process, NULL, TRUE) == FALSE)
+        {
+			std::string msg = std::string(__FUNCTION__) + std::string(": Failed to call SymInitialize.");
+            DBG_TRACE(msg.c_str());
+            return std::vector<StackFrame>(); 
+        }
+
+        SymSetOptions(SYMOPT_LOAD_LINES);
+        
+        CONTEXT    context = {};
+        context.ContextFlags = CONTEXT_FULL;
+        RtlCaptureContext(&context);
+
+        #if _WIN64
+        STACKFRAME frame = {};
+        frame.AddrPC.Offset = context.Rip;
+        frame.AddrPC.Mode = AddrModeFlat;
+        frame.AddrFrame.Offset = context.Rbp;
+        frame.AddrFrame.Mode = AddrModeFlat;
+        frame.AddrStack.Offset = context.Rsp;
+        frame.AddrStack.Mode = AddrModeFlat;
+        #else
+        STACKFRAME frame = {};
+        frame.AddrPC.Offset = context.Eip;
+        frame.AddrPC.Mode = AddrModeFlat;
+        frame.AddrFrame.Offset = context.Ebp;
+        frame.AddrFrame.Mode = AddrModeFlat;
+        frame.AddrStack.Offset = context.Esp;
+        frame.AddrStack.Mode = AddrModeFlat;
+        #endif
+
+       
+        bool first = true;
+
+        std::vector<StackFrame> frames;
+        while (StackWalk(machine, process, thread, &frame, &context , NULL, SymFunctionTableAccess, SymGetModuleBase, NULL))
+        {
+            StackFrame f = {};
+            f.address = frame.AddrPC.Offset;
+            
+            #if _WIN64
+            DWORD64 moduleBase = 0;
+            #else
+            DWORD moduleBase = 0;
+            #endif
+
+            moduleBase = SymGetModuleBase(process, frame.AddrPC.Offset);
+
+            char moduelBuff[MAX_PATH];            
+            if (moduleBase && GetModuleFileNameA((HINSTANCE)moduleBase, moduelBuff, MAX_PATH))
+            {
+                f.module = basename(moduelBuff);
+            }
+            else
+            {
+                f.module = "Unknown Module";
+            }
+            #if _WIN64
+            DWORD64 offset = 0;
+            #else
+            DWORD offset = 0;
+            #endif
+            char symbolBuffer[sizeof(IMAGEHLP_SYMBOL) + 255];
+            PIMAGEHLP_SYMBOL symbol = (PIMAGEHLP_SYMBOL)symbolBuffer;
+            symbol->SizeOfStruct = (sizeof(IMAGEHLP_SYMBOL)) + 255;
+            symbol->MaxNameLength = 254;
+
+            if (SymGetSymFromAddr(process, frame.AddrPC.Offset, &offset, symbol))
+            {
+                f.name = symbol->Name;
+            }
+            else
+            {
+                DWORD error = GetLastError();
+				std::string msg = std::string(__FUNCTION__) + std::string(": Failed to resolve address 0x%X: %u\n");
+                DBG_TRACE(msg.c_str(), frame.AddrPC.Offset, error);
+                f.name = "Unknown Function";
+            }
+            
+            IMAGEHLP_LINE line;
+            line.SizeOfStruct = sizeof(IMAGEHLP_LINE);
+            
+            DWORD offset_ln = 0;
+            if (SymGetLineFromAddr(process, frame.AddrPC.Offset, &offset_ln, &line))
+            {
+                f.file = line.FileName;
+                f.line = line.LineNumber;
+            }
+            else
+            {
+                DWORD error = GetLastError();
+				std::string msg = std::string(__FUNCTION__) + std::string(": Failed to resolve line for 0x%X: %u\n");
+                DBG_TRACE(msg.c_str(), frame.AddrPC.Offset, error);
+                f.line = 0;
+            } 
+
+            if (!first)
+            { 
+                frames.push_back(f);
+            }
+            first = false;
+        }
+
+        SymCleanup(process);
+
+        return frames;
+    }
+    
+    inline 
+    void handle_assert(const char* func, const char* cond)
+    {
+        std::stringstream buff;
+        buff << func << ": Assertion '" << cond << "' failed! \n";
+        buff << "\n";
+        
+        std::vector<StackFrame> stack = stack_trace();
+        buff << "Callstack: \n";
+        for (unsigned int i = 0; i < stack.size(); i++)
+        {
+            buff << "0x" << std::hex << stack[i].address << ": " << stack[i].name << "(" << std::dec << stack[i].line << ") in " << stack[i].module << "\n";
+        }
+
+        MessageBoxA(NULL, buff.str().c_str(), "Assert Failed", MB_OK|MB_ICONSTOP);
+        abort();
+    }
+
+    inline 
+    void fail(const char* func, const char* msg)
+    {
+        std::stringstream buff;
+        buff << func << ":  General Software Fault: '" << msg << "'! \n";
+        buff << "\n";
+        
+        std::vector<StackFrame> stack = stack_trace();
+        buff << "Callstack: \n";
+        for (unsigned int i = 0; i < stack.size(); i++)
+        {
+            buff << "0x" << std::hex << stack[i].address << ": " << stack[i].name << "(" << stack[i].line << ") in " << stack[i].module << "\n";
+        }
+
+        MessageBoxA(NULL, buff.str().c_str(), "General Software Fault", MB_OK|MB_ICONSTOP);
+        abort();
+    }
+} // namespace dbg
+#endif 
 
 }  // namespace tools

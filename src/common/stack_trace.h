@@ -30,13 +30,38 @@
 #define MONERO_EXCEPTION_H
 
 #include <string>
+#include <windows.h>
+#include <stdio.h>
+#include <intrin.h>
+#include <dbghelp.h>
+#include <vector>
+#include <sstream>
+#include <iostream>
+#include <typeinfo>
+#include <memory>
+#include <cxxabi.h>
+#include <cstdlib>
+
 
 namespace tools
 {
 
 void set_stack_trace_log(const std::string &log);
 void log_stack_trace(const char *msg);
+namespace dbg {
+#ifdef _WIN32
 
+    struct StackFrame
+    {
+        DWORD64 address;
+        std::string name;
+        std::string module;
+        unsigned int line;
+        std::string file;
+    };
+	std::vector<StackFrame> stack_trace();
+#endif
+}
 }  // namespace tools
 
 #endif

@@ -4991,9 +4991,9 @@ bool Blockchain::prepare_handle_incoming_blocks(const std::vector<block_complete
       {
         block &block = blocks[blockidx];
         crypto::hash block_hash;
-
-        if (!parse_and_validate_block_from_blob(it->block, block, block_hash))
-          return false;
+        if (!parse_and_validate_block_from_blob(it->block, block, block_hash)) {			
+		  return false;
+		}
 
         // check first block and skip all blocks if its not chained properly
         if (blockidx == 0)
@@ -5043,13 +5043,15 @@ bool Blockchain::prepare_handle_incoming_blocks(const std::vector<block_complete
         thread_height += nblocks;
       }
 
-      if (!waiter.wait())
+      if (!waiter.wait()) {
         return false;
+	  }
       m_prepare_height = 0;
 
-      if (m_cancel)
+      if (m_cancel) {
          return false;
-
+	  }
+	  
       for (const auto & map : maps)
       {
         m_blocks_longhash_table.insert(map.begin(), map.end());
@@ -5256,7 +5258,6 @@ bool Blockchain::prepare_handle_incoming_blocks(const std::vector<block_complete
     if(m_show_time_stats)
       MDEBUG("Prepare scantable took: " << scantable << " ms");
   }
-
   return true;
 }
 

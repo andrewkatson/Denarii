@@ -29,6 +29,7 @@
 #pragma once
 
 #include <vector>
+#include <limits>
 #include "contrib/epee/include/misc_log_ex.h"
 #include "contrib/epee/include/span.h"
 

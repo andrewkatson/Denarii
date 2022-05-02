@@ -33,6 +33,7 @@
 #include "src/common/scoped_message_writer.h"
 #include "src/common/password.h"
 #include "src/common/util.h"
+#include "src/common/stack_trace.h"
 #include "src/cryptonote_core/cryptonote_core.h"
 #include "src/cryptonote_basic/miner.h"
 #include "src/daemon/command_server.h"
@@ -185,6 +186,14 @@ void print_genesis_tx_hex(uint8_t nettype) {
   wal->store();
 
   return;
+}
+
+void log_stack_trace() {
+	#if defined(STACK_TRACE_DENARII)
+	for(auto& frame : tools::dbg::stack_trace()) {
+		std::cerr << "File " << frame.file << " Module: " << frame.module << " Line " << std::to_string(frame.line) << " Name: " << frame.name << std::endl;
+	}
+	#endif
 }
 
 int main(int argc, char const * argv[])
@@ -439,10 +448,12 @@ int main(int argc, char const * argv[])
   catch (std::exception const & ex)
   {
     LOG_ERROR("Exception in main! " << ex.what());
+	log_stack_trace();
   }
   catch (...)
   {
     LOG_ERROR("Exception in main!");
+	log_stack_trace();
   }
   return 1;
 }
