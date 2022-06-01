@@ -322,7 +322,7 @@ This section contains general instructions for debugging failed installs or prob
 
 ### Obtaining stack traces and core dumps on Unix systems
 
-We generally use the tool `gdb` (GNU debugger) to provide stack trace functionality, and `ulimit` to provide core dumps in builds which crash or segfault.
+We generally use the tool `gdb` (GNU debugger) to provide stack trace functionality, and `ulimit` to provide core dumps in builds which crash or segfault. You need to use version 10+.
 
 * To use `gdb` in order to obtain a stack trace for a build that has stalled:
 

@@ -21,6 +21,7 @@ from PyQt5 import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+
 try:
 
     # Modify PATH to include the path to where we are so in production we can find all our files.
@@ -88,19 +89,26 @@ try:
             self.denarii_client = denarii_client.DenariiClient()
 
             self.denariid = self.setup_denariid()
-            
-            if self.denariid  is not None:
+
+            if self.denariid is not None and self.denariid.returncode == 0:
                 print("Denariid started up")
             else:
                 print("Denariid was not started or was already active")
+                if self.denariid is not None:
+                    print(self.denariid.returncode)
+                    print(self.denariid.stdout)
+                    print(self.denariid.stderr)
 
             self.denarii_wallet_rpc_server = self.setup_denarii_wallet_rpc_server()
-            
-            if self.denarii_wallet_rpc_server is not None:
+
+            if self.denarii_wallet_rpc_server is not None and self.denarii_wallet_rpc_server.returncode == 0:
                 print("Wallet rpc server started up")
             else:
                 print("Wallet rpc server not started up or was already active")
-            
+                if self.denarii_wallet_rpc_server is not None:
+                    print(self.denarii_wallet_rpc_server.returncode)
+                    print(self.denarii_wallet_rpc_server.stdout)
+                    print(self.denarii_wallet_rpc_server.stderr)
 
             self.next_button = QPushButton("Next Page", self)
             self.next_button.setStyleSheet("color:black")
@@ -380,13 +388,14 @@ try:
                 return None
 
             if os.path.exists(MAIN_DENARII_PATH_LINUX):
-                return subprocess.Popen("sudo " + MAIN_DENARII_PATH_LINUX + " --no-igd", shell=True)
+                return subprocess.Popen("sudo " + MAIN_DENARII_PATH_LINUX + " --no-igd", shell=True, encoding='utf-8')
             elif os.path.exists(MAIN_DENARII_PATH_WINDOWS):
-                return subprocess.Popen("start " + MAIN_DENARII_PATH_WINDOWS + " --no-igd", shell=True)
+                return subprocess.Popen("start " + MAIN_DENARII_PATH_WINDOWS + " --no-igd", shell=True,
+                                        encoding='utf-8')
             elif os.path.exists(DENARIID_PATH_LINUX):
-                return subprocess.Popen("sudo " + DENARIID_PATH_LINUX + " --no-igd", shell=True)
+                return subprocess.Popen("sudo " + DENARIID_PATH_LINUX + " --no-igd", shell=True, encoding='utf-8')
             elif os.path.exists(DENARIID_PATH_WINDOWS):
-                return subprocess.Popen("start " + DENARIID_PATH_WINDOWS + " --no-igd", shell=True)
+                return subprocess.Popen("start " + DENARIID_PATH_WINDOWS + " --no-igd", shell=True, encoding='utf-8')
 
             return None
 
@@ -399,24 +408,25 @@ try:
 
             if os.path.exists(MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX):
                 return subprocess.Popen(
-                    [
-                        "sudo " + MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login"],
-                    shell=True)
+                    "sudo " + MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login",
+                    shell=True, encoding='utf-8')
             elif os.path.exists(MAIN_DENARII_WALLET_RPC_SERVER_PATH_WINDOWS):
                 return subprocess.Popen(
-                    [
-                        "start " + MAIN_DENARII_WALLET_RPC_SERVER_PATH_WINDOWS + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login"],
-                    shell=True)
+
+                    "start " + MAIN_DENARII_WALLET_RPC_SERVER_PATH_WINDOWS + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login",
+                    shell=True, encoding='utf-8')
             elif os.path.exists(DENARII_WALLET_RPC_SERVER_PATH_LINUX):
                 return subprocess.Popen(
-                    [
-                        "sudo " + DENARII_WALLET_RPC_SERVER_PATH_LINUX + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login"],
-                    shell=True)
+
+                    "sudo " + DENARII_WALLET_RPC_SERVER_PATH_LINUX + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login",
+                    shell=True, encoding='utf-8')
             elif os.path.exists(DENARII_WALLET_RPC_SERVER_PATH_WINDOWS):
                 return subprocess.Popen(
-                    [
-                        "start " + DENARII_WALLET_RPC_SERVER_PATH_WINDOWS + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login"],
-                    shell=True)
+
+                    "start " + DENARII_WALLET_RPC_SERVER_PATH_WINDOWS + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login",
+                    shell=True, encoding='utf-8')
+
+            return None
 
         def shutdown_denariid(self):
 
@@ -444,6 +454,17 @@ try:
                     proc.kill()
                 elif proc.name() == "denarii_wallet_rpc_server.exe":
                     proc.kill()
+
+        def print_status(self, text, success):
+            """
+            Print the status of something
+            @param text the text of the something
+            @param success whether that thing succeeded
+            """
+            if success:
+                print(text + " succeeded")
+            else:
+                print(text + " failed")
 
         def setup_lang_select_screen(self):
             """
@@ -598,13 +619,13 @@ try:
             self.third_horizontal_layout.addWidget(self.address_text_box, alignment=Qt.AlignCenter)
             self.fourth_horizontal_layout.addWidget(self.your_sub_address_label, alignment=Qt.AlignCenter)
             self.fourth_horizontal_layout.addWidget(self.create_sub_address_push_button, alignment=Qt.AlignCenter)
-            self.fifth_horizontal_layout.addWidget(self.wallet_info_status_text_box, alignment=Qt.AlignCenter)
             self.form_layout.addRow("Address", self.address_line_edit)
             self.form_layout.addRow("Amount", self.amount_line_edit)
-            self.sixth_horizontal_layout.addWidget(self.transfer_push_button, alignment=Qt.AlignCenter)
-            self.seventh_horizontal_layout.addWidget(self.start_mining_push_button, alignment=Qt.AlignCenter)
-            self.seventh_horizontal_layout.addWidget(self.stop_mining_push_button, alignment=Qt.AlignCenter)
-            self.eight_horizontal_layout.addWidget(self.wallet_transfer_status_text_box, alignment=Qt.AlignCenter)
+            self.fifth_horizontal_layout.addWidget(self.transfer_push_button, alignment=Qt.AlignCenter)
+            self.sixth_horizontal_layout.addWidget(self.start_mining_push_button, alignment=Qt.AlignCenter)
+            self.sixth_horizontal_layout.addWidget(self.stop_mining_push_button, alignment=Qt.AlignCenter)
+            self.seventh_horizontal_layout.addWidget(self.wallet_transfer_status_text_box, alignment=Qt.AlignCenter)
+            self.eight_horizontal_layout.addWidget(self.wallet_info_status_text_box, alignment=Qt.AlignCenter)
 
             self.populate_wallet_screen()
 
@@ -671,10 +692,9 @@ try:
             success = False
             try:
                 success = self.denarii_client.create_wallet(self.wallet)
-
-                success = self.denarii_client.set_current_wallet(self.wallet) and success
-
+                self.print_status("Create wallet ", success)
                 success = self.denarii_client.query_seed(self.wallet) and success
+                self.print_status("Query seed ", success)
             except Exception as e:
                 print(e)
 
@@ -698,7 +718,9 @@ try:
 
             try:
                 success = self.denarii_client.set_current_wallet(self.wallet)
+                self.print_status("Set current wallet ", success)
                 success = self.denarii_client.query_seed(self.wallet) and success
+                self.print_status("Query seed ", success)
             except Exception as e:
                 print(e)
 
@@ -719,6 +741,7 @@ try:
             success = False
             try:
                 success = self.denarii_client.restore_wallet(self.wallet)
+                self.print_status("Restore wallet ", success)
             except Exception as e:
                 print(e)
 
@@ -739,7 +762,9 @@ try:
             other_wallet.address = bytes(self.address_line_edit.text(), 'utf-8')
 
             try:
-                success = self.denarii_client.transfer_money(int(self.amount_line_edit.text()), self.wallet, other_wallet)
+                success = self.denarii_client.transfer_money(int(self.amount_line_edit.text()), self.wallet,
+                                                             other_wallet)
+                self.print_status("Transfer money ", success)
             except Exception as e:
                 print(e)
 
@@ -757,6 +782,7 @@ try:
 
             try:
                 success = self.denarii_client.create_no_label_address(self.wallet)
+                self.print_status("Create subaddress ", success)
             except Exception as e:
                 print(e)
 
@@ -769,7 +795,8 @@ try:
                 sub_address_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
                 self.vertical_layout.addWidget(sub_address_text_box, alignment=Qt.AlignCenter)
                 self.sub_address_text_boxes.append(sub_address_text_box)
-                self.wallet_info_status_text_box.setText("Success creating sub address. Use this to send to other people.")
+                self.wallet_info_status_text_box.setText(
+                    "Success creating sub address. Use this to send to other people.")
             else:
                 self.wallet_info_status_text_box.setText("Failure creating sub address.")
 
@@ -978,6 +1005,7 @@ try:
         window.centralWidget().shutdown_denarii_wallet_rpc_server()
         app.exit(0)
         sys.exit()
+
 
     if __name__ == "__main__":
         main()

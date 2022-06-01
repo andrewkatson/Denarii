@@ -1,6 +1,20 @@
 # Denariid GUI
 
+## Building 
+
+The below assumes you have all the necessary files in one folder. The configuration script should do that for you.
+
+### Windows 
+
+* pyinstaller gui_main.py --onefile
+
 ## Running 
+
+### Windows 
+
+Right click on `gui_main.exe` and run as administrator.
+
+### Linux
 
 `bazel run utils/gui`
 
