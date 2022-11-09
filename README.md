@@ -26,7 +26,7 @@ Denarii is a private, secure, untraceable, decentralised digital currency. You a
 
 **Untraceability:** By taking advantage of ring signatures, a special property of a certain type of cryptography, Denarii is able to ensure that transactions are not only untraceable but have an optional measure of ambiguity that ensures that transactions cannot easily be tied back to an individual user or computer.
 
-**Decentralization:** The utility of Denarii depends on its decentralised peer-to-peer consensus network - anyone should be able to run the denarii software, validate the integrity of the blockchain, and participate in all aspects of the monero network using consumer-grade commodity hardware. Decentralization of the monero network is maintained by software development that minimizes the costs of running the monero software and inhibits the proliferation of specialized, non-commodity hardware.  
+**Decentralization:** The utility of Denarii depends on its decentralised peer-to-peer consensus network - anyone should be able to run the denarii software, validate the integrity of the blockchain, and participate in all aspects of the denarii network using consumer-grade commodity hardware. Decentralization of the monero network is maintained by software development that minimizes the costs of running the denarii software and inhibits the proliferation of specialized, non-commodity hardware.  
 
 **Stability:** Denarii is a stable currency through the adoption of proven modern monetary policy. 
 
@@ -199,7 +199,7 @@ Do `sudo bazel build target` for all targets
 
 ### On Windows  
 
-All builds should use ```--compiler=mingw-gcc``` and  ```--copt="-O3"``` and  ```--copt="-DWIN32_LEAN_AND_MEAN"``` and ```--copt="-DMINIUPNP_STATICLIB"``` and ```--copt="-DZMQ_STATIC``` and ```--linkopt="-static"```
+All builds should use ```--compiler=mingw-gcc``` and  ```--copt="-O3"``` and  ```--copt="-DWIN32_LEAN_AND_MEAN"``` and ```--copt="-DMINIUPNP_STATICLIB"``` and ```--copt="-DZMQ_STATIC"``` and ```--linkopt="-static"```
 
 If you want to build in debug mode use `--compilation_mode=dbg` instead of `--copt="-O3"` and also add in `--linkopt="mcmodel=medium"` and `--copt="=Wa,-mbig-obj"`
 
@@ -239,7 +239,7 @@ sudo ./bazel-bin/src/denariid --log-file denariid.log --detach
 ```
 
 If you're on Mac, you may need to add the `--max-concurrency 1` option to
-monero-wallet-cli, and possibly monerod, if you get crashes refreshing. You also might need `--no-igd`.
+denarii-wallet-cli, and possibly denariid, if you get crashes refreshing. You also might need `--no-igd`.
 
 ## Running denarii wallet rpc server
 
@@ -266,7 +266,7 @@ See [README.i18n.md](README.i18n.md).
 > used solely for relaying transactions received over local RPC. This provides
 > privacy and better protection against surrounding node (sybil) attacks.
 
-While Monero isn't made to integrate with Tor, it can be used wrapped with torsocks, by
+While Denarii isn't made to integrate with Tor, it can be used wrapped with torsocks, by
 setting the following configuration parameters and environment variables:
 
 * `--p2p-bind-ip 127.0.0.1` on the command line or `p2p-bind-ip=127.0.0.1` in
@@ -275,9 +275,9 @@ setting the following configuration parameters and environment variables:
   (UPnP port forwarding negotiation), which is pointless with Tor.
 * `DNS_PUBLIC=tcp` or `DNS_PUBLIC=tcp://x.x.x.x` where x.x.x.x is the IP of the
   desired DNS server, for DNS requests to go over TCP, so that they are routed
-  through Tor. When IP is not specified, monerod uses the default list of
+  through Tor. When IP is not specified, denariid uses the default list of
   servers defined in [src/common/dns_utils.cpp](src/common/dns_utils.cpp).
-* `TORSOCKS_ALLOW_INBOUND=1` to tell torsocks to allow monerod to bind to interfaces
+* `TORSOCKS_ALLOW_INBOUND=1` to tell torsocks to allow denariid to bind to interfaces
    to accept connections from the wallet. On some Linux systems, torsocks
    allows binding to localhost by default, so setting this variable is only
    necessary to allow binding to local LAN/VPN interfaces to allow wallets to
@@ -288,7 +288,7 @@ setting the following configuration parameters and environment variables:
 * If you use the wallet with a Tor daemon via the loopback IP (eg, 127.0.0.1:9050),
   then use `--untrusted-daemon` unless it is your own hidden service.
 
-Example command line to start monerod through Tor:
+Example command line to start denariid through Tor:
 
 ```bash
 DNS_PUBLIC=tcp torsocks ./bazel-bin/src/denariid --p2p-bind-ip 127.0.0.1 --no-igd
@@ -308,17 +308,17 @@ DNS_PUBLIC=tcp torsocks ./bazel-bin/src/denariid --p2p-bind-ip 127.0.0.1 --no-ig
 
 ## Pruning
 
-As of May 2020, the full Monero blockchain file is about 80 GB. One can store a pruned blockchain, which is about 28 GB.
+As of May 2020, the full Denarii blockchain file is about 80 GB. One can store a pruned blockchain, which is about 28 GB.
 A pruned blockchain can only serve part of the historical chain data to other peers, but is otherwise identical in
 functionality to the full blockchain.
 To use a pruned blockchain, it is best to start the initial sync with --prune-blockchain. However, it is also possible
-to prune an existing blockchain using the monero-blockchain-prune tool or using the --prune-blockchain monerod option
+to prune an existing blockchain using the denarii-blockchain-prune tool or using the --prune-blockchain denariid option
 with an existing chain. If an existing chain exists, pruning will temporarily require disk space to store both the full
 and pruned blockchains.
 
 ## Debugging
 
-This section contains general instructions for debugging failed installs or problems encountered with Monero. First, ensure you are running the latest version built from the Github repo.
+This section contains general instructions for debugging failed installs or problems encountered with Denarii. First, ensure you are running the latest version built from the Github repo.
 
 ### Obtaining stack traces and core dumps on Unix systems
 
@@ -360,9 +360,9 @@ Print the stack trace with `bt`
 coredumpctl -1 gdb
 ```
 
-#### To run Monero within gdb:
+#### To run Denarii within gdb:
 
-Type `gdb /path/to/denaridd`
+Type `gdb /path/to/denaridd` but you will need to follow the instructions here https://stackoverflow.com/questions/71903316/gdb-command-aborted-for-all-commands?noredirect=1#comment127059480_71903316 and get the latest gdb.
 
 Pass command-line options with `--args` followed by the relevant arguments
 
@@ -374,13 +374,13 @@ There are two tools available:
 
 #### ASAN
 
-Configure Monero with the -D SANITIZE=ON cmake flag, eg:
+Configure Denarii with the -D SANITIZE=ON cmake flag, eg:
 
 ```bash
 cd build/debug && cmake -D SANITIZE=ON -D CMAKE_BUILD_TYPE=Debug ../..
 ```
 
-You can then run the monero tools normally. Performance will typically halve.
+You can then run the Denarii tools normally. Performance will typically halve.
 
 #### valgrind
 
@@ -408,13 +408,13 @@ These records are dumped as hex data, where the first line is the key and the se
 
 ### Socket-based
 
-Because of the nature of the socket-based protocols that drive monero, certain protocol weaknesses are somewhat unavoidable at this time. While these weaknesses can theoretically be fully mitigated, the effort required (the means) may not justify the ends. As such, please consider taking the following precautions if you are a monero node operator:
+Because of the nature of the socket-based protocols that drive denarii, certain protocol weaknesses are somewhat unavoidable at this time. While these weaknesses can theoretically be fully mitigated, the effort required (the means) may not justify the ends. As such, please consider taking the following precautions if you are a denarii node operator:
 
-- Run `denariid` on a "secured" machine. If operational security is not your forte, at a very minimum, have a dedicated a computer running `denariid` and **do not** browse the web, use email clients, or use any other potentially harmful apps on your `monerod` machine. **Do not click links or load URL/MUA content on the same machine**. Doing so may potentially exploit weaknesses in commands which accept "localhost" and "127.0.0.1".
-- If you plan on hosting a public "remote" node, start `monerod` with `--restricted-rpc`. This is a must.
+- Run `denariid` on a "secured" machine. If operational security is not your forte, at a very minimum, have a dedicated a computer running `denariid` and **do not** browse the web, use email clients, or use any other potentially harmful apps on your `denariid` machine. **Do not click links or load URL/MUA content on the same machine**. Doing so may potentially exploit weaknesses in commands which accept "localhost" and "127.0.0.1".
+- If you plan on hosting a public "remote" node, start `denariid` with `--restricted-rpc`. This is a must.
 
 ### Blockchain-based
 
 Certain blockchain "features" can be considered "bugs" if misused correctly. Consequently, please consider the following:
 
-- When receiving monero, be aware that it may be locked for an arbitrary time if the sender elected to, preventing you from spending that monero until the lock time expires. You may want to hold off acting upon such a transaction until the unlock time lapses. To get a sense of that time, you can consider the remaining blocktime until unlock as seen in the `show_transfers` command.
+- When receiving denarii, be aware that it may be locked for an arbitrary time if the sender elected to, preventing you from spending that denarii until the lock time expires. You may want to hold off acting upon such a transaction until the unlock time lapses. To get a sense of that time, you can consider the remaining blocktime until unlock as seen in the `show_transfers` command.

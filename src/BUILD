@@ -269,6 +269,13 @@ cc_library(
     }),
 )
 
+cc_library(
+    name = "file",
+    srcs = glob(["**/common/file/*.cc"]),
+    hdrs = glob(["**/common/file/*.h"]),
+    deps = [],
+)
+
 # ANOTHER WORKAROUND FOR TESTS. DO NOT USE NORMALLY.
 cc_library(
     name = "common_for_tests",
@@ -281,7 +288,10 @@ cc_library(
     name = "cryptonote_protocol",
     srcs = glob(["**/cryptonote_protocol/*.cpp"]),
     hdrs = glob(["**/cryptonote_protocol/*.h"]) + glob(["**/cryptonote_protocol/*.inl"]),
-    deps = ["//src:p2p"],
+    deps = [
+        "//src:p2p",
+        "//src:file"
+    ],
 )
 
 cc_library(

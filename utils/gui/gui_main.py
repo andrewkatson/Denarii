@@ -9,7 +9,9 @@ import psutil
 import os
 import subprocess
 import sys
+import threading
 import time
+
 import workspace_path_finder
 
 from google.protobuf import descriptor as _descriptor
@@ -69,6 +71,11 @@ try:
     if not os.path.exists(DENARIID_WALLET_PATH):
         os.makedirs(DENARIID_WALLET_PATH)
 
+    # Files used to tell this program that the synchronization process is already done or is starting. Both indicators
+    # that the denariid is working.
+    SYNCHRONIZED_OK = "synchronized_ok.txt"
+    SYNCHRONIZATION_STARTED = "synchronization_started.txt"
+
 
     def store_user():
         with open(USER_SETTINGS_PATH, "wb") as output_file:
@@ -89,26 +96,30 @@ try:
             self.denarii_client = denarii_client.DenariiClient()
 
             self.denariid = self.setup_denariid()
-
+            self.denariid.wait(timeout=5)
             if self.denariid is not None and self.denariid.returncode == 0:
                 print("Denariid started up")
             else:
                 print("Denariid was not started or was already active")
                 if self.denariid is not None:
                     print(self.denariid.returncode)
-                    print(self.denariid.stdout)
-                    print(self.denariid.stderr)
 
             self.denarii_wallet_rpc_server = self.setup_denarii_wallet_rpc_server()
-
+            self.denarii_wallet_rpc_server.wait(timeout=5)
             if self.denarii_wallet_rpc_server is not None and self.denarii_wallet_rpc_server.returncode == 0:
                 print("Wallet rpc server started up")
             else:
                 print("Wallet rpc server not started up or was already active")
                 if self.denarii_wallet_rpc_server is not None:
                     print(self.denarii_wallet_rpc_server.returncode)
-                    print(self.denarii_wallet_rpc_server.stdout)
-                    print(self.denarii_wallet_rpc_server.stderr)
+
+            # Setup threads that will monitor the server and wallet rpc and ensure they are healthy.
+            self.server_thread = self.setup_server_thread()
+            self.wallet_thread = self.setup_wallet_thread()
+
+            # Start the threads up.
+            self.server_thread.start()
+            self.wallet_thread.start()
 
             self.next_button = QPushButton("Next Page", self)
             self.next_button.setStyleSheet("color:black")
@@ -388,14 +399,17 @@ try:
                 return None
 
             if os.path.exists(MAIN_DENARII_PATH_LINUX):
-                return subprocess.Popen("sudo " + MAIN_DENARII_PATH_LINUX + " --no-igd", shell=True, encoding='utf-8')
+                return subprocess.Popen("sudo " + MAIN_DENARII_PATH_LINUX + " --no-igd", shell=True, encoding='utf-8',
+                                        stderr=subprocess.PIPE, stdout=subprocess.PIPE)
             elif os.path.exists(MAIN_DENARII_PATH_WINDOWS):
                 return subprocess.Popen("start " + MAIN_DENARII_PATH_WINDOWS + " --no-igd", shell=True,
-                                        encoding='utf-8')
+                                        encoding='utf-8', stderr=subprocess.PIPE, stdout=subprocess.PIPE)
             elif os.path.exists(DENARIID_PATH_LINUX):
-                return subprocess.Popen("sudo " + DENARIID_PATH_LINUX + " --no-igd", shell=True, encoding='utf-8')
+                return subprocess.Popen("sudo " + DENARIID_PATH_LINUX + " --no-igd", shell=True, encoding='utf-8',
+                                        stderr=subprocess.PIPE, stdout=subprocess.PIPE)
             elif os.path.exists(DENARIID_PATH_WINDOWS):
-                return subprocess.Popen("start " + DENARIID_PATH_WINDOWS + " --no-igd", shell=True, encoding='utf-8')
+                return subprocess.Popen("start " + DENARIID_PATH_WINDOWS + " --no-igd", shell=True, encoding='utf-8',
+                                        stderr=subprocess.PIPE, stdout=subprocess.PIPE)
 
             return None
 
@@ -409,24 +423,65 @@ try:
             if os.path.exists(MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX):
                 return subprocess.Popen(
                     "sudo " + MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login",
-                    shell=True, encoding='utf-8')
+                    shell=True, encoding='utf-8', stderr=subprocess.PIPE, stdout=subprocess.PIPE)
             elif os.path.exists(MAIN_DENARII_WALLET_RPC_SERVER_PATH_WINDOWS):
                 return subprocess.Popen(
 
                     "start " + MAIN_DENARII_WALLET_RPC_SERVER_PATH_WINDOWS + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login",
-                    shell=True, encoding='utf-8')
+                    shell=True, encoding='utf-8', stderr=subprocess.PIPE, stdout=subprocess.PIPE)
             elif os.path.exists(DENARII_WALLET_RPC_SERVER_PATH_LINUX):
                 return subprocess.Popen(
 
                     "sudo " + DENARII_WALLET_RPC_SERVER_PATH_LINUX + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login",
-                    shell=True, encoding='utf-8')
+                    shell=True, encoding='utf-8', stderr=subprocess.PIPE, stdout=subprocess.PIPE)
             elif os.path.exists(DENARII_WALLET_RPC_SERVER_PATH_WINDOWS):
                 return subprocess.Popen(
 
                     "start " + DENARII_WALLET_RPC_SERVER_PATH_WINDOWS + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login",
-                    shell=True, encoding='utf-8')
+                    shell=True, encoding='utf-8', stderr=subprocess.PIPE, stdout=subprocess.PIPE)
 
             return None
+
+        def setup_server_thread(self):
+            return threading.Thread(target=self.monitor_server_thread)
+
+        def setup_wallet_thread(self):
+            return threading.Thread(target=self.monitor_wallet_thread)
+
+        def monitor_server_thread(self):
+            """
+            Restart the server thread if there are any issues with it
+            """
+
+            while True:
+                time.sleep(60)
+
+                if os.path.exists(SYNCHRONIZATION_STARTED) or os.path.exists(SYNCHRONIZED_OK):
+                    print("Synchronized")
+                    if os.path.exists(SYNCHRONIZATION_STARTED):
+                        os.remove(SYNCHRONIZATION_STARTED)
+                    if os.path.exists(SYNCHRONIZED_OK):
+                        os.remove(SYNCHRONIZED_OK)
+                    return
+                else:
+                    print("Not synchronized")
+                    self.shutdown_denariid()
+                    self.denariid = self.setup_denariid()
+                    self.denariid.wait(timeout=5)
+                    if self.denariid is not None and self.denariid.returncode == 0:
+                        print("Denariid started up")
+                    else:
+                        print("Denariid was not started or was already active")
+                        if self.denariid is not None:
+                            print(self.denariid.returncode)
+
+        def monitor_wallet_thread(self):
+            """
+            Restart the wallet thread if there any issues with it
+            @param wallet_rpc_server the wallet rpc server
+            """
+            # There are no known issues with denarii wallet rpc server so just exit.
+            return
 
         def shutdown_denariid(self):
 
@@ -454,6 +509,10 @@ try:
                     proc.kill()
                 elif proc.name() == "denarii_wallet_rpc_server.exe":
                     proc.kill()
+
+        def shutdown_threads(self):
+            self.server_thread.join()
+            self.wallet_thread.join()
 
         def print_status(self, text, success):
             """
@@ -1003,6 +1062,7 @@ try:
 
         window.centralWidget().shutdown_denariid()
         window.centralWidget().shutdown_denarii_wallet_rpc_server()
+        window.centralWidget().shutdown_threads()
         app.exit(0)
         sys.exit()
 

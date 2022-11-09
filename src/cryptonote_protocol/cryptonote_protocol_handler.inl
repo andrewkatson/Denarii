@@ -366,6 +366,8 @@ namespace cryptonote
       << " [Your node is " << abs_diff << " blocks (" << tools::get_human_readable_timespan((abs_diff - diff_v2) * DIFFICULTY_TARGET_V1 + diff_v2 * DIFFICULTY_TARGET_V2) << ") "
       << (0 <= diff ? std::string("behind") : std::string("ahead"))
       << "] " << ENDL << "SYNCHRONIZATION started");
+    // We need to create a text file so the gui will know we have started synchronizing.
+    file::createTextFile("synchronization_started.txt", "synchronization_started");
       if (hshd.current_height >= m_core.get_current_blockchain_height() + 5) // don't switch to unsafe mode just for a few blocks
       {
         m_core.safesyncmode(false);
@@ -2316,6 +2318,8 @@ skip:
         if (m_core.get_current_blockchain_height() >= m_core.get_target_blockchain_height())
         {
           MGINFO_GREEN("SYNCHRONIZED OK");
+          // Create a text file so that the gui would know we have synchronized.
+          file::createTextFile("synchronized_ok.txt", "synchronized_ok");
           on_connection_synchronized();
         }
       }

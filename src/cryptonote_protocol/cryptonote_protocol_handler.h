@@ -46,6 +46,7 @@
 #include "src/common/perf_timer.h"
 #include "src/cryptonote_basic/connection_context.h"
 #include <boost/circular_buffer.hpp>
+#include "src/common/file/file_operations.h"
 
 PUSH_WARNINGS
 DISABLE_VS_WARNINGS(4355)
