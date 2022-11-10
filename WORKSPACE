@@ -6,10 +6,10 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 http_archive(
     name = "bazel_skylib",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.1.1/bazel-skylib-1.1.1.tar.gz",
-        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.1.1/bazel-skylib-1.1.1.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.3.0/bazel-skylib-1.3.0.tar.gz",
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.3.0/bazel-skylib-1.3.0.tar.gz",
     ],
-    sha256 = "c6966ec828da198c5d9adbaa94c05e3a1c7f21bd012a0b29ba8ddbccb2c93b0d",
+    sha256 = "74d544d96f4a5bb630d465ca8bbcfe231e3594e5aae57e1edbf17a6eb3ca2506",
 )
 load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 bazel_skylib_workspace()
@@ -17,26 +17,28 @@ bazel_skylib_workspace()
 
 # abseil-cpp
 http_archive(
-    name = "com_google_absl",
-    sha256 = "8400c511d64eb4d26f92c5ec72535ebd0f843067515244e8b50817b0786427f9",
-    strip_prefix = "abseil-cpp-c512f118dde6ffd51cb7d8ac8804bbaf4d266c3a",
-    urls = ["https://github.com/abseil/abseil-cpp/archive/c512f118dde6ffd51cb7d8ac8804bbaf4d266c3a.zip"],
+  name = "com_google_absl",
+  urls = ["https://github.com/abseil/abseil-cpp/archive/98eb410c93ad059f9bba1bf43f5bb916fc92a5ea.zip"],
+  strip_prefix = "abseil-cpp-98eb410c93ad059f9bba1bf43f5bb916fc92a5ea",
 )
 
 # Google Test
 http_archive(
-    name = "gtest",
-    sha256 = "94c634d499558a76fa649edb13721dce6e98fb1e7018dfaeba3cd7a083945e91",
-    strip_prefix = "googletest-release-1.10.0",
-    url = "https://github.com/google/googletest/archive/release-1.10.0.zip",
+  name = "gtest",
+  urls = ["https://github.com/google/googletest/archive/release-1.12.1.zip"],
+  strip_prefix = "googletest-release-1.12.1",
+  sha256 = "24564e3b712d3eb30ac9a85d92f7d720f60cc0173730ac166f27dda7fed76cb2"
 )
 
-# C++ protocol buffer rules for Bazel.
+# rules_cc defines rules for generating C++ code from Protocol Buffers.
 http_archive(
     name = "rules_cc",
-    sha256 = "954b7a3efc8752da957ae193a13b9133da227bdacf5ceb111f2e11264f7e8c95",
-    strip_prefix = "rules_cc-9e10b8a6db775b1ecd358d8ddd3dab379a2c29a5",
-    urls = ["https://github.com/bazelbuild/rules_cc/archive/9e10b8a6db775b1ecd358d8ddd3dab379a2c29a5.zip"],
+    sha256 = "35f2fb4ea0b3e61ad64a369de284e4fbbdcdba71836a5555abb5e194cf119509",
+    strip_prefix = "rules_cc-624b5d59dfb45672d4239422fa1e3de1822ee110",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_cc/archive/624b5d59dfb45672d4239422fa1e3de1822ee110.tar.gz",
+        "https://github.com/bazelbuild/rules_cc/archive/624b5d59dfb45672d4239422fa1e3de1822ee110.tar.gz",
+    ],
 )
 
 # rules_java defines rules for generating Java code from Protocol Buffers.
@@ -53,28 +55,20 @@ http_archive(
 # rules_proto defines abstract rules for building Protocol Buffers.
 http_archive(
     name = "rules_proto",
-    sha256 = "602e7161d9195e50246177e7c55b2f39950a9cf7366f74ed5f22fd45750cd208",
-    strip_prefix = "rules_proto-97d8af4dc474595af3900dd85cb3a29ad28cc313",
+    sha256 = "2490dca4f249b8a9a3ab07bd1ba6eca085aaf8e45a734af92aad0c42d9dc7aaf",
+    strip_prefix = "rules_proto-218ffa7dfa5408492dc86c01ee637614f8695c45",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_proto/archive/97d8af4dc474595af3900dd85cb3a29ad28cc313.tar.gz",
-        "https://github.com/bazelbuild/rules_proto/archive/97d8af4dc474595af3900dd85cb3a29ad28cc313.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_proto/archive/218ffa7dfa5408492dc86c01ee637614f8695c45.tar.gz",
+        "https://github.com/bazelbuild/rules_proto/archive/218ffa7dfa5408492dc86c01ee637614f8695c45.tar.gz",
     ],
-)
-
-# language specific rules for building python with Bazel.
-http_archive(
-    name = "rules_python",
-    sha256 = "e5470e92a18aa51830db99a4d9c492cc613761d5bdb7131c04bd92b9834380f6",
-    strip_prefix = "rules_python-4b84ad270387a7c439ebdccfd530e2339601ef27",
-    urls = ["https://github.com/bazelbuild/rules_python/archive/4b84ad270387a7c439ebdccfd530e2339601ef27.tar.gz"],
 )
 
 # the base google protocol buffer code.
 http_archive(
     name = "com_google_protobuf",
-    sha256 = "25680843adf0c3302648d35f744e38cc3b6b05a6c77a927de5aea3e1c2e36106",
-    strip_prefix = "protobuf-3.19.4",
-    urls = ["https://github.com/protocolbuffers/protobuf/archive/v3.19.4.zip"],
+    strip_prefix = "protobuf-21.9",
+    urls = ["https://github.com/protocolbuffers/protobuf/archive/v21.9.zip"],
+    sha256 = "5babb8571f1cceafe0c18e13ddb3be556e87e12ceea3463d6b0d0064e6cc1ac3"
 )
 
 # gRPC code -- has py_proto_library rule which is useful.
@@ -88,17 +82,29 @@ http_archive(
 # proto libraries for grpc. this gives us all the esoteric languages that can be used
 http_archive(
     name = "rules_proto_grpc",
-    sha256 = "7954abbb6898830cd10ac9714fbcacf092299fda00ed2baf781172f545120419",
-    strip_prefix = "rules_proto_grpc-3.1.1",
-    urls = ["https://github.com/rules-proto-grpc/rules_proto_grpc/archive/3.1.1.tar.gz"],
+    sha256 = "bbe4db93499f5c9414926e46f9e35016999a4e9f6e3522482d3760dc61011070",
+    strip_prefix = "rules_proto_grpc-4.2.0",
+    urls = ["https://github.com/rules-proto-grpc/rules_proto_grpc/archive/4.2.0.tar.gz"],
 )
 
-# boost
-git_repository(
+http_archive(
+    name = "platforms",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.5/platforms-0.0.5.tar.gz",
+        "https://github.com/bazelbuild/platforms/releases/download/0.0.5/platforms-0.0.5.tar.gz",
+    ],
+    sha256 = "379113459b0feaf6bfbb584a91874c065078aa673222846ac765f86661c27407",
+)
+
+# Boost
+# Famous C++ library that has given rise to many new additions to the C++ Standard Library
+# Makes @boost available for use: For example, add `@boost//:algorithm` to your deps.
+# For more, see https://github.com/nelhage/rules_boost and https://www.boost.org
+http_archive(
     name = "com_github_nelhage_rules_boost",
-    commit = "1e3a69bf2d5cd10c34b74f066054cd335d033d71",
-    remote = "https://github.com/nelhage/rules_boost",
-    shallow_since = "1591047380 -0700",
+    url = "https://github.com/nelhage/rules_boost/archive/8022bc45ee7acc254ed93cb6872c627ca844a36f.tar.gz",
+    strip_prefix = "rules_boost-8022bc45ee7acc254ed93cb6872c627ca844a36f",
+    sha256 = "a49f49804f788d2f40ee036d44dd92f0130e5866ea81173a4c6a38422a384733"
 )
 
 # boost archive extra files
@@ -319,21 +325,18 @@ load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
 grpc_deps()
 
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
-
 boost_deps()
 
 load("@keiros_public//:bazel/keiros_public.bzl", "keiros_public_deps")
 
 keiros_public_deps()
 
-load("@rules_proto_grpc//js:repositories.bzl", rules_proto_grpc_js_repos = "js_repos")
 
-rules_proto_grpc_js_repos()
+load("@rules_proto_grpc//:repositories.bzl", "rules_proto_grpc_toolchains", "rules_proto_grpc_repos")
+rules_proto_grpc_toolchains()
+rules_proto_grpc_repos()
 
-load("@build_bazel_rules_nodejs//:index.bzl", "yarn_install")
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+rules_proto_dependencies()
+rules_proto_toolchains()
 
-yarn_install(
-    name = "npm",
-    package_json = "@rules_proto_grpc//js:requirements/package.json",  # This should be changed to your local package.json which should contain the dependencies required
-    yarn_lock = "@rules_proto_grpc//js:requirements/yarn.lock",
-)
