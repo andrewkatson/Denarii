@@ -31,7 +31,7 @@ config_setting(
 config_setting(
     name = "x86_64",
     constraint_values = [
-        "@bazel_tools//platforms:x86_64",
+        "@platforms//cpu:x86_64",
     ],
     visibility = ["//visibility:public"],
 )
@@ -39,7 +39,7 @@ config_setting(
 config_setting(
     name = "windows",
     constraint_values = [
-        "@bazel_tools//platforms:windows",
+        "@platforms//os:windows",
     ],
     visibility = ["//visibility:public"],
 )
