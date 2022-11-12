@@ -140,6 +140,16 @@ test*.keys
 test*
 mytest*
 
+# UI stuff
+utils/gui/denarii_client.py
+utils/gui/workspace_path_finder.py
+utils/gui/denariid*
+utils/gui_denarii_wallet_rpc_server*
+utils/gui/google/
+utils/gui/Proto/wallet_pb2.py
+utils/gui/Proto/gui_user_pb2.py
+utils/gui/Security/
+
 # Zips from setup
 external/openssl.zip
 external/supercop.zip

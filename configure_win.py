@@ -16,6 +16,8 @@ import sys
 import workspace_path_finder
 import zipfile
 
+import common
+
 
 class LibraryInfo:
 
@@ -38,28 +40,23 @@ win_library_info = [LibraryInfo("liblzma", "liblzma"), LibraryInfo("libsodium", 
 workspace_path = pathlib.Path()
 
 
-def chdir(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
-
-    os.chdir(path)
-
-
 def get_libunwind():
+    common.print_something("Getting libunwind")
+
     # libunwind wants to be special so we need to download its source files first
     raw_path = str(workspace_path / "external")
 
-    chdir(raw_path)
+    common.chdir(raw_path)
 
     clone_command = "git clone https://github.com/llvm-mirror/libunwind.git"
-    os.system(clone_command)
+    common.system(clone_command)
 
     # need to modify the libunwind.h we are using
     source = str(workspace_path) + "/libunwind.h"
     dest = raw_path + "/libunwind/include/libunwind.h"
 
     move_command = "move " + source + " " + dest
-    os.system(move_command)
+    common.system(move_command)
 
     # Need to modify an include of libunwind to use "" instead of <>
     # opening the file in read mode
@@ -77,19 +74,27 @@ def get_libunwind():
     fout.write(replacement)
     fout.close()
 
+    libunwind_path = workspace_path / "external" / "libunwind"
+    common.check_exists(libunwind_path)
+
 
 def get_zlib():
+    common.print_something("Getting Zlib")
     raw_path = str(workspace_path / "external")
 
-    chdir(raw_path)
+    common.chdir(raw_path)
 
     clone_command = "git clone git@github.com:andrewkatson/zlib.git"
-    os.system(clone_command)
+    common.system(clone_command)
+
+    zlib_path = workspace_path / "external" / "zlib"
+    common.check_exists(zlib_path)
 
 
 def create_build_file_win(libraries):
     external_dir_path = workspace_path / "external"
 
+    common.print_something("Creating BUILD files for Windows libraries")
     for library in libraries:
 
         build_file_name = "BUILD." + library.foldername
@@ -100,10 +105,13 @@ def create_build_file_win(libraries):
             with open(path, 'w'):
                 pass
 
+        common.check_exists(path)
+
 
 def create_folder_win(libraries):
     external_dir_path = workspace_path / "external"
 
+    common.print_something("Creating folders for Windows libraries")
     for library in libraries:
 
         foldername = library.foldername
@@ -115,8 +123,11 @@ def create_folder_win(libraries):
 
         library.folderpath = path
 
+        common.check_exists(path)
+
 
 def get_relevant_paths_win(libraries):
+    common.print_something("Getting relevant paths for Windows libraries")
     base_path = pathlib.Path(R"C:\msys64\mingw64")
     includes_path = os.path.join(base_path, "include")
     src_path = os.path.join(base_path, "lib")
@@ -150,6 +161,7 @@ def get_relevant_paths_win(libraries):
 
 
 def find_src_files_win(libraries):
+    common.print_something("Finding source files for Windows libraries")
     for library in libraries:
 
         for path in library.relevant_paths:
@@ -176,6 +188,7 @@ def find_src_files_win(libraries):
 
 
 def copy_file(path, library):
+    common.print_something("Copying files for Windows libraries")
     if "include" in path:
         try:
             filename = path.split("\\")[-1]
@@ -210,6 +223,7 @@ def copy_file(path, library):
 
 
 def find_includes_win(libraries):
+    common.print_something("Finding include files for Windows libraries")
     for library in libraries:
 
         if library.get_includes:
@@ -226,6 +240,7 @@ def find_includes_win(libraries):
 
 
 def import_dependencies_win():
+    common.print_something("Importing dependencies for Windows")
     get_libunwind()
     get_zlib()
     create_folder_win(win_library_info)
@@ -236,36 +251,43 @@ def import_dependencies_win():
 
 
 def randomx_win(external_dir_path):
+    common.print_something("Getting randomx")
     raw_path = str(external_dir_path)
 
     randomx_path = raw_path + "/randomx"
 
-    chdir(randomx_path)
+    common.chdir(randomx_path)
 
     build_path = randomx_path + "/build"
-    chdir(build_path)
+    common.chdir(build_path)
     command = "cmake -DARCH=native -G \"MinGW Makefiles\" .. && mingw32-make"
-    os.system(command)
+    common.system(command)
+
+    common.check_exists(randomx_path)
 
 
 def miniupnp_win(external_dir_path):
+    common.print_something("Gettign miniupnp")
     raw_path = str(external_dir_path)
 
     # remove the empty directory
     remove_command = "rm -rf " + raw_path + "/external/miniupnp"
-    os.system(remove_command)
+    common.system(remove_command)
 
     # For now we have to clone this because miniupnp fails to download :(
     clone_command = "git clone https://github.com/miniupnp/miniupnp.git"
-    os.system(clone_command)
+    common.system(clone_command)
 
     # we only need to build one of the subdirectories
     miniupnp_path = raw_path + "/external/miniupnp/miniupnpc"
 
-    chdir(miniupnp_path)
+    common.chdir(miniupnp_path)
 
     command = "cmake -G \"MinGW Makefiles\" . && mingw32-make"
-    os.system(command)
+    common.system(command)
+
+    common.check_exists(miniupnp_path)
+
 
 workspace_path = workspace_path_finder.find_workspace_path()
 print(workspace_path)
