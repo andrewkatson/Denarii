@@ -224,7 +224,7 @@ sudo ./bazel-bin/src/denariid --log-file denariid.log --detach
 
 ### On Windows 
 ```bash
-start denariid.exe
+start bazel-bin/src/denariid.exe
 ```
 
 ### On Mac
@@ -245,7 +245,7 @@ sudo ./bazel-bin/src/denarii_wallet_rpc_server --rpc-bind-port=8080 --wallet-dir
 ### On Windows 
 
 ```bash 
-start denarii_wallet_rpc_server.exe
+start bazel-bin/src/denarii_wallet_rpc_server.exe
 ```
 
 ## Stack Traces on Windows 
