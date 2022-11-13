@@ -48,7 +48,7 @@ linux_library_info = [LibraryInfo("libnorm-dev", "libnorm"), LibraryInfo("libunb
                       LibraryInfo("libhidapi-dev", "libhidapi"), LibraryInfo("libusb-1.0-0-dev", "libusb"),
                       LibraryInfo("libudev-dev", "libudev")]
 
-workspace_path = pathlib.Path()
+workspace_path = workspace_path_finder.find_workspace_path()
 
 
 def download_url(url, save_path, chunk_size=128):
@@ -1196,7 +1196,6 @@ def setup_ui_win():
     move_binaries_win()
 
 
-workspace_path = workspace_path_finder.find_workspace_path()
 common.print_something(workspace_path)
 if sys.platform == "linux":
     import_dependencies()

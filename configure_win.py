@@ -29,7 +29,7 @@ win_library_info = [LibraryInfo("liblzma", "liblzma"), LibraryInfo("libsodium", 
                     LibraryInfo("liblmdb", "db_drivers", False),
                     LibraryInfo("libunwind", "libunwind", False)]
 
-workspace_path = pathlib.Path()
+workspace_path = workspace_path_finder.find_workspace_path()
 
 
 def get_libunwind():
@@ -281,8 +281,7 @@ def miniupnp_win(external_dir_path):
     common.check_exists(miniupnp_path)
 
 
-workspace_path = workspace_path_finder.find_workspace_path()
-print(workspace_path)
+common.print_something(workspace_path)
 
 import_dependencies_win()
 
