@@ -2,7 +2,6 @@
 # This assumes that denarii has been cloned into your $HOME repository. Or on Windows your %HOMEDRIVE%%HOMEPATH%
 # To see what that is try 'printenv HOME' or 'printenv HOMEDRIVE' and 'printenv HOMEPATH'
 
-import argparse
 import glob
 import os
 import pathlib

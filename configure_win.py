@@ -3,18 +3,10 @@
 # To see what that is try 'printenv HOMEDRIVE' and 'printenve HOMEPATH'
 # This is only for windows
 
-import argparse
-import glob
 import os
 import pathlib
-import platform
-import re
-import requests
 import shutil
-import subprocess
-import sys
 import workspace_path_finder
-import zipfile
 
 import common
 
