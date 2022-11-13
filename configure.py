@@ -1,5 +1,5 @@
-# Configures some of the install files for denarii.
-# This assumes that denarii has been cloned into your $HOME repository. Or on Windows your %HOMEDRIVE%%HOMEPATH%
+# Configures some of the install files for Denarii.
+# This assumes that Denarii has been cloned into your $HOME repository. Or on Windows your %HOMEDRIVE%%HOMEPATH%
 # To see what that is try 'printenv HOME' or 'printenv HOMEDRIVE' and 'printenv HOMEPATH'
 
 import glob
@@ -11,10 +11,10 @@ import requests
 import shutil
 import subprocess
 import sys
-import workspace_path_finder
 import zipfile
 
 import common
+import workspace_path_finder
 
 py_pb_files_to_check = ["any_pb2.py", "api_pb2.py", "descriptor_pb2.py", "duration_pb2.py", "empty_pb2.py",
                         "field_mask_pb2.py", "source_context_pb2.py", "struct_pb2.py", "timestamp_pb2.py",

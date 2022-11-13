@@ -166,8 +166,6 @@ Bazel with gcc: https://github.com/bazelbuild/bazel/issues/12100
     ```
   
 * Run Configure 
-    
-    Update configure.py and configure_win.py with your workspace path at the top. Also update tests/run_monero_tests.py in the same way. *This step you do from command prompt not msys2*.
 
     ``` 
     bazel run :configure_win (run through command prompt)

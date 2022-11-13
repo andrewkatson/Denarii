@@ -1,10 +1,12 @@
-# This file runs any monero tests that are done through commands in CMAKE. The ones that are run with gtest do not need this
-# and have to be run manually
+# This file runs *some* of the tests for Monero/Denarii
+# This assumes that Denarii has been cloned into your $HOME repository. Or on Windows your %HOMEDRIVE%%HOMEPATH%
+# To see what that is try 'printenv HOME' or 'printenv HOMEDRIVE' and 'printenv HOMEPATH'
 import os
 import subprocess
 
-# NEED TO FILL THIS IN WITH YOUR PATH TO DENARII FOR THIS TO WORK SORRY
-workspace_path = "/home/andrew/denarii"
+import workspace_path_finder
+
+workspace_path = workspace_path_finder.find_workspace_path()
 
 failed_tests = []
 

@@ -50,5 +50,6 @@ cc_binary(
 py_binary(
     name = "run_monero_tests",
     srcs = ["run_monero_tests.py"],
-    deps = [],
+    deps = ["//:workspace_path_finder"],
+    imports = ["//:workspace_path_finder"]
 )

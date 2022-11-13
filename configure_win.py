@@ -1,14 +1,14 @@
-# Configures some of the install files for denarii.
-# This assumes that denarii has been cloned into your %HOMEDRIVE%%HOMEPATH% repository.
+# Configures some of the install files for Denarii.
+# This assumes that Denarii has been cloned into your %HOMEDRIVE%%HOMEPATH% repository.
 # To see what that is try 'printenv HOMEDRIVE' and 'printenve HOMEPATH'
 # This is only for windows
 
 import os
 import pathlib
 import shutil
-import workspace_path_finder
 
 import common
+import workspace_path_finder
 
 
 class LibraryInfo:
