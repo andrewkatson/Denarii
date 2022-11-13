@@ -20,11 +20,11 @@ def report_status_of_test(process, testname):
 
 
 def test_block_weight():
-    block_weight_py_path = workspace_path + "/bazel-bin/tests/block_weight/block_weight_py"
-    block_weight_path = workspace_path + "/bazel-bin/tests/block_weight/block_weight"
+    block_weight_py_path = workspace_path / "bazel-bin" / "tests" / "block_weight" / "block_weight_py"
+    block_weight_path = workspace_path / "bazel-bin" / "tests" / "block_weight" / "block_weight"
 
     # run compare
-    compare_command = "bazel run tests/block_weight:compare -- " + block_weight_py_path + " " + block_weight_path
+    compare_command = "bazel run tests/block_weight:compare -- " + str(block_weight_py_path) + " " + str(block_weight_path)
     compare_proc = subprocess.Popen(compare_command, shell=True, stdout=subprocess.PIPE)
     compare_proc.wait()
     report_status_of_test(compare_proc, "block_weight:compare")
@@ -47,10 +47,10 @@ def test_core_tests():
 
 
 def test_crypto():
-    tests_path = workspace_path + "/tests/crypto/tests.txt"
+    tests_path = workspace_path / "tests" / "crypto" / "tests.txt"
 
     # run crypto
-    crypto_command = "bazel run tests/crypto:cnccrypto_tests -- " + tests_path
+    crypto_command = "bazel run tests/crypto:cnccrypto_tests -- " + str(tests_path)
     crypto_proc = subprocess.Popen(crypto_command, shell=True, stdout=subprocess.PIPE)
     crypto_proc.wait()
     report_status_of_test(crypto_proc, "crypto:crypto")
@@ -63,16 +63,16 @@ def test_crypto():
 
 
 def test_difficulty():
-    data_path = workspace_path + "/tests/difficulty/data.txt"
-    difficulty_tests_command = "bazel run tests/difficulty:difficulty -- " + data_path
+    data_path = workspace_path / "tests" / "difficulty" / "data.txt"
+    difficulty_tests_command = "bazel run tests/difficulty:difficulty -- " + str(data_path)
     difficulty_tests_proc = subprocess.Popen(difficulty_tests_command, shell=True, stdout=subprocess.PIPE)
     difficulty_tests_proc.wait()
     report_status_of_test(difficulty_tests_proc, "difficulty:difficulty")
 
-    gen_wide_python_path = workspace_path + "/tests/difficulty/gen_wide_data.py"
-    difficulty_tests_path = workspace_path + "/bazel-bin/tests/difficulty/difficulty"
-    wide_data_path = workspace_path + "/tests/difficulty/wide_data.txt"
-    wide_difficulty_command = "bazel run tests/difficulty:wide_difficulty -- python3 " + gen_wide_python_path + " " + difficulty_tests_path + " " + wide_data_path
+    gen_wide_python_path = workspace_path / "tests" / "difficulty" / "gen_wide_data.py"
+    difficulty_tests_path = workspace_path / "bazel-bin" / "tests" / "difficulty" / "difficulty"
+    wide_data_path = workspace_path / "tests" / "difficulty" / "wide_data.txt"
+    wide_difficulty_command = "bazel run tests/difficulty:wide_difficulty -- python3 " + str(gen_wide_python_path) + " " + str(difficulty_tests_path) + " " + str(wide_data_path)
     wide_difficulty_proc = subprocess.Popen(wide_difficulty_command, shell=True, stdout=subprocess.PIPE)
     wide_difficulty_proc.wait()
     report_status_of_test(wide_difficulty_proc, "difficulty:wide_difficulty")
@@ -91,15 +91,16 @@ def test_functional_tests():
     # make_test_signature_proc.wait()
     # report_status_of_test(make_test_signature_proc, "functional_tests:make_test_signature")
 
-    current_path = workspace_path + "/tests/functional_tests"
-    binary_path = workspace_path + "/bazel-bin"
-    functional_tests_rpc_command = "bazel run tests/functional_tests:functional_tests_rpc -- python3 " + current_path + " " + binary_path + " all"
+    current_path = workspace_path / "tests" / "functional_tests"
+    binary_path = workspace_path / "bazel-bin"
+    functional_tests_rpc_command = "bazel run tests/functional_tests:functional_tests_rpc -- python3 " + str(
+        current_path) + " " + str(binary_path) + " all"
     functional_tests_rpc_proc = subprocess.Popen(functional_tests_rpc_command, shell=True, stdout=subprocess.PIPE)
     functional_tests_rpc_proc.wait()
     report_status_of_test(functional_tests_rpc_proc, "functional_tests:functional_tests_rpc")
 
     source_path = workspace_path
-    check_missing_command = "bazel run tests/functional_tests:check_missing_rpc_methods -- " + source_path
+    check_missing_command = "bazel run tests/functional_tests:check_missing_rpc_methods -- " + str(source_path)
     check_missing_proc = subprocess.Popen(check_missing_command, shell=True, stdout=subprocess.PIPE)
     check_missing_proc.wait()
     report_status_of_test(check_missing_proc, "functional_tests:check_missing_rpc_methods")
@@ -180,8 +181,9 @@ def test_hash():
                "extra-jh", "extra-skein"]
 
     for flavor in flavors:
-        text_file_path = workspace_path + "/tests/hash/tests-" + flavor + ".txt"
-        flavor_command = "bazel run tests/hash:hash_tests -- " + flavor + " " + text_file_path
+        file_name = "tests-" + flavor + ".txt"
+        text_file_path = workspace_path / "tests" / "hash" / file_name
+        flavor_command = "bazel run tests/hash:hash_tests -- " + flavor + " " + str(text_file_path)
         flavor_proc = subprocess.Popen(flavor_command, shell=True, stdout=subprocess.PIPE)
         flavor_proc.wait()
         report_status_of_test(flavor_proc, "hash:" + flavor)
@@ -212,9 +214,10 @@ def test_top_level():
 
 
 def test_unit_tests():
-    data_dir_path = workspace_path + "/tests/data"
+    data_dir_path = workspace_path / "tests" / "data"
 
-    unit_tests_command = "bazel test tests/unit_tests:unit_tests --test_timeout=1000 --test_arg=--data-dir=" + data_dir_path
+    unit_tests_command = "bazel test tests/unit_tests:unit_tests --test_timeout=1000 --test_arg=--data-dir=" + str(
+        data_dir_path)
     unit_tests_proc = subprocess.Popen(unit_tests_command, shell=True, stdout=subprocess.PIPE)
     unit_tests_proc.wait()
     report_status_of_test(unit_tests_proc, "unit_tests:unit_tests")
