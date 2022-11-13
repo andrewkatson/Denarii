@@ -41,27 +41,6 @@ See [LICENSE](LICENSE).
 * The real dependencies no longer need to be fiddled with just run the configuration script and it will do the rest.
 * Need to set an enviornment variable ```DENARI_WORKSPACE_PATH=``` and then put whatever the path is to folder containing the ```WORKSPACE``` file. 
 
-### Real Dependencies 
-
-#### Manually pulled in 
-* PyQt5 (for the gui)  On Windows: `pip install pyqt5` On Linux: `sudo apt-get install python3-pyqt5`
- 
-#### Automatically pulled in 
-* Boost Archive: Do not need to do anything 
-* DB_Driver (liblmdb): Do not need to do anything 
-* Easylogging++: Do not need to do anything 
-* Miniupnp: Need to build each of the subfolders within the miniupnp folder. They all have their own instructions GL
-* Qrcodegen: Do not need to do anything. 
-* RandomX: Need to build it according to its README. 
-* Rapdijson: Do not need to do anything. If you want to build you need to remove "-Werror" from its CMakeLists.txt
-* Supercop: Need to build it according to its README. But you need to build it twice. Once normally and then rename 
-            the outputted file to ```libmonero-crypto64.a```. Then build with the ```-DMONERO_CRYPTO_LIBRARY=amd64-51-30k```
-            flag at the cmake step. Make sure you go and manually pull supercop do not rely on the one that is provided when 
-            you pull this repository. From https://github.com/monero-project/supercop/tree/monero 
-* Trezor-common: Do not need to do anything
-* Unbound: Build according to its instructions in its README. Then, move libunbound.a from /usr/local/lib to the unbound directory
-
-
 ### Dependencies
 
 The following table summarizes the tools and libraries required to build. A
@@ -169,17 +148,23 @@ Bazel with gcc: https://github.com/bazelbuild/bazel/issues/12100
 
 * Install dependencies:
 
-    To build for 64-bit Windows:
+    To build for 64-bit Windows in Msys2:
 
     ```bash
-    pacman -S mingw-w64-x86_64-toolchain make mingw-w64-x86_64-cmake mingw-w64-x86_64-boost mingw-w64-x86_64-openssl mingw-w64-x86_64-zeromq mingw-w64-x86_64-libsodium mingw-w64-x86_64-hidapi mingw-w64-x86_64-libunwind mingw-w64-x86_64-libusb mingw-w64-x86_64-unbound mingw-w64-i686-lmdb mingw-w64-i686-qt-creator &&  pip install PyQt5
+    pacman -S mingw-w64-x86_64-toolchain make mingw-w64-x86_64-cmake mingw-w64-x86_64-boost mingw-w64-x86_64-openssl mingw-w64-x86_64-zeromq mingw-w64-x86_64-libsodium mingw-w64-x86_64-hidapi mingw-w64-x86_64-libunwind mingw-w64-x86_64-libusb mingw-w64-x86_64-unbound mingw-w64-i686-lmdb mingw-w64-i686-qt-creator mingw-w64-x86_64-python-pyqt5
     ```
 
-    To build for 32-bit Windows:
+    To build for 32-bit Windows in Msys2:
 
     ```bash
-    pacman -S mingw-w64-i686-toolchain make mingw-w64-i686-cmake mingw-w64-i686-boost mingw-w64-i686-openssl mingw-w64-i686-zeromq mingw-w64-i686-libsodium mingw-w64-i686-hidapi mingw-w64-i686-libunwind mingw-w64-i686-libusb mingw-w64-i686-unbound mingw-w64-x86_64-lmdb mingw-w64-x86_64-qt-creator &&  pip install PyQt5
+    pacman -S mingw-w64-i686-toolchain make mingw-w64-i686-cmake mingw-w64-i686-boost mingw-w64-i686-openssl mingw-w64-i686-zeromq mingw-w64-i686-libsodium mingw-w64-i686-hidapi mingw-w64-i686-libunwind mingw-w64-i686-libusb mingw-w64-i686-unbound mingw-w64-i686-lmdb mingw-w64-i686-qt-creator mingw-w64-i686-python-pyqt5
     ```
+  
+    Then run in command prompt 
+    ```bash 
+    pip install PyQt5
+    ```
+  
 * Run Configure 
     
     Update configure.py and configure_win.py with your workspace path at the top. Also update tests/run_monero_tests.py in the same way. *This step you do from command prompt not msys2*.
@@ -205,10 +190,9 @@ If you want to build in debug mode use `--compilation_mode=dbg` instead of `--co
 
 Need to set JAVA_HOME in msys. Mine is ```export JAVA_HOME=/c/'Program Files'/Java/jdk-10.0.2```
 
-Protoc works weird with mingw-gcc so you have to fix it. There are two ways. 
+Protoc works weird with mingw-gcc so you have to fix it.
 
-1. Need to add to PATH ```C:\Windows\SYSTEM32``` and ```C:\msys64\usr\bin```. You can now build through the command prompt
-2. Add the following files to `C:\msys64\mingw-gcc\bin`
+Add the following files to `C:\msys64\mingw-gcc\bin`
 * `ntdll.dll`
 * `KERNEL32.DLL`
 * `KERNELBASE.dll`
@@ -217,6 +201,8 @@ Protoc works weird with mingw-gcc so you have to fix it. There are two ways.
 These can all be found under `C:\Windows\SYSTEM32` 
 
 ## Running denariid
+
+### On Linux
 
 The build places the binary in `bazel-bin/` sub-directory. To run in the
 foreground:
@@ -238,16 +224,30 @@ To run in background:
 sudo ./bazel-bin/src/denariid --log-file denariid.log --detach
 ```
 
+### On Windows 
+```bash
+start denariid.exe
+```
+
+### On Mac
 If you're on Mac, you may need to add the `--max-concurrency 1` option to
 denarii-wallet-cli, and possibly denariid, if you get crashes refreshing. You also might need `--no-igd`.
 
 ## Running denarii wallet rpc server
+
+### On Linux
 
 The build places the binary in `bazel-bin` sub-directory: To run in the foreground: 
 
 ```bash
 bazel build src:denarii_wallet_rpc_server
 sudo ./bazel-bin/src/denarii_wallet_rpc_server --rpc-bind-port=8080 --wallet-dir=/some/existing/path
+```
+
+### On Windows 
+
+```bash 
+start denarii_wallet_rpc_server.exe
 ```
 
 ## Stack Traces on Windows 
