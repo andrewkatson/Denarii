@@ -224,18 +224,19 @@ def test_unit_tests():
     dcv_unit_tests_proc.wait()
     report_status_of_test(dcv_unit_tests_proc, "unit_tests:dynamic_critical_values")
 
+
 os.chdir(workspace_path)
 
-#NEEDS TO BE RUN SEPARATELY
-#test_core_tests()
-#test_functional_tests()
+# NEEDS TO BE RUN SEPARATELY
+# test_core_tests()
+# test_functional_tests()
 
-#test_block_weight()
-#test_crypto()
-#test_difficulty()
-#test_hash()
-#test_top_level()
-#test_unit_tests()
+test_block_weight()
+test_crypto()
+test_difficulty()
+test_hash()
+test_top_level()
+test_unit_tests()
 
 # Monero doesn't run these
 # test_core_proxy()
