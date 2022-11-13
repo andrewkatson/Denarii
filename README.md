@@ -416,3 +416,9 @@ Because of the nature of the socket-based protocols that drive denarii, certain 
 Certain blockchain "features" can be considered "bugs" if misused correctly. Consequently, please consider the following:
 
 - When receiving denarii, be aware that it may be locked for an arbitrary time if the sender elected to, preventing you from spending that denarii until the lock time expires. You may want to hold off acting upon such a transaction until the unlock time lapses. To get a sense of that time, you can consider the remaining blocktime until unlock as seen in the `show_transfers` command.
+
+## Connections 
+
+### Denariid on Windows 
+
+- Right now, `denaiid.exe` will sometimes fail to connect to the network. If it happens just restart it.
