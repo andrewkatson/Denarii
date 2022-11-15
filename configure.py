@@ -185,10 +185,10 @@ def import_dependencies():
 
 def miniupnp(external_dir_path):
     common.print_something("Getting miniupnp")
-    raw_path = str(external_dir_path)
+    common.chdir(external_dir_path)
 
     # remove the empty directory
-    remove_command = "rm -rf " + raw_path + "/miniupnp"
+    remove_command = "rm -rf " + str(external_dir_path / "miniupnp")
     common.system(remove_command)
 
     # For now we have to clone this because miniupnp fails to download :(
@@ -196,42 +196,44 @@ def miniupnp(external_dir_path):
     common.system(clone_command)
 
     # we only need to build one of the subdirectories
-    miniupnp_path = raw_path + "/miniupnp/miniupnpc"
+    miniupnp_path = external_dir_path / "miniupnp" / "miniupnpc"
 
     common.chdir(miniupnp_path)
 
     command = "sudo make install"
     common.system(command)
 
-    common.check_exists(miniupnp_path)
+    miniupnp_library_path = miniupnp_path / "libminiupnpc.a"
+    common.check_exists(miniupnp_library_path)
 
 
 def randomx(external_dir_path):
     common.print_something("Getting randomx")
-    raw_path = str(external_dir_path)
+    common.chdir(external_dir_path)
 
-    randomx_path = raw_path + "/randomx"
+    randomx_path = external_dir_path / "randomx"
 
     common.chdir(randomx_path)
 
     command = "mkdir build && cd build && cmake -DARCH=native .. && make"
     common.system(command)
 
-    common.check_exists(randomx_path)
+    randomx_library_path = randomx_path / "build" / "librandomx.a"
+    common.check_exists(randomx_library_path)
 
 
 def supercop(external_dir_path):
     common.print_something("Getting supercop")
-    raw_path = str(external_dir_path)
 
-    common.chdir(raw_path)
+    common.chdir(external_dir_path)
 
-    supercop_path = raw_path + "/supercop"
+    supercop_path = external_dir_path / "supercop"
 
-    remove_command = "rm -rf " + supercop_path
+    remove_command = "rm -rf " + str(supercop_path)
     common.system(remove_command)
 
-    clone_command = "git clone --recursive https://github.com/andrewkatson/supercop.git && cd supercop && git submodule init && git submodule update"
+    clone_command = "git clone --recursive https://github.com/andrewkatson/supercop.git && cd supercop && git " \
+                    "submodule init && git submodule update "
     common.system(clone_command)
 
     common.chdir(supercop_path)
@@ -240,138 +242,114 @@ def supercop(external_dir_path):
     first_create_command = "cmake . && make && sudo make install"
     common.system(first_create_command)
 
-    first_move_command = "mv /usr/local/lib/libmonero-crypto.a " + supercop_path + "/libmonero-crypto64.a"
-    common.system(first_move_command)
+    lib_crypto_path = "/usr/local/lib/libmonero-crypto.a"
+
+    shutil.copyfile(lib_crypto_path, str(supercop_path / "libmonero-crypto64.a"))
 
     # then create its sibling
     second_create_command = "cmake . -DMONERO_CRYPTO_LIBRARY=amd64-51-30k && make && sudo make install"
     common.system(second_create_command)
 
-    second_move_command = "mv /usr/local/lib/libmonero-crypto.a " + supercop_path + "/libmonero-crypto.a"
-    common.system(second_move_command)
+    shutil.copyfile(lib_crypto_path, str(supercop_path / "libmonero-crypto.a"))
 
-    common.check_exists(supercop_path)
-
-
-def supercop_win(external_dir_path):
-    common.print_something("Getting supercop for Windows")
-    raw_path = str(external_dir_path)
-
-    common.chdir(raw_path)
-
-    supercop_path = raw_path + "/supercop"
-
-    remove_command = "rm -rf " + supercop_path
-    common.system(remove_command)
-
-    clone_command = "git clone --recursive https://github.com/andrewkatson/supercop.git && git submodule init && git submodule update"
-    common.system(clone_command)
-
-    common.chdir(supercop_path)
-
-    # need to create the first crypto library
-    first_create_command = "cmake . && make && make install"
-    common.system(first_create_command)
-
-    first_move_command = "mv /usr/local/lib/libmonero-crypto.a " + supercop_path + "/libmonero-crypto64.a"
-    common.system(first_move_command)
-
-    # then create its sibling
-    second_create_command = "cmake . -DMONERO_CRYPTO_LIBRARY=amd64-51-30k && make && make install"
-    common.system(second_create_command)
-
-    second_move_command = "mv /usr/local/lib/libmonero-crypto.a " + supercop_path + "/libmonero-crypto.a"
-    common.system(second_move_command)
-
-    common.check_exists(supercop_path)
+    supercop_64_library_path = supercop_path / "libmonero-crypto64.a"
+    supercop_other_library_path = supercop_path / "libmonero-crypto.a"
+    common.check_exists(supercop_64_library_path)
+    common.check_exists(supercop_other_library_path)
 
 
 def unbound(external_dir_path):
     common.print_something("Getting unbound")
-    raw_path = str(external_dir_path)
+    common.chdir(external_dir_path)
 
-    unbound_path = raw_path + "/unbound"
+    unbound_path = external_dir_path / "unbound"
 
     common.chdir(unbound_path)
 
     command = "./configure && make && sudo make install"
     common.system(command)
 
-    move_command = "mv /usr/local/lib/libunbound.so " + unbound_path
-    common.system(move_command)
+    shutil.copyfile("/usr/local/lib/libunbound.so", str(unbound_path / "libunbound.so"))
 
-    common.check_exists(unbound_path)
+
+    common.check_exists(unbound_path / "libunbound.so"))
 
 
 def openssl(external_dir_path):
     common.print_something("Getting openssl")
-    raw_path = str(external_dir_path)
 
-    common.chdir(raw_path)
+    common.chdir(external_dir_path)
 
-    openssl_zip_path = raw_path + "/openssl.zip"
-    download_url("https://www.openssl.org/source/openssl-1.1.1i.tar.gz", openssl_zip_path)
+    openssl_zip_path = external_dir_path / "openssl.zip"
+    download_url("https://www.openssl.org/source/openssl-1.1.1i.tar.gz", str(openssl_zip_path))
 
-    unzip_command = "tar -xvzf " + openssl_zip_path + " -C " + raw_path
+    unzip_command = "tar -xvzf " + str(openssl_zip_path) + " -C " + str(external_dir_path)
     common.system(unzip_command)
 
-    openssl_path = raw_path + "/openssl"
+    openssl_path = external_dir_path / "openssl"
 
-    openssl_wrong_name_path = raw_path + "/openssl-1.1.1i"
-    rename_command = "mv " + openssl_wrong_name_path + " " + openssl_path
-    common.system(rename_command)
+    openssl_wrong_name_path = external_dir_path / "openssl-1.1.1i"
+
+    shutil.copytree(str(openssl_wrong_name_path), str(openssl_path))
 
     common.chdir(openssl_path)
 
-    command = "./config && make && make test"
-    common.system(command)
+    make_command = "./config && make && make test"
+    common.system(make_command)
 
-    common.check_exists(openssl_path)
+    libssl_path = openssl_path / "libssl.a"
+    libcrypto_path = openssl_path / "libcrypto.a"
+    common.check_exists(libssl_path)
+    common.check_exists(libcrypto_path)
 
 
 def libzmq(external_dir_path):
     common.print_something("Getting libzmq")
-    raw_path = str(external_dir_path)
+    common.chdir(external_dir_path)
 
     clone_command = "git clone https://github.com/zeromq/libzmq.git"
     common.system(clone_command)
 
-    libzmq_path = raw_path + "/libzmq"
+    libzmq_path = external_dir_path / "libzmq"
 
     common.chdir(libzmq_path)
 
-    command = "./autogen.sh && ./configure --with-libsodium && make && sudo make install"
-    common.system(command)
+    make_command = "./autogen.sh && ./configure --with-libsodium && make && sudo make install"
+    common.system(make_command)
 
-    move_command = "mv /usr/local/lib/libzmq.a " + libzmq_path
-    common.system(move_command)
+    libzmq_library_path = libzmq_path / "libzmq.a"
+    shutil.copyfile("/usr/local/lib/libzmq.a", str(libzmq_library_path))
 
-    common.check_exists(libzmq_path)
+    common.check_exists(libzmq_library_path)
 
 
 def zlib(external_dir_path):
     common.print_something("Getting zlib")
-    raw_path = str(external_dir_path)
+    common.chdir(external_dir_path)
 
-    zlib_path = raw_path + "/zlib"
+    zlib_path = external_dir_path / "zlib"
 
     common.chdir(zlib_path)
 
-    command = "./configure && make test && sudo make install"
-    common.system(command)
+    make_command = "./configure && make test && sudo make install"
+    common.system(make_command)
 
+    # We dont check for the existence of a library because zlib is just a normal bazel cc_library
     common.check_exists(zlib_path)
 
 
 def liblmdb(external_dir_path):
     common.print_something("Getting liblmdb")
-    liblmdb_path = external_dir_path / "db_drivers/liblmdb"
+    common.chdir(external_dir_path)
+
+    liblmdb_path = external_dir_path / "db_drivers" / "liblmdb"
 
     common.chdir(liblmdb_path)
-    command = "make"
-    common.system(command)
+    make_command = "make"
+    common.system(make_command)
 
-    common.check_exists(liblmdb_path)
+    liblmdb_library_path = liblmdb_path / "liblmdb.a"
+    common.check_exists(liblmdb_library_path)
 
 
 def build_dependencies():
@@ -405,6 +383,39 @@ def build_dependencies():
     liblmdb(external_dir_path)
     common.chdir(external_dir_path)
 
+def supercop_win(external_dir_path):
+    common.print_something("Getting supercop for Windows")
+
+    common.chdir(external_dir_path)
+
+    supercop_path = external_dir_path / "supercop"
+
+    remove_command = "rm -rf " + str(supercop_path)
+    common.system(remove_command)
+
+    clone_command = "git clone --recursive https://github.com/andrewkatson/supercop.git && git submodule init && git submodule update"
+    common.system(clone_command)
+
+    common.chdir(supercop_path)
+
+    # need to create the first crypto library
+    first_create_command = "cmake . && make && sudo make install"
+    common.system(first_create_command)
+
+    lib_crypto_path = "/usr/local/lib/libmonero-crypto.a"
+
+    shutil.copyfile(lib_crypto_path, str(supercop_path / "libmonero-crypto64.a"))
+
+    # then create its sibling
+    second_create_command = "cmake . -DMONERO_CRYPTO_LIBRARY=amd64-51-30k && make && sudo make install"
+    common.system(second_create_command)
+
+    shutil.copyfile(lib_crypto_path, str(supercop_path / "libmonero-crypto.a"))
+
+    supercop_64_library_path = supercop_path / "libmonero-crypto64.a"
+    supercop_other_library_path = supercop_path / "libmonero-crypto.a"
+    common.check_exists(supercop_64_library_path)
+    common.check_exists(supercop_other_library_path)
 
 def build_dependencies_win():
     common.print_something("Building dependencies for Windows")
