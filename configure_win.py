@@ -259,7 +259,7 @@ def randomx_win(external_dir_path):
 
 
 def miniupnp_win(external_dir_path):
-    common.print_something("Gettign miniupnp")
+    common.print_something("Getting miniupnp")
     raw_path = str(external_dir_path)
 
     # remove the empty directory

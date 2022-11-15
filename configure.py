@@ -4,7 +4,6 @@
 
 import glob
 import os
-import pathlib
 import platform
 import re
 import requests
