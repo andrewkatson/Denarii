@@ -244,41 +244,38 @@ def import_dependencies_win():
 
 def randomx_win(external_dir_path):
     common.print_something("Getting randomx")
-    raw_path = str(external_dir_path)
 
-    randomx_path = raw_path + "/randomx"
+    randomx_path = external_dir_path / "randomx"
 
     common.chdir(randomx_path)
 
-    build_path = randomx_path + "/build"
+    build_path = randomx_path / "build"
     common.chdir(build_path)
     command = "cmake -DARCH=native -G \"MinGW Makefiles\" .. && mingw32-make"
     common.system(command)
 
-    common.check_exists(randomx_path)
+    randomx_library_path = build_path / "librandomx.a"
+    common.check_exists(randomx_library_path)
 
 
 def miniupnp_win(external_dir_path):
     common.print_something("Getting miniupnp")
-    raw_path = str(external_dir_path)
-
-    # remove the empty directory
-    remove_command = "rm -rf " + raw_path + "/external/miniupnp"
-    common.system(remove_command)
+    common.chdir(external_dir_path)
 
     # For now we have to clone this because miniupnp fails to download :(
     clone_command = "git clone https://github.com/miniupnp/miniupnp.git"
     common.system(clone_command)
 
     # we only need to build one of the subdirectories
-    miniupnp_path = raw_path + "/external/miniupnp/miniupnpc"
+    miniupnp_path = external_dir_path / "miniupnp" / "miniupnpc"
 
     common.chdir(miniupnp_path)
 
     command = "cmake -G \"MinGW Makefiles\" . && mingw32-make"
     common.system(command)
 
-    common.check_exists(miniupnp_path)
+    miniupnp_library_path = miniupnp_path / "libminiupnpc.a"
+    common.check_exists(miniupnp_library_path)
 
 
 common.print_something(workspace_path)
