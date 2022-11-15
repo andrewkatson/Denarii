@@ -271,8 +271,7 @@ def unbound(external_dir_path):
 
     shutil.copyfile("/usr/local/lib/libunbound.so", str(unbound_path / "libunbound.so"))
 
-
-    common.check_exists(unbound_path / "libunbound.so"))
+    common.check_exists(unbound_path / "libunbound.so")
 
 
 def openssl(external_dir_path):
@@ -383,6 +382,7 @@ def build_dependencies():
     liblmdb(external_dir_path)
     common.chdir(external_dir_path)
 
+
 def supercop_win(external_dir_path):
     common.print_something("Getting supercop for Windows")
 
@@ -416,6 +416,7 @@ def supercop_win(external_dir_path):
     supercop_other_library_path = supercop_path / "libmonero-crypto.a"
     common.check_exists(supercop_64_library_path)
     common.check_exists(supercop_other_library_path)
+
 
 def build_dependencies_win():
     common.print_something("Building dependencies for Windows")
