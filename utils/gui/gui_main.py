@@ -257,6 +257,7 @@ try:
             self.name_line_edit = QLineEdit()
             self.email_line_edit = QLineEdit()
             self.password_line_edit = QLineEdit()
+            self.password_line_edit.setEchoMode(QLineEdit.Password)
             self.seed_line_edit = QLineEdit()
             self.address_line_edit = QLineEdit()
             self.amount_line_edit = QLineEdit()
