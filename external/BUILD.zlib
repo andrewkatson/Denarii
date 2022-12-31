@@ -10,6 +10,14 @@ config_setting(
     visibility = ["//visibility:public"],
 )
 
+config_setting(
+    name = "mac",
+    constraint_values = [
+        "@platforms//os:macos",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 _ZLIB_HEADERS = [
     "crc32.h",
     "deflate.h",
@@ -62,6 +70,7 @@ cc_library(
     hdrs = _ZLIB_PREFIXED_HEADERS,
     copts = select({
         "windows": [],
+        "mac": [],
         "//conditions:default": [
             "-Wno-unused-variable",
             "-Wno-implicit-function-declaration",

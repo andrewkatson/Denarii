@@ -9,6 +9,14 @@ config_setting(
     visibility = ["//visibility:public"],
 )
 
+config_setting(
+    name = "mac",
+    constraint_values = [
+        "@platforms//os:macos",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 cc_library (
  name = "minissdpd",
  srcs = glob(["**/minissdpd/*.a"]),
@@ -21,12 +29,14 @@ cc_library(
                 "windows": glob([
                    "**/miniupnpc/*.a",
                 ]),
+                "mac": [],
                 "//conditions:default": glob(["**/miniupnpc/*.a"]),
                 }),
  hdrs = glob(["**/miniupnpc/**/*.h"]),
  linkstatic = True,
  linkopts =  select({
                 "windows": ["-liphlpapi"],
+                "mac": [],
                 "//conditions:default": [],
                 }),
 )

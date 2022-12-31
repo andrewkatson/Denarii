@@ -13,8 +13,6 @@ import subprocess
 import sys
 import zipfile
 
-from difflib import SequenceMatcher
-
 import common
 import workspace_path_finder
 
@@ -73,12 +71,8 @@ mac_library_info = [LibraryInfo("autoconf"), LibraryInfo("autogen"), LibraryInfo
 workspace_path = workspace_path_finder.find_workspace_path()
 
 
-def similar(a, b):
-    return SequenceMatcher(None, a, b).ratio()
-
-
 def download_url(url, save_path, chunk_size=128):
-    common.print_something(f"Downloading url {url}")
+    common.print_something(f"Downloading url {url} to {save_path}")
     r = requests.get(url, stream=True)
     with open(save_path, 'wb') as fd:
         for chunk in r.iter_content(chunk_size=chunk_size):
@@ -296,7 +290,7 @@ def import_dependencies_mac():
     common.print_something("Importing dependencies for Mac")
     create_folder(mac_library_info)
     get_relevant_paths_mac(mac_library_info)
-    # find_includes_mac(mac_library_info)
+    find_includes_mac(mac_library_info)
     find_src_files_mac(mac_library_info)
 
 
@@ -548,14 +542,51 @@ def build_dependencies_win():
     supercop_win(external_dir_path)
     common.chdir(external_dir_path)
 
+def randomx_mac(external_dir_path):
+    pass
+
+def supercop_mac(external_dir_path):
+    pass
+
+def unbound_mac(external_dir_path):
+    pass
+
+def liblmdb_mac(external_dir_path):
+    pass
+
+def libnorm_mac(external_dir_path):
+    pass
+
+def libusb_mac(external_dir_path):
+    pass
 
 def build_dependencies_mac():
-    pass
+    common.print_something("Building dependencies for Mac")
+    external_dir_path = workspace_path / "external"
+
+    common.chdir(external_dir_path)
+    randomx_mac(external_dir_path)
+
+    common.chdir(external_dir_path)
+    supercop_mac(external_dir_path)
+
+    common.chdir(external_dir_path)
+    unbound_mac(external_dir_path)
+
+    common.chdir(external_dir_path)
+    liblmdb_mac(external_dir_path)
+
+    common.chdir(external_dir_path)
+    libnorm_mac(external_dir_path)
+
+    common.chdir(external_dir_path)
+    libusb_mac(external_dir_path)
+
 
 
 def trezor_common():
 
-    trezor_common_build_file_path = workspace_path_finder / \
+    trezor_common_build_file_path = workspace_path / \
         "trezor_common_build_file.txt"
     with open(trezor_common_build_file_path) as f:
         text = f.read()
@@ -565,6 +596,8 @@ def trezor_common():
     common.chdir(path_to_dir)
 
     common.system(f"echo \'{text}\' > BUILD")
+
+    common.check_exists(trezor_common_build_file_path)
 
     path_to_workspace_dir = str(workspace_path) + "/external/trezor-common"
     common.chdir(path_to_workspace_dir)
@@ -576,7 +609,7 @@ def trezor_common():
 
     common.system(f"echo \'{workspace_text}\' > WORKSPACE")
 
-    common.check_exists(path_to_workspace_dir)
+    common.check_exists(trezor_common_workspace_file_path)
 
 
 def blocks_generate():
@@ -608,12 +641,11 @@ def blocks_generate():
 
 def crypto_wallet_generate():
     common.print_something("Generating crypto wallet directory")
-    crypto_wallet_path = str(workspace_path) + "/src/crypto/wallet"
+    crypto_wallet_path = workspace_path / "src" / "crypto" / "wallet"
     ops_file = "ops.h"
-    build_file = "BUILD"
 
-    supercop_path = str(workspace_path) + "/external/supercop"
-    copy_file_path = supercop_path + "/include/monero/crypto.h"
+    supercop_path = workspace_path / "external" / "supercop"
+    copy_file_path = supercop_path / "include" / "monero" / "crypto.h"
 
     # If we are on Linux and have 64 bit processor we can use monero's default crypto libraries
     if re.match(".*nix.*|.*ux.*", platform.common.system()) and re.match(".*amd64.*|.*AMD64.*|.*x86_64.*",
@@ -622,7 +654,7 @@ def crypto_wallet_generate():
         # copy the contents of the crypto file over to ops
         with open(copy_file_path, "r") as copy:
             # generate the file
-            command = "cd " + crypto_wallet_path + " && echo > " + ops_file
+            command = "cd " + str(crypto_wallet_path) + " && echo > " + ops_file
             common.system(command)
 
             # the license causes all sorts of problems with echo so we just skip it
@@ -635,7 +667,7 @@ def crypto_wallet_generate():
                     # we have to output a different line than the include in this line because
                     # bazel will not be viewing that dependency in the same way that cmake does
                     modified_line = "#include \"include/monero/crypto/amd64-64-24k.h\""
-                    copy_line_command = "cd " + crypto_wallet_path + \
+                    copy_line_command = "cd " + str(crypto_wallet_path) + \
                         " && echo '" + modified_line + "' >> " + ops_file
                     common.system(copy_line_command)
 
@@ -643,12 +675,12 @@ def crypto_wallet_generate():
                     # we have to output a different line than the include in this line because
                     # bazel will not be viewing that dependency in the same way that cmake does
                     modified_line = "#include \"include/monero/crypto/amd64-51-30k.h\""
-                    copy_line_command = "cd " + crypto_wallet_path + \
+                    copy_line_command = "cd " + str(crypto_wallet_path) + \
                         " && echo '" + modified_line + "' >> " + ops_file
                     common.system(copy_line_command)
 
                 elif seen_license_info:
-                    copy_line_command = "cd " + crypto_wallet_path + \
+                    copy_line_command = "cd " + str(crypto_wallet_path) + \
                         " && echo '" + line + "' >> " + ops_file
                     common.system(copy_line_command)
     else:
@@ -656,6 +688,9 @@ def crypto_wallet_generate():
         command = "cd " + crypto_wallet_path + " && touch " + \
             ops_file + " && echo \"#pragma once\" >> " + ops_file
         common.system(command)
+
+    
+    common.check_exists(crypto_wallet_path / ops_file)
 
 
 def is_git_repo():
@@ -730,13 +765,13 @@ def generate_version_file_with_replacement(version_tag, is_release):
     input_file = "version.cpp.in"
     output_file = "version.cpp"
 
-    src_directory = str(workspace_path) + "/src/"
+    src_directory = workspace_path / "src"
 
     input_file_path = os.path.join(src_directory, input_file)
     with open(input_file_path, "r") as copy:
 
         # create the file
-        create_file_command = "cd " + src_directory + " && echo > " + output_file
+        create_file_command = "cd " + str(src_directory) + " && echo > " + output_file
         common.system(create_file_command)
 
         for line in copy:
@@ -748,10 +783,10 @@ def generate_version_file_with_replacement(version_tag, is_release):
                 line_to_write = line.replace(
                     version_release_str, str(is_release).lower())
 
-            write_line_command = "cd " + src_directory + \
+            write_line_command = "cd " + str(src_directory) + \
                 " && echo '" + line_to_write + "' >> " + output_file
             common.system(write_line_command)
-
+    common.check_exists(src_directory / output_file)
 
 def version_generate():
     if have_git():
@@ -778,9 +813,9 @@ def generate_benchmark_file_with_replacement(replacement):
     input_file = "benchmark.h.in"
     output_file = "benchmark.h"
 
-    tests_directory = str(workspace_path) + "/tests/"
+    tests_directory = workspace_path / "tests"
 
-    input_file_path = os.path.join(tests_directory, input_file)
+    input_file_path = tests_directory / input_file
 
     with open(input_file_path, "r") as copy:
 
@@ -790,10 +825,11 @@ def generate_benchmark_file_with_replacement(replacement):
             if benchmark_str in line:
                 line_to_write = line.replace(benchmark_str, replacement)
 
-            write_line_command = "cd " + tests_directory + \
+            write_line_command = "cd " + str(tests_directory) + \
                 " && echo '" + line_to_write + "' >> " + output_file
             common.system(write_line_command)
 
+    common.check_exists(tests_directory / output_file)
 
 def benchmark_generate():
     replacement = ""
@@ -810,7 +846,7 @@ def benchmark_generate():
 
 def convert_translation_files():
     common.print_something("Conveting translation files")
-    translation_file_dir = str(workspace_path) + "/translations"
+    translation_file_dir = workspace_path  / "translations"
 
     common.chdir(translation_file_dir)
 
@@ -828,12 +864,14 @@ def convert_translation_files():
         conversion_command = "lrelease " + file + " -qm " + converted_file
         common.system(conversion_command)
 
+        common.check_exists(translation_file_dir / converted_file)
+
     return converted_files
 
 
 def convert_translation_files_win():
     common.print_something("Converting translation files for Windows")
-    translation_file_dir = str(workspace_path) + "/translations"
+    translation_file_dir = workspace_path / "translations"
 
     common.chdir(translation_file_dir)
 
@@ -851,17 +889,19 @@ def convert_translation_files_win():
         conversion_command = "/mingw64/bin/lrelease " + file + " -qm " + converted_file
         common.system(conversion_command)
 
+        common.check_exists(translation_file_dir / converted_file)
+
     return converted_files
 
 
 def run_translation_generation(translation_files):
     common.print_something("Running translation generation")
-    translation_file_dir = str(workspace_path) + "/translations"
+    translation_file_dir = workspace_path / "translations"
     # create the file first
-    create_command = "cd " + translation_file_dir + " && echo > translation_files.h"
+    create_command = "cd " + str(translation_file_dir) + " && echo > translation_files.h"
     common.system(create_command)
 
-    translation_file_path = translation_file_dir + "/translation_files.h"
+    translation_file_path = translation_file_dir / "translation_files.h"
 
     # need to build the binary first so the command will work
     build_command = "bazel build :generate_translations"
@@ -869,7 +909,7 @@ def run_translation_generation(translation_files):
 
     # we cannot use bazel run because it just won't cooperate
     generation_command = str(
-        workspace_path) + "/bazel-bin/translations/generate_translations " + translation_file_path + " "
+        workspace_path) + "/bazel-bin/translations/generate_translations " + str(translation_file_path) + " "
 
     for translation_file in translation_files:
         generation_command = generation_command + " " + \
@@ -877,16 +917,18 @@ def run_translation_generation(translation_files):
 
     common.system(generation_command)
 
+    common.check_exists(translation_file_path)
+
 
 def run_translation_generation_win(translation_files):
     common.print_something("Running translation generation for Windows")
-    translation_file_dir = str(workspace_path) + "/translations"
+    translation_file_dir = workspace_path / "translations"
 
     # create the file first
     create_command = "cd " + translation_file_dir + " && echo > translation_files.h"
     common.system(create_command)
 
-    translation_file_path = translation_file_dir + "/translation_files.h"
+    translation_file_path = translation_file_dir / "translation_files.h"
 
     # need to build the binary first so the command will work
     build_command = "bazel build :generate_translations"
@@ -894,13 +936,15 @@ def run_translation_generation_win(translation_files):
 
     # we cannot use bazel run because it just won't cooperate
     generation_command = "bazel run :generate_translations -- " + \
-        translation_file_path + " "
+        str(translation_file_path) + " "
 
     for translation_file in translation_files:
         generation_command = generation_command + " " + \
             translation_file_dir + "/" + translation_file
 
     common.system(generation_command)
+
+    common.check_exists(translation_file_path)
 
 
 def translations_generate():
@@ -964,6 +1008,7 @@ def download_protobuf():
     with zipfile.ZipFile(save_path, 'r') as zip_ref:
         zip_ref.extractall(final_path)
 
+    common.check_exists(final_path)
 
 def download_dependencies_for_ui():
     common.print_something("Downloading dependencies for ui")
@@ -1339,7 +1384,7 @@ elif sys.platform == "msys":
 
     setup_ui_win()
 elif sys.platform == "darwin":
-    import_dependencies_mac()
+    # import_dependencies_mac()
 
     build_dependencies_mac()
 

@@ -1,6 +1,7 @@
 # Common functions used in configuration code
 import os
 
+from difflib import SequenceMatcher
 
 def chdir(path):
     if not os.path.exists(path):
@@ -38,3 +39,6 @@ def get_all_files_paths(path):
                 paths.append(new_path)
     
     return paths
+
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
