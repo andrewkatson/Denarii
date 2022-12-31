@@ -1,0 +1,27 @@
+
+
+Mac: 
+
+found:
+expat 
+ldns
+hidapi
+readline
+sodium
+unbound
+zmq
+miniupnp
+openssl
+
+lzma (called xz)
+openpgm (called libpgm)
+
+partially missing: 
+unwind (only headers)
+
+missing:
+
+norm
+udev (not a problem)
+usb
+release (not a problem)

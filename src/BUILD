@@ -44,6 +44,14 @@ config_setting(
     visibility = ["//visibility:public"],
 )
 
+config_setting(
+    name = "mac",
+    constraint_values = [
+        "@platforms//os:macos",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 cc_binary(
     name = "denariid",
     srcs = glob(
@@ -94,6 +102,7 @@ cc_binary(
             "-lwsock32",
             "-lbcrypt",
         ],
+        "mac": [],
         "//conditions:default": ["-lunwind",],
     }),
     deps = [
@@ -133,6 +142,7 @@ cc_binary(
     ] + select({
         "windows": [
         ],
+        "mac": [],
         "//conditions:default": ["@libunwind",],
     }),
 )
@@ -162,6 +172,7 @@ cc_library(
             "**/crypto/wallet/*.c",
             "**/crypto/wallet/*.cpp",
         ]),
+        "mac": [],
         "//conditions:default": [],
     }),
     hdrs = glob([
@@ -170,6 +181,7 @@ cc_library(
         "**/pod-class.h",
     ]) + select({
         "windows": glob(["**/crypto/wallet/*.h"]),
+        "mac": [],
         "//conditions:default": [],
     }),
     copts = [
@@ -182,6 +194,7 @@ cc_library(
             "-L external/randomx/build",
             "-lrandomx",
         ],
+        "mac": [],
         "//conditions:default": [],
     }),
     deps = [
@@ -214,6 +227,7 @@ cc_library(
             "-L external/randomx/build",
             "-lrandomx",
         ],
+        "mac": [],
         "//conditions:default": [],
     }),
     deps = [
@@ -243,6 +257,7 @@ cc_library(
             "-lwsock32",
 			"-ldbghelp",
         ],
+        "mac": [],
         "//conditions:default": ["-ldl","-lunwind",],
     }),
     deps = [
@@ -265,6 +280,7 @@ cc_library(
     ] + select({
         ":windows": [
         ],
+        "mac": [],
         "//conditions:default": ["@libunwind",],
     }),
 )
@@ -366,6 +382,7 @@ cc_library(
             "-lws2_32",
             "-lwsock32",
         ],
+        "mac": [],
         "//conditions:default": ["-ldl"],
     }),
     deps = [
@@ -389,6 +406,7 @@ cc_library(
             "-lws2_32",
             "-lwsock32",
         ],
+        "mac": [],
         "//conditions:default": ["-ldl"],
     }),
     deps = [
@@ -532,6 +550,7 @@ cc_library(
             "-lws2_32",
             "-lwsock32",
         ],
+        "mac": [],
         "//conditions:default": ["-ldl"],
     }),
     deps = [
@@ -546,6 +565,7 @@ cc_library(
         "@openssl//:libssl",
     ] + select({
         "windows": [],
+        "mac": [],
         "//conditions:default": [
             "@supercop//:supercop64",
             "@supercop//:supercop51",
@@ -691,6 +711,7 @@ cc_binary(
             "-lwsock32",
             "-lbcrypt",
         ],
+        "mac": [],
         "//conditions:default": [],
     }),
     deps = [
@@ -736,6 +757,7 @@ cc_library(
         "net/zmq.h",
     ] + select({
         "windows": ["net/include/zmq.h"],
+        "mac": [],
         "//conditions:default": [],
     }),
     deps = [
@@ -743,6 +765,8 @@ cc_library(
         "//src:common",
         "@libzmq",
     ] + select({
+        "windows": ["@boost//:asio"],
+        "mac": [],
         "//conditions:default": ["@boost//:asio"],
     }),
 )
@@ -921,6 +945,7 @@ cc_binary(
             "-lws2_32",
             "-lwsock32",
         ],
+        "mac": [],
         "//conditions:default": ["-ldl"],
     }),
     deps = [
@@ -1091,6 +1116,7 @@ cc_binary(
     ]  + select({
         "windows": [
         ],
+        "mac": [],
         "//conditions:default": ["@libunwind",],
     }),
 )
@@ -1107,6 +1133,7 @@ cc_binary(
     ]  + select({
         "windows": [
         ],
+        "mac": [],
         "//conditions:default": ["@libunwind",],
     }),
 )

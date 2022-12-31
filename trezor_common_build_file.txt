@@ -1,0 +1,44 @@
+load(\"@rules_proto//proto:defs.bzl\", \"proto_library\")  
+load(\"@rules_cc//cc:defs.bzl\", \"cc_proto_library\")     
+package(default_visibility = [\"//visibility:public\"])  
+cc_proto_library(                                      
+ name = \"messages_cc_proto\",                        
+ deps = [\":messages_proto\"],                        
+)                                                      
+proto_library(                                         
+ name = \"messages_proto\",                           
+ srcs = [\"messages.proto\"],                         
+ deps = [                                           
+     \"@com_google_protobuf//:descriptor_proto\",     
+ ],                                                 
+)                                                      
+cc_proto_library(                                      
+ name = \"messages_common_cc_proto\",                 
+ deps = [\":messages_common_proto\"],                 
+)                                                      
+proto_library(                                         
+ name = \"messages_common_proto\",                    
+ srcs = [\"messages-common.proto\"],                  
+ deps = [                                          
+ ],                                                
+)                                                      
+cc_proto_library(                                      
+ name = \"messages_management_cc_proto\",             
+ deps = [\":messages_management_proto\"],             
+)                                                      
+proto_library(                                         
+ name = \"messages_management_proto\",                
+ srcs = [\"messages-management.proto\"],             
+ deps = [                                          
+ ],                                                 
+)                                                     
+cc_proto_library(                                      
+ name = \"messages_monero_cc_proto\",                 
+ deps = [\":messages_monero_proto\"],                 
+)                                                      
+proto_library(                                         
+ name = \"messages_monero_proto\",                    
+ srcs = [\"messages-monero.proto\"],                 
+ deps = [                                           
+ ],                                                 
+)

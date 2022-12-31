@@ -8,6 +8,14 @@ config_setting(
     visibility = ["//visibility:public"],
 )
 
+config_setting(
+    name = "mac",
+    constraint_values = [
+        "@platforms//os:macos",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 cc_library(
     name = "epee",
     srcs = glob([
@@ -24,6 +32,7 @@ cc_library(
         "-lcrypto",
     ]   + select({
         "windows": ["-lcrypt32", "-lws2_32","-lwsock32"],
+        "mac": [],
         "//conditions:default": [],
     }),
     deps = [

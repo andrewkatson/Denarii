@@ -9,12 +9,21 @@ config_setting(
     visibility = ["//visibility:public"],
 )
 
+config_setting(
+    name = "mac",
+    constraint_values = [
+        "@platforms//os:macos",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 cc_library(
  name = "libssl",
  srcs = glob(["**/libssl.a"]),
  hdrs =
  select({
          ":windows": glob(["**/*.h"]),
+         "mac": [],
          "//conditions:default": glob(["**/ssl/**/*.h"]),
      }),
 )
@@ -24,6 +33,7 @@ cc_library(
  srcs = glob(["**/libssl.a"]),
  hdrs =  select({
                  ":windows": glob(["**/*.h"]),
+                 "mac": [],
                  "//conditions:default": glob(["**/ssl/**/*.h"]),
              }),
 )
@@ -34,6 +44,7 @@ cc_library(
  hdrs =
   select({
           ":windows": glob(["**/*.h"]),
+          "mac": [],
           "//conditions:default": glob(["**/crypto/**/*.h"]),
       }),
 )

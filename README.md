@@ -88,7 +88,7 @@ Install all dependencies at once on Debian/Ubuntu:
 ``` sudo apt update && sudo apt install build-essential cmake pkg-config libboost-all-dev libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev doxygen graphviz libpgm-dev qttools5-dev-tools libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev libnorm-dev qt5-default && sudo apt install python-pip && sudo apt-get install python3-pyqt5 ```
 
 Install all dependencies at once on macOS with the provided Brewfile:
-``` brew update && brew bundle --file=contrib/brew/Brewfile ```
+``` brew update && brew bundle --file=contrib/brew/Brewfile && pip3 install PyQt5 ```
 
 FreeBSD 12.1 one-liner required to build dependencies:
 ```pkg install git gmake cmake pkgconf boost-libs libzmq4 libsodium```
@@ -103,11 +103,11 @@ If you already have a repo cloned, initialize and update:
 
 `$ cd denarii && git submodule init && git submodule update`
 
-### Build instructions
+## Configuration instructions
 
-Denarii uses bazel
+Denarii uses bazel (https://bazel.build/)
 
-#### On Linux and macOS
+### On Linux and macOS
 
 * Install the dependencies
 * Update configure.py with your workspace path at the top. Also update tests/run_monero_tests.py in the same way.
@@ -120,7 +120,7 @@ Denarii uses bazel
     sudo chmod -R 777 /path/to/denarii
     ```
 
-#### On Windows
+### On Windows
 * Download and install the following. 
 CMAKE: https://cmake.org/download/
 Make: http://gnuwin32.sourceforge.net/packages/make.htm
@@ -128,7 +128,6 @@ MinGW: https://sourceforge.net/projects/mingw/files/latest/download
 Msys2: https://www.msys2.org/
 Bazel with gcc: https://github.com/bazelbuild/bazel/issues/12100
 
-* Download and install the [MSYS2 installer](https://www.msys2.org), either the 64-bit or the 32-bit package, depending on your system.
 * Open the MSYS shell via the `MSYS2 Shell` shortcut
 * Update packages using pacman:  
 
@@ -177,7 +176,7 @@ Bazel with gcc: https://github.com/bazelbuild/bazel/issues/12100
 ### On Linux 
 
 
-Do `sudo bazel build target` for all targets
+Do `sudo bazel build target` for all targets -- e.g. ```sudo bazel build src:denariid```
 
 
 ### On Windows  
@@ -305,8 +304,7 @@ DNS_PUBLIC=tcp torsocks ./bazel-bin/src/denariid --p2p-bind-ip 127.0.0.1 --no-ig
 ```
 
 ## Pruning
-
-As of May 2020, the full Denarii blockchain file is about 80 GB. One can store a pruned blockchain, which is about 28 GB.
+One can store a pruned blockchain,  which is ~1/3 the size of the full chain.
 A pruned blockchain can only serve part of the historical chain data to other peers, but is otherwise identical in
 functionality to the full blockchain.
 To use a pruned blockchain, it is best to start the initial sync with --prune-blockchain. However, it is also possible
@@ -421,4 +419,4 @@ Certain blockchain "features" can be considered "bugs" if misused correctly. Con
 
 ### Denariid on Windows 
 
-- Right now, `denaiid.exe` will sometimes fail to connect to the network. If it happens just restart it.
+- Right now, `denaiid.exe` will sometimes fail to connect to the network. If it happens just restart it. The gui will restart it automatically in the background.
