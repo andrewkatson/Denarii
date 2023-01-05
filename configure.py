@@ -557,26 +557,18 @@ def randomx_mac(external_dir_path):
     randomx_library_path = randomx_path / "build" / "librandomx.a"
     common.check_exists(randomx_library_path)
 
-
-def unbound_mac(external_dir_path):
-    common.print_something("Getting unbound")
+def liblmdb_mac(external_dir_path):
+    common.print_something("Getting liblmdb")
     common.chdir(external_dir_path)
 
-    unbound_path = external_dir_path / "unbound"
+    liblmdb_path = external_dir_path / "db_drivers" / "liblmdb"
 
-    common.chdir(unbound_path)
+    common.chdir(liblmdb_path)
+    make_command = "make"
+    common.system(make_command)
 
-    command = "./configure && make && sudo make install"
-    common.system(command)
-
-    shutil.copyfile("/usr/local/lib/libunbound.so",
-                    str(unbound_path / "libunbound.so"))
-
-    common.check_exists(unbound_path / "libunbound.so")
-
-
-def liblmdb_mac(external_dir_path):
-    pass
+    liblmdb_library_path = liblmdb_path / "liblmdb.a"
+    common.check_exists(liblmdb_library_path)
 
 
 def libnorm_mac(external_dir_path):
@@ -593,9 +585,6 @@ def build_dependencies_mac():
 
     common.chdir(external_dir_path)
     # randomx_mac(external_dir_path)
-
-    common.chdir(external_dir_path)
-    unbound_mac(external_dir_path)
 
     common.chdir(external_dir_path)
     liblmdb_mac(external_dir_path)
