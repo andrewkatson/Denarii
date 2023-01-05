@@ -542,33 +542,57 @@ def build_dependencies_win():
     supercop_win(external_dir_path)
     common.chdir(external_dir_path)
 
-def randomx_mac(external_dir_path):
-    pass
 
-def supercop_mac(external_dir_path):
-    pass
+def randomx_mac(external_dir_path):
+    common.print_something("Getting randomx")
+    common.chdir(external_dir_path)
+
+    randomx_path = external_dir_path / "randomx"
+
+    common.chdir(randomx_path)
+
+    command = "mkdir build && cd build && cmake -DARCH=native .. && make"
+    common.system(command)
+
+    randomx_library_path = randomx_path / "build" / "librandomx.a"
+    common.check_exists(randomx_library_path)
+
 
 def unbound_mac(external_dir_path):
-    pass
+    common.print_something("Getting unbound")
+    common.chdir(external_dir_path)
+
+    unbound_path = external_dir_path / "unbound"
+
+    common.chdir(unbound_path)
+
+    command = "./configure && make && sudo make install"
+    common.system(command)
+
+    shutil.copyfile("/usr/local/lib/libunbound.so",
+                    str(unbound_path / "libunbound.so"))
+
+    common.check_exists(unbound_path / "libunbound.so")
+
 
 def liblmdb_mac(external_dir_path):
     pass
 
+
 def libnorm_mac(external_dir_path):
     pass
 
+
 def libusb_mac(external_dir_path):
     pass
+
 
 def build_dependencies_mac():
     common.print_something("Building dependencies for Mac")
     external_dir_path = workspace_path / "external"
 
     common.chdir(external_dir_path)
-    randomx_mac(external_dir_path)
-
-    common.chdir(external_dir_path)
-    supercop_mac(external_dir_path)
+    # randomx_mac(external_dir_path)
 
     common.chdir(external_dir_path)
     unbound_mac(external_dir_path)
@@ -581,7 +605,6 @@ def build_dependencies_mac():
 
     common.chdir(external_dir_path)
     libusb_mac(external_dir_path)
-
 
 
 def trezor_common():
@@ -654,7 +677,8 @@ def crypto_wallet_generate():
         # copy the contents of the crypto file over to ops
         with open(copy_file_path, "r") as copy:
             # generate the file
-            command = "cd " + str(crypto_wallet_path) + " && echo > " + ops_file
+            command = "cd " + str(crypto_wallet_path) + \
+                " && echo > " + ops_file
             common.system(command)
 
             # the license causes all sorts of problems with echo so we just skip it
@@ -689,7 +713,6 @@ def crypto_wallet_generate():
             ops_file + " && echo \"#pragma once\" >> " + ops_file
         common.system(command)
 
-    
     common.check_exists(crypto_wallet_path / ops_file)
 
 
@@ -771,7 +794,8 @@ def generate_version_file_with_replacement(version_tag, is_release):
     with open(input_file_path, "r") as copy:
 
         # create the file
-        create_file_command = "cd " + str(src_directory) + " && echo > " + output_file
+        create_file_command = "cd " + \
+            str(src_directory) + " && echo > " + output_file
         common.system(create_file_command)
 
         for line in copy:
@@ -787,6 +811,7 @@ def generate_version_file_with_replacement(version_tag, is_release):
                 " && echo '" + line_to_write + "' >> " + output_file
             common.system(write_line_command)
     common.check_exists(src_directory / output_file)
+
 
 def version_generate():
     if have_git():
@@ -831,6 +856,7 @@ def generate_benchmark_file_with_replacement(replacement):
 
     common.check_exists(tests_directory / output_file)
 
+
 def benchmark_generate():
     replacement = ""
 
@@ -846,7 +872,7 @@ def benchmark_generate():
 
 def convert_translation_files():
     common.print_something("Conveting translation files")
-    translation_file_dir = workspace_path  / "translations"
+    translation_file_dir = workspace_path / "translations"
 
     common.chdir(translation_file_dir)
 
@@ -898,7 +924,8 @@ def run_translation_generation(translation_files):
     common.print_something("Running translation generation")
     translation_file_dir = workspace_path / "translations"
     # create the file first
-    create_command = "cd " + str(translation_file_dir) + " && echo > translation_files.h"
+    create_command = "cd " + \
+        str(translation_file_dir) + " && echo > translation_files.h"
     common.system(create_command)
 
     translation_file_path = translation_file_dir / "translation_files.h"
@@ -1009,6 +1036,7 @@ def download_protobuf():
         zip_ref.extractall(final_path)
 
     common.check_exists(final_path)
+
 
 def download_dependencies_for_ui():
     common.print_something("Downloading dependencies for ui")

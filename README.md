@@ -197,6 +197,10 @@ Add the following files to `C:\msys64\mingw-gcc\bin`
 
 These can all be found under `C:\Windows\SYSTEM32` 
 
+### On Mac
+
+Do `bazel build target` on all targets.
+
 ## Running denariid
 
 ### On Linux
@@ -244,12 +248,23 @@ sudo ./bazel-bin/src/denarii_wallet_rpc_server --rpc-bind-port=8080 --wallet-dir
 ### On Windows 
 
 ```bash 
-start bazel-bin/src/denarii_wallet_rpc_server.exe
+start bazel-bin/src/denarii_wallet_rpc_server.exe --rpc-bind-port=8080 --wallet-dir=/some/existing/path
 ```
 
-## Stack Traces on Windows 
+#### Stack Traces on Windows 
 
 Linux has stack traces by default. Windows crashes when there is a stack trace so we by default do not log them. However, you can enable them with `--copt="-DSTACK_TRACE_DENARII`
+
+### On Mac
+
+```bash
+bazel build src:denarii_wallet_rpc_server
+./bazel-bin/src/denarii_wallet_rpc_server --rpc-bind-port=8080 --wallet-dir=/some/existing/path
+```
+
+## Running Denarii GUI
+
+See `./utils/gui/README.md` for details.
 
 ## Internationalization
 
