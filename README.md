@@ -110,7 +110,6 @@ Denarii uses bazel (https://bazel.build/)
 ### On Linux and macOS
 
 * Install the dependencies
-* Update configure.py with your workspace path at the top. Also update tests/run_monero_tests.py in the same way.
 * Change to the root of the source code directory, change to the most recent release branch, and build:
 
     ```bash

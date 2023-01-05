@@ -557,6 +557,7 @@ def randomx_mac(external_dir_path):
     randomx_library_path = randomx_path / "build" / "librandomx.a"
     common.check_exists(randomx_library_path)
 
+
 def liblmdb_mac(external_dir_path):
     common.print_something("Getting liblmdb")
     common.chdir(external_dir_path)
@@ -572,11 +573,45 @@ def liblmdb_mac(external_dir_path):
 
 
 def libnorm_mac(external_dir_path):
-    pass
+    common.print_something("Getting libnorm")
+    common.chdir(external_dir_path)
+
+    clone_command = "git clone --recurse-submodules git@github.com:USNavalResearchLaboratory/norm.git"
+    common.system(clone_command)
+
+    libnorm_path = external_dir_path / "libnorm"
+    old_path = external_dir_path / "norm"
+    rename_command = f"mv {old_path} {libnorm_path}"
+    common.system(rename_command)
+
+    common.chdir(libnorm_path)
+
+    path_to_waf = libnorm_path / "waf"
+    # We need libnorm to use python3 since mac doenst play nice with python2 and bazel.
+    common.replace_phrase("#!\/usr\/bin\/env python", "#!/usr/bin/env python3", path_to_waf)
+
+    build_command = f"./waf configure --prefix={libnorm_path} && ./waf && ./waf install"
+    common.system(build_command)
+
+    binary_path = libnorm_path / "build" / "libnorm.a"
+    common.check_exists(binary_path)
 
 
 def libusb_mac(external_dir_path):
-    pass
+    common.print_something("Getting libusb")
+    common.chdir(external_dir_path)
+
+    clone_command = "git clone git@github.com:libusb/libusb.git"
+    common.system(clone_command)
+
+    libusb_path = external_dir_path / "libusb"
+    common.chdir(libusb_path)
+
+    build_command = f"./autogen.sh --prefix={libusb_path} && make && make install"
+    common.system(build_command)
+
+    binary_path = libusb_path / "lib" / "libusb-1.0.a"
+    common.check_exists(binary_path)
 
 
 def build_dependencies_mac():
@@ -584,7 +619,7 @@ def build_dependencies_mac():
     external_dir_path = workspace_path / "external"
 
     common.chdir(external_dir_path)
-    # randomx_mac(external_dir_path)
+    randomx_mac(external_dir_path)
 
     common.chdir(external_dir_path)
     liblmdb_mac(external_dir_path)
@@ -1403,7 +1438,7 @@ elif sys.platform == "msys":
 elif sys.platform == "darwin":
     # import_dependencies_mac()
 
-    build_dependencies_mac()
+    # build_dependencies_mac()
 
     generate_files_mac()
 

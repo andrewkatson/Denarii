@@ -1,7 +1,9 @@
 # Common functions used in configuration code
 import os
+import re
 
 from difflib import SequenceMatcher
+
 
 def chdir(path):
     if not os.path.exists(path):
@@ -27,6 +29,7 @@ def check_exists(path):
         print_something(f"Path {path} does not exist failing")
         exit(-1)
 
+
 def get_all_files_paths(path):
     paths = []
     for subdir, dirs, files in os.walk(path):
@@ -37,8 +40,22 @@ def get_all_files_paths(path):
             new_paths = get_all_files_paths(dir)
             for new_path in new_paths:
                 paths.append(new_path)
-    
+
     return paths
+
 
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
+
+
+def replace_phrase(phrase_to_replace, replace_with, path):
+
+    new_file = ""
+
+    with open (path, 'r', encoding='latin-1') as f:
+        content = f.read()
+        content_new = re.sub(phrase_to_replace, replace_with, content, flags = re.M)
+        new_file += f"{content_new} \n"
+
+    with open(path, 'w', encoding='latin-1') as f:
+        f.write(new_file)
