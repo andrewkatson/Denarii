@@ -695,7 +695,7 @@ def crypto_wallet_generate():
     copy_file_path = supercop_path / "include" / "monero" / "crypto.h"
 
     # If we are on Linux and have 64 bit processor we can use monero's default crypto libraries
-    if re.match(".*nix.*|.*ux.*", platform.common.system()) and re.match(".*amd64.*|.*AMD64.*|.*x86_64.*",
+    if re.match(".*nix.*|.*ux.*", platform.system()) and re.match(".*amd64.*|.*AMD64.*|.*x86_64.*",
                                                                          platform.processor()):
 
         # copy the contents of the crypto file over to ops
@@ -733,7 +733,7 @@ def crypto_wallet_generate():
                     common.system(copy_line_command)
     else:
         # Otherwise create an empty file.
-        command = "cd " + crypto_wallet_path + " && touch " + \
+        command = "cd " + str(crypto_wallet_path) + " && touch " + \
             ops_file + " && echo \"#pragma once\" >> " + ops_file
         common.system(command)
 
@@ -885,7 +885,7 @@ def benchmark_generate():
     replacement = ""
 
     # If we are on Linux and have 64 bit processor we can use monero's default crypto libraries
-    if re.match(".*nix.*|.*ux.*", platform.common.system()) and re.match(".*amd64.*|.*AMD64.*|.*x86_64.*",
+    if re.match(".*nix.*|.*ux.*", platform.system()) and re.match(".*amd64.*|.*AMD64.*|.*x86_64.*",
                                                                          platform.processor()):
         replacement = "(cn)(amd64_64_24k)(amd64_51_30k)"
     else:
@@ -943,6 +943,29 @@ def convert_translation_files_win():
 
     return converted_files
 
+def convert_translation_files_mac():
+    common.print_something("Converting translation files for Mac")
+    translation_file_dir = workspace_path / "translations"
+
+    common.chdir(translation_file_dir)
+
+    files = []
+    converted_files = []
+
+    for file in glob.glob("*.ts"):
+        files.append(file)
+        converted_files.append(file.replace(".ts", ".qm"))
+
+    for i in range(len(files)):
+        file = files[i]
+        converted_file = converted_files[i]
+
+        conversion_command = "/opt/homebrew/opt/qt5/bin/lrelease " + file + " -qm " + converted_file
+        common.system(conversion_command)
+
+        common.check_exists(translation_file_dir / converted_file)
+
+    return converted_files
 
 def run_translation_generation(translation_files):
     common.print_something("Running translation generation")
@@ -963,10 +986,11 @@ def run_translation_generation(translation_files):
         workspace_path) + "/bazel-bin/translations/generate_translations " + str(translation_file_path) + " "
 
     for translation_file in translation_files:
+        translated_file_path = translation_file_dir / translation_file
         generation_command = generation_command + " " + \
-            translation_file_dir + "/" + translation_file
+            str(translated_file_path)
 
-    common.system(generation_command)
+        common.system(generation_command)
 
     common.check_exists(translation_file_path)
 
@@ -976,7 +1000,7 @@ def run_translation_generation_win(translation_files):
     translation_file_dir = workspace_path / "translations"
 
     # create the file first
-    create_command = "cd " + translation_file_dir + " && echo > translation_files.h"
+    create_command = "cd " + str(translation_file_dir) + " && echo > translation_files.h"
     common.system(create_command)
 
     translation_file_path = translation_file_dir / "translation_files.h"
@@ -990,13 +1014,42 @@ def run_translation_generation_win(translation_files):
         str(translation_file_path) + " "
 
     for translation_file in translation_files:
-        generation_command = generation_command + " " + \
-            translation_file_dir + "/" + translation_file
+        translated_file_path = translation_file_dir / translation_file
 
-    common.system(generation_command)
+        generation_command = generation_command + " " + \
+            str(translated_file_path)
+
+        common.system(generation_command)
 
     common.check_exists(translation_file_path)
 
+def run_translation_generation_mac(translation_files):
+    common.print_something("Running translation generation for Mac")
+    translation_file_dir = workspace_path / "translations"
+
+    # create the file first
+    create_command = "cd " + str(translation_file_dir) + " && echo > translation_files.h"
+    common.system(create_command)
+
+    translation_file_path = translation_file_dir / "translation_files.h"
+
+    # need to build the binary first so the command will work
+    build_command = "bazel build :generate_translations"
+    common.system(build_command)
+
+    # we cannot use bazel run because it just won't cooperate
+    generation_command = "bazel run :generate_translations -- " + \
+        str(translation_file_path) + " "
+
+    for translation_file in translation_files:
+        translated_file_path = translation_file_dir / translation_file
+
+        generation_command = generation_command + " " + \
+            str(translated_file_path)
+
+        common.system(generation_command)
+
+    common.check_exists(translation_file_path)
 
 def translations_generate():
     # first change all the suffixes of the translations files to .qm
@@ -1010,6 +1063,10 @@ def translations_generate_win():
     translation_files = convert_translation_files_win()
     run_translation_generation_win(translation_files)
 
+def translations_generate_mac():
+    translation_files = convert_translation_files_mac()
+
+    run_translation_generation_mac(translation_files)
 
 def generate_files():
     common.print_something("Generating files")
@@ -1032,7 +1089,13 @@ def generate_files_win():
 
 
 def generate_files_mac():
-    pass
+    common.print_something("Generating files for Mac")
+    blocks_generate()
+    crypto_wallet_generate()
+    version_generate()
+    benchmark_generate()
+    translations_generate_mac()
+    trezor_common()
 
 
 def download_keiros_public():
@@ -1319,6 +1382,37 @@ def build_binaries_win():
 
     build_denarii_wallet_rpc_server_win()
 
+def build_denariid_mac():
+    common.print_something("Building denariid for Mac")
+
+    common.chdir(workspace_path)
+
+    build_command = "bazel_build src:denariid"
+    common.system(build_command)
+
+    denariid_path = workspace_path / "bazel-bin" / "src" / "denariid"
+    common.check_exists(denariid_path)
+
+
+def build_denarii_wallet_rpc_server_mac():
+    common.print_something("Building denarii_wallet_rpc_server for Mac")
+
+    common.chdir(workspace_path)
+
+    build_command = "bazel build src:denarii_wallet_rpc_server"
+    common.system(build_command)
+
+    denarii_wallet_rpc_server_path = workspace_path / \
+        "bazel-bin" / "src" / "denarii_wallet_rpc_server"
+    common.check_exists(denarii_wallet_rpc_server_path)
+
+
+def build_binaries_mac():
+    common.print_something("Building binaries for Mac")
+
+    build_denariid_mac()
+
+    build_denarii_wallet_rpc_server_mac()
 
 def move_denariid():
     common.print_something("Moving denariid")
@@ -1384,6 +1478,37 @@ def move_binaries_win():
 
     move_denarii_wallet_rpc_server_win()
 
+def move_denariid_mac():
+    common.print_something("Moving denariid for Mac")
+
+    common.chdir(workspace_path)
+
+    src_path = workspace_path / "bazel-bin" / "src" / "denariid"
+    dest_path = workspace_path / "utils" / "gui" / "denariid"
+    shutil.copyfile(src_path, dest_path)
+
+    common.check_exists(dest_path)
+
+
+def move_denarii_wallet_rpc_server_mac():
+    common.print_something("Moving denarii_wallet_rpc_server for Mac")
+
+    common.chdir(workspace_path)
+
+    src_path = workspace_path / "bazel-bin" / "src" / "denarii_wallet_rpc_server"
+    dest_path = workspace_path / "utils" / "gui" / "denarii_wallet_rpc_server"
+    shutil.copyfile(src_path, dest_path)
+
+    common.check_exists(dest_path)
+
+
+def move_binaries_mac():
+    common.print_something("Moving binaries for Mac")
+
+    move_denariid_mac()
+
+    move_denarii_wallet_rpc_server_mac()
+
 
 def setup_ui():
     common.print_something("Setting up the UI")
@@ -1416,7 +1541,18 @@ def setup_ui_win():
 
 
 def setup_ui_mac():
-    pass
+    common.print_something("Setting up the UI for Mac")
+    download_dependencies_for_ui()
+
+    build_protos()
+
+    move_protos()
+
+    move_misc()
+
+    build_binaries_mac()
+
+    move_binaries_mac()
 
 
 common.print_something(workspace_path)
@@ -1440,6 +1576,6 @@ elif sys.platform == "darwin":
 
     # build_dependencies_mac()
 
-    generate_files_mac()
+    # generate_files_mac()
 
     setup_ui_mac()
