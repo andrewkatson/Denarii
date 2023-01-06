@@ -588,7 +588,8 @@ def libnorm_mac(external_dir_path):
 
     path_to_waf = libnorm_path / "waf"
     # We need libnorm to use python3 since mac doenst play nice with python2 and bazel.
-    common.replace_phrase("#!\/usr\/bin\/env python", "#!/usr/bin/env python3", path_to_waf)
+    common.replace_phrase("#!\/usr\/bin\/env python",
+                          "#!/usr/bin/env python3", path_to_waf)
 
     build_command = f"./waf configure --prefix={libnorm_path} && ./waf && ./waf install"
     common.system(build_command)
@@ -696,7 +697,7 @@ def crypto_wallet_generate():
 
     # If we are on Linux and have 64 bit processor we can use monero's default crypto libraries
     if re.match(".*nix.*|.*ux.*", platform.system()) and re.match(".*amd64.*|.*AMD64.*|.*x86_64.*",
-                                                                         platform.processor()):
+                                                                  platform.processor()):
 
         # copy the contents of the crypto file over to ops
         with open(copy_file_path, "r") as copy:
@@ -886,7 +887,7 @@ def benchmark_generate():
 
     # If we are on Linux and have 64 bit processor we can use monero's default crypto libraries
     if re.match(".*nix.*|.*ux.*", platform.system()) and re.match(".*amd64.*|.*AMD64.*|.*x86_64.*",
-                                                                         platform.processor()):
+                                                                  platform.processor()):
         replacement = "(cn)(amd64_64_24k)(amd64_51_30k)"
     else:
         replacement = "(cn)"
@@ -943,6 +944,7 @@ def convert_translation_files_win():
 
     return converted_files
 
+
 def convert_translation_files_mac():
     common.print_something("Converting translation files for Mac")
     translation_file_dir = workspace_path / "translations"
@@ -960,12 +962,14 @@ def convert_translation_files_mac():
         file = files[i]
         converted_file = converted_files[i]
 
-        conversion_command = "/opt/homebrew/opt/qt5/bin/lrelease " + file + " -qm " + converted_file
+        conversion_command = "/opt/homebrew/opt/qt5/bin/lrelease " + \
+            file + " -qm " + converted_file
         common.system(conversion_command)
 
         common.check_exists(translation_file_dir / converted_file)
 
     return converted_files
+
 
 def run_translation_generation(translation_files):
     common.print_something("Running translation generation")
@@ -1000,7 +1004,8 @@ def run_translation_generation_win(translation_files):
     translation_file_dir = workspace_path / "translations"
 
     # create the file first
-    create_command = "cd " + str(translation_file_dir) + " && echo > translation_files.h"
+    create_command = "cd " + \
+        str(translation_file_dir) + " && echo > translation_files.h"
     common.system(create_command)
 
     translation_file_path = translation_file_dir / "translation_files.h"
@@ -1022,13 +1027,15 @@ def run_translation_generation_win(translation_files):
         common.system(generation_command)
 
     common.check_exists(translation_file_path)
+
 
 def run_translation_generation_mac(translation_files):
     common.print_something("Running translation generation for Mac")
     translation_file_dir = workspace_path / "translations"
 
     # create the file first
-    create_command = "cd " + str(translation_file_dir) + " && echo > translation_files.h"
+    create_command = "cd " + \
+        str(translation_file_dir) + " && echo > translation_files.h"
     common.system(create_command)
 
     translation_file_path = translation_file_dir / "translation_files.h"
@@ -1050,6 +1057,7 @@ def run_translation_generation_mac(translation_files):
         common.system(generation_command)
 
     common.check_exists(translation_file_path)
+
 
 def translations_generate():
     # first change all the suffixes of the translations files to .qm
@@ -1063,10 +1071,12 @@ def translations_generate_win():
     translation_files = convert_translation_files_win()
     run_translation_generation_win(translation_files)
 
+
 def translations_generate_mac():
     translation_files = convert_translation_files_mac()
 
     run_translation_generation_mac(translation_files)
+
 
 def generate_files():
     common.print_something("Generating files")
@@ -1113,16 +1123,14 @@ def download_keiros_public():
 
 def download_protobuf():
     common.print_something("Downloading Google Protobuf")
+    path = workspace_path / "external"
+    common.chdir(path)
 
-    url = "https://github.com/protocolbuffers/protobuf/archive/refs/tags/v21.9.zip"
-    save_path = workspace_path / "external" / "protobuf.zip"
-    download_url(url, save_path)
+    clone_command = "git clone git@github.com:protocolbuffers/protobuf.git"
+    common.system(clone_command)
 
-    final_path = workspace_path / "external" / "protobuf"
-    with zipfile.ZipFile(save_path, 'r') as zip_ref:
-        zip_ref.extractall(final_path)
-
-    common.check_exists(final_path)
+    protobuf_path = path / "protobuf"
+    common.check_exists(protobuf_path)
 
 
 def download_dependencies_for_ui():
@@ -1141,14 +1149,15 @@ def build_keiros_public_protos():
     build_command = "bazel build Proto:wallet_py_proto"
     common.system(build_command)
 
-    wallet_py_proto_path = workspace_path / "bazel-bin" / "Proto" / "wallet_pb2.py"
+    wallet_py_proto_path = workspace_path / "external" / \
+        "KeirosPublic" / "bazel-bin" / "Proto" / "wallet_pb2.py"
     common.check_exists(wallet_py_proto_path)
 
-    other_build_command = "bazel build Security:identifier_py_proto"
+    other_build_command = "bazel build Security/Proto:identifier_py_proto"
     common.system(other_build_command)
 
     identifier_py_proto_path = workspace_path / \
-        "bazel-bin" / "Security" / "identifier_pb2.py"
+        "external" / "KeirosPublic" / "bazel-bin" / "Security" / "Proto" / "identifier_pb2.py"
     common.check_exists(identifier_py_proto_path)
 
 
@@ -1207,9 +1216,12 @@ def move_keiros_public_protos():
     common.check_exists(dest_wallet_py_path)
 
     src_identifier_py_path = keiros_public_path / \
-        "bazel-bin" / "Security" / "identifier_pb2.py"
-    dest_identifier_py_path = workspace_path / "utils" / \
-        "gui" / "Security" / "identifier_pb2.py"
+        "bazel-bin" / "Security" / "Proto" / "identifier_pb2.py"
+    dest_identifier_folder_path = workspace_path / "utils" / \
+        "gui" / "Security" / "Proto"
+    dest_identifier_py_path = dest_identifier_folder_path / "identifier_pb2.py"
+
+    os.makedirs(dest_identifier_folder_path)
 
     shutil.copyfile(src_identifier_py_path, dest_identifier_py_path)
 
@@ -1226,6 +1238,8 @@ def move_google_protobuf_protos():
     common_src_path = google_protobuf_path / \
         "bazel-bin" / "python" / "google" / "protobuf"
     common_dest_path = workspace_path / "utils" / "gui" / "google" / "protobuf"
+
+    os.makedirs(common_dest_path)
 
     for file in py_pb_files_to_check:
         src_path = common_src_path / file
@@ -1266,7 +1280,7 @@ def move_keiros_public_py_files():
     common.chdir(workspace_path)
 
     src_denarii_client_path = workspace_path / "external" / \
-        "KeirsoPublic" / "Client" / "Denarii" / "denarii_client.py"
+        "KeirosPublic" / "Client" / "Denarii" / "denarii_client.py"
     dest_denarii_client_path = workspace_path / \
         "utils" / "gui" / "denarii_client.py"
 
@@ -1382,6 +1396,7 @@ def build_binaries_win():
 
     build_denarii_wallet_rpc_server_win()
 
+
 def build_denariid_mac():
     common.print_something("Building denariid for Mac")
 
@@ -1413,6 +1428,7 @@ def build_binaries_mac():
     build_denariid_mac()
 
     build_denarii_wallet_rpc_server_mac()
+
 
 def move_denariid():
     common.print_something("Moving denariid")
@@ -1477,6 +1493,7 @@ def move_binaries_win():
     move_denariid_win()
 
     move_denarii_wallet_rpc_server_win()
+
 
 def move_denariid_mac():
     common.print_something("Moving denariid for Mac")

@@ -107,6 +107,12 @@ http_archive(
     sha256 = "a49f49804f788d2f40ee036d44dd92f0130e5866ea81173a4c6a38422a384733"
 )
 
+http_archive(
+    name = "build_bazel_rules_nodejs",
+    sha256 = "c2ad51299792d5af3b258f1dd71b3b57eff9424c2e1797d9c1d65717d95da03a",
+    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/5.7.3/rules_nodejs-5.7.3.tar.gz"],
+)
+
 # boost archive extra files
 new_local_repository(
     name = "boost_extra",
@@ -339,4 +345,8 @@ rules_proto_grpc_repos()
 load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
 rules_proto_dependencies()
 rules_proto_toolchains()
+
+load("@build_bazel_rules_nodejs//:repositories.bzl", "build_bazel_rules_nodejs_dependencies")
+
+build_bazel_rules_nodejs_dependencies()
 
