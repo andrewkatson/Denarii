@@ -29,7 +29,7 @@ cc_library(
                 "windows": glob([
                    "**/miniupnpc/*.a",
                 ]),
-                "mac": [],
+                "mac": glob(["**/*.a"]),
                 "//conditions:default": glob(["**/miniupnpc/*.a"]),
                 }),
  hdrs = glob(["**/miniupnpc/**/*.h"]),

@@ -23,7 +23,7 @@ cc_library(
  hdrs =
  select({
          ":windows": glob(["**/*.h"]),
-         "mac": [],
+         "mac": glob(["**/*.h"]),
          "//conditions:default": glob(["**/ssl/**/*.h"]),
      }),
 )
@@ -33,7 +33,7 @@ cc_library(
  srcs = glob(["**/libssl.a"]),
  hdrs =  select({
                  ":windows": glob(["**/*.h"]),
-                 "mac": [],
+                 "mac": glob(["**/*.h"]),
                  "//conditions:default": glob(["**/ssl/**/*.h"]),
              }),
 )
@@ -44,7 +44,7 @@ cc_library(
  hdrs =
   select({
           ":windows": glob(["**/*.h"]),
-          "mac": [],
+          "mac": glob(["**/*.h"]),
           "//conditions:default": glob(["**/crypto/**/*.h"]),
       }),
 )
