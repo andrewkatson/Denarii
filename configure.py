@@ -1589,10 +1589,10 @@ elif sys.platform == "msys":
 
     setup_ui_win()
 elif sys.platform == "darwin":
-    # import_dependencies_mac()
+    import_dependencies_mac()
 
-    # build_dependencies_mac()
+    build_dependencies_mac()
 
-    # generate_files_mac()
+    generate_files_mac()
     
     setup_ui_mac()
