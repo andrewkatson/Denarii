@@ -60,9 +60,15 @@
 #include "src/cryptonote_core/cryptonote_core.h"
 #include "src/net/parse.h"
 
+#ifdef __clang__
+#include "include/miniupnpc/miniupnpc.h"
+#include "include/miniupnpc/upnpcommands.h"
+#include "include/miniupnpc/upnperrors.h"
+#else
 #include "miniupnpc/include/miniupnpc.h"
 #include "miniupnpc/include/upnpcommands.h"
 #include "miniupnpc/include/upnperrors.h"
+#endif
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "net.p2p"

@@ -36,7 +36,9 @@
 
 #ifdef _WIN32
 #include "sodium/crypto_verify_32.h"
-#else
+#elif defined(__clang__)
+#include "include/sodium/crypto_verify_32.h"
+#else 
 #include "sodium/crypto_verify_32.h"
 #endif
 

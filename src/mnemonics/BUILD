@@ -9,6 +9,7 @@ cc_library(
         "//src:cncrypto",
         "//src:common",
         "@boost//:system",
+        "@boost//:crc",
         "@easy_logging",
     ],
 )

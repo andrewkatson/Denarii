@@ -21,19 +21,16 @@ cc_library(
     srcs = glob([
         "src/*.cpp",
         "src/*.c",
-    ]),
+    ], exclude = ["src/readline_buffer.cpp"]),
     hdrs = glob([
         "**/*.h",
         "**/*.hpp",
         "**/*.inl",
     ]),
-    linkopts = [
-        "-lssl",
-        "-lcrypto",
-    ]   + select({
-        "windows": ["-lcrypt32", "-lws2_32","-lwsock32"],
+    linkopts = select({
+        "windows": ["-lssl","-lcrypto","-lcrypt32", "-lws2_32","-lwsock32"],
         "mac": [],
-        "//conditions:default": [],
+        "//conditions:default": ["-lssl","-lcrypto",],
     }),
     deps = [
         "@boost//:assign",
@@ -41,9 +38,14 @@ cc_library(
         "@boost//:asio_ssl",
         "@boost//:filesystem",
         "@boost//:thread",
+        "@boost//:multiprecision",
+        "@boost//:interprocess",
+        "@boost//:mpl",
+        "@boost//:uuid",
         "@easy_logging",
         "@openssl//:libcrypto",
         "@openssl//:libssl",
+        "@openssl//:ssl",
         "@libreadline//:libreadline",
         "@zlib",
     ],

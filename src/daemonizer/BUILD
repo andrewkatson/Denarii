@@ -24,7 +24,10 @@ cc_library(
             "windows_daemonizer.inl",
             "windows_service.cpp",
         ],
-        "mac": [],
+        "mac": [
+            "posix_daemonizer.inl",
+            "posix_fork.cpp",
+        ],
         "//conditions:default": [
             "posix_daemonizer.inl",
             "posix_fork.cpp",
@@ -36,7 +39,10 @@ cc_library(
             "windows_service.h",
             "windows_service_runner.h",
         ],
-        "mac": [],
+        "mac": [
+            "daemonizer.h",
+            "posix_fork.h",
+        ],
         "//conditions:default": [
             "daemonizer.h",
             "posix_fork.h",

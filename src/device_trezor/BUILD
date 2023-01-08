@@ -47,6 +47,7 @@ cc_library(
         "//src:ringct_basic",
         "//src:rpc",
         "@boost//:chrono",
+        "@boost//:scope_exit",
         "@libsodium",
         "@libusb",
         "@rapidjson",

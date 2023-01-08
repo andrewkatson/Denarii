@@ -1594,5 +1594,5 @@ elif sys.platform == "darwin":
     # build_dependencies_mac()
 
     # generate_files_mac()
-
+    
     setup_ui_mac()

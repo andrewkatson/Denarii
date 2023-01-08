@@ -39,7 +39,8 @@
 #include "portable_storage_val_converters.h"
 #include "contrib/epee/include/span.h"
 #include "contrib/epee/include/int-util.h"
-
+#include <boost/mpl/contains.hpp>
+#include <boost/mpl/assert.hpp>
 namespace epee
 {
   namespace serialization

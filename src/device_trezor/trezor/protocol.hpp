@@ -52,6 +52,10 @@
 #include "src/device_trezor/trezor/include/sodium.h"
 #include "src/device_trezor/trezor/include/crypto_verify_32.h"
 #include "src/device_trezor/trezor/include/crypto_aead_chacha20poly1305.h"
+#elif __clang__
+#include "include/sodium.h"
+#include "include/sodium/crypto_verify_32.h"
+#include "include/sodium/crypto_aead_chacha20poly1305.h"
 #else
 #include <sodium.h>
 #include <sodium/crypto_verify_32.h>

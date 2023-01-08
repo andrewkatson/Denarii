@@ -97,7 +97,11 @@
 #include <boost/format.hpp>
 #include <openssl/sha.h>
 
+#ifdef __clang__
+#include "include/unbound.h"
+#else
 #include "unbound.h"
+#endif
 
 #include "contrib/epee/include/include_base_utils.h"
 #include "contrib/epee/include/file_io_utils.h"
