@@ -154,6 +154,9 @@ utils/gui/google/
 utils/gui/Proto/wallet_pb2.py
 utils/gui/Proto/gui_user_pb2.py
 utils/gui/Security/
+utils/gui/build/
+utils/gui/dist/
+utils/gui/gui_main.spec
 
 # Zips from setup
 external/openssl.zip
