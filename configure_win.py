@@ -308,12 +308,15 @@ def miniupnp_win(external_dir_path):
 
     common.check_exists(miniupnp_library_path)
 
+def build_dependencies_win():
+    external_dir_path = workspace_path / "external"
+    randomx_win(external_dir_path)
+
+    miniupnp_win(external_dir_path)
+
 
 common.print_something(workspace_path)
 
 import_dependencies_win()
 
-external_dir_path = workspace_path / "external"
-randomx_win(external_dir_path)
-
-miniupnp_win(external_dir_path)
+build_dependencies_win()
