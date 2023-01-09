@@ -22,12 +22,16 @@ def system(command):
     os.system(command)
 
 
-def check_exists(path):
+def check_exists(path, fail_on_existence=True):
     if os.path.exists(path):
         print_something(f"Path: {path} exists")
+        return True
     else:
         print_something(f"Path {path} does not exist failing")
-        exit(-1)
+        if fail_on_existence:
+            exit(-1)        
+        else:
+            return False
 
 
 def get_all_files_paths(path):
