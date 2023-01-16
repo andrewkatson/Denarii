@@ -28,7 +28,7 @@ config_setting(
 cc_library(
   name = "openpgm",
   srcs = select({
-    "windows": glob(["**/*.a"]),
+    "windows": glob(["**/*.lib"]),
     "mac": glob(["**/*.a"]),
     "linux": glob(["**/*.a"]),
   }),

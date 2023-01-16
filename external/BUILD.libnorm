@@ -27,7 +27,7 @@ config_setting(
 cc_library(
   name = "libnorm",
   srcs = select({
-    "windows": glob(["build/*.a"]),
+    "windows": glob(["build/*.lib"]),
     "mac": ["build/libnorm.a"],
     "linux": glob(["build/*.a"]),
   }),
