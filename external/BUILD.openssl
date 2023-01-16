@@ -17,49 +17,72 @@ config_setting(
     visibility = ["//visibility:public"],
 )
 
+config_setting(
+   name = "linux",
+   constraint_values = [
+      "@platforms//os:linux",
+   ],
+   visibility = ["//visibility:public"],
+)
+
 cc_library(
  name = "libssl",
- srcs = glob(["**/libssl.a"]),
+ srcs = select({
+    "windows": glob(["**/libssl.a"]),
+    "mac": glob(["**/libssl.a"]),
+    "linux": glob(["**/libssl.a"]),
+ }),
  hdrs =
  select({
          ":windows": glob(["**/*.h"]),
          "mac": glob(["**/*.h"]),
-         "//conditions:default": glob(["**/ssl/**/*.h"]),
+         "linux": glob(["**/ssl/**/*.h"]),
      }),
 includes = select({
     "windows": [],
     "mac": ["include"],
-    "//conditions:default": [],
-  })
+    "linux": [],
+  }),
+  linkstatic = True
 )
 
 cc_library(
  name = "ssl",
- srcs = glob(["**/libssl.a"]),
+ srcs = select({
+    "windows": glob(["**/libssl.a"]),
+    "mac": glob(["**/libssl.a"]),
+    "linux": glob(["**/libssl.a"]),
+ }),
  hdrs =  select({
                  ":windows": glob(["**/*.h"]),
                  "mac": glob(["**/*.h"]),
-                 "//conditions:default": glob(["**/ssl/**/*.h"]),
+                 "linux": glob(["**/ssl/**/*.h"]),
              }),
 includes = select({
     "windows": [],
     "mac": ["include"],
-    "//conditions:default": [],
-  })
+    "linux": [],
+  }),
+  linkstatic = True
 )
 
 cc_library(
  name = "libcrypto",
- srcs = glob(["**/libcrypto.a"]),
+ srcs = select({
+    "windows": glob(["**/libcrypto.a"]),
+    "mac": glob(["**/libcrypto.a"]),
+    "linux": glob(["**/libcrypto.a"]),
+ }),
  hdrs =
   select({
           ":windows": glob(["**/*.h"]),
           "mac": glob(["**/*.h"]),
-          "//conditions:default": glob(["**/crypto/**/*.h"]),
+          "linux": glob(["**/crypto/**/*.h"]),
       }),
 includes = select({
     "windows": [],
     "mac": ["include"],
-    "//conditions:default": [],
-  })
+    "linux": [],
+  }),
+  linkstatic = True,
 )

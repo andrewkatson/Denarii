@@ -1,5 +1,6 @@
 package(default_visibility = ["//visibility:public"])
 
+# Doesn't build on MacOS because it tries to evaluate @libnorm and recurs endlessly.
 cc_binary(
     name = "benchmark",
     srcs = [

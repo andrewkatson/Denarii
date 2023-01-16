@@ -266,6 +266,7 @@ bool Blockchain::scan_outputkeys_for_indexes(size_t tx_version, const txin_to_ke
 uint64_t Blockchain::get_current_blockchain_height() const
 {
   LOG_PRINT_L3("Blockchain::" << __func__);
+  LOG_PRINT_L0("HERE");
   // WARNING: this function does not take m_blockchain_lock, and thus should only call read only
   // m_db functions which do not depend on one another (ie, no getheight + gethash(height-1), as
   // well as not accessing class members, even read only (ie, m_invalid_blocks). The caller must
@@ -1394,7 +1395,6 @@ bool Blockchain::validate_miner_transaction(const block& b, size_t cumulative_bl
   }
 
   double relative_height_block_reward = get_last_n_blocks_reward_average(b.prev_id, CRYPTONOTE_REWARD_BLOCKS_WINDOW);
-
   // From hard fork 15 we allow any size of block reward if it is within a range of other blocks around it.
   if(base_reward + fee < money_in_use || (version >= HF_VERSION_DYNAMIC_CRITICAL_VALUES && (relative_height_block_reward + CRYPTONOTE_REWARD_EPSILON) < money_in_use))
   {

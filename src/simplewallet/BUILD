@@ -1,5 +1,21 @@
 package(default_visibility = ["//visibility:public"])
 
+config_setting(
+    name="windows",
+    constraint_values=[
+        "@platforms//os:windows",
+    ],
+    visibility=["//visibility:public"],
+)
+
+config_setting(
+    name="mac",
+    constraint_values=[
+        "@platforms//os:macos",
+    ],
+    visibility=["//visibility:public"],
+)
+
 cc_binary(
     name = "denarii_wallet_cli",
     srcs = [
@@ -13,7 +29,11 @@ cc_binary(
         "-lpthread",
         "-lboost_system",
         "-lboost_thread",
-    ],
+    ] + select({
+        "windows": [],
+        "mac": ["-Lexternal/openssl"],
+        "//conditions:default": [],
+    }),
     deps = [
         "//contrib/epee",
         "//src:cncrypto",

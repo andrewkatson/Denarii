@@ -27,10 +27,11 @@ def check_exists(path, fail_on_existence=True):
         print_something(f"Path: {path} exists")
         return True
     else:
-        print_something(f"Path {path} does not exist failing")
         if fail_on_existence:
+            print_something(f"Failing because {path} does not exist")
             exit(-1)        
         else:
+            print_something(f"Returning false because {path} does not exist")
             return False
 
 

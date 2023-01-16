@@ -106,7 +106,7 @@ __attribute__((noreturn))
 void CXA_THROW(void *ex, CXA_THROW_INFO_T *info, void (*dest)(void*))
 {
 	
-// I dont know how this function ever works on Windows so just disable it entirely. Otherwise we just crash.
+// I dont know how this function ever worked on Windows so just disable it entirely. Otherwise we just crash.
 #ifndef _WIN32
 
   int status;
@@ -137,6 +137,7 @@ namespace
 namespace tools
 {
 
+#ifndef __clang__
 void set_stack_trace_log(const std::string &log)
 {
   stack_trace_log = log;
@@ -205,6 +206,15 @@ void log_stack_trace(const char *msg)
   }
 #endif
 }
+#else 
+void set_stack_trace_log(const std::string &log) {
+  // No op because mac isn't playing nice with stack traces during runtime.
+}
+
+void log_stack_trace(const char *msg) {
+  // No op because mac isn't play nice with stack traces during runtime.
+}
+#endif
 #endif
 
 // FROM: rioki.org/2017/01/09/windows_stacktrace.html

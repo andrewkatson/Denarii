@@ -16,6 +16,14 @@ config_setting(
     visibility = ["//visibility:public"],
 )
 
+config_setting(
+   name = "linux",
+   constraint_values = [
+      "@platforms//os:linux",
+   ],
+   visibility = ["//visibility:public"],
+)
+
 # likely needs to be improved to follow the actual distinction between compilers being used not platforms
 cc_library(
     name = "daemonizer",
@@ -28,7 +36,7 @@ cc_library(
             "posix_daemonizer.inl",
             "posix_fork.cpp",
         ],
-        "//conditions:default": [
+        "linux": [
             "posix_daemonizer.inl",
             "posix_fork.cpp",
         ],
@@ -43,7 +51,7 @@ cc_library(
             "daemonizer.h",
             "posix_fork.h",
         ],
-        "//conditions:default": [
+        "linux": [
             "daemonizer.h",
             "posix_fork.h",
         ],

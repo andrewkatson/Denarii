@@ -1,41 +1,5 @@
 package(default_visibility=["//visibility:public"])
 
-constraint_setting(name="cpu")
-
-constraint_value(
-    name="i386",
-    constraint_setting=":cpu",
-)
-
-constraint_value(
-    name="amd64",
-    constraint_setting=":cpu",
-)
-
-config_setting(
-    name="amd64_config",
-    constraint_values=[
-        ":amd64",
-    ],
-    visibility=["//visibility:public"],
-)
-
-config_setting(
-    name="i386_config",
-    constraint_values=[
-        ":i386",
-    ],
-    visibility=["//visibility:public"],
-)
-
-config_setting(
-    name="x86_64",
-    constraint_values=[
-        "@platforms//cpu:x86_64",
-    ],
-    visibility=["//visibility:public"],
-)
-
 config_setting(
     name="windows",
     constraint_values=[
@@ -45,11 +9,19 @@ config_setting(
 )
 
 config_setting(
-    name="mac",
+    name = "mac",
     constraint_values=[
         "@platforms//os:macos",
     ],
     visibility=["//visibility:public"],
+)
+
+config_setting(
+   name = "linux",
+   constraint_values = [
+      "@platforms//os:linux",
+   ],
+   visibility = ["//visibility:public"],
 )
 
 cc_binary(
@@ -86,14 +58,14 @@ cc_binary(
     linkopts=[
         "-lpthread",
         "-llzma",
+        "-lssl",
+        "-lcrypto",
     ] + select({
         "windows": [
             "-L external/db_drivers",
             "-llmdb",
             "-lzmq",
             "-lunbound",
-            "-lssl",
-            "-lcrypto",
             "-L external/miniupnp/miniupnpc",
             "-lminiupnpc",
             "-L external/randomx/build",
@@ -102,14 +74,12 @@ cc_binary(
             "-lwsock32",
             "-lbcrypt",
         ],
-        "mac": [],
-        "//conditions:default": [
+        "mac": ["-Lexternal/openssl"],
+        "linux": [
             "-L external/db_drivers",
             "-llmdb",
             "-lzmq",
             "-lunbound",
-            "-lssl",
-            "-lcrypto",
             "-L external/miniupnp/miniupnpc",
             "-lminiupnpc",
             "-lunwind",
@@ -153,7 +123,7 @@ cc_binary(
         "windows": [
         ],
         "mac": [],
-        "//conditions:default": ["@libunwind",],
+        "linux": ["@libunwind",],
     }),
 )
 
@@ -185,7 +155,7 @@ cc_library(
             "**/crypto/CryptonightR_template.S",
         ]),
         "mac": [],
-        "//conditions:default": glob([
+        "linux": glob([
             "**/crypto/CryptonightR_template.S",
         ]),
     }),
@@ -196,7 +166,7 @@ cc_library(
     ]) + select({
         "windows": glob(["**/crypto/wallet/*.h"]),
         "mac": [],
-        "//conditions:default": [],
+        "linux": [],
     }),
     copts=[
     ] + select({
@@ -206,7 +176,7 @@ cc_library(
             "-march=native"
         ],
         "mac": [],
-        "//conditions:default": [
+        "linux": [
             "-msse4.1",
             "-maes",
             "-march=native",
@@ -218,7 +188,7 @@ cc_library(
             "-lrandomx",
         ],
         "mac": [],
-        "//conditions:default": [],
+        "linux": [],
     }),
     deps=[
         ":config",
@@ -248,7 +218,7 @@ cc_library(
             "-march=native"
         ],
         "mac": [],
-        "//conditions:default": [
+        "linux": [
             "-msse4.1",
             "-maes",
             "-march=native",
@@ -260,7 +230,7 @@ cc_library(
             "-lrandomx",
         ],
         "mac": [],
-        "//conditions:default": [],
+        "linux": [],
     }),
     deps=[
         ":config",
@@ -290,12 +260,12 @@ cc_library(
             "-ldbghelp",
         ],
         "mac": [],
-        "//conditions:default": [
+        "linux": [
             "-lssl",
             "-lcrypto",
             "-lunbound",
             "-ldl",
-             "-lunwind",
+            "-lunwind",
         ],
     }),
     deps=[
@@ -321,7 +291,7 @@ cc_library(
         ":windows": [
         ],
         "mac": [],
-        "//conditions:default": ["@libunwind",],
+        "linux": ["@libunwind",],
     }),
 )
 
@@ -416,19 +386,20 @@ cc_library(
         "ringct/rctOps.h",
         "ringct/rctTypes.h",
     ],
-    linkopts=
+    linkopts= 
         select({
         "windows": [
+            "-lssl",
+            "-lcrypto",
             "-lws2_32",
             "-lwsock32",
-            "-lssl",
-            "-lcrypto",
         ],
         "mac": [],
-        "//conditions:default": [
+        "linux": [
             "-lssl",
             "-lcrypto",
-            "-ldl"],
+            "-ldl"
+        ],
     }),
     deps=[
         "//src:cncrypto",
@@ -443,16 +414,16 @@ cc_library(
     name="ringct",
     srcs=["ringct/rctSigs.cpp"],
     hdrs=["ringct/rctSigs.h"],
-    linkopts= 
+    linkopts=
     select({
         "windows": [
-            "-lws2_32",
-            "-lwsock32",
             "-lssl",
             "-lcrypto",
+            "-lws2_32",
+            "-lwsock32",
         ],
         "mac": [],
-        "//conditions:default": [
+        "linux": [
             "-lssl",
             "-lcrypto",
             "-ldl"
@@ -591,16 +562,16 @@ cc_library(
         "device/device_ledger.hpp",
         "device/log.hpp",
     ],
-    linkopts=
+    linkopts= 
     select({
         "windows": [
-            "-lws2_32",
-            "-lwsock32",
             "-lssl",
             "-lcrypto",
+            "-lws2_32",
+            "-lwsock32",
         ],
         "mac": [],
-        "//conditions:default": [
+        "linux": [
             "-lssl",
             "-lcrypto",
             "-ldl"
@@ -621,7 +592,7 @@ cc_library(
     ] + select({
         "windows": [],
         "mac": [],
-        "//conditions:default": [
+        "linux": [
             "@supercop//:supercop64",
             "@supercop//:supercop51",
         ],
@@ -758,21 +729,18 @@ cc_binary(
     linkopts=[
         "-lpthread",
         "-llzma",
+        "-lssl",
+        "-lcrypto",
     ] + select({
         "windows": [
-            "-lssl",
-            "-lcrypto",
             "-L external/randomx/build",
             "-lrandomx",
             "-lws2_32",
             "-lwsock32",
             "-lbcrypt",
         ],
-        "mac": [],
-        "//conditions:default": [
-            "-lssl",
-            "-lcrypto",
-        ],
+        "mac": ["-Lexternal/openssl"],
+        "linux": [],
     }),
     deps=[
         ":wallet",
@@ -818,7 +786,7 @@ cc_library(
     ] + select({
         "windows": ["net/include/zmq.h"],
         "mac": [],
-        "//conditions:default": [],
+        "linux": [],
     }),
     deps=[
         "//contrib/epee",
@@ -827,7 +795,7 @@ cc_library(
     ] + select({
         "windows": ["@boost//:asio"],
         "mac": [],
-        "//conditions:default": ["@boost//:asio"],
+        "linux": ["@boost//:asio"],
     }),
 )
 
@@ -881,7 +849,7 @@ cc_library(
             "-lminiupnpc",
         ],
         "mac": [],
-        "//conditions:default": [
+        "linux": [
             "-L external/miniupnp/miniupnpc",
             "-lminiupnpc",
         ],
@@ -1003,19 +971,15 @@ cc_binary(
         "serialization/difficulty_type.h",
         "serialization/json_utils.h",
     ],
-    linkopts=
+    linkopts= ["-lssl", "-lcrypto",] + 
     select({
         "windows": [
-            "-lssl",
-            "-lcrypto",
             "-llzma",
             "-lws2_32",
             "-lwsock32",
         ],
-        "mac": [],
-        "//conditions:default": [
-            "-lssl",
-            "-lcrypto",
+        "mac": ["-Lexternal/openssl"],
+        "linux": [
             "-llzma",
             "-ldl"
         ],
@@ -1189,7 +1153,7 @@ cc_binary(
         "windows": [
         ],
         "mac": [],
-        "//conditions:default": ["@libunwind",],
+        "linux": ["@libunwind",],
     }),
 )
 
@@ -1206,7 +1170,7 @@ cc_binary(
         "windows": [
         ],
         "mac": [],
-        "//conditions:default": ["@libunwind",],
+        "linux": ["@libunwind",],
     }),
 )
 
@@ -1215,6 +1179,14 @@ cc_binary(
     srcs=["what_is_argv.cpp"],
     deps = ["@miniupnp//:miniupnpc",],
 )
+
+# This doesn't work because on Mac the other parts of the select statment get evaluated and 
+# that causes the evaluator to recur endlessly.
+#cc_binary(
+#    name = "general_import_tester",
+#    srcs = ["general_import_tester.cpp"],
+#    deps = ["@libnorm",]
+#)
 
 cc_library(
     name="checkpoints",
