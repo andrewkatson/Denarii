@@ -424,7 +424,6 @@ def build_dependencies_win():
 
     common.chdir(external_dir_path)
     supercop_win(external_dir_path)
-    common.chdir(external_dir_path)
 
 
 def trezor_common():
@@ -1216,7 +1215,7 @@ if sys.platform == "linux":
     generate_files()
 
     setup_ui()
-elif sys.platform == "msys":
+elif sys.platform == "msys" or sys.platform == "cygwin":
 
     build_dependencies_win()
 

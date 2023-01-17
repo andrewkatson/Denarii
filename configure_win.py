@@ -278,6 +278,50 @@ def miniupnp_win(external_dir_path):
     common.check_exists(miniupnp_library_path)
 
 
+def openpgm_win(external_dir_path):
+    common.print_something("Getting openpgm for Windows")
+
+    common.chdir(external_dir_path)
+
+    openpgm_path = external_dir_path / "openpgm"
+
+    clone_command = "git clone https://github.com/steve-o/openpgm.git"
+    common.system(clone_command)
+
+    common.chdir(openpgm_path)
+
+    inner_path = openpgm_path / "openpgm" / "pgm"
+    common.chdir(inner_path)
+
+    make_command = "mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && msbuild /nologo /property:Configuration=Debug ALL_BUILD.vcxproj"
+    common.system(make_command)
+
+    binary_path = inner_path / "build" / "lib" / "libpgm-v142-mt-gd-5_2_127.lib"
+    common.check_exists(binary_path)
+
+def libnorm_win(external_dir_path):
+    common.print_something("Getting libnorm for Windows")
+
+    common.chdir(external_dir_path)
+
+    libnorm_path = external_dir_path / "libnorm"
+
+    clone_command = "git clone --recurse-submodules https://github.com/USNavalResearchLaboratory/norm.git"
+    common.system(clone_command)
+
+    old_path = external_dir_path / "norm"
+    rename_command = f"REN {old_path} libnorm"
+    common.system(rename_command)
+
+    common.chdir(libnorm_path)
+
+    build_command = f"python waf configure --prefix={libnorm_path} && python waf && python waf install"
+    common.system(build_command)
+
+    binary_path = libnorm_path / "build" / "norm_static.lib"
+    common.check_exists(binary_path)
+
+
 common.print_something(workspace_path)
 
 import_dependencies_win()
@@ -286,3 +330,7 @@ external_dir_path = workspace_path / "external"
 randomx_win(external_dir_path)
 
 miniupnp_win(external_dir_path)
+
+openpgm_win(external_dir_path)
+
+libnorm_win(external_dir_path)
