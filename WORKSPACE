@@ -102,9 +102,18 @@ http_archive(
 # For more, see https://github.com/nelhage/rules_boost and https://www.boost.org
 http_archive(
     name = "com_github_nelhage_rules_boost",
-    url = "https://github.com/nelhage/rules_boost/archive/8022bc45ee7acc254ed93cb6872c627ca844a36f.tar.gz",
-    strip_prefix = "rules_boost-8022bc45ee7acc254ed93cb6872c627ca844a36f",
-    sha256 = "a49f49804f788d2f40ee036d44dd92f0130e5866ea81173a4c6a38422a384733"
+
+    # Replace the commit hash in both places (below) with the latest, rather than using the stale one here.
+    # Even better, set up Renovate and let it do the work for you (see "Suggestion: Updates" in the README).
+    url = "https://github.com/nelhage/rules_boost/archive/6b7c1ce2b8d77cb6b3df6ccca0b6cf7ed13136fc.tar.gz",
+    strip_prefix = "rules_boost-6b7c1ce2b8d77cb6b3df6ccca0b6cf7ed13136fc",
+    # When you first run this tool, it'll recommend a sha256 hash to put here with a message like: "DEBUG: Rule 'com_github_nelhage_rules_boost' indicated that a canonical reproducible form can be obtained by modifying arguments sha256 = ..."
+)
+
+http_archive(
+    name = "build_bazel_rules_nodejs",
+    sha256 = "c2ad51299792d5af3b258f1dd71b3b57eff9424c2e1797d9c1d65717d95da03a",
+    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/5.7.3/rules_nodejs-5.7.3.tar.gz"],
 )
 
 # boost archive extra files
@@ -339,4 +348,8 @@ rules_proto_grpc_repos()
 load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
 rules_proto_dependencies()
 rules_proto_toolchains()
+
+load("@build_bazel_rules_nodejs//:repositories.bzl", "build_bazel_rules_nodejs_dependencies")
+
+build_bazel_rules_nodejs_dependencies()
 

@@ -30,10 +30,12 @@
 #define MONERO_EXCEPTION_H
 
 #include <string>
+#ifdef _WIN32
 #include <windows.h>
-#include <stdio.h>
 #include <intrin.h>
 #include <dbghelp.h>
+#endif
+#include <stdio.h>
 #include <vector>
 #include <sstream>
 #include <iostream>

@@ -8,6 +8,14 @@ config_setting(
     visibility = ["//visibility:public"],
 )
 
+config_setting(
+    name = "mac",
+    constraint_values = [
+        "@platforms//os:macos",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 cc_library(
     name = "device_trezor",
     srcs = [
@@ -28,6 +36,7 @@ cc_library(
         "trezor/trezor_defs.hpp",
     ] + select({
         "windows": glob(["**/trezor/include/*.h"]),
+        "mac": [],
         "//conditions:default": [],
     }),
     deps = [
@@ -38,6 +47,7 @@ cc_library(
         "//src:ringct_basic",
         "//src:rpc",
         "@boost//:chrono",
+        "@boost//:scope_exit",
         "@libsodium",
         "@libusb",
         "@rapidjson",

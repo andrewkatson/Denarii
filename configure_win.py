@@ -33,6 +33,12 @@ workspace_path = workspace_path_finder.find_workspace_path()
 
 
 def get_libunwind():
+    libunwind_path = workspace_path / "external" / "libunwind"
+
+    if common.check_exists(libunwind_path, False):
+        common.print_something("Libunwind already downloaded")
+        return
+
     common.print_something("Getting libunwind")
 
     # libunwind wants to be special so we need to download its source files first
@@ -66,11 +72,16 @@ def get_libunwind():
     fout.write(replacement)
     fout.close()
 
-    libunwind_path = workspace_path / "external" / "libunwind"
     common.check_exists(libunwind_path)
 
 
 def get_zlib():
+    zlib_path = workspace_path / "external" / "zlib"
+
+    if common.check_exists(zlib_path, False): 
+        common.print_something("Zlib already downloaded")
+        return
+
     common.print_something("Getting Zlib")
     raw_path = str(workspace_path / "external")
 
@@ -79,7 +90,6 @@ def get_zlib():
     clone_command = "git clone git@github.com:andrewkatson/zlib.git"
     common.system(clone_command)
 
-    zlib_path = workspace_path / "external" / "zlib"
     common.check_exists(zlib_path)
 
 
@@ -96,6 +106,8 @@ def create_build_file_win(libraries):
         if not os.path.exists(path):
             with open(path, 'w'):
                 pass
+        else:
+            common.print_something(f"{path} already exists")
 
         common.check_exists(path)
 
@@ -112,6 +124,8 @@ def create_folder_win(libraries):
 
         if not os.path.exists(path):
             os.makedirs(path)
+        else:
+            common.print_something(f"{path} already exists")
 
         library.folderpath = path
 
@@ -164,19 +178,24 @@ def find_src_files_win(libraries):
                 new_path = os.path.join(library.folderpath, filename)
 
                 if os.path.exists(path):
-                    print("Moving: " + path + " to " + library.folderpath)
+                    common.print_something("Moving: " + path + " to " + library.folderpath)
                     try:
                         if not os.path.exists(new_path):
                             with open(new_path, 'w'):
                                 pass
                     except:
-                        print("weird this shouldnt happen but is ok")
-                    finally:
-                        print(" ALREADY EXISTS " + new_path)
+                        common.print_something("weird this shouldnt happen but is ok")
+                    
+                    if common.check_exists(new_path, False):
+                        common.print_something(f"{new_path} already exists")
+                        continue
+
                     shutil.copyfile(path, new_path)
 
+                    common.check_exists(new_path)
+
                 else:
-                    print(path + " does not exist")
+                    common.print_something(path + " does not exist")
 
 
 def copy_file(path, library):
@@ -206,12 +225,16 @@ def copy_file(path, library):
                     with open(new_path, 'w'):
                         pass
             except Exception as e:
-                print("ALREADY EXISTS " + new_path)
+                common.print_something(e)
+
+            if common.check_exists(new_path, False):
+                common.print_something(f"{new_path} already exists")
+                return
 
             shutil.copyfile(path, new_path)
         except Exception as e:
-            print("Could not copy file " + path)
-            print(e)
+            common.print_something("Could not copy file " + path)
+            common.print_something(e)
 
 
 def find_includes_win(libraries):
@@ -222,13 +245,11 @@ def find_includes_win(libraries):
 
             for path in library.relevant_paths:
 
-                if os.path.isdir(path):
-                    for subdir, dirs, files in os.walk(path):
-                        for file in files:
-                            full_path = os.path.join(path, file)
-                            copy_file(full_path, library)
-                else:
-                    copy_file(path, library)
+                paths = common.get_all_files_paths(path)
+
+                for path in paths: 
+
+                    copy_file(path)
 
 
 def import_dependencies_win():
@@ -243,6 +264,12 @@ def import_dependencies_win():
 
 
 def randomx_win(external_dir_path):
+    randomx_library_path = build_path / "librandomx.a"
+
+    if common.check_exists(randomx_library_path, False):
+        common.print_something("Randomx library already exists")
+        return
+
     common.print_something("Getting randomx")
 
     randomx_path = external_dir_path / "randomx"
@@ -254,11 +281,16 @@ def randomx_win(external_dir_path):
     command = "cmake -DARCH=native -G \"MinGW Makefiles\" .. && mingw32-make"
     common.system(command)
 
-    randomx_library_path = build_path / "librandomx.a"
     common.check_exists(randomx_library_path)
 
 
 def miniupnp_win(external_dir_path):
+
+    miniupnp_library_path = miniupnp_path / "libminiupnpc.a"
+    if common.check_exists(miniupnp_library_path, False):
+        common.print_something("Miniupnp library already exists")
+        return
+
     common.print_something("Getting miniupnp")
     common.chdir(external_dir_path)
 
@@ -274,8 +306,13 @@ def miniupnp_win(external_dir_path):
     command = "cmake -G \"MinGW Makefiles\" . && mingw32-make"
     common.system(command)
 
-    miniupnp_library_path = miniupnp_path / "libminiupnpc.a"
     common.check_exists(miniupnp_library_path)
+
+def build_dependencies_win():
+    external_dir_path = workspace_path / "external"
+    randomx_win(external_dir_path)
+
+    miniupnp_win(external_dir_path)
 
 
 def openpgm_win(external_dir_path):
@@ -334,3 +371,4 @@ miniupnp_win(external_dir_path)
 openpgm_win(external_dir_path)
 
 libnorm_win(external_dir_path)
+

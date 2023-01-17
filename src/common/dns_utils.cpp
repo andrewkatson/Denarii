@@ -29,7 +29,11 @@
 #include "src/common/dns_utils.h"
 // check local first (in the event of static or in-source compilation of libunbound)
 
+#ifdef __clang__
+#include "include/unbound.h"
+#else
 #include "unbound.h"
+#endif
 
 #include <stdlib.h>
 #include "contrib/epee/include/include_base_utils.h"

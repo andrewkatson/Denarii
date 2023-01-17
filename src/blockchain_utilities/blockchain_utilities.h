@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "version.h"
+#include "src/version.h"
 
 
 // bounds checking is done before writing to buffer, but buffer size

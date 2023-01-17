@@ -111,7 +111,10 @@ nbproject
 __pycache__/
 
 # External folders
+external/autoconf
+external/autogen
 external/expat
+external/graphviz
 external/ldns
 external/libhidapi
 external/liblzma
@@ -125,6 +128,8 @@ external/libusb
 external/libzmq
 external/openpgm
 external/openssl*/
+external/pkg-config
+external/protobuf
 external/zlib
 external/openssl-1.1.1i/
 external/supercop
@@ -149,6 +154,9 @@ utils/gui/google/
 utils/gui/Proto/wallet_pb2.py
 utils/gui/Proto/gui_user_pb2.py
 utils/gui/Security/
+utils/gui/build/
+utils/gui/dist/
+utils/gui/gui_main.spec
 
 # Zips from setup
 external/openssl.zip
@@ -192,3 +200,9 @@ wallet/
 
 # Clion 
 .clwb/
+
+# VSCode
+.vscode/
+
+# Brew
+contrib/brew/Brewfile.lock.json
