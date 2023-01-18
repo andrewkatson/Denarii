@@ -1,5 +1,29 @@
 package(default_visibility = ["//visibility:public"])
 
+config_setting(
+    name = "windows",
+    constraint_values = [
+        "@platforms//os:windows",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "mac",
+    constraint_values = [
+        "@platforms//os:macos",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+   name = "linux",
+   constraint_values = [
+      "@platforms//os:linux",
+   ],
+   visibility = ["//visibility:public"],
+)
+
 # Doesn't build on MacOS because it tries to evaluate @libnorm and recurs endlessly.
 cc_binary(
     name = "benchmark",
@@ -7,10 +31,15 @@ cc_binary(
         "benchmark.cpp",
         "benchmark.h",
     ],
-    linkopts = [
-        "-ltinfo",
+    linkopts = select({
+        "windows": [],
+        "mac": [],
+        "linux": [
+            "-ltinfo", 
+            "-lnorm",
+        ]
+    }) + [
         "-lreadline",
-        "-lnorm",
     ],
     deps = [
         "//src:cncrypto",
