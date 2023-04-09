@@ -1127,7 +1127,6 @@ namespace nodetool
       hsh_result = true;
       if(!just_take_peerlist)
       {
-        LOG_WARNING_CC(context, "HERE");
         if(!m_payload_handler.process_payload_sync_data(rsp.payload_data, context, true))
         {
           LOG_WARNING_CC(context, "COMMAND_HANDSHAKE invoked, but process_payload_sync_data returned false, dropping connection.");
