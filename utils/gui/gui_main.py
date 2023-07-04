@@ -14,6 +14,8 @@ import time
 
 import workspace_path_finder
 
+# DO NOT REMOVE THESE
+# They look like they aren't used but they are when building the exe
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import descriptor_pool as _descriptor_pool
 from google.protobuf import message as _message
@@ -25,6 +27,22 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 try:
+
+    from create_wallet_screen import *
+    from font import *
+    from lang_select_screen import *
+    from local_wallet_screen import *
+    from remote_wallet_screen import *
+    from restore_wallet_screen import *
+    from screen import *
+    from set_wallet_screen import *
+    from user_info_screen import *
+    from wallet_info_screen import *
+    from wallet_screen import *
+    from label import *
+    from push_button import *
+    from radio_button import *
+    from line_edit import *
 
     # Modify PATH to include the path to where we are so in production we can find all our files.
     sys.path.append(os.path.dirname(os.path.realpath(__file__)))
@@ -95,14 +113,7 @@ try:
 
             self.denarii_client = denarii_client.DenariiClient()
 
-            self.denariid = self.setup_denariid()
-            self.denariid.wait(timeout=5)
-            if self.denariid is not None and self.denariid.returncode == 0:
-                print("Denariid started up")
-            else:
-                print("Denariid was not started or was already active")
-                if self.denariid is not None:
-                    print(self.denariid.returncode)
+            self.denariid = self.run_denariid_setup()
 
             self.denarii_wallet_rpc_server = self.setup_denarii_wallet_rpc_server()
             self.denarii_wallet_rpc_server.wait(timeout=5)
@@ -121,221 +132,59 @@ try:
             self.server_thread.start()
             self.wallet_thread.start()
 
-            self.next_button = QPushButton("Next Page", self)
+            self.main_layout = QVBoxLayout()
+            self.setLayout(self.main_layout)
+
+            # Common buttons
+            self.next_button = PushButton("Next Page", self)
             self.next_button.setStyleSheet("color:black")
             self.next_button.setStyleSheet("font-weight: bold")
             self.next_button.setStyleSheet("font-size: 18pt")
             self.next_button.clicked.connect(self.next_clicked)
 
-            self.pick_lang_label = Label("Pick a Language")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.pick_lang_label.setFont(font)
+            self.back_button = PushButton("Back", self)
+            self.back_button.setStyleSheet("color:black")
+            self.back_button.setStyleSheet("font-weight: bold")
+            self.back_button.setStyleSheet("font-size: 18pt")
+            self.back_button.clicked.connect(self.back_clicked)
 
-            self.user_info_label = Label("Input Your Information")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.user_info_label.setFont(font)
+            common_buttons = [self.next_button, self.back_button]
 
-            self.wallet_info_label = Label("Choose Wallet")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.wallet_info_label.setFont(font)
-
-            self.create_wallet_label = Label("Create Wallet")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.create_wallet_label.setFont(font)
-
-            self.restore_wallet_label = Label("Restore Wallet")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.restore_wallet_label.setFont(font)
-
-            self.set_wallet_label = Label("Set Wallet")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.set_wallet_label.setFont(font)
-
-            self.wallet_info_label = Label("Wallet")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.wallet_info_label.setFont(font)
-
-            self.your_balance_label = Label("Your Balance:")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.your_balance_label.setFont(font)
-
-            self.your_address_label = Label("Your Address:")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.your_address_label.setFont(font)
-
-            self.your_sub_address_label = Label("Your Subaddresses:")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.your_sub_address_label.setFont(font)
-
-            self.wallet_info_text_box = Label("")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.wallet_info_text_box.setFont(font)
-            self.wallet_info_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
-
-            self.wallet_save_file_text_box = Label("")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.wallet_save_file_text_box.setFont(font)
-            self.wallet_save_file_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
-
-            self.create_wallet_text_box = Label("")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.create_wallet_text_box.setFont(font)
-
-            self.restore_wallet_text_box = Label("")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.restore_wallet_text_box.setFont(font)
-
-            self.set_wallet_text_box = Label("")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.set_wallet_text_box.setFont(font)
-            self.set_wallet_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
-
-            self.balance_text_box = Label("")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.balance_text_box.setFont(font)
-
-            self.address_text_box = Label("")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.address_text_box.setFont(font)
-            self.address_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
-
-            self.wallet_info_status_text_box = Label("")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.wallet_info_status_text_box.setFont(font)
-
-            self.wallet_transfer_status_text_box = Label("")
-            font = QFont()
-            font.setFamily("Arial")
-            font.setPixelSize(50)
-            self.wallet_transfer_status_text_box.setFont(font)
-
-            self.sub_address_text_boxes = []
-
-            self.english_radio_button = RadioButton("English", self)
-            self.english_radio_button.toggled.connect(self.english_radio_button.on_lang_select_clicked)
-            self.english_radio_button.language = "English"
-            self.english_radio_button.setVisible(False)
-            self.english_radio_button.setStyleSheet(
-                'QRadioButton{font: 30pt Helvetica MS;} QRadioButton::indicator { width: 30px; height: 30px;};')
-
-            self.name_line_edit = QLineEdit()
-            self.email_line_edit = QLineEdit()
-            self.password_line_edit = QLineEdit()
-            self.password_line_edit.setEchoMode(QLineEdit.Password)
-            self.seed_line_edit = QLineEdit()
-            self.address_line_edit = QLineEdit()
-            self.amount_line_edit = QLineEdit()
-
-            self.create_wallet_push_button = PushButton("Create wallet", self)
-            self.create_wallet_push_button.clicked.connect(self.on_create_wallet_clicked)
-            self.create_wallet_push_button.setVisible(False)
-            self.create_wallet_push_button.setStyleSheet(
-                'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
-
-            self.restore_wallet_push_button = PushButton("Restore wallet", self)
-            self.restore_wallet_push_button.clicked.connect(self.on_restore_wallet_pushed)
-            self.restore_wallet_push_button.setVisible(False)
-            self.restore_wallet_push_button.setStyleSheet(
-                'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
-
-            self.set_wallet_push_button = PushButton("Set wallet", self)
-            self.set_wallet_push_button.clicked.connect(self.on_set_wallet_pushed)
-            self.set_wallet_push_button.setVisible(False)
-            self.set_wallet_push_button.setStyleSheet(
-                'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
-
-            self.create_wallet_submit_push_button = PushButton("Submit", self)
-            self.create_wallet_submit_push_button.clicked.connect(self.on_create_wallet_submit_clicked)
-            self.create_wallet_submit_push_button.setVisible(False)
-            self.create_wallet_submit_push_button.setStyleSheet(
-                'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
-
-            self.restore_wallet_submit_push_button = PushButton("Submit", self)
-            self.restore_wallet_submit_push_button.clicked.connect(self.on_restore_wallet_submit_clicked)
-            self.restore_wallet_submit_push_button.setVisible(False)
-            self.restore_wallet_submit_push_button.setStyleSheet(
-                'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
-
-            self.set_wallet_submit_push_button = PushButton("Submit", self)
-            self.set_wallet_submit_push_button.clicked.connect(self.on_set_wallet_submit_clicked)
-            self.set_wallet_submit_push_button.setVisible(False)
-            self.set_wallet_submit_push_button.setStyleSheet(
-                'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
-
-            self.transfer_push_button = PushButton("Transfer", self)
-            self.transfer_push_button.clicked.connect(self.on_transfer_clicked)
-            self.transfer_push_button.setVisible(False)
-            self.transfer_push_button.setStyleSheet(
-                'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
-
-            self.create_sub_address_push_button = PushButton("Create subaddress", self)
-            self.create_sub_address_push_button.clicked.connect(self.on_create_sub_address_clicked)
-            self.create_sub_address_push_button.setVisible(False)
-            self.create_sub_address_push_button.setStyleSheet(
-                'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
-
-            self.start_mining_push_button = PushButton("Start mining", self)
-            self.start_mining_push_button.clicked.connect(self.on_start_mining_clicked)
-            self.start_mining_push_button.setVisible(False)
-            self.start_mining_push_button.setStyleSheet(
-                'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
-
-            self.stop_mining_push_button = PushButton("Stop mining", self)
-            self.stop_mining_push_button.clicked.connect(self.on_stop_mining_clicked)
-            self.stop_mining_push_button.setVisible(False)
-            self.stop_mining_push_button.setStyleSheet(
-                'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
-
-            self.main_layout = QVBoxLayout()
-            self.setLayout(self.main_layout)
+            # Widgets
+            self.LANG_SELECT = LangSelectScreen(push_buttons=[self.next_button], gui_user=gui_user,
+                                                store_user_func=store_user, parent=self, main_layout=self.main_layout,
+                                                deletion_func=self.remove_all_widgets)
+            self.USER_INFO = UserInfoScreen(push_buttons=common_buttons, main_layout=self.main_layout,
+                                            deletion_func=self.remove_all_widgets)
+            self.WALLET_INFO = WalletInfoScreen(push_buttons=common_buttons, parent=self,
+                                                on_create_wallet_clicked=self.on_create_wallet_clicked,
+                                                on_restore_wallet_clicked=self.on_restore_wallet_pushed,
+                                                on_set_wallet_clicked=self.on_set_wallet_pushed,
+                                                main_layout=self.main_layout,
+                                                deletion_func=self.remove_all_widgets)
+            self.CREATE_WALLET = CreateWalletScreen(push_buttons=common_buttons, parent=self,
+                                                    on_create_wallet_submit_clicked=self.on_create_wallet_submit_clicked,
+                                                    main_layout=self.main_layout,
+                                                    deletion_func=self.remove_all_widgets)
+            self.RESTORE_WALLET = RestoreWalletScreen(push_buttons=common_buttons, parent=self,
+                                                      on_restore_wallet_submit_clicked=self.on_restore_wallet_submit_clicked,
+                                                      main_layout=self.main_layout,
+                                                      deletion_func=self.remove_all_widgets)
+            self.SET_WALLET = SetWalletScreen(push_buttons=common_buttons, parent=self,
+                                              on_set_wallet_submit_clicked=self.on_set_wallet_submit_clicked,
+                                              main_layout=self.main_layout,
+                                              deletion_func=self.remove_all_widgets)
+            self.CURRENT_WALLET = None
+            self.LOCAL_WALLET = LocalWalletScreen(push_buttons=[self.back_button], main_layout=self.main_layout,
+                                                  deletion_func=self.remove_all_widgets, parent=self,
+                                                  on_create_subaddress_clicked=self.on_create_sub_address_clicked,
+                                                  on_stop_mining_clicked=self.on_stop_mining_clicked,
+                                                  on_start_mining_clicked=self.on_start_mining_clicked)
+            self.REMOTE_WALLET = RemoteWalletScreen(push_buttons=[self.back_button], main_layout=self.main_layout,
+                                                    deletion_func=self.remove_all_widgets)
 
             if os.path.exists(USER_SETTINGS_PATH):
                 load_user()
-
-            # Widgets
-            self.LANG_SELECT = "LangSelect"
-            self.USER_INFO = "UserInfo"
-            self.WALLET_INFO = "WalletInfo"
-            self.CREATE_WALLET = "CreateWallet"
-            self.RESTORE_WALLET = "RestoreWallet"
-            self.SET_WALLET = "SetWallet"
-            self.WALLET_SCENE = "WalletScene"
 
             # Determine what scene we are on based on what info the stored user has
             if gui_user.language == "" and gui_user.name == "" and not gui_user.HasField("wallet"):
@@ -345,34 +194,27 @@ try:
             elif gui_user.language != "" and gui_user.name != "" and not gui_user.HasField("wallet"):
                 self.current_widget = self.WALLET_INFO
             else:
-                self.current_widget = self.WALLET_SCENE
+                self.current_widget = self.LOCAL_WALLET
 
-            self.first_horizontal_layout = QHBoxLayout()
-            self.second_horizontal_layout = QHBoxLayout()
-            self.third_horizontal_layout = QHBoxLayout()
-            self.fourth_horizontal_layout = QHBoxLayout()
-            self.fifth_horizontal_layout = QHBoxLayout()
-            self.sixth_horizontal_layout = QHBoxLayout()
-            self.seventh_horizontal_layout = QHBoxLayout()
-            self.eight_horizontal_layout = QHBoxLayout()
-            self.vertical_layout = QVBoxLayout()
-            self.form_layout = QFormLayout()
-
-            # Add some other layouts depending on the current widget
-            if self.current_widget == self.LANG_SELECT:
-                self.setup_lang_select_screen()
-            elif self.current_widget == self.USER_INFO:
-                self.setup_user_info_screen()
-            elif self.current_widget == self.WALLET_INFO:
-                self.setup_wallet_info_screen()
-            elif self.current_widget == self.WALLET_SCENE:
-                self.setup_wallet_scene_screen()
+            self.current_widget.setup()
 
             self.parent = parent
 
             self.success = False
 
             self.wallet = wallet_pb2.Wallet()
+
+        def run_denariid_setup(self):
+            self.denariid = self.setup_denariid()
+            self.denariid.wait(timeout=5)
+            if self.denariid is not None and self.denariid.returncode == 0:
+                print("Denariid started up")
+            else:
+                print("Denariid was not started or was already active")
+                if self.denariid is not None:
+                    print(self.denariid.returncode)
+
+            return self.denariid
 
         def already_started_denariid(self):
 
@@ -467,14 +309,7 @@ try:
                 else:
                     print("Not synchronized")
                     self.shutdown_denariid()
-                    self.denariid = self.setup_denariid()
-                    self.denariid.wait(timeout=5)
-                    if self.denariid is not None and self.denariid.returncode == 0:
-                        print("Denariid started up")
-                    else:
-                        print("Denariid was not started or was already active")
-                        if self.denariid is not None:
-                            print(self.denariid.returncode)
+                    self.denariid = self.run_denariid_setup()
 
         def monitor_wallet_thread(self):
             """
@@ -631,7 +466,7 @@ try:
 
         def setup_set_wallet_screen(self):
             """
-            Setup the set wallet screen
+            Setup the open wallet screen
             """
             self.remove_all_widgets(self.main_layout)
 
@@ -711,7 +546,7 @@ try:
                 # Add all the subaddresses to the vertical layout
                 for sub_address in self.wallet.sub_addresses:
                     sub_address_text_box = Label(str(sub_address))
-                    font = QFont()
+                    font = Font()
                     font.setFamily("Arial")
                     font.setPixelSize(50)
                     sub_address_text_box.setFont(font)
@@ -768,7 +603,7 @@ try:
 
         def set_wallet(self):
             """
-            Set the wallet based on the user's information
+            Open the wallet based on the user's information
             """
 
             self.wallet.name = self.name_line_edit.text()
@@ -848,7 +683,7 @@ try:
 
             if success:
                 sub_address_text_box = Label(str(self.wallet.sub_addresses[len(self.wallet.sub_addresses) - 1]))
-                font = QFont()
+                font = Font()
                 font.setFamily("Arial")
                 font.setPixelSize(50)
                 sub_address_text_box.setFont(font)
@@ -905,19 +740,50 @@ try:
                 self.current_widget = self.WALLET_INFO
                 self.store_user_info()
             elif self.current_widget == self.WALLET_INFO:
-                self.current_widget = self.WALLET_SCENE
+                # The next button on the wallet info screen should do nothing
+                self.current_widget = self.WALLET_INFO
             elif self.current_widget == self.CREATE_WALLET:
-                self.current_widget = self.WALLET_SCENE
+                self.current_widget = self.LOCAL_WALLET
             elif self.current_widget == self.RESTORE_WALLET:
-                self.current_widget = self.WALLET_SCENE
+                self.current_widget = self.LOCAL_WALLET
             elif self.current_widget == self.SET_WALLET:
-                self.current_widget = self.WALLET_SCENE
+                self.current_widget = self.LOCAL_WALLET
 
             if self.current_widget == self.USER_INFO:
                 self.setup_user_info_screen()
             elif self.current_widget == self.WALLET_INFO:
                 self.setup_wallet_info_screen()
-            elif self.current_widget == self.WALLET_SCENE:
+            elif self.current_widget == self.LOCAL_WALLET:
+                self.setup_wallet_scene_screen()
+
+            store_user()
+
+        @pyqtSlot()
+        def back_clicked(self):
+            """
+            What to do when the back_button button is clicked depending on the current screen
+            """
+            if self.current_widget == self.LANG_SELECT:
+                # The back button on lang select should do nothing
+                self.current_widget = self.LANG_SELECT
+            elif self.current_widget == self.USER_INFO:
+                self.current_widget = self.LANG_SELECT
+            elif self.current_widget == self.WALLET_INFO:
+                self.current_widget = self.USER_INFO
+            elif self.current_widget == self.CREATE_WALLET:
+                self.current_widget = self.WALLET_INFO
+            elif self.current_widget == self.RESTORE_WALLET:
+                self.current_widget = self.WALLET_INFO
+            elif self.current_widget == self.SET_WALLET:
+                self.current_widget = self.WALLET_INFO
+            elif self.current_widget == self.LOCAL_WALLET:
+                self.current_widget = self.WALLET_INFO
+
+            if self.current_widget == self.USER_INFO:
+                self.setup_user_info_screen()
+            elif self.current_widget == self.WALLET_INFO:
+                self.setup_wallet_info_screen()
+            elif self.current_widget == self.LOCAL_WALLET:
                 self.setup_wallet_scene_screen()
 
             store_user()
@@ -994,31 +860,6 @@ try:
             Stop mining
             """
             self.stop_mining()
-
-
-    class RadioButton(QRadioButton):
-
-        @pyqtSlot()
-        def on_lang_select_clicked(self):
-            """
-            Set the user's language when they choose one
-            """
-            button = self.sender()
-
-            gui_user.language = button.language
-
-            store_user()
-
-
-    class PushButton(QPushButton):
-        pass
-
-
-    class Label(QLabel):
-
-        def __init__(self, name):
-            super().__init__()
-            self.setText(name)
 
 
     def get_main_window():
