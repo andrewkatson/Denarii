@@ -137,6 +137,7 @@ external/miniupnp
 external/trezor-common
 external/unbound
 external/KeirosPublic
+external/protolib
 
 # Testing stuff
 tests/functional_tests/functional-tests-directory/
@@ -157,6 +158,7 @@ utils/gui/Security/
 utils/gui/build/
 utils/gui/dist/
 utils/gui/gui_main.spec
+synchronization_started.txt
 
 # Zips from setup
 external/openssl.zip

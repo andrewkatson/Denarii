@@ -168,10 +168,17 @@ namespace tools
       m_wallet_dir = command_line::get_arg(*m_vm, arg_wallet_dir);
 #ifdef _WIN32
 #define MKDIR(path, mode)    mkdir(path)
+#elif __clang__
+#define MKDIR(path, mode) boost::filesystem::create_directories(path)
 #else
 #define MKDIR(path, mode)    mkdir(path, mode)
 #endif
+
+#ifdef __clang__
+      if (!m_wallet_dir.empty() && MKDIR(m_wallet_dir.c_str(), 0700))
+#else
       if (!m_wallet_dir.empty() && MKDIR(m_wallet_dir.c_str(), 0700) < 0 && errno != EEXIST)
+#endif
       {
 #ifdef _WIN32
         LOG_ERROR(tr("Failed to create directory ") + m_wallet_dir);

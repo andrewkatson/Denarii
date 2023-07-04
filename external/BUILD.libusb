@@ -1,8 +1,55 @@
 
 package(default_visibility = ["//visibility:public"])
 
+config_setting(
+    name = "windows",
+    constraint_values = [
+        "@platforms//os:windows",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "mac",
+    constraint_values = [
+        "@platforms//os:macos",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+   name = "linux",
+   constraint_values = [
+      "@platforms//os:linux",
+   ],
+   visibility = ["//visibility:public"],
+)
+
 cc_library(
   name = "libusb",
-  srcs = glob(["**/*.a"]),
-  hdrs = glob(["**/include/**/*.h"])
+  srcs = select({
+    "windows": glob(["**/*.a"]),
+    "mac": [
+      "libusb/os/darwin_usb.c", 
+      "libusb/os/events_posix.c", 
+      "libusb/os/threads_posix.c",
+      "libusb/core.c", 
+      "libusb/descriptor.c",
+      "libusb/hotplug.c",
+      "libusb/io.c",
+      "libusb/strerror.c",
+      "libusb/sync.c",
+    ],
+    "linux": glob(["**/*.a"]),
+  }),
+  hdrs = select({
+    "windows": glob(["**/include/**/*.h"]),
+    "mac": glob(["**/*.h"]),
+    "linux": glob(["**/include/**/*.h"]),
+  }),
+  includes = select({
+    "windows": [],
+    "mac": ["libusb"],
+    "linux": [],
+  })
 )

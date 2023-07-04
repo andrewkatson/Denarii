@@ -8,8 +8,13 @@ Portions Copyright (c) 2012-2013 The Cryptonote developers.
 
   - [Introduction](#introduction)
   - [License](#license)
-  - [Compiling Monero from source](#compiling-denarii-from-source)
+  - [Compiling Denarii from source](#compiling-denarii-from-source)
     - [Dependencies](#dependencies)
+  - [Configuration Instructions](#configuration-instructions)
+  - [Building](#building)
+  - [Running Denariid](#running-denariid)
+  - [Running Denarii Wallet Rpc Server](#running-denarii-wallet-rpc-server)
+  - [Running Denarii GUI](#running-denarii-gui)
   - [Internationalization](#Internationalization)
   - [Using Tor](#using-tor)
   - [Pruning](#Pruning)
@@ -120,12 +125,13 @@ Denarii uses bazel (https://bazel.build/)
     ```
 
 ### On Windows
-* Download and install the following. 
+* Download and install the following. Make sure they are in your path.
 CMAKE: https://cmake.org/download/
 Make: http://gnuwin32.sourceforge.net/packages/make.htm
 MinGW: https://sourceforge.net/projects/mingw/files/latest/download
 Msys2: https://www.msys2.org/
 Bazel with gcc: https://github.com/bazelbuild/bazel/issues/12100
+Visual Studio: https://visualstudio.microsoft.com/
 
 * Open the MSYS shell via the `MSYS2 Shell` shortcut
 * Update packages using pacman:  
@@ -180,7 +186,7 @@ Do `sudo bazel build target` for all targets -- e.g. ```sudo bazel build src:den
 
 ### On Windows  
 
-All builds should use ```--compiler=mingw-gcc``` and  ```--copt="-O3"``` and  ```--copt="-DWIN32_LEAN_AND_MEAN"``` and ```--copt="-DMINIUPNP_STATICLIB"``` and ```--copt="-DZMQ_STATIC"``` and ```--linkopt="-static"```
+All builds should use ```--compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static"```
 
 If you want to build in debug mode use `--compilation_mode=dbg` instead of `--copt="-O3"` and also add in `--linkopt="mcmodel=medium"` and `--copt="=Wa,-mbig-obj"`
 
@@ -208,7 +214,6 @@ The build places the binary in `bazel-bin/` sub-directory. To run in the
 foreground:
 
 ```bash
-bazel build src:denariid
 sudo ./bazel-bin/src/denariid
 ```
 
@@ -230,6 +235,10 @@ start bazel-bin/src/denariid.exe
 ```
 
 ### On Mac
+```bash
+sudo ./bazel-bin/src/denariid
+```
+
 If you're on Mac, you may need to add the `--max-concurrency 1` option to
 denarii-wallet-cli, and possibly denariid, if you get crashes refreshing. You also might need `--no-igd`.
 
@@ -240,7 +249,6 @@ denarii-wallet-cli, and possibly denariid, if you get crashes refreshing. You al
 The build places the binary in `bazel-bin` sub-directory: To run in the foreground: 
 
 ```bash
-bazel build src:denarii_wallet_rpc_server
 sudo ./bazel-bin/src/denarii_wallet_rpc_server --rpc-bind-port=8080 --wallet-dir=/some/existing/path
 ```
 
@@ -257,8 +265,7 @@ Linux has stack traces by default. Windows crashes when there is a stack trace s
 ### On Mac
 
 ```bash
-bazel build src:denarii_wallet_rpc_server
-./bazel-bin/src/denarii_wallet_rpc_server --rpc-bind-port=8080 --wallet-dir=/some/existing/path
+sudo ./bazel-bin/src/denarii_wallet_rpc_server --rpc-bind-port=8080 --wallet-dir=/some/existing/path
 ```
 
 ## Running Denarii GUI
@@ -412,25 +419,39 @@ The output of `mdb_dump -s blocks <path to blockchain dir>` and `mdb_dump -s blo
 
 These records are dumped as hex data, where the first line is the key and the second line is the data.
 
-# Known Issues
+## Known Issues
 
-## Protocols
+### Building 
 
-### Socket-based
+#### Mac 
+
+Only works with `ARM` CPUs.
+
+#### Windows 
+
+Only works with `x86` CPUs.
+
+#### Linux 
+
+Only works on `Ubuntu` with `x86` CPUs.
+
+### Protocols
+
+#### Socket-based
 
 Because of the nature of the socket-based protocols that drive denarii, certain protocol weaknesses are somewhat unavoidable at this time. While these weaknesses can theoretically be fully mitigated, the effort required (the means) may not justify the ends. As such, please consider taking the following precautions if you are a denarii node operator:
 
 - Run `denariid` on a "secured" machine. If operational security is not your forte, at a very minimum, have a dedicated a computer running `denariid` and **do not** browse the web, use email clients, or use any other potentially harmful apps on your `denariid` machine. **Do not click links or load URL/MUA content on the same machine**. Doing so may potentially exploit weaknesses in commands which accept "localhost" and "127.0.0.1".
 - If you plan on hosting a public "remote" node, start `denariid` with `--restricted-rpc`. This is a must.
 
-### Blockchain-based
+#### Blockchain-based
 
 Certain blockchain "features" can be considered "bugs" if misused correctly. Consequently, please consider the following:
 
 - When receiving denarii, be aware that it may be locked for an arbitrary time if the sender elected to, preventing you from spending that denarii until the lock time expires. You may want to hold off acting upon such a transaction until the unlock time lapses. To get a sense of that time, you can consider the remaining blocktime until unlock as seen in the `show_transfers` command.
 
-## Connections 
+### Connections 
 
-### Denariid on Windows 
+#### Denariid on Windows 
 
 - Right now, `denaiid.exe` will sometimes fail to connect to the network. If it happens just restart it. The gui will restart it automatically in the background.

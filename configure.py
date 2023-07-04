@@ -113,7 +113,7 @@ def create_folder(libraries):
 
         if not os.path.exists(path):
             os.makedirs(path)
-        else: 
+        else:
             common.print_something(f"{path} already exists")
 
         library.folderpath = path
@@ -204,7 +204,7 @@ def find_includes(libraries):
                             os.mknod(new_path)
                     except Exception as e:
                         common.print_something(e)
-                    
+
                     if common.check_exists(new_path, False):
                         common.check_exists(f"{new_path} already exists")
                         continue
@@ -267,14 +267,15 @@ def find_includes_mac(libraries):
                     include_path = pathlib.Path(library.folderpath) / "include"
 
                     if common.check_exists(include_path, False):
-                        common.print_something(f"{include_path} already exists")
+                        common.print_something(
+                            f"{include_path} already exists")
                         continue
 
                     shutil.copytree(path, include_path)
 
                 except Exception as e:
                     common.print_something(e)
-                
+
                 common.check_exists(include_path)
 
 
@@ -310,6 +311,9 @@ def import_dependencies_mac():
 
 
 def miniupnp(external_dir_path):
+    # we only need to build one of the subdirectories
+    miniupnp_path = external_dir_path / "miniupnp" / "miniupnpc"
+
     miniupnp_library_path = miniupnp_path / "libminiupnpc.a"
 
     if common.check_exists(miniupnp_library_path, False):
@@ -327,9 +331,6 @@ def miniupnp(external_dir_path):
     clone_command = "git clone https://github.com/miniupnp/miniupnp.git"
     common.system(clone_command)
 
-    # we only need to build one of the subdirectories
-    miniupnp_path = external_dir_path / "miniupnp" / "miniupnpc"
-
     common.chdir(miniupnp_path)
 
     command = "sudo make install"
@@ -339,6 +340,8 @@ def miniupnp(external_dir_path):
 
 
 def randomx(external_dir_path):
+    randomx_path = external_dir_path / "randomx"
+
     randomx_library_path = randomx_path / "build" / "librandomx.a"
 
     if common.check_exists(randomx_library_path, False):
@@ -347,8 +350,6 @@ def randomx(external_dir_path):
 
     common.print_something("Getting randomx")
     common.chdir(external_dir_path)
-
-    randomx_path = external_dir_path / "randomx"
 
     common.chdir(randomx_path)
 
@@ -359,19 +360,19 @@ def randomx(external_dir_path):
 
 
 def supercop(external_dir_path):
+    supercop_path = external_dir_path / "supercop"
 
     supercop_64_library_path = supercop_path / "libmonero-crypto64.a"
     supercop_other_library_path = supercop_path / "libmonero-crypto.a"
 
     if common.check_exists(supercop_64_library_path, False) and common.check_exists(supercop_other_library_path, False):
-        common.print_something(f"{supercop_64_library_path} and {supercop_other_library_path} already exist")
+        common.print_something(
+            f"{supercop_64_library_path} and {supercop_other_library_path} already exist")
         return
-    
+
     common.print_something("Getting supercop")
 
     common.chdir(external_dir_path)
-
-    supercop_path = external_dir_path / "supercop"
 
     remove_command = "rm -rf " + str(supercop_path)
     common.system(remove_command)
@@ -399,7 +400,8 @@ def supercop(external_dir_path):
     common.system(second_create_command)
 
     try:
-        shutil.copyfile(lib_crypto_path, str(supercop_path / "libmonero-crypto.a"))
+        shutil.copyfile(lib_crypto_path, str(
+            supercop_path / "libmonero-crypto.a"))
     except Exception as e:
         common.print_something(e)
 
@@ -408,6 +410,8 @@ def supercop(external_dir_path):
 
 
 def unbound(external_dir_path):
+    unbound_path = external_dir_path / "unbound"
+
     libunbound_library_path = unbound_path / "libunbound.so"
 
     if common.check_exists(libunbound_library_path, False):
@@ -416,8 +420,6 @@ def unbound(external_dir_path):
 
     common.print_something("Getting unbound")
     common.chdir(external_dir_path)
-
-    unbound_path = external_dir_path / "unbound"
 
     common.chdir(unbound_path)
 
@@ -431,11 +433,14 @@ def unbound(external_dir_path):
 
 
 def openssl(external_dir_path):
+    openssl_path = external_dir_path / "openssl"
+
     libssl_path = openssl_path / "libssl.a"
     libcrypto_path = openssl_path / "libcrypto.a"
 
     if common.check_exists(libssl_path, False) and common.check_exists(libcrypto_path, False):
-        common.print_something(f"{libssl_path} and {libcrypto_path} already exist")
+        common.print_something(
+            f"{libssl_path} and {libcrypto_path} already exist")
         return
 
     common.print_something("Getting openssl")
@@ -449,8 +454,6 @@ def openssl(external_dir_path):
     unzip_command = "tar -xvzf " + \
         str(openssl_zip_path) + " -C " + str(external_dir_path)
     common.system(unzip_command)
-
-    openssl_path = external_dir_path / "openssl"
 
     openssl_wrong_name_path = external_dir_path / "openssl-1.1.1i"
 
@@ -466,6 +469,8 @@ def openssl(external_dir_path):
 
 
 def libzmq(external_dir_path):
+    libzmq_path = external_dir_path / "libzmq"
+
     libzmq_library_path = libzmq_path / "libzmq.a"
 
     if common.check_exists(libzmq_library_path, False):
@@ -477,8 +482,6 @@ def libzmq(external_dir_path):
 
     clone_command = "git clone https://github.com/zeromq/libzmq.git"
     common.system(clone_command)
-
-    libzmq_path = external_dir_path / "libzmq"
 
     common.chdir(libzmq_path)
 
@@ -492,6 +495,7 @@ def libzmq(external_dir_path):
 
 def zlib(external_dir_path):
     zlib_path = external_dir_path / "zlib"
+
     if common.check_exists(zlib_path, False):
         common.print_something(f"{zlib_path} already exists")
         return
@@ -509,6 +513,8 @@ def zlib(external_dir_path):
 
 
 def liblmdb(external_dir_path):
+    liblmdb_path = external_dir_path / "db_drivers" / "liblmdb"
+
     liblmdb_library_path = liblmdb_path / "liblmdb.a"
 
     if common.check_exists(liblmdb_library_path, False):
@@ -517,8 +523,6 @@ def liblmdb(external_dir_path):
 
     common.print_something("Getting liblmdb")
     common.chdir(external_dir_path)
-
-    liblmdb_path = external_dir_path / "db_drivers" / "liblmdb"
 
     common.chdir(liblmdb_path)
     make_command = "make"
@@ -560,19 +564,19 @@ def build_dependencies():
 
 
 def supercop_win(external_dir_path):
+    supercop_path = external_dir_path / "supercop"
 
     supercop_64_library_path = supercop_path / "libmonero-crypto64.a"
     supercop_other_library_path = supercop_path / "libmonero-crypto.a"
 
     if common.check_exists(supercop_64_library_path, False) and common.check_exists(supercop_other_library_path, False):
-        common.print_something(f"{supercop_64_library_path} and {supercop_other_library_path} already exist")
+        common.print_something(
+            f"{supercop_64_library_path} and {supercop_other_library_path} already exist")
         return
 
     common.print_something("Getting supercop for Windows")
 
     common.chdir(external_dir_path)
-
-    supercop_path = external_dir_path / "supercop"
 
     remove_command = "rm -rf " + str(supercop_path)
     common.system(remove_command)
@@ -590,7 +594,7 @@ def supercop_win(external_dir_path):
 
     try:
         shutil.copyfile(lib_crypto_path, str(
-        supercop_path / "libmonero-crypto64.a"))
+            supercop_path / "libmonero-crypto64.a"))
     except Exception as e:
         common.print_something(e)
 
@@ -599,7 +603,8 @@ def supercop_win(external_dir_path):
     common.system(second_create_command)
 
     try:
-        shutil.copyfile(lib_crypto_path, str(supercop_path / "libmonero-crypto.a"))
+        shutil.copyfile(lib_crypto_path, str(
+            supercop_path / "libmonero-crypto.a"))
     except Exception as e:
         common.print_something(e)
 
@@ -616,6 +621,8 @@ def build_dependencies_win():
 
 
 def randomx_mac(external_dir_path):
+    randomx_path = external_dir_path / "randomx"
+
     randomx_library_path = randomx_path / "build" / "librandomx.a"
 
     if common.check_exists(randomx_library_path, False):
@@ -624,8 +631,6 @@ def randomx_mac(external_dir_path):
 
     common.print_something("Getting randomx")
     common.chdir(external_dir_path)
-
-    randomx_path = external_dir_path / "randomx"
 
     common.chdir(randomx_path)
 
@@ -636,6 +641,8 @@ def randomx_mac(external_dir_path):
 
 
 def liblmdb_mac(external_dir_path):
+    liblmdb_path = external_dir_path / "db_drivers" / "liblmdb"
+
     liblmdb_library_path = liblmdb_path / "liblmdb.a"
 
     if common.check_exists(liblmdb_library_path, False):
@@ -645,8 +652,6 @@ def liblmdb_mac(external_dir_path):
     common.print_something("Getting liblmdb")
     common.chdir(external_dir_path)
 
-    liblmdb_path = external_dir_path / "db_drivers" / "liblmdb"
-
     common.chdir(liblmdb_path)
     make_command = "make"
     common.system(make_command)
@@ -655,6 +660,8 @@ def liblmdb_mac(external_dir_path):
 
 
 def libnorm_mac(external_dir_path):
+    libnorm_path = external_dir_path / "libnorm"
+
     binary_path = libnorm_path / "build" / "libnorm.a"
 
     if common.check_exists(binary_path, False):
@@ -667,7 +674,6 @@ def libnorm_mac(external_dir_path):
     clone_command = "git clone --recurse-submodules git@github.com:USNavalResearchLaboratory/norm.git"
     common.system(clone_command)
 
-    libnorm_path = external_dir_path / "libnorm"
     old_path = external_dir_path / "norm"
     rename_command = f"mv {old_path} {libnorm_path}"
     common.system(rename_command)
@@ -686,6 +692,8 @@ def libnorm_mac(external_dir_path):
 
 
 def libusb_mac(external_dir_path):
+    libusb_path = external_dir_path / "libusb"
+
     binary_path = libusb_path / "lib" / "libusb-1.0.a"
 
     if common.check_exists(binary_path, False):
@@ -698,13 +706,19 @@ def libusb_mac(external_dir_path):
     clone_command = "git clone git@github.com:libusb/libusb.git"
     common.system(clone_command)
 
-    libusb_path = external_dir_path / "libusb"
     common.chdir(libusb_path)
 
     build_command = f"./autogen.sh --prefix={libusb_path} && make && make install"
     common.system(build_command)
 
     common.check_exists(binary_path)
+
+    libusbi_path = libusb_path / "libusb" / "libusbi.h"
+    darwin_usb_path = libusb_path / "libusb" / "os" / "darwin_usb.c"
+
+    # We need to change some files to use quotes instead of angled brackets.
+    common.replace_phrase("<config.h>", '"config.h"', libusbi_path)
+    common.replace_phrase("<config.h>", '"config.h"', darwin_usb_path)
 
 
 def build_dependencies_mac():
@@ -731,7 +745,8 @@ def trezor_common():
         "trezor_common_workspace_file.txt"
 
     if common.check_exists(trezor_common_build_file_path, False) and common.check_exists(trezor_common_workspace_file_path, False):
-        common.print_something(f"{trezor_common_build_file_path} and {trezor_common_workspace_file_path} already exist")
+        common.print_something(
+            f"{trezor_common_build_file_path} and {trezor_common_workspace_file_path} already exist")
         return
 
     try:
@@ -764,7 +779,6 @@ def trezor_common():
     common.check_exists(trezor_common_workspace_file_path)
 
 
-
 def blocks_generate():
     common.print_something("Generating blocks files")
     input_files = ["checkpoints.dat",
@@ -783,7 +797,6 @@ def blocks_generate():
         if common.check_exists(path_to_output, False):
             common.print_something(f"{path_to_output} already exists")
             continue
-
 
         path_to_blocks = str(workspace_path) + "/src/blocks"
         command = "cd " + path_to_blocks + " && echo '#include\t<stddef.h>\n#ifndef _WIN32' > " + output_file \
@@ -1312,14 +1325,15 @@ def download_dependencies_for_ui():
 
 def build_keiros_public_protos():
 
-
     wallet_py_proto_path = workspace_path / "external" / \
         "KeirosPublic" / "bazel-bin" / "Proto" / "wallet_pb2.py"
     identifier_py_proto_path = workspace_path / \
-        "external" / "KeirosPublic" / "bazel-bin" / "Security" / "Proto" / "identifier_pb2.py"
+        "external" / "KeirosPublic" / "bazel-bin" / \
+        "Security" / "Proto" / "identifier_pb2.py"
 
     if common.check_exists(wallet_py_proto_path, False) and common.check_exists(identifier_py_proto_path, False):
-        common.print_something(f"{wallet_py_proto_path} and {identifier_py_proto_path} already exist")
+        common.print_something(
+            f"{wallet_py_proto_path} and {identifier_py_proto_path} already exist")
         return
 
     common.print_something("Building KeirosPublic protos")
@@ -1400,7 +1414,8 @@ def move_keiros_public_protos():
     dest_identifier_py_path = dest_identifier_folder_path / "identifier_pb2.py"
 
     if common.check_exists(dest_wallet_py_path, False) and common.check_exists(dest_identifier_py_path, False):
-        common.print_something(f"{dest_wallet_py_path} and {dest_identifier_py_path} already exist")
+        common.print_something(
+            f"{dest_wallet_py_path} and {dest_identifier_py_path} already exist")
         return
 
     common.print_something("Moving KeirosPublic protos")
@@ -1535,7 +1550,8 @@ def move_own_py_files():
         "utils" / "gui" / "workspace_path_finder.py"
 
     if common.check_exists(workspace_path_finder_dest_path, False):
-        common.print_something(f"{workspace_path_finder_dest_path} already exists")
+        common.print_something(
+            f"{workspace_path_finder_dest_path} already exists")
         return
 
     common.print_something("Moving own py files")
@@ -1582,7 +1598,8 @@ def build_denarii_wallet_rpc_server():
         "bazel-bin" / "src" / "denarii_wallet_rpc_server"
 
     if common.check_exists(denarii_wallet_rpc_server_path, False):
-        common.print_something(f"{denarii_wallet_rpc_server_path} already exists")
+        common.print_something(
+            f"{denarii_wallet_rpc_server_path} already exists")
         return
 
     common.print_something("Building denarii_wallet_rpc_server")
@@ -1627,7 +1644,8 @@ def build_denarii_wallet_rpc_server_win():
         "bazel-bin" / "src" / "denarii_wallet_rpc_server.exe"
 
     if common.check_exists(denarii_wallet_rpc_server_win_path, False):
-        common.print_something(f"{denarii_wallet_rpc_server_win_path} already exists")
+        common.print_something(
+            f"{denarii_wallet_rpc_server_win_path} already exists")
         return
 
     common.print_something("Building denarii_wallet_rpc_server.exe")
@@ -1671,7 +1689,8 @@ def build_denarii_wallet_rpc_server_mac():
         "bazel-bin" / "src" / "denarii_wallet_rpc_server"
 
     if common.check_exists(denarii_wallet_rpc_server_path, False):
-        common.print_something(f"{denarii_wallet_rpc_server_path} already exists")
+        common.print_something(
+            f"{denarii_wallet_rpc_server_path} already exists")
         return
 
     common.print_something("Building denarii_wallet_rpc_server for Mac")
@@ -1881,10 +1900,10 @@ elif sys.platform == "msys" or sys.platform == "cygwin":
 
     setup_ui_win()
 elif sys.platform == "darwin":
-    import_dependencies_mac()
+    # import_dependencies_mac()
 
     build_dependencies_mac()
 
-    generate_files_mac()
-    
-    setup_ui_mac()
+    # generate_files_mac()
+
+    # setup_ui_mac()

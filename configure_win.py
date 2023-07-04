@@ -23,9 +23,12 @@ class LibraryInfo:
 
 # windows only uses the bare number of libraries needed to get everything to build...
 win_library_info = [LibraryInfo("liblzma", "liblzma"), LibraryInfo("libsodium", "libsodium"),
-                    LibraryInfo("libreadline", "libreadline"), LibraryInfo("libhidapi", "libhidapi"),
-                    LibraryInfo("libusb", "libusb"), LibraryInfo("libunbound", "libunbound"),
-                    LibraryInfo("libopenssl", "openssl"), LibraryInfo("libzmq", "libzmq"),
+                    LibraryInfo("libreadline", "libreadline"), LibraryInfo(
+                        "libhidapi", "libhidapi"),
+                    LibraryInfo("libusb", "libusb"), LibraryInfo(
+                        "libunbound", "libunbound"),
+                    LibraryInfo("libopenssl", "openssl"), LibraryInfo(
+                        "libzmq", "libzmq"),
                     LibraryInfo("liblmdb", "db_drivers", False),
                     LibraryInfo("libunwind", "libunwind", False)]
 
@@ -63,7 +66,8 @@ def get_libunwind():
     # using the for loop
     for line in file:
         line = line.strip()
-        changes = line.replace("<__libunwind_config.h>", "\"__libunwind_config.h\"")
+        changes = line.replace("<__libunwind_config.h>",
+                               "\"__libunwind_config.h\"")
         replacement = replacement + changes + "\n"
 
     file.close()
@@ -78,7 +82,7 @@ def get_libunwind():
 def get_zlib():
     zlib_path = workspace_path / "external" / "zlib"
 
-    if common.check_exists(zlib_path, False): 
+    if common.check_exists(zlib_path, False):
         common.print_something("Zlib already downloaded")
         return
 
@@ -156,14 +160,17 @@ def get_relevant_paths_win(libraries):
             for subdir, dirs, files in os.walk(includes_path):
                 for directory in dirs:
                     if name in directory:
-                        library.relevant_paths.append(os.path.join(includes_path, directory))
+                        library.relevant_paths.append(
+                            os.path.join(includes_path, directory))
                 for file in files:
                     if name in file and file.endswith(".h"):
-                        library.relevant_paths.append(os.path.join(includes_path, file))
+                        library.relevant_paths.append(
+                            os.path.join(includes_path, file))
             for subdir, dirs, files in os.walk(src_path):
                 for file in files:
                     if name in file and file.endswith(".a") or file.endswith(".so"):
-                        library.relevant_paths.append(os.path.join(src_path, file))
+                        library.relevant_paths.append(
+                            os.path.join(src_path, file))
 
 
 def find_src_files_win(libraries):
@@ -178,14 +185,16 @@ def find_src_files_win(libraries):
                 new_path = os.path.join(library.folderpath, filename)
 
                 if os.path.exists(path):
-                    common.print_something("Moving: " + path + " to " + library.folderpath)
+                    common.print_something(
+                        "Moving: " + path + " to " + library.folderpath)
                     try:
                         if not os.path.exists(new_path):
                             with open(new_path, 'w'):
                                 pass
                     except:
-                        common.print_something("weird this shouldnt happen but is ok")
-                    
+                        common.print_something(
+                            "weird this shouldnt happen but is ok")
+
                     if common.check_exists(new_path, False):
                         common.print_something(f"{new_path} already exists")
                         continue
@@ -208,13 +217,17 @@ def copy_file(path, library):
             new_path_wo_filename = ""
             # openssl requires it be in a directory called openssl
             if "openssl" in library.libname:
-                new_path_wo_filename = os.path.join(library.folderpath, "openssl")
+                new_path_wo_filename = os.path.join(
+                    library.folderpath, "openssl")
             elif "readline" in library.libname:
-                new_path_wo_filename = os.path.join(library.folderpath, "readline")
+                new_path_wo_filename = os.path.join(
+                    library.folderpath, "readline")
             elif "sodium" in library.libname:
-                new_path_wo_filename = os.path.join(library.folderpath, "sodium")
+                new_path_wo_filename = os.path.join(
+                    library.folderpath, "sodium")
             else:
-                new_path_wo_filename = os.path.join(library.folderpath, "include")
+                new_path_wo_filename = os.path.join(
+                    library.folderpath, "include")
 
             # the path plus include directory might not exist
             if not os.path.exists(new_path_wo_filename):
@@ -247,7 +260,7 @@ def find_includes_win(libraries):
 
                 paths = common.get_all_files_paths(path)
 
-                for path in paths: 
+                for path in paths:
 
                     copy_file(path)
 
@@ -264,6 +277,8 @@ def import_dependencies_win():
 
 
 def randomx_win(external_dir_path):
+    build_path = randomx_path / "build"
+
     randomx_library_path = build_path / "librandomx.a"
 
     if common.check_exists(randomx_library_path, False):
@@ -276,7 +291,6 @@ def randomx_win(external_dir_path):
 
     common.chdir(randomx_path)
 
-    build_path = randomx_path / "build"
     common.chdir(build_path)
     command = "cmake -DARCH=native -G \"MinGW Makefiles\" .. && mingw32-make"
     common.system(command)
@@ -285,6 +299,8 @@ def randomx_win(external_dir_path):
 
 
 def miniupnp_win(external_dir_path):
+    # we only need to build one of the subdirectories
+    miniupnp_path = external_dir_path / "miniupnp" / "miniupnpc"
 
     miniupnp_library_path = miniupnp_path / "libminiupnpc.a"
     if common.check_exists(miniupnp_library_path, False):
@@ -298,9 +314,6 @@ def miniupnp_win(external_dir_path):
     clone_command = "git clone https://github.com/miniupnp/miniupnp.git"
     common.system(clone_command)
 
-    # we only need to build one of the subdirectories
-    miniupnp_path = external_dir_path / "miniupnp" / "miniupnpc"
-
     common.chdir(miniupnp_path)
 
     command = "cmake -G \"MinGW Makefiles\" . && mingw32-make"
@@ -308,19 +321,18 @@ def miniupnp_win(external_dir_path):
 
     common.check_exists(miniupnp_library_path)
 
-def build_dependencies_win():
-    external_dir_path = workspace_path / "external"
-    randomx_win(external_dir_path)
-
-    miniupnp_win(external_dir_path)
-
 
 def openpgm_win(external_dir_path):
+    openpgm_path = external_dir_path / "openpgm"
+    binary_path = inner_path / "build" / "lib" / "libpgm-v142-mt-gd-5_2_127.lib"
+
+    if common.check_exists(binary_path, False):
+        common.print_something("Openpgm already exists")
+        return
+
     common.print_something("Getting openpgm for Windows")
 
     common.chdir(external_dir_path)
-
-    openpgm_path = external_dir_path / "openpgm"
 
     clone_command = "git clone https://github.com/steve-o/openpgm.git"
     common.system(clone_command)
@@ -333,15 +345,21 @@ def openpgm_win(external_dir_path):
     make_command = "mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && msbuild /nologo /property:Configuration=Debug ALL_BUILD.vcxproj"
     common.system(make_command)
 
-    binary_path = inner_path / "build" / "lib" / "libpgm-v142-mt-gd-5_2_127.lib"
     common.check_exists(binary_path)
 
+
 def libnorm_win(external_dir_path):
+    libnorm_path = external_dir_path / "libnorm"
+
+    binary_path = libnorm_path / "build" / "norm_static.lib"
+
+    if common.check_exists(binary_path, False):
+        common.print_something("Libnorm already exists")
+        return
+
     common.print_something("Getting libnorm for Windows")
 
     common.chdir(external_dir_path)
-
-    libnorm_path = external_dir_path / "libnorm"
 
     clone_command = "git clone --recurse-submodules https://github.com/USNavalResearchLaboratory/norm.git"
     common.system(clone_command)
@@ -355,20 +373,22 @@ def libnorm_win(external_dir_path):
     build_command = f"python waf configure --prefix={libnorm_path} && python waf && python waf install"
     common.system(build_command)
 
-    binary_path = libnorm_path / "build" / "norm_static.lib"
     common.check_exists(binary_path)
+
+
+def build_dependencies_win():
+    external_dir_path = workspace_path / "external"
+    randomx_win(external_dir_path)
+
+    miniupnp_win(external_dir_path)
+
+    openpgm_win(external_dir_path)
+
+    libnorm_win(external_dir_path)
 
 
 common.print_something(workspace_path)
 
 import_dependencies_win()
 
-external_dir_path = workspace_path / "external"
-randomx_win(external_dir_path)
-
-miniupnp_win(external_dir_path)
-
-openpgm_win(external_dir_path)
-
-libnorm_win(external_dir_path)
-
+build_dependencies_win()

@@ -1,7 +1,31 @@
 
 package(default_visibility = ["//visibility:public"])
 
-# This doesn't work with all platforms. It only works with x86_64
+config_setting(
+    name = "windows",
+    constraint_values = [
+        "@platforms//os:windows",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "mac",
+    constraint_values = [
+        "@platforms//os:macos",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+   name = "linux",
+   constraint_values = [
+      "@platforms//os:linux",
+   ],
+   visibility = ["//visibility:public"],
+)
+
+# This doesn't work with all platforms. It only works with x86_64 and maybe not even that.
 cc_library(
   name = "randomx",
   srcs =  glob(["**/*.cpp", "**/*.c", "**/jit_compiler_x86_static.S"], exclude = ["**/tests/*", "**/jit_compiler_a64.cpp", "**/jit_compiler_a64_static.cpp"]),
@@ -10,7 +34,15 @@ cc_library(
 
 cc_library(
   name = "randomx_lib",
-  srcs = glob(["**/*.a"]),
-  hdrs = glob(["**/randomx.h"]),
+  srcs = select({
+    "windows": glob(["**/*.a"]),
+    "mac": glob(["**/*.cpp", "**/*.c", "**/*.S"], exclude = ["**/tests/*", "**/*x86*"]),
+    "linux": glob(["**/*.a"])
+  }),
+  hdrs = select({
+    "windows": glob(["**/randomx.h"]),
+    "mac": glob(["**/*.h", "**/*.hpp"]),
+    "linux": glob(["**/randomx.h"])
+  }),
   linkstatic = True
 )

@@ -367,7 +367,7 @@ namespace cryptonote
       << (0 <= diff ? std::string("behind") : std::string("ahead"))
       << "] " << ENDL << "SYNCHRONIZATION started");
     // We need to create a text file so the gui will know we have started synchronizing.
-    file::createTextFile("synchronization_started.txt", "synchronization_started");
+    file::createTextFile("synchronization_started.txt", "synchronization_started \n");
       if (hshd.current_height >= m_core.get_current_blockchain_height() + 5) // don't switch to unsafe mode just for a few blocks
       {
         m_core.safesyncmode(false);
@@ -2319,7 +2319,7 @@ skip:
         {
           MGINFO_GREEN("SYNCHRONIZED OK");
           // Create a text file so that the gui would know we have synchronized.
-          file::createTextFile("synchronized_ok.txt", "synchronized_ok");
+          file::createTextFile("synchronized_ok.txt", "synchronized_ok \n");
           on_connection_synchronized();
         }
       }

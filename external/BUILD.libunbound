@@ -17,14 +17,27 @@ config_setting(
     visibility = ["//visibility:public"],
 )
 
+config_setting(
+   name = "linux",
+   constraint_values = [
+      "@platforms//os:linux",
+   ],
+   visibility = ["//visibility:public"],
+)
+
 
 cc_library(
   name = "libunbound",
-  srcs = glob(["**/*.so", "**/*.a"]),
+  srcs = select({
+    "windows": glob(["**/*.a"]),
+    "mac": glob(["**/*.dylib"]),
+    "linux": glob(["**/*.so", "**/*.a"]),
+  }),
   hdrs = glob(["**/include/**/*.h"]),
   linkopts =  select({
                 "windows": ["-liphlpapi"],
                 "mac": [],
-                "//conditions:default": [],
+                "linux": [],
                 }),
+ linkstatic = True,
 )

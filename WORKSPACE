@@ -17,9 +17,10 @@ bazel_skylib_workspace()
 
 # abseil-cpp
 http_archive(
-  name = "com_google_absl",
-  urls = ["https://github.com/abseil/abseil-cpp/archive/98eb410c93ad059f9bba1bf43f5bb916fc92a5ea.zip"],
-  strip_prefix = "abseil-cpp-98eb410c93ad059f9bba1bf43f5bb916fc92a5ea",
+    name = "com_google_absl",
+    sha256 = "1a1745b5ee81392f5ea4371a4ca41e55d446eeaee122903b2eaffbd8a3b67a2b",
+    strip_prefix = "abseil-cpp-01cc6567cff77738e416a7ddc17de2d435a780ce",
+    urls = ["https://github.com/abseil/abseil-cpp/archive/01cc6567cff77738e416a7ddc17de2d435a780ce.zip"],  # 2022-06-21T19:28:27Z
 )
 
 # Google Test
@@ -107,13 +108,20 @@ http_archive(
     # Even better, set up Renovate and let it do the work for you (see "Suggestion: Updates" in the README).
     url = "https://github.com/nelhage/rules_boost/archive/6b7c1ce2b8d77cb6b3df6ccca0b6cf7ed13136fc.tar.gz",
     strip_prefix = "rules_boost-6b7c1ce2b8d77cb6b3df6ccca0b6cf7ed13136fc",
-    # When you first run this tool, it'll recommend a sha256 hash to put here with a message like: "DEBUG: Rule 'com_github_nelhage_rules_boost' indicated that a canonical reproducible form can be obtained by modifying arguments sha256 = ..."
+    sha256 = "1a3316cde21eccc337c067b21d767d252e4ac2e8041d65eb4b7b91da569c5e3f"
 )
 
 http_archive(
     name = "build_bazel_rules_nodejs",
     sha256 = "c2ad51299792d5af3b258f1dd71b3b57eff9424c2e1797d9c1d65717d95da03a",
     urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/5.7.3/rules_nodejs-5.7.3.tar.gz"],
+)
+
+http_archive(
+    name = "com_googlesource_code_re2",
+    sha256 = "0a890c2aa0bb05b2ce906a15efb520d0f5ad4c7d37b8db959c43772802991887",
+    strip_prefix = "re2-a427f10b9fb4622dd6d8643032600aa1b50fbd12",
+    urls = ["https://github.com/google/re2/archive/a427f10b9fb4622dd6d8643032600aa1b50fbd12.zip"],  # 2022-06-09
 )
 
 # boost archive extra files

@@ -1,9 +1,36 @@
 
 package(default_visibility = ["//visibility:public"])
 
+config_setting(
+    name = "windows",
+    constraint_values = [
+        "@platforms//os:windows",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "mac",
+    constraint_values = [
+        "@platforms//os:macos",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+   name = "linux",
+   constraint_values = [
+      "@platforms//os:linux",
+   ],
+   visibility = ["//visibility:public"],
+)
 
 cc_library(
  name = "libzmq",
- srcs = glob(["**/libzmq.a"]),
+ srcs = select({
+    "windows": glob(["**/libzmq.a"]),
+    "mac": glob(["**/*.dylib"]),
+    "linux": glob(["**/libzmq.a"]),
+  }),
  hdrs = glob(["**/*.h"]),
 )

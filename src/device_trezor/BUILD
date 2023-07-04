@@ -16,6 +16,14 @@ config_setting(
     visibility = ["//visibility:public"],
 )
 
+config_setting(
+   name = "linux",
+   constraint_values = [
+      "@platforms//os:linux",
+   ],
+   visibility = ["//visibility:public"],
+)
+
 cc_library(
     name = "device_trezor",
     srcs = [
@@ -37,7 +45,7 @@ cc_library(
     ] + select({
         "windows": glob(["**/trezor/include/*.h"]),
         "mac": [],
-        "//conditions:default": [],
+        "linux": [],
     }),
     deps = [
         "//src:cncrypto",

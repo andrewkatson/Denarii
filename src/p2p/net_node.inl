@@ -1202,6 +1202,7 @@ namespace nodetool
       }
       if(!context.m_is_income)
         m_network_zones.at(context.m_remote_address.get_zone()).m_peerlist.set_peer_just_seen(context.peer_id, context.m_remote_address, context.m_pruning_seed, context.m_rpc_port, context.m_rpc_credits_per_hash);
+      
       if (!m_payload_handler.process_payload_sync_data(rsp.payload_data, context, false))
       {
         m_network_zones.at(context.m_remote_address.get_zone()).m_net_server.get_config_object().close(context.m_connection_id );

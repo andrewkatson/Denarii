@@ -16,6 +16,14 @@ config_setting(
     visibility = ["//visibility:public"],
 )
 
+config_setting(
+   name = "linux",
+   constraint_values = [
+      "@platforms//os:linux",
+   ],
+   visibility = ["//visibility:public"],
+)
+
 cc_library(
     name = "epee",
     srcs = glob([
@@ -27,10 +35,10 @@ cc_library(
         "**/*.hpp",
         "**/*.inl",
     ]),
-    linkopts = select({
-        "windows": ["-lssl","-lcrypto","-lcrypt32", "-lws2_32","-lwsock32"],
-        "mac": [],
-        "//conditions:default": ["-lssl","-lcrypto",],
+    linkopts = ["-lssl","-lcrypto"] + select({
+        "windows": ["-lcrypt32", "-lws2_32","-lwsock32"],
+        "mac": ["-Lexternal/openssl"],
+        "linux": [],
     }),
     deps = [
         "@boost//:assign",

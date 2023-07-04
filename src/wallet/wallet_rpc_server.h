@@ -41,6 +41,7 @@
 #include <boost/format.hpp>
 #include <boost/asio/ip/address.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/preprocessor/stringize.hpp>
 #include <cstdint>
