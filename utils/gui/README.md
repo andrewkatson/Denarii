@@ -4,7 +4,7 @@
 
 The below assumes you have all the necessary files in one folder. The configuration script should do that for you. 
 
-`pip3 install pyinstaller`
+`pip3 install pyinstaller stripe`
 
 ### Linux and Windows
 
