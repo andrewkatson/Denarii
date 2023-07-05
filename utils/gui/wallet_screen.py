@@ -7,8 +7,7 @@ from label import *
 from PyQt5.QtCore import *
 from line_edit import *
 from push_button import *
-from Proto import wallet_pb2
-
+from wallet import *
 
 class WalletScreen(Screen):
     """
@@ -41,6 +40,8 @@ class WalletScreen(Screen):
 
     def init(self, **kwargs):
         super().init(**kwargs)
+
+        self.next_button.setVisible(False)
 
         self.wallet_header_label = Label("Wallet")
         font = Font()
@@ -89,7 +90,7 @@ class WalletScreen(Screen):
         self.amount_line_edit = LineEdit()
 
         self.transfer_push_button = PushButton("Transfer", kwargs['parent'])
-        self.transfer_push_button.clicked.connect(self.on_transfer_clicked)
+        self.transfer_push_button.clicked.connect(lambda: self.on_transfer_clicked())
         self.transfer_push_button.setVisible(False)
         self.transfer_push_button.setStyleSheet(
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
@@ -110,7 +111,7 @@ class WalletScreen(Screen):
         """
         success = False
 
-        other_wallet = wallet_pb2.Wallet()
+        other_wallet = Wallet()
         other_wallet.address = bytes(self.address_line_edit.text(), 'utf-8')
 
         try:

@@ -28,9 +28,13 @@ class RestoreWalletScreen(Screen):
         self.pick_wallet_type = None
         self.remote_wallet_radio_button = None
         self.local_wallet_radio_button = None
+        self.set_wallet_type_callback = kwargs['set_wallet_type_callback']
+
 
     def init(self, **kwargs):
         super().init(**kwargs)
+
+        self.next_button.setVisible(False)
 
         self.restore_wallet_label = Label("Restore Wallet")
         font = Font()
@@ -52,7 +56,7 @@ class RestoreWalletScreen(Screen):
         self.restore_wallet_text_box.setFont(font)
 
         self.restore_wallet_submit_push_button = PushButton("Submit", kwargs['parent'])
-        self.restore_wallet_submit_push_button.clicked.connect(self.on_restore_wallet_submit_clicked)
+        self.restore_wallet_submit_push_button.clicked.connect(lambda: self.on_restore_wallet_submit_clicked())
         self.restore_wallet_submit_push_button.setVisible(False)
         self.restore_wallet_submit_push_button.setStyleSheet(
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
@@ -69,7 +73,7 @@ class RestoreWalletScreen(Screen):
         self.pick_wallet_type.setFont(font)
 
         self.remote_wallet_radio_button = RadioButton("Remote", kwargs['parent'],
-                                                      wallet_type_callback=self.set_which_wallet)
+                                                      wallet_type_callback=self.set_which_wallet, next_button=self.next_button)
         self.remote_wallet_radio_button.toggled.connect(self.remote_wallet_radio_button.on_wallet_type_clicked)
         self.remote_wallet_radio_button.wallet_type_option = "Remote"
         self.remote_wallet_radio_button.setVisible(False)
@@ -77,7 +81,7 @@ class RestoreWalletScreen(Screen):
             'QRadioButton{font: 30pt Helvetica MS;} QRadioButton::indicator { width: 30px; height: 30px;};')
 
         self.local_wallet_radio_button = RadioButton("Local", kwargs['parent'],
-                                                     wallet_type_callback=self.set_which_wallet)
+                                                     wallet_type_callback=self.set_which_wallet, next_button=self.next_button)
         self.local_wallet_radio_button.toggled.connect(self.local_wallet_radio_button.on_wallet_type_clicked)
         self.local_wallet_radio_button.wallet_type_option = "Local"
         self.local_wallet_radio_button.setVisible(False)
@@ -112,8 +116,9 @@ class RestoreWalletScreen(Screen):
         self.fifth_horizontal_layout.addWidget(self.pick_wallet_type, alignment=Qt.AlignCenter)
         self.sixth_horizontal_layout.addWidget(self.remote_wallet_radio_button, alignment=Qt.AlignCenter)
         self.sixth_horizontal_layout.addWidget(self.local_wallet_radio_button, alignment=Qt.AlignCenter)
-        self.seventh_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
         self.seventh_horizontal_layout.addWidget(self.back_button, alignment=(Qt.AlignLeft | Qt.AlignBottom))
+        self.seventh_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
+
 
     def teardown(self):
         super().teardown()
@@ -131,8 +136,11 @@ class RestoreWalletScreen(Screen):
         try:
             success = self.denarii_client.restore_wallet(self.wallet)
             print_status("Restore wallet ", success)
+            if success:
+                self.next_button.setVisible(True)
         except Exception as e:
             print(e)
+            self.next_button.setVisible(False)
 
         if success:
             self.wallet_save_file_text_box.setText("Wallet saved to: " + DENARIID_WALLET_PATH)
@@ -165,3 +173,5 @@ class RestoreWalletScreen(Screen):
 
     def set_which_wallet(self, which_wallet):
         self.which_wallet = which_wallet
+
+        self.set_wallet_type_callback(self.which_wallet)

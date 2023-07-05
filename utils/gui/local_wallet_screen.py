@@ -1,3 +1,5 @@
+import multiprocessing
+
 from wallet_screen import *
 
 
@@ -30,19 +32,19 @@ class LocalWalletScreen(WalletScreen):
         self.sub_address_text_boxes = []
 
         self.create_sub_address_push_button = PushButton("Create subaddress", kwargs['parent'])
-        self.create_sub_address_push_button.clicked.connect(self.on_create_sub_address_clicked)
+        self.create_sub_address_push_button.clicked.connect(lambda: self.on_create_sub_address_clicked())
         self.create_sub_address_push_button.setVisible(False)
         self.create_sub_address_push_button.setStyleSheet(
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
 
         self.start_mining_push_button = PushButton("Start mining", kwargs['parent'])
-        self.start_mining_push_button.clicked.connect(self.start_mining_push_button)
+        self.start_mining_push_button.clicked.connect(lambda: self.on_start_mining_clicked())
         self.start_mining_push_button.setVisible(False)
         self.start_mining_push_button.setStyleSheet(
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
 
         self.stop_mining_push_button = PushButton("Stop mining", kwargs['parent'])
-        self.stop_mining_push_button.clicked.connect(self.stop_mining_push_button)
+        self.stop_mining_push_button.clicked.connect(lambda: self.on_stop_mining_clicked())
         self.stop_mining_push_button.setVisible(False)
         self.stop_mining_push_button.setStyleSheet(
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
@@ -66,7 +68,7 @@ class LocalWalletScreen(WalletScreen):
         self.create_sub_address_push_button.setVisible(True)
         self.start_mining_push_button.setVisible(True)
         self.stop_mining_push_button.setVisible(True)
-        self.next_button.setVisible(False)
+        self.back_button.setVisible(False)
 
         self.first_horizontal_layout.addWidget(self.wallet_header_label, alignment=Qt.AlignCenter)
         self.second_horizontal_layout.addWidget(self.your_balance_label, alignment=Qt.AlignCenter)

@@ -4,11 +4,11 @@ from constants import *
 
 class RadioButton(QRadioButton):
 
-    def __init__(self, text, parent, user=None, store_user_func=None, wallet_type_callback=None):
+    def __init__(self, text, parent, user=None, wallet_type_callback=None, next_button=None):
         super().__init__(text=text, parent=parent)
         self.user = user
-        self.store_user_func = store_user_func
         self.wallet_type_callback = wallet_type_callback
+        self.next_button = next_button
 
     @pyqtSlot()
     def on_lang_select_clicked(self):
@@ -19,15 +19,14 @@ class RadioButton(QRadioButton):
 
         self.user.language = button.language
 
-        self.store_user_func()
-
-    @pyqtSlot
+    @pyqtSlot()
     def on_wallet_type_clicked(self):
-
+        """
+        Set the wallet type to local or remote
+        """
         button = self.sender()
 
         if button.wallet_type_option == 'Remote':
             self.wallet_type_callback(REMOTE_WALLET)
-        elif button.wallet_type_option == 'Local':
+        else:
             self.wallet_type_callback(LOCAL_WALLET)
-        self.wallet_type_callback(LOCAL_WALLET)

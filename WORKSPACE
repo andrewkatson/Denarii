@@ -17,10 +17,10 @@ bazel_skylib_workspace()
 
 # abseil-cpp
 http_archive(
-    name = "com_google_absl",
-    sha256 = "1a1745b5ee81392f5ea4371a4ca41e55d446eeaee122903b2eaffbd8a3b67a2b",
-    strip_prefix = "abseil-cpp-01cc6567cff77738e416a7ddc17de2d435a780ce",
-    urls = ["https://github.com/abseil/abseil-cpp/archive/01cc6567cff77738e416a7ddc17de2d435a780ce.zip"],  # 2022-06-21T19:28:27Z
+  name = "com_google_absl",
+  urls = ["https://github.com/abseil/abseil-cpp/archive/20230125.3.zip"],
+  strip_prefix = "abseil-cpp-20230125.3",
+  sha256 = "51d676b6846440210da48899e4df618a357e6e44ecde7106f1e44ea16ae8adc7"
 )
 
 # Google Test
@@ -67,9 +67,8 @@ http_archive(
 # the base google protocol buffer code.
 http_archive(
     name = "com_google_protobuf",
-    strip_prefix = "protobuf-21.9",
-    urls = ["https://github.com/protocolbuffers/protobuf/archive/v21.9.zip"],
-    sha256 = "5babb8571f1cceafe0c18e13ddb3be556e87e12ceea3463d6b0d0064e6cc1ac3"
+    strip_prefix = "protobuf-23.3",
+    urls = ["https://github.com/protocolbuffers/protobuf/archive/v23.3.zip"],
 )
 
 # gRPC code -- has py_proto_library rule which is useful.
@@ -305,13 +304,30 @@ new_local_repository(
     path = "external/zlib",
 )
 
-#keiros public
-git_repository (
-	name = "keiros_public",
-	commit = "21e01a20a0d20c584eb7c441a95e3cbcbb1d85f7",
-	remote = "https://github.com/andrewkatson/KeirosPublic.git",
-	shallow_since = "1646013575 -0500"
+#bigint
+new_local_repository(
+    name = "bigint",
+    build_file = "external/BUILD.bigint",
+    path = "external/bigint",
 )
+
+#json
+new_local_repository(
+    name = "json",
+    build_file = "external/BUILD.json",
+    path = "external/json/json",
+)
+
+#curl
+new_local_repository(
+    name = "curl",
+    build_file = "external/BUILD.curl",
+    path = "external/curl/curl",
+)
+
+load("@rules_proto_grpc//python:repositories.bzl", rules_proto_grpc_python_repos = "python_repos")
+
+rules_proto_grpc_python_repos()
 
 load("@rules_cc//cc:repositories.bzl", "rules_cc_dependencies")
 
@@ -343,10 +359,6 @@ grpc_deps()
 
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
 boost_deps()
-
-load("@keiros_public//:bazel/keiros_public.bzl", "keiros_public_deps")
-
-keiros_public_deps()
 
 
 load("@rules_proto_grpc//:repositories.bzl", "rules_proto_grpc_toolchains", "rules_proto_grpc_repos")

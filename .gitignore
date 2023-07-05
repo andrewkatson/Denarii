@@ -154,11 +154,15 @@ utils/gui_denarii_wallet_rpc_server*
 utils/gui/google/
 utils/gui/Proto/wallet_pb2.py
 utils/gui/Proto/gui_user_pb2.py
+utils/gui/gui_user_pb2.py
+utils/gui_wallet_pb.py
+utils/gui/identifier_pb2.py
 utils/gui/Security/
 utils/gui/build/
 utils/gui/dist/
 utils/gui/gui_main.spec
 synchronization_started.txt
+synchronized_ok.txt
 
 # Zips from setup
 external/openssl.zip

@@ -1,0 +1,34 @@
+/*
+ * Represent a wallet address for some cryptocurrency wallet.
+ */
+
+syntax = "proto3";
+
+import "utils/gui/identifier.proto";
+
+option java_package = "com.keiros.common";
+option java_outer_classname = "WalletClass";
+
+package common;
+
+message Wallet {
+  // The primary address
+  bytes address = 1;
+  // password for the wallet
+  string password = 2;
+  // name of the wallet
+  string name = 3;
+  
+  // This is the user of the wallet rpc. Rarely used. 
+  string user = 4;
+  string user_password = 5;
+  
+  // If this is a user wallet then this is their identifier
+  common.security.Identifier user_id = 6;
+
+  // The mnemonic phrase associated with this wallet.
+  string phrase = 7;
+
+  // Secondary addresses
+  repeated bytes sub_addresses = 8;
+}

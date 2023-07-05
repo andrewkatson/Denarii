@@ -376,6 +376,28 @@ def libnorm_win(external_dir_path):
 
     common.check_exists(binary_path)
 
+def curl_win(external_dir_path):
+    raw_path = external_dir_path / "curl"
+
+    curl_path = raw_path / "curl"
+
+    common.chdir(raw_path)
+
+    if common.check_exists(raw_path, False):
+        common.print_something(f"{raw_path} already exists")
+        return
+
+    clone_command = "git clone git@github.com:curl/curl.git"
+    os.system(clone_command)
+
+    common.chdir(curl_path)
+
+    command = "buildconf && mingw32-make mingw32"
+    os.system(command)
+
+    common.check_exists(curl_path)
+
+
 
 def build_dependencies_win():
     external_dir_path = workspace_path / "external"
@@ -386,6 +408,8 @@ def build_dependencies_win():
     openpgm_win(external_dir_path)
 
     libnorm_win(external_dir_path)
+
+    curl_win(external_dir_path)
 
 
 common.print_something(workspace_path)

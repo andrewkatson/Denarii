@@ -35,7 +35,7 @@ class Screen:
         self.gui_user = gui_user
 
         if self.suffix_of_screen_name in kwargs:
-            self.screen_name = f"{screen_name}{kwargs[self.suffix_of_screen_name]}"
+            self.screen_name = f"{screen_name}_{kwargs[self.suffix_of_screen_name]}"
 
         self.first_horizontal_layout = QHBoxLayout()
         self.second_horizontal_layout = QHBoxLayout()
@@ -69,9 +69,11 @@ class Screen:
 
         if NEXT_BUTTON in self.push_buttons:
             self.next_button = self.push_buttons[NEXT_BUTTON]
+            print("Found next button")
 
         if BACK_BUTTON in self.push_buttons:
             self.back_button = self.push_buttons[BACK_BUTTON]
+            print("Found back button")
 
     def setup(self):
         print(f"Setting up screen: {self.screen_name}")

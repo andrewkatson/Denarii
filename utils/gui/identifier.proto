@@ -1,0 +1,23 @@
+/*
+ * A multi part message that can be used to identify something -- e.g. an object, 
+ * or a system.
+ */
+
+ syntax = "proto3";
+
+option java_package = "com.keiros.common.security";
+option java_outer_classname = "IdentifierClass";
+
+package common.security;
+
+message Identifier {
+
+	// Ordered in assumed use frequency.
+	repeated int32 int32_part = 1;
+	repeated int64 int64_part = 2;
+	repeated string string_part = 3;
+	repeated double double_part = 4;
+	repeated float float_part = 5;
+	repeated bool bool_part = 6;
+
+}

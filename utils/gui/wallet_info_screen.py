@@ -23,6 +23,8 @@ class WalletInfoScreen(Screen):
     def init(self, **kwargs):
         super().init(**kwargs)
 
+        self.next_button.setVisible(False)
+
         self.wallet_info_label = Label("Choose Wallet")
         font = Font()
         font.setFamily("Arial")
@@ -64,7 +66,6 @@ class WalletInfoScreen(Screen):
         self.second_horizontal_layout.addWidget(self.create_wallet_push_button, alignment=Qt.AlignCenter)
         self.second_horizontal_layout.addWidget(self.restore_wallet_push_button, alignment=Qt.AlignCenter)
         self.second_horizontal_layout.addWidget(self.set_wallet_push_button, alignment=Qt.AlignCenter)
-        self.third_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
         self.third_horizontal_layout.addWidget(self.back_button, alignment=(Qt.AlignLeft | Qt.AlignBottom))
 
     def teardown(self):

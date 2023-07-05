@@ -1,9 +1,76 @@
+load("@rules_proto_grpc//python:defs.bzl", "python_proto_library")
+load("@com_google_protobuf//:protobuf.bzl", "py_proto_library")
+
 package(default_visibility = ["//visibility:public"])
+
+
+py_library(
+    name = "other_gui",
+    srcs = glob(["*.py"], exclude = ["gui_main.py", "*_pb2.py"]),
+    deps = [],
+    imports = [] 
+)
 
 py_binary(
     name = "gui",
     srcs = ["gui_main.py"],
-    deps = ["//:workspace_path_finder", "//utils/gui/Proto:gui_user_py_proto"],
-    imports = ["//utils/gui/Proto:gui_user_py_proto",],
+    deps = ["//:workspace_path_finder", ":other_gui"],
+    imports = [] ,
     main = "gui_main.py"
+)
+
+
+proto_library(
+    name = "identifier_proto",
+    srcs = ["identifier.proto"],
+    deps = [],
+)
+
+py_proto_library(
+    name = "identifier_py_proto",
+    srcs = ["identifier.proto"],
+)
+
+java_proto_library(
+  name = "identifier_java_proto",
+  deps = [":identifier_proto"],
+)
+
+cc_proto_library(
+  name= "identifier_cc_proto",
+  deps = [":identifier_proto"],
+)
+
+py_proto_library(
+  name = "gui_user_py_proto",
+  srcs = ["gui_user.proto"],
+  deps = [":wallet_py_proto"],
+)
+
+proto_library(
+  name = "gui_user_proto",
+  srcs = ["gui_user.proto"],
+  deps = [":wallet_proto"],
+)
+
+cc_proto_library(
+  name = "wallet_cc_proto",
+  deps = [":wallet_proto"],
+)
+
+java_proto_library(
+  name = "wallet_java_proto",
+  deps = [":wallet_proto"], 
+)
+
+py_proto_library(
+  name = "wallet_py_proto",
+  srcs = ["wallet.proto"],
+  deps = [":identifier_py_proto"],
+)
+
+proto_library(
+  name = "wallet_proto",
+  srcs = ["wallet.proto"],
+  deps = [":identifier_proto"]
 )

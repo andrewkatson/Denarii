@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-import "Proto/wallet.proto";
+import "utils/gui/wallet.proto";
 
 package denarii.gui;
 
@@ -13,8 +13,7 @@ message GuiUser {
 
   string language = 2;
 
-  common.Wallet local_wallet = 3;
-  common.Wallet remote_wallet = 6;
+  common.Wallet wallet = 3;
 
   string email = 4;
 

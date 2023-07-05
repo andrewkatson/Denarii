@@ -533,6 +533,53 @@ def liblmdb(external_dir_path):
     common.check_exists(liblmdb_library_path)
 
 
+def bigint():
+    bigint_path = workspace_path / "external"
+    common.chdir(bigint_path)
+
+    if common.check_exists(bigint_path, False):
+        common.print_something(f"{bigint_path} already exists")
+        return
+
+    clone_command = "git clone git@github.com:kasparsklavins/bigint.git"
+    os.system(clone_command)
+
+    common.check_exists(bigint_path)
+
+def curl():
+    curl_path = workspace_path / "external/curl"
+    inside_folder_path = curl_path + "/curl"
+    common.chdir(curl_path)
+    
+    if common.check_exists(inside_folder_path, False):
+        common.print_something(f"{inside_folder_path} already exists")
+        return
+
+    clone_command = "git clone git@github.com:curl/curl.git"
+    os.system(clone_command)
+
+    common.chdir(inside_folder_path)
+
+    make_command = "./buildconf && ./configure && make"
+    os.system(make_command)
+
+    common.check_exists(inside_folder_path)
+
+
+def json():
+
+    json_path = workspace_path / "external/json"
+    if common.check_exists(json_path, False):
+        common.print_something(f"{json_path} already exists")
+        return
+
+    common.chdir(json_path)
+
+    clone_command = "git clone git@github.com:andrewkatson/json.git"
+    os.system(clone_command)
+
+    common.check_exists(json_path)
+
 def build_dependencies():
     common.print_something("Building dependencies")
 
@@ -562,6 +609,15 @@ def build_dependencies():
     common.chdir(external_dir_path)
 
     liblmdb(external_dir_path)
+    common.chdir(external_dir_path)
+
+    bigint(external_dir_path)
+    common.chdir(external_dir_path)
+
+    curl(external_dir_path)
+    common.chdir(external_dir_path)
+
+    json(external_dir_path)
     common.chdir(external_dir_path)
 
 
@@ -620,6 +676,9 @@ def build_dependencies_win():
 
     common.chdir(external_dir_path)
     supercop_win(external_dir_path)
+
+    common.chdir(external_dir_path)
+    bigint(external_dir_path)
 
 
 def randomx_mac(external_dir_path):
@@ -738,6 +797,15 @@ def build_dependencies_mac():
 
     common.chdir(external_dir_path)
     libusb_mac(external_dir_path)
+
+    common.chdir(external_dir_path)
+    bigint(external_dir_path)
+
+    common.chdir(external_dir_path)
+    curl(external_dir_path)
+
+    common.chdir(external_dir_path)
+    json(external_dir_path)
 
 
 def trezor_common():
@@ -1285,25 +1353,6 @@ def generate_files_mac():
     translations_generate_mac()
     trezor_common()
 
-
-def download_keiros_public():
-    keiros_public_path = workspace_path / "external" / "KeirosPublic"
-
-    if common.check_exists(keiros_public_path, False):
-        common.print_something(f"{keiros_public_path} already exists")
-        return
-
-    common.print_something("Downloading KeirosPublic")
-
-    path = workspace_path / "external"
-    common.chdir(path)
-
-    clone_command = "git clone git@github.com:andrewkatson/KeirosPublic.git"
-    common.system(clone_command)
-
-    common.check_exists(keiros_public_path)
-
-
 def download_protobuf():
     protobuf_path = workspace_path / "external" / "protobuf"
 
@@ -1323,44 +1372,7 @@ def download_protobuf():
 
 def download_dependencies_for_ui():
     common.print_something("Downloading dependencies for ui")
-    download_keiros_public()
-
     download_protobuf()
-
-
-def build_keiros_public_protos():
-
-    wallet_py_proto_path = workspace_path / "external" / \
-        "KeirosPublic" / "bazel-bin" / "Proto" / "wallet_pb2.py"
-    identifier_py_proto_path = workspace_path / \
-        "external" / "KeirosPublic" / "bazel-bin" / \
-        "Security" / "Proto" / "identifier_pb2.py"
-
-    if common.check_exists(wallet_py_proto_path, False) and common.check_exists(identifier_py_proto_path, False):
-        common.print_something(
-            f"{wallet_py_proto_path} and {identifier_py_proto_path} already exist")
-        return
-
-    common.print_something("Building KeirosPublic protos")
-
-    keiros_public_path = workspace_path / "external" / "KeirosPublic"
-    common.chdir(keiros_public_path)
-
-    try:
-        build_command = "bazel build Proto:wallet_py_proto"
-        common.system(build_command)
-    except Exception as e:
-        common.print_something(e)
-
-    common.check_exists(wallet_py_proto_path)
-
-    try:
-        other_build_command = "bazel build Security/Proto:identifier_py_proto"
-        common.system(other_build_command)
-    except Exception as e:
-        common.print_something(e)
-
-    common.check_exists(identifier_py_proto_path)
 
 
 def build_google_protobuf_protos():
@@ -1383,73 +1395,38 @@ def build_google_protobuf_protos():
 
 
 def build_own_protos():
-    path = workspace_path / "bazel-bin" / "utils" / \
-        "gui" / "Proto" / "gui_user_pb2.py"
+    gui_user_path = workspace_path / "bazel-bin" / "utils" / \
+        "gui" / "gui_user_pb2.py"
 
-    if common.check_exists(path, False):
-        common.print_something(f"{path} already exists")
+    
+    wallet_py_proto_path = workspace_path /  "bazel-bin" / "utils" / \
+        "gui" / "wallet_pb2.py"
+
+    identifier_py_proto_path = workspace_path / \
+        "bazel-bin" / "utils" / "gui" / "identifier_pb2.py"
+
+    if common.check_exists(gui_user_path, False) and common.check_exists(wallet_py_proto_path, False) and common.check_exists(identifier_py_proto_path, False):
+        common.print_something(f"{gui_user_path} or {wallet_py_proto_path} or {identifier_py_proto_path} already exists")
         return
 
     common.print_something("Building own protos")
 
     common.chdir(workspace_path)
 
-    build_command = "bazel build utils/gui/Proto:all"
+    build_command = "bazel build utils/gui:all"
     common.system(build_command)
 
-    common.check_exists(path)
+    common.check_exists(wallet_py_proto_path)
+    common.check_exists(identifier_py_proto_path)
+    common.check_exists(gui_user_path)
 
 
 def build_protos():
     common.print_something("Building protos")
 
-    build_keiros_public_protos()
-
     build_google_protobuf_protos()
 
     build_own_protos()
-
-
-def move_keiros_public_protos():
-
-    dest_wallet_py_path = workspace_path / \
-        "utils" / "gui" / "Proto" / "wallet_pb2.py"
-    dest_identifier_folder_path = workspace_path / "utils" / \
-        "gui" / "Security" / "Proto"
-    dest_identifier_py_path = dest_identifier_folder_path / "identifier_pb2.py"
-
-    if common.check_exists(dest_wallet_py_path, False) and common.check_exists(dest_identifier_py_path, False):
-        common.print_something(
-            f"{dest_wallet_py_path} and {dest_identifier_py_path} already exist")
-        return
-
-    common.print_something("Moving KeirosPublic protos")
-
-    common.chdir(workspace_path)
-
-    keiros_public_path = workspace_path / "external" / "KeirosPublic"
-
-    src_wallet_py_path = keiros_public_path / \
-        "bazel-bin" / "Proto" / "wallet_pb2.py"
-
-    try:
-        shutil.copyfile(src_wallet_py_path, dest_wallet_py_path)
-    except Exception as e:
-        common.print_something(e)
-
-    common.check_exists(dest_wallet_py_path)
-
-    src_identifier_py_path = keiros_public_path / \
-        "bazel-bin" / "Security" / "Proto" / "identifier_pb2.py"
-
-    try:
-        os.makedirs(dest_identifier_folder_path)
-
-        shutil.copyfile(src_identifier_py_path, dest_identifier_py_path)
-    except Exception as e:
-        common.print_something(e)
-
-    common.check_exists(dest_identifier_py_path)
 
 
 def move_google_protobuf_protos():
@@ -1479,11 +1456,15 @@ def move_google_protobuf_protos():
 
 
 def move_own_protos():
-    gui_user_dest_path = workspace_path / "utils" / \
-        "gui" / "Proto" / "gui_user_pb2.py"
+    wallet_dest_path = workspace_path / "utils" / "gui" / "wallet_pb2.py"
 
-    if common.check_exists(gui_user_dest_path, False):
-        common.print_something(f"{gui_user_dest_path} already exists")
+    identifier_dest_path = workspace_path / "utils" / "gui" / "identifier_pb2.py"
+
+    gui_user_dest_path = workspace_path / "utils" / \
+        "gui" / "gui_user_pb2.py"
+
+    if common.check_exists(gui_user_dest_path, False) and common.check_exists(wallet_dest_path, False) and common.check_exists(identifier_dest_path, False):
+        common.print_something(f"{gui_user_dest_path} or {wallet_dest_path} or {identifier_dest_path} already exists")
         return
 
     common.print_something("Moving own protos")
@@ -1491,41 +1472,33 @@ def move_own_protos():
     common.chdir(workspace_path)
 
     gui_user_path = workspace_path / "bazel-bin" / \
-        "utils" / "gui" / "Proto" / "gui_user_pb2.py"
+        "utils" / "gui" / "gui_user_pb2.py"
+
+    wallet_path = workspace_path / "bazel-bin" / "utils" / "gui" / "wallet_pb2.py"
+
+    identifier_path = workspace_path / "bazel-bin" / "utils" / "gui" / "identifier_pb2.py"
 
     shutil.copyfile(gui_user_path, gui_user_dest_path)
 
     common.check_exists(gui_user_dest_path)
 
 
+    shutil.copyfile(wallet_path, wallet_dest_path)
+
+    common.check_exists(wallet_dest_path)
+
+
+    shutil.copyfile(identifier_path, identifier_dest_path)
+
+    common.check_exists(identifier_dest_path)
+
+
 def move_protos():
     common.print_something("Moving protos")
-
-    move_keiros_public_protos()
 
     move_google_protobuf_protos()
 
     move_own_protos()
-
-
-def move_keiros_public_py_files():
-    dest_denarii_client_path = workspace_path / \
-        "utils" / "gui" / "denarii_client.py"
-
-    if common.check_exists(dest_denarii_client_path, False):
-        common.print_something(f"{dest_denarii_client_path} already exists")
-        return
-
-    common.print_something("Moving KeirosPublic py files")
-
-    common.chdir(workspace_path)
-
-    src_denarii_client_path = workspace_path / "external" / \
-        "KeirosPublic" / "Client" / "Denarii" / "denarii_client.py"
-
-    shutil.copyfile(src_denarii_client_path, dest_denarii_client_path)
-
-    common.check_exists(dest_denarii_client_path)
 
 
 def move_google_protobuf_py_files():
@@ -1570,11 +1543,22 @@ def move_own_py_files():
 
     common.check_exists(workspace_path_finder_dest_path)
 
+    dest_denarii_client_path = workspace_path / \
+        "utils" / "gui" / "denarii_client.py"
+
+    if common.check_exists(dest_denarii_client_path, False):
+        common.print_something(f"{dest_denarii_client_path} already exists")
+        return
+
+    src_denarii_client_path = workspace_path / "client" / "Denarii" / "denarii_client.py"
+
+    shutil.copyfile(src_denarii_client_path, dest_denarii_client_path)
+
+    common.check_exists(dest_denarii_client_path)
+
 
 def move_misc():
     common.print_something("Moving miscellaneous")
-
-    move_keiros_public_py_files()
 
     move_google_protobuf_py_files()
 
@@ -1868,9 +1852,9 @@ def setup_ui_win():
 
     move_misc()
 
-    # build_binaries_win()
+    build_binaries_win()
 
-    # move_binaries_win()
+    move_binaries_win()
 
 
 def setup_ui_mac():

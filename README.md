@@ -110,7 +110,7 @@ If you already have a repo cloned, initialize and update:
 
 ## Configuration instructions
 
-Denarii uses bazel (https://bazel.build/)
+Denarii uses bazel (https://bazel.build/). And it needs `C++14` at least. So set `BAZEL_CXXOPTS="-std=c++14"` on Linux/Mac and `BAZEL_CXXOPT="-std:c++14"` on Windows.
 
 ### On Linux and macOS
 

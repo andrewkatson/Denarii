@@ -29,9 +29,12 @@ class CreateWalletScreen(Screen):
         self.pick_wallet_type = None
         self.remote_wallet_radio_button = None
         self.local_wallet_radio_button = None
+        self.set_wallet_type_callback = kwargs['set_wallet_type_callback']
 
     def init(self, **kwargs):
         super().init(**kwargs)
+
+        self.next_button.setVisible(False)
 
         self.create_wallet_label = Label("Create Wallet")
         font = Font()
@@ -67,7 +70,7 @@ class CreateWalletScreen(Screen):
         self.wallet_info_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
 
         self.create_wallet_submit_push_button = PushButton("Submit", kwargs['parent'])
-        self.create_wallet_submit_push_button.clicked.connect(self.on_create_wallet_submit_clicked)
+        self.create_wallet_submit_push_button.clicked.connect(lambda: self.on_create_wallet_submit_clicked())
         self.create_wallet_submit_push_button.setVisible(False)
         self.create_wallet_submit_push_button.setStyleSheet(
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
@@ -83,7 +86,7 @@ class CreateWalletScreen(Screen):
         self.pick_wallet_type.setFont(font)
 
         self.remote_wallet_radio_button = RadioButton("Remote", kwargs['parent'],
-                                                      wallet_type_callback=self.set_which_wallet)
+                                                      wallet_type_callback=self.set_which_wallet, next_button=self.next_button)
         self.remote_wallet_radio_button.toggled.connect(self.remote_wallet_radio_button.on_wallet_type_clicked)
         self.remote_wallet_radio_button.wallet_type_option = "Remote"
         self.remote_wallet_radio_button.setVisible(False)
@@ -91,7 +94,7 @@ class CreateWalletScreen(Screen):
             'QRadioButton{font: 30pt Helvetica MS;} QRadioButton::indicator { width: 30px; height: 30px;};')
 
         self.local_wallet_radio_button = RadioButton("Local", kwargs['parent'],
-                                                     wallet_type_callback=self.set_which_wallet)
+                                                     wallet_type_callback=self.set_which_wallet, next_button=self.next_button)
         self.local_wallet_radio_button.toggled.connect(self.local_wallet_radio_button.on_wallet_type_clicked)
         self.local_wallet_radio_button.wallet_type_option = "Local"
         self.local_wallet_radio_button.setVisible(False)
@@ -130,6 +133,7 @@ class CreateWalletScreen(Screen):
         self.eight_horizontal_layout.addWidget(self.back_button, alignment=(Qt.AlignLeft | Qt.AlignBottom))
         self.eight_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
 
+
     def teardown(self):
         super().teardown()
 
@@ -157,11 +161,20 @@ class CreateWalletScreen(Screen):
             print_status("Create wallet ", success)
             success = self.denarii_client.query_seed(self.wallet) and success
             print_status("Query seed ", success)
+            if success:
+                self.next_button.setVisible(True)
         except Exception as create_wallet_e:
             print(create_wallet_e)
+            self.next_button.setVisible(False)
 
         if success:
-            self.wallet_info_text_box.setText(self.wallet.phrase)
+            split = self.wallet.phrase.split()
+            thirds = int(len(split) / 3)
+            first = ' '.join(split[:thirds])
+            second = ' '.join(split[thirds:thirds * 2])
+            third = ''.join(split[thirds * 2:])
+
+            self.wallet_info_text_box.setText(f"{first}\n{second}\n{third}")
             self.wallet_save_file_text_box.setText("Wallet saved to: " + DENARIID_WALLET_PATH)
             self.create_wallet_text_box.setText(
                 "Success. Make sure to write down your information. It will not be saved on this device.")
@@ -181,3 +194,5 @@ class CreateWalletScreen(Screen):
 
     def set_which_wallet(self, which_wallet):
         self.which_wallet = which_wallet
+
+        self.set_wallet_type_callback(self.which_wallet)

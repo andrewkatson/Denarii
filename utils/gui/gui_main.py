@@ -14,19 +14,16 @@ import time
 
 import workspace_path_finder
 
-# DO NOT REMOVE THESE
-# They look like they aren't used but they are when building the exe
-from google.protobuf import descriptor as _descriptor
-from google.protobuf import descriptor_pool as _descriptor_pool
-from google.protobuf import message as _message
-from google.protobuf import reflection as _reflection
-from google.protobuf import symbol_database as _symbol_database
-from PyQt5 import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
 
 try:
+
+    # DO NOT REMOVE THESE
+    # They look like they aren't used but they are when building the exe
+    # We try to import google.protobuf in case we are using a built exe using pyinstaller instead of bazel run
+    from PyQt5 import *
+    from PyQt5.QtCore import *
+    from PyQt5.QtGui import *
+    from PyQt5.QtWidgets import *
 
     from create_wallet_screen import *
     from font import *
@@ -48,6 +45,9 @@ try:
     # Modify PATH to include the path to where we are so in production we can find all our files.
     sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+    sys.path.append(os.path.dirname(SCRIPT_DIR))
+
     # Modify the PATH to include the path to the denarii python client
     sys.path.append(str(workspace_path_finder.find_other_workspace_path("KeirosPublic") / "Client" / "Denarii"))
 
@@ -56,15 +56,13 @@ try:
     # Modify the PATH to point to where all of python protos are located that are not nearby in the filesystem
     sys.path.append(str(workspace_path_finder.get_home() / "py_proto"))
 
-    from Security.Proto import identifier_pb2
-    from Proto import wallet_pb2
+    from wallet import *
+    from gui_user import *
 
     # Modify the PATH to point to where the gui_user proto is
     sys.path.append(str(workspace_path_finder.find_workspace_path() / "bazel-bin" / "utils" / "gui"))
 
-    from Proto import gui_user_pb2
-
-    gui_user = gui_user_pb2.GuiUser()
+    gui_user = GuiUser()
 
     USER_SETTINGS_PATH = str(workspace_path_finder.find_workspace_path() / "utils" / "gui" / "user_settings.pkl")
 
@@ -91,17 +89,17 @@ try:
     SYNCHRONIZED_OK = "synchronized_ok.txt"
     SYNCHRONIZATION_STARTED = "synchronization_started.txt"
 
-
     def store_user():
+        global gui_user
         with open(USER_SETTINGS_PATH, "wb") as output_file:
-            pkl.dump(gui_user.SerializeToString(), output_file)
+            pkl.dump(gui_user, output_file)
 
 
     def load_user():
         global gui_user
 
         with open(USER_SETTINGS_PATH, "rb") as input_file:
-            gui_user.ParseFromString(pkl.load(input_file))
+            gui_user = pkl.load(input_file)
 
 
     class Widget(QWidget):
@@ -113,7 +111,6 @@ try:
             self.denariid = self.run_denariid_setup()
 
             self.denarii_wallet_rpc_server = self.setup_denarii_wallet_rpc_server()
-            self.denarii_wallet_rpc_server.wait(timeout=5)
             if self.denarii_wallet_rpc_server is not None and self.denarii_wallet_rpc_server.returncode == 0:
                 print("Wallet rpc server started up")
             else:
@@ -132,8 +129,8 @@ try:
             self.main_layout = QVBoxLayout()
             self.setLayout(self.main_layout)
 
-            self.local_wallet = wallet_pb2.Wallet
-            self.remote_wallet = wallet_pb2.Wallet
+            self.local_wallet = Wallet()
+            self.remote_wallet = Wallet()
             self.which_wallet = None
 
             # Common buttons
@@ -151,22 +148,26 @@ try:
 
             common_buttons = {NEXT_BUTTON: self.next_button, BACK_BUTTON: self.back_button}
 
-            self.kwargs = {'push_buttons': common_buttons, 'gui_user': gui_user, 'store_user_func': store_user,
+            self.kwargs = {'push_buttons': common_buttons, 'gui_user': gui_user,
                            'parent': self, 'main_layout': self.main_layout, 'deletion_func': self.remove_all_widgets,
                            'denarii_client': denarii_client, 'on_create_wallet_clicked': self.on_create_wallet_clicked,
                            'on_restore_wallet_clicked': self.on_restore_wallet_pushed,
                            'on_set_wallet_clicked': self.on_set_wallet_pushed,
                            'remote_wallet': self.remote_wallet,
-                           'local_wallet': self.local_wallet}
+                           'local_wallet': self.local_wallet, 
+                           'set_wallet_type_callback': self.set_wallet_type}
+
+            if os.path.exists(USER_SETTINGS_PATH):
+                load_user()
+
 
             # Widgets
-            self.LANG_SELECT = LangSelectScreen(push_buttons={NEXT_BUTTON: self.next_button}, gui_user=gui_user,
-                                                store_user_func=store_user, parent=self, main_layout=self.main_layout,
+            self.LANG_SELECT = LangSelectScreen(push_buttons=common_buttons, gui_user=gui_user, parent=self, main_layout=self.main_layout,
                                                 deletion_func=self.remove_all_widgets,
                                                 denarii_client=self.denarii_client)
             self.USER_INFO = UserInfoScreen(push_buttons=common_buttons, main_layout=self.main_layout,
                                             deletion_func=self.remove_all_widgets, gui_user=gui_user,
-                                            denarii_client=self.denarii_client)
+                                            denarii_client=self.denarii_client, parent=self)
             self.WALLET_INFO = WalletInfoScreen(push_buttons=common_buttons, parent=self,
                                                 on_create_wallet_clicked=self.on_create_wallet_clicked,
                                                 on_restore_wallet_clicked=self.on_restore_wallet_pushed,
@@ -179,46 +180,41 @@ try:
                                                     deletion_func=self.remove_all_widgets,
                                                     denarii_client=self.denarii_client,
                                                     remote_wallet=self.remote_wallet,
-                                                    local_wallet=self.local_wallet, gui_user=gui_user)
+                                                    local_wallet=self.local_wallet, gui_user=gui_user, set_wallet_type_callback=self.set_wallet_type)
             self.RESTORE_WALLET = RestoreWalletScreen(push_buttons=common_buttons, parent=self,
                                                       main_layout=self.main_layout,
                                                       deletion_func=self.remove_all_widgets,
                                                       denarii_client=self.denarii_client,
                                                       remote_wallet=self.remote_wallet,
-                                                      local_wallet=self.local_wallet, gui_user=gui_user)
+                                                      local_wallet=self.local_wallet, gui_user=gui_user, set_wallet_type_callback=self.set_wallet_type)
             self.SET_WALLET = SetWalletScreen(push_buttons=common_buttons, parent=self,
                                               main_layout=self.main_layout,
                                               deletion_func=self.remove_all_widgets,
                                               denarii_client=self.denarii_client,
                                               remote_wallet=self.remote_wallet,
-                                              local_wallet=self.local_wallet, gui_user=gui_user)
+                                              local_wallet=self.local_wallet, gui_user=gui_user, set_wallet_type_callback=self.set_wallet_type)
             self.CURRENT_WALLET = None
-            self.LOCAL_WALLET_SCREEN = LocalWalletScreen(push_buttons={BACK_BUTTON: self.back_button},
+            self.LOCAL_WALLET_SCREEN = LocalWalletScreen(push_buttons=common_buttons,
                                                          main_layout=self.main_layout,
                                                          deletion_func=self.remove_all_widgets, parent=self,
                                                          denarii_client=self.denarii_client,
                                                          local_wallet=self.local_wallet, gui_user=gui_user)
-            self.REMOTE_WALLET_SCREEN = RemoteWalletScreen(push_buttons={BACK_BUTTON: self.back_button},
+            self.REMOTE_WALLET_SCREEN = RemoteWalletScreen(push_buttons=common_buttons,
                                                            main_layout=self.main_layout,
                                                            deletion_func=self.remove_all_widgets,
                                                            denarii_client=self.denarii_client,
+                                                           parent=self,
                                                            remote_wallet=self.remote_wallet, gui_user=gui_user)
 
-            if os.path.exists(USER_SETTINGS_PATH):
-                load_user()
-
             # Determine what scene we are on based on what info the stored user has
-            if gui_user.language == "" and gui_user.name == "" and not gui_user.HasField("local_wallet") \
-                    and not gui_user.HasField("remote_wallet"):
+            if (gui_user.language is None or gui_user.language == "") and (gui_user.name is None or gui_user.name == ""):
                 self.current_widget = self.LANG_SELECT
-            elif gui_user.language != "" and gui_user.name == "" and not gui_user.HasField("local_wallet") \
-                    and not gui_user.HasField("remote_wallet"):
+            elif gui_user.language is not None and gui_user.language != "" and (gui_user.name is None or gui_user.name == ""):
                 self.current_widget = self.USER_INFO
-            elif gui_user.language != "" and gui_user.name != "" and not gui_user.HasField("local_wallet") \
-                    and not gui_user.HasField("remote_wallet"):
+            elif gui_user.language is not None and gui_user.language != "" and gui_user.name is not None and gui_user.name != "":
                 self.current_widget = self.WALLET_INFO
             else:
-                self.current_widget = self.current_wallet_widget
+                self.current_widget = self.WALLET_INFO
 
             self.last_widget = None
             self.setup_current_widget()
@@ -229,7 +225,6 @@ try:
 
         def run_denariid_setup(self):
             self.denariid = self.setup_denariid()
-            self.denariid.wait(timeout=5)
             if self.denariid is not None and self.denariid.returncode == 0:
                 print("Denariid started up")
             else:
@@ -260,7 +255,6 @@ try:
             return False
 
         def setup_denariid(self):
-
             if self.already_started_denariid():
                 return None
 
@@ -395,7 +389,6 @@ try:
                 self.current_widget = self.USER_INFO
             elif self.current_widget == self.USER_INFO:
                 self.current_widget = self.WALLET_INFO
-                self.USER_INFO.store_user_info()
             elif self.current_widget == self.WALLET_INFO:
                 # The next button on the wallet info screen should do nothing
                 self.current_widget = self.WALLET_INFO
@@ -488,6 +481,13 @@ try:
             elif self.which_wallet == LOCAL_WALLET:
                 return self.LOCAL_WALLET_SCREEN
             return self.LOCAL_WALLET_SCREEN
+
+        def set_wallet_type(self, type):
+
+            if type == REMOTE_WALLET:
+                self.which_wallet = REMOTE_WALLET
+            else: 
+                self.which_wallet = LOCAL_WALLET
 
 
     def get_main_window():
