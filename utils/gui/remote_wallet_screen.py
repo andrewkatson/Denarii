@@ -13,6 +13,8 @@ class RemoteWalletScreen(WalletScreen):
     def init(self, **kwargs):
         super().init(**kwargs)
 
+        self.wallet = kwargs['remote_wallet']
+
     def setup(self):
         super().setup()
 

@@ -43,6 +43,7 @@ class UserInfoScreen(Screen):
 
         self.first_horizontal_layout.addWidget(self.user_info_label, alignment=Qt.AlignCenter)
         self.second_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
+        self.second_horizontal_layout.addWidget(self.back_button, alignment=(Qt.AlignLeft | Qt.AlignBottom))
         self.form_layout.addRow("Name", self.name_line_edit)
         self.form_layout.addRow("Email", self.email_line_edit)
 

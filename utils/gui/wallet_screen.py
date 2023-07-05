@@ -4,6 +4,7 @@ from label import *
 from PyQt5.QtCore import *
 from line_edit import *
 from push_button import *
+from Proto import wallet_pb2
 
 
 class WalletScreen(Screen):
@@ -28,7 +29,8 @@ class WalletScreen(Screen):
         self.address_line_edit = None
         self.amount_line_edit = None
         self.transfer_push_button = None
-        self.wallet = kwargs['wallet']
+        # Wallet is set in the specific wallet screen
+        self.wallet = None
 
     def init(self, **kwargs):
         super().init(**kwargs)
@@ -80,17 +82,45 @@ class WalletScreen(Screen):
         self.amount_line_edit = LineEdit()
 
         self.transfer_push_button = PushButton("Transfer", kwargs['parent'])
-        self.transfer_push_button.clicked.connect(kwargs['on_transfer_clicked'])
+        self.transfer_push_button.clicked.connect(self.on_transfer_clicked)
         self.transfer_push_button.setVisible(False)
         self.transfer_push_button.setStyleSheet(
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
 
     def setup(self):
         super().setup()
-        self.remove_all_widgets(self.main_layout)
+        self.deletion_func(self.main_layout)
 
     def teardown(self):
         super().teardown()
 
     def populate_wallet_screen(self):
         pass
+
+    def transfer_money(self):
+        """
+        Transfer money between two wallets.
+        """
+        success = False
+
+        other_wallet = wallet_pb2.Wallet()
+        other_wallet.address = bytes(self.address_line_edit.text(), 'utf-8')
+
+        try:
+            success = self.denarii_client.transfer_money(int(self.amount_line_edit.text()), self.wallet,
+                                                         other_wallet)
+            print_status("Transfer money ", success)
+        except Exception as e:
+            print(e)
+
+        if success:
+            self.wallet_transfer_status_text_box.setText("Success transferring money")
+        else:
+            self.wallet_transfer_status_text_box.setText("Failure transferring money")
+
+    @pyqtSlot()
+    def on_transfer_clicked(self):
+        """
+        Transfer money to another person's wallet
+        """
+        self.transfer_money()

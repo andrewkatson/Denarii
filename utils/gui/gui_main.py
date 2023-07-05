@@ -134,6 +134,7 @@ try:
 
             self.local_wallet = wallet_pb2.Wallet
             self.remote_wallet = wallet_pb2.Wallet
+            self.which_wallet = None
 
             # Common buttons
             self.next_button = PushButton("Next Page", self)
@@ -149,6 +150,14 @@ try:
             self.back_button.clicked.connect(self.back_clicked)
 
             common_buttons = {NEXT_BUTTON: self.next_button, BACK_BUTTON: self.back_button}
+
+            self.kwargs = {'push_buttons': common_buttons, 'gui_user': gui_user, 'store_user_func': store_user,
+                           'parent': self, 'main_layout': self.main_layout, 'deletion_func': self.remove_all_widgets,
+                           'denarii_client': denarii_client, 'on_create_wallet_clicked': self.on_create_wallet_clicked,
+                           'on_restore_wallet_clicked': self.on_restore_wallet_pushed,
+                           'on_set_wallet_clicked': self.on_set_wallet_pushed,
+                           'remote_wallet': self.remote_wallet,
+                           'local_wallet': self.local_wallet}
 
             # Widgets
             self.LANG_SELECT = LangSelectScreen(push_buttons={NEXT_BUTTON: self.next_button}, gui_user=gui_user,
@@ -172,31 +181,28 @@ try:
                                                     remote_wallet=self.remote_wallet,
                                                     local_wallet=self.local_wallet)
             self.RESTORE_WALLET = RestoreWalletScreen(push_buttons=common_buttons, parent=self,
-                                                      on_restore_wallet_submit_clicked=self.on_restore_wallet_submit_clicked,
                                                       main_layout=self.main_layout,
                                                       deletion_func=self.remove_all_widgets,
-                                                      denarii_client=self.denarii_client)
+                                                      denarii_client=self.denarii_client,
+                                                      remote_wallet=self.remote_wallet,
+                                                      local_wallet=self.local_wallet)
             self.SET_WALLET = SetWalletScreen(push_buttons=common_buttons, parent=self,
-                                              on_set_wallet_submit_clicked=self.on_set_wallet_submit_clicked,
                                               main_layout=self.main_layout,
                                               deletion_func=self.remove_all_widgets,
-                                              denarii_client=self.denarii_client)
+                                              denarii_client=self.denarii_client,
+                                              remote_wallet=self.remote_wallet,
+                                              local_wallet=self.local_wallet)
             self.CURRENT_WALLET = None
             self.LOCAL_WALLET = LocalWalletScreen(push_buttons={BACK_BUTTON: self.back_button},
                                                   main_layout=self.main_layout,
                                                   deletion_func=self.remove_all_widgets, parent=self,
-                                                  on_create_subaddress_clicked=self.on_create_sub_address_clicked,
-                                                  on_stop_mining_clicked=self.on_stop_mining_clicked,
-                                                  on_start_mining_clicked=self.on_start_mining_clicked,
-                                                  on_transfer_clicked=self.on_transfer_clicked,
                                                   denarii_client=self.denarii_client,
-                                                  wallet=self.local_wallet)
+                                                  local_wallet=self.local_wallet)
             self.REMOTE_WALLET = RemoteWalletScreen(push_buttons={BACK_BUTTON: self.back_button},
                                                     main_layout=self.main_layout,
                                                     deletion_func=self.remove_all_widgets,
-                                                    on_transfer_clicked=self.on_transfer_clicked,
                                                     denarii_client=self.denarii_client,
-                                                    wallet=self.remote_wallet)
+                                                    remote_wallet=self.remote_wallet)
 
             if os.path.exists(USER_SETTINGS_PATH):
                 load_user()
@@ -211,7 +217,8 @@ try:
             else:
                 self.current_widget = self.LOCAL_WALLET
 
-            self.current_widget.setup()
+            self.last_widget = None
+            self.setup_current_widget()
 
             self.parent = parent
 
@@ -363,7 +370,6 @@ try:
             self.server_thread.join()
             self.wallet_thread.join()
 
-
         def remove_all_widgets(self, layout):
             """
             Remove all widgets and layouts
@@ -376,139 +382,12 @@ try:
                 else:
                     self.remove_all_widgets(item.layout())
 
-        def set_wallet(self):
-            """
-            Open the wallet based on the user's information
-            """
-
-            self.wallet.name = self.name_line_edit.text()
-            self.wallet.password = self.password_line_edit.text()
-
-            success = False
-
-            try:
-                success = self.denarii_client.set_current_wallet(self.wallet)
-                print_status("Set current wallet ", success)
-                success = self.denarii_client.query_seed(self.wallet) and success
-                print_status("Query seed ", success)
-            except Exception as e:
-                print(e)
-
-            if success:
-                self.set_wallet_text_box.setText("Success. Your seed is \n" + self.wallet.phrase)
-            else:
-                self.set_wallet_text_box.setText("Failure")
-
-        def restore_wallet(self):
-            """
-            Try to restore a denarii wallet
-            """
-
-            self.wallet.name = self.name_line_edit.text()
-            self.wallet.password = self.password_line_edit.text()
-            self.wallet.phrase = self.seed_line_edit.text()
-
-            success = False
-            try:
-                success = self.denarii_client.restore_wallet(self.wallet)
-                print_status("Restore wallet ", success)
-            except Exception as e:
-                print(e)
-
-            if success:
-                self.wallet_save_file_text_box.setText("Wallet saved to: " + DENARIID_WALLET_PATH)
-                self.restore_wallet_text_box.setText("Success")
-            else:
-                self.wallet_save_file_text_box.setText("Wallet already at: " + DENARIID_WALLET_PATH)
-                self.restore_wallet_text_box.setText("Failure")
-
-        def transfer_money(self):
-            """
-            Transfer money between two wallets.
-            """
-            success = False
-
-            other_wallet = wallet_pb2.Wallet()
-            other_wallet.address = bytes(self.address_line_edit.text(), 'utf-8')
-
-            try:
-                success = self.denarii_client.transfer_money(int(self.amount_line_edit.text()), self.wallet,
-                                                             other_wallet)
-                print_status("Transfer money ", success)
-            except Exception as e:
-                print(e)
-
-            if success:
-                self.wallet_transfer_status_text_box.setText("Success transferring money")
-            else:
-                self.wallet_transfer_status_text_box.setText("Failure transferring money")
-
-        def create_sub_address(self):
-            """
-            Create a sub address
-            """
-
-            success = False
-
-            try:
-                success = self.denarii_client.create_no_label_address(self.wallet)
-                print_status("Create subaddress ", success)
-            except Exception as e:
-                print(e)
-
-            if success:
-                sub_address_text_box = Label(str(self.wallet.sub_addresses[len(self.wallet.sub_addresses) - 1]))
-                font = Font()
-                font.setFamily("Arial")
-                font.setPixelSize(50)
-                sub_address_text_box.setFont(font)
-                sub_address_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
-                self.vertical_layout.addWidget(sub_address_text_box, alignment=Qt.AlignCenter)
-                self.sub_address_text_boxes.append(sub_address_text_box)
-                self.wallet_info_status_text_box.setText(
-                    "Success creating sub address. Use this to send to other people.")
-            else:
-                self.wallet_info_status_text_box.setText("Failure creating sub address.")
-
-        def start_mining(self):
-            """
-            Start mining
-            """
-
-            success = False
-
-            try:
-                success = self.denarii_client.start_mining(True, False, multiprocessing.cpu_count() - 2)
-            except Exception as e:
-                print(e)
-
-            if success:
-                self.wallet_info_status_text_box.setText("Started mining")
-            else:
-                self.wallet_info_status_text_box.setText("Failed to start mining")
-
-        def stop_mining(self):
-            """
-            Stop mining
-            """
-
-            success = False
-
-            try:
-                success = self.denarii_client.stop_mining()
-            except Exception as e:
-                print(e)
-
-            if success:
-                self.wallet_info_status_text_box.setText("Stopped mining")
-            else:
-                self.wallet_info_status_text_box.setText("Failed to stop mining")
-
         @pyqtSlot()
         def next_clicked(self):
             """
             What to do when the next page button is clicked depending on the current screen
             """
+            self.last_widget = self.current_widget
             if self.current_widget == self.LANG_SELECT:
                 self.current_widget = self.USER_INFO
             elif self.current_widget == self.USER_INFO:
@@ -518,18 +397,13 @@ try:
                 # The next button on the wallet info screen should do nothing
                 self.current_widget = self.WALLET_INFO
             elif self.current_widget == self.CREATE_WALLET:
-                self.current_widget = self.LOCAL_WALLET
+                self.current_widget = self.current_wallet_widget
             elif self.current_widget == self.RESTORE_WALLET:
-                self.current_widget = self.LOCAL_WALLET
+                self.current_widget = self.current_wallet_widget
             elif self.current_widget == self.SET_WALLET:
-                self.current_widget = self.LOCAL_WALLET
+                self.current_widget = self.current_wallet_widget
 
-            if self.current_widget == self.USER_INFO:
-                self.setup_user_info_screen()
-            elif self.current_widget == self.WALLET_INFO:
-                self.setup_wallet_info_screen()
-            elif self.current_widget == self.LOCAL_WALLET:
-                self.setup_wallet_scene_screen()
+            self.setup_current_widget()
 
             store_user()
 
@@ -538,6 +412,7 @@ try:
             """
             What to do when the back_button button is clicked depending on the current screen
             """
+            self.last_widget = self.current_widget
             if self.current_widget == self.LANG_SELECT:
                 # The back button on lang select should do nothing
                 self.current_widget = self.LANG_SELECT
@@ -551,15 +426,10 @@ try:
                 self.current_widget = self.WALLET_INFO
             elif self.current_widget == self.SET_WALLET:
                 self.current_widget = self.WALLET_INFO
-            elif self.current_widget == self.LOCAL_WALLET:
+            elif self.current_widget == self.current_wallet_widget:
                 self.current_widget = self.WALLET_INFO
 
-            if self.current_widget == self.USER_INFO:
-                self.setup_user_info_screen()
-            elif self.current_widget == self.WALLET_INFO:
-                self.setup_wallet_info_screen()
-            elif self.current_widget == self.LOCAL_WALLET:
-                self.setup_wallet_scene_screen()
+            self.setup_current_widget()
 
             store_user()
 
@@ -569,7 +439,7 @@ try:
             Setup the wallet creation screen when the user decides to create one
             """
             self.current_widget = self.CREATE_WALLET
-            self.setup_create_wallet_screen()
+            self.setup_current_widget()
 
         @pyqtSlot()
         def on_restore_wallet_pushed(self):
@@ -577,7 +447,7 @@ try:
             Setup the restore wallet screen when the user decides to restore one
             """
             self.current_widget = self.RESTORE_WALLET
-            self.setup_restore_wallet_screen()
+            self.setup_current_widget()
 
         @pyqtSlot()
         def on_set_wallet_pushed(self):
@@ -585,49 +455,36 @@ try:
             Setup the set wallet to set one saved to disk
             """
             self.current_widget = self.SET_WALLET
-            self.setup_set_wallet_screen()
+            self.setup_current_widget()
 
-        @pyqtSlot()
-        def on_restore_wallet_submit_clicked(self):
-            """
-            Restore a wallet based on the user's input information
-            """
-            self.restore_wallet()
+        def setup_current_widget(self):
+            if self.last_widget is not None:
+                self.last_widget.teardown()
 
-        @pyqtSlot()
-        def on_set_wallet_submit_clicked(self):
-            """
-            Set a wallet based on the user's input information
-            """
-            self.set_wallet()
+            self.current_widget.init(**self.kwargs)
+            self.current_widget.setup()
 
-        @pyqtSlot()
-        def on_transfer_clicked(self):
-            """
-            Transfer money to another person's wallet
-            """
-            self.transfer_money()
+        @property
+        def wallet(self):
+            if self.which_wallet is None:
+                return self.local_wallet
 
-        @pyqtSlot()
-        def on_create_sub_address_clicked(self):
-            """
-            Create a subaddress
-            """
-            self.create_sub_address()
+            if self.which_wallet == REMOTE_WALLET:
+                return self.remote_wallet
+            elif self.which_wallet == LOCAL_WALLET:
+                return self.local_wallet
+            return self.local_wallet
 
-        @pyqtSlot()
-        def on_start_mining_clicked(self):
-            """
-            Start mining
-            """
-            self.start_mining()
+        @property
+        def current_wallet_widget(self):
+            if self.which_wallet is None:
+                return self.LOCAL_WALLET
 
-        @pyqtSlot()
-        def on_stop_mining_clicked(self):
-            """
-            Stop mining
-            """
-            self.stop_mining()
+            if self.which_wallet == REMOTE_WALLET:
+                return self.REMOTE_WALLET
+            elif self.which_wallet == LOCAL_WALLET:
+                return self.LOCAL_WALLET
+            return self.LOCAL_WALLET
 
 
     def get_main_window():
