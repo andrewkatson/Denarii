@@ -43,6 +43,7 @@ try:
     from push_button import *
     from radio_button import *
     from line_edit import *
+    from constants import *
 
     # Modify PATH to include the path to where we are so in production we can find all our files.
     sys.path.append(os.path.dirname(os.path.realpath(__file__)))
@@ -84,10 +85,6 @@ try:
 
     DENARII_WALLET_RPC_SERVER_PATH_WINDOWS = str(
         workspace_path_finder.find_workspace_path() / "utils" / "gui" / "denarii_wallet_rpc_server.exe")
-
-    DENARIID_WALLET_PATH = str(workspace_path_finder.get_home() / "denarii" / "wallet")
-    if not os.path.exists(DENARIID_WALLET_PATH):
-        os.makedirs(DENARIID_WALLET_PATH)
 
     # Files used to tell this program that the synchronization process is already done or is starting. Both indicators
     # that the denariid is working.
@@ -135,6 +132,9 @@ try:
             self.main_layout = QVBoxLayout()
             self.setLayout(self.main_layout)
 
+            self.local_wallet = wallet_pb2.Wallet
+            self.remote_wallet = wallet_pb2.Wallet
+
             # Common buttons
             self.next_button = PushButton("Next Page", self)
             self.next_button.setStyleSheet("color:black")
@@ -148,40 +148,55 @@ try:
             self.back_button.setStyleSheet("font-size: 18pt")
             self.back_button.clicked.connect(self.back_clicked)
 
-            common_buttons = [self.next_button, self.back_button]
+            common_buttons = {NEXT_BUTTON: self.next_button, BACK_BUTTON: self.back_button}
 
             # Widgets
-            self.LANG_SELECT = LangSelectScreen(push_buttons=[self.next_button], gui_user=gui_user,
+            self.LANG_SELECT = LangSelectScreen(push_buttons={NEXT_BUTTON: self.next_button}, gui_user=gui_user,
                                                 store_user_func=store_user, parent=self, main_layout=self.main_layout,
-                                                deletion_func=self.remove_all_widgets)
+                                                deletion_func=self.remove_all_widgets,
+                                                denarii_client=self.denarii_client)
             self.USER_INFO = UserInfoScreen(push_buttons=common_buttons, main_layout=self.main_layout,
-                                            deletion_func=self.remove_all_widgets)
+                                            deletion_func=self.remove_all_widgets, gui_user=gui_user,
+                                            denarii_client=self.denarii_client)
             self.WALLET_INFO = WalletInfoScreen(push_buttons=common_buttons, parent=self,
                                                 on_create_wallet_clicked=self.on_create_wallet_clicked,
                                                 on_restore_wallet_clicked=self.on_restore_wallet_pushed,
                                                 on_set_wallet_clicked=self.on_set_wallet_pushed,
                                                 main_layout=self.main_layout,
-                                                deletion_func=self.remove_all_widgets)
+                                                deletion_func=self.remove_all_widgets,
+                                                denarii_client=self.denarii_client)
             self.CREATE_WALLET = CreateWalletScreen(push_buttons=common_buttons, parent=self,
-                                                    on_create_wallet_submit_clicked=self.on_create_wallet_submit_clicked,
                                                     main_layout=self.main_layout,
-                                                    deletion_func=self.remove_all_widgets)
+                                                    deletion_func=self.remove_all_widgets,
+                                                    denarii_client=self.denarii_client,
+                                                    remote_wallet=self.remote_wallet,
+                                                    local_wallet=self.local_wallet)
             self.RESTORE_WALLET = RestoreWalletScreen(push_buttons=common_buttons, parent=self,
                                                       on_restore_wallet_submit_clicked=self.on_restore_wallet_submit_clicked,
                                                       main_layout=self.main_layout,
-                                                      deletion_func=self.remove_all_widgets)
+                                                      deletion_func=self.remove_all_widgets,
+                                                      denarii_client=self.denarii_client)
             self.SET_WALLET = SetWalletScreen(push_buttons=common_buttons, parent=self,
                                               on_set_wallet_submit_clicked=self.on_set_wallet_submit_clicked,
                                               main_layout=self.main_layout,
-                                              deletion_func=self.remove_all_widgets)
+                                              deletion_func=self.remove_all_widgets,
+                                              denarii_client=self.denarii_client)
             self.CURRENT_WALLET = None
-            self.LOCAL_WALLET = LocalWalletScreen(push_buttons=[self.back_button], main_layout=self.main_layout,
+            self.LOCAL_WALLET = LocalWalletScreen(push_buttons={BACK_BUTTON: self.back_button},
+                                                  main_layout=self.main_layout,
                                                   deletion_func=self.remove_all_widgets, parent=self,
                                                   on_create_subaddress_clicked=self.on_create_sub_address_clicked,
                                                   on_stop_mining_clicked=self.on_stop_mining_clicked,
-                                                  on_start_mining_clicked=self.on_start_mining_clicked)
-            self.REMOTE_WALLET = RemoteWalletScreen(push_buttons=[self.back_button], main_layout=self.main_layout,
-                                                    deletion_func=self.remove_all_widgets)
+                                                  on_start_mining_clicked=self.on_start_mining_clicked,
+                                                  on_transfer_clicked=self.on_transfer_clicked,
+                                                  denarii_client=self.denarii_client,
+                                                  wallet=self.local_wallet)
+            self.REMOTE_WALLET = RemoteWalletScreen(push_buttons={BACK_BUTTON: self.back_button},
+                                                    main_layout=self.main_layout,
+                                                    deletion_func=self.remove_all_widgets,
+                                                    on_transfer_clicked=self.on_transfer_clicked,
+                                                    denarii_client=self.denarii_client,
+                                                    wallet=self.remote_wallet)
 
             if os.path.exists(USER_SETTINGS_PATH):
                 load_user()
@@ -201,8 +216,6 @@ try:
             self.parent = parent
 
             self.success = False
-
-            self.wallet = wallet_pb2.Wallet()
 
         def run_denariid_setup(self):
             self.denariid = self.setup_denariid()
@@ -350,213 +363,6 @@ try:
             self.server_thread.join()
             self.wallet_thread.join()
 
-        def print_status(self, text, success):
-            """
-            Print the status of something
-            @param text the text of the something
-            @param success whether that thing succeeded
-            """
-            if success:
-                print(text + " succeeded")
-            else:
-                print(text + " failed")
-
-        def setup_lang_select_screen(self):
-            """
-            Setup the language selection screen
-            """
-            self.main_layout.addLayout(self.first_horizontal_layout)
-            self.main_layout.addLayout(self.second_horizontal_layout)
-            self.main_layout.addLayout(self.third_horizontal_layout)
-
-            # Add some text telling the user to select a language
-            self.first_horizontal_layout.addWidget(self.pick_lang_label, alignment=Qt.AlignCenter)
-
-            # Add a radio button for the user's language
-            self.english_radio_button.setVisible(True)
-            self.second_horizontal_layout.addWidget(self.english_radio_button, alignment=Qt.AlignCenter)
-
-            # Add a button to go the next screen
-            self.third_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
-
-        def setup_user_info_screen(self):
-            """
-            Setup the user information screen
-            """
-            # Remove anything on the screen
-            self.remove_all_widgets(self.main_layout)
-
-            self.main_layout.addLayout(self.first_horizontal_layout)
-            self.main_layout.addLayout(self.form_layout)
-            self.main_layout.addLayout(self.second_horizontal_layout)
-
-            self.first_horizontal_layout.addWidget(self.user_info_label, alignment=Qt.AlignCenter)
-            self.second_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
-            self.form_layout.addRow("Name", self.name_line_edit)
-            self.form_layout.addRow("Email", self.email_line_edit)
-
-        def setup_wallet_info_screen(self):
-            """
-            Setup the wallet information screen where the user can choose to create or restore a wallet
-            """
-            self.remove_all_widgets(self.main_layout)
-
-            self.main_layout.addLayout(self.first_horizontal_layout)
-            self.main_layout.addLayout(self.second_horizontal_layout)
-            self.main_layout.addLayout(self.third_horizontal_layout)
-
-            self.create_wallet_push_button.setVisible(True)
-            self.restore_wallet_push_button.setVisible(True)
-            self.set_wallet_push_button.setVisible(True)
-
-            self.first_horizontal_layout.addWidget(self.wallet_info_label, alignment=Qt.AlignCenter)
-            self.second_horizontal_layout.addWidget(self.create_wallet_push_button, alignment=Qt.AlignCenter)
-            self.second_horizontal_layout.addWidget(self.restore_wallet_push_button, alignment=Qt.AlignCenter)
-            self.second_horizontal_layout.addWidget(self.set_wallet_push_button, alignment=Qt.AlignCenter)
-            self.third_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
-
-        def setup_create_wallet_screen(self):
-            """
-            Setup the wallet creation screen
-            """
-            self.remove_all_widgets(self.main_layout)
-
-            self.main_layout.addLayout(self.first_horizontal_layout)
-            self.main_layout.addLayout(self.form_layout)
-            self.main_layout.addLayout(self.second_horizontal_layout)
-            self.main_layout.addLayout(self.third_horizontal_layout)
-            self.main_layout.addLayout(self.fourth_horizontal_layout)
-            self.main_layout.addLayout(self.fifth_horizontal_layout)
-            self.main_layout.addLayout(self.sixth_horizontal_layout)
-
-            self.create_wallet_submit_push_button.setVisible(True)
-
-            self.first_horizontal_layout.addWidget(self.create_wallet_label, alignment=Qt.AlignCenter)
-            self.form_layout.addRow("Name", self.name_line_edit)
-            self.form_layout.addRow("Password", self.password_line_edit)
-            self.second_horizontal_layout.addWidget(self.wallet_info_text_box, alignment=Qt.AlignCenter)
-            self.third_horizontal_layout.addWidget(self.wallet_save_file_text_box, alignment=Qt.AlignCenter)
-            self.fourth_horizontal_layout.addWidget(self.create_wallet_text_box, alignment=Qt.AlignCenter)
-            self.fifth_horizontal_layout.addWidget(self.create_wallet_submit_push_button, alignment=Qt.AlignCenter)
-            self.sixth_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
-
-        def setup_restore_wallet_screen(self):
-            """
-            Setup the restore wallet screen
-            """
-            self.remove_all_widgets(self.main_layout)
-
-            self.main_layout.addLayout(self.first_horizontal_layout)
-            self.main_layout.addLayout(self.form_layout)
-            self.main_layout.addLayout(self.second_horizontal_layout)
-            self.main_layout.addLayout(self.third_horizontal_layout)
-            self.main_layout.addLayout(self.fourth_horizontal_layout)
-            self.main_layout.addLayout(self.fifth_horizontal_layout)
-
-            self.restore_wallet_submit_push_button.setVisible(True)
-
-            self.first_horizontal_layout.addWidget(self.restore_wallet_label, alignment=Qt.AlignCenter)
-            self.form_layout.addRow("Name", self.name_line_edit)
-            self.form_layout.addRow("Password", self.password_line_edit)
-            self.form_layout.addRow("Seed", self.seed_line_edit)
-            self.second_horizontal_layout.addWidget(self.wallet_save_file_text_box, alignment=Qt.AlignCenter)
-            self.third_horizontal_layout.addWidget(self.restore_wallet_text_box, alignment=Qt.AlignCenter)
-            self.fourth_horizontal_layout.addWidget(self.restore_wallet_submit_push_button, alignment=Qt.AlignCenter)
-            self.fifth_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
-
-        def setup_set_wallet_screen(self):
-            """
-            Setup the open wallet screen
-            """
-            self.remove_all_widgets(self.main_layout)
-
-            self.main_layout.addLayout(self.first_horizontal_layout)
-            self.main_layout.addLayout(self.form_layout)
-            self.main_layout.addLayout(self.second_horizontal_layout)
-            self.main_layout.addLayout(self.third_horizontal_layout)
-            self.main_layout.addLayout(self.fourth_horizontal_layout)
-
-            self.set_wallet_submit_push_button.setVisible(True)
-
-            self.first_horizontal_layout.addWidget(self.set_wallet_label, alignment=Qt.AlignCenter)
-            self.form_layout.addRow("Name", self.name_line_edit)
-            self.form_layout.addRow("Password", self.password_line_edit)
-            self.second_horizontal_layout.addWidget(self.set_wallet_text_box, alignment=Qt.AlignCenter)
-            self.third_horizontal_layout.addWidget(self.set_wallet_submit_push_button, alignment=Qt.AlignCenter)
-            self.fourth_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
-
-        def setup_wallet_scene_screen(self):
-            """
-            Setup the wallet scene where the user can transfer funds and check their own funds
-            """
-            self.remove_all_widgets(self.main_layout)
-
-            self.main_layout.addLayout(self.first_horizontal_layout)
-            self.main_layout.addLayout(self.second_horizontal_layout)
-            self.main_layout.addLayout(self.third_horizontal_layout)
-            self.main_layout.addLayout(self.fourth_horizontal_layout)
-            self.main_layout.addLayout(self.vertical_layout)
-            self.main_layout.addLayout(self.fifth_horizontal_layout)
-            self.main_layout.addLayout(self.form_layout)
-            self.main_layout.addLayout(self.sixth_horizontal_layout)
-            self.main_layout.addLayout(self.seventh_horizontal_layout)
-
-            self.transfer_push_button.setVisible(True)
-            self.create_sub_address_push_button.setVisible(True)
-            self.start_mining_push_button.setVisible(True)
-            self.stop_mining_push_button.setVisible(True)
-            self.next_button.setVisible(False)
-
-            self.first_horizontal_layout.addWidget(self.wallet_info_label, alignment=Qt.AlignCenter)
-            self.second_horizontal_layout.addWidget(self.your_balance_label, alignment=Qt.AlignCenter)
-            self.second_horizontal_layout.addWidget(self.balance_text_box, alignment=Qt.AlignCenter)
-            self.third_horizontal_layout.addWidget(self.your_address_label, alignment=Qt.AlignCenter)
-            self.third_horizontal_layout.addWidget(self.address_text_box, alignment=Qt.AlignCenter)
-            self.fourth_horizontal_layout.addWidget(self.your_sub_address_label, alignment=Qt.AlignCenter)
-            self.fourth_horizontal_layout.addWidget(self.create_sub_address_push_button, alignment=Qt.AlignCenter)
-            self.form_layout.addRow("Address", self.address_line_edit)
-            self.form_layout.addRow("Amount", self.amount_line_edit)
-            self.fifth_horizontal_layout.addWidget(self.transfer_push_button, alignment=Qt.AlignCenter)
-            self.sixth_horizontal_layout.addWidget(self.start_mining_push_button, alignment=Qt.AlignCenter)
-            self.sixth_horizontal_layout.addWidget(self.stop_mining_push_button, alignment=Qt.AlignCenter)
-            self.seventh_horizontal_layout.addWidget(self.wallet_transfer_status_text_box, alignment=Qt.AlignCenter)
-            self.eight_horizontal_layout.addWidget(self.wallet_info_status_text_box, alignment=Qt.AlignCenter)
-
-            self.populate_wallet_screen()
-
-        def populate_wallet_screen(self):
-            """
-            Populate the wallet scene with user wallet information
-            """
-
-            success = False
-            balance = 0
-            try:
-                success = self.denarii_client.get_address(self.wallet)
-
-                balance = self.denarii_client.get_balance_of_wallet(self.wallet)
-            except Exception as e:
-                print(e)
-
-            if success:
-                # We need to adjust the balance because it is in picomonero
-                self.balance_text_box.setText(str(balance * 0.000000000001))
-                self.address_text_box.setText(str(self.wallet.address))
-
-                # Add all the subaddresses to the vertical layout
-                for sub_address in self.wallet.sub_addresses:
-                    sub_address_text_box = Label(str(sub_address))
-                    font = Font()
-                    font.setFamily("Arial")
-                    font.setPixelSize(50)
-                    sub_address_text_box.setFont(font)
-                    sub_address_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
-                    self.vertical_layout.addWidget(sub_address_text_box, alignment=Qt.AlignCenter)
-                    self.sub_address_text_boxes.append(sub_address_text_box)
-
-                self.wallet_info_status_text_box.setText("Success loading wallet info")
-            else:
-                self.wallet_info_status_text_box.setText("Failure loading wallet info")
 
         def remove_all_widgets(self, layout):
             """
@@ -570,37 +376,6 @@ try:
                 else:
                     self.remove_all_widgets(item.layout())
 
-        def store_user_info(self):
-            """
-            Store the user's input information in the user proto
-            """
-            gui_user.name = self.name_line_edit.text()
-            gui_user.email = self.email_line_edit.text()
-
-        def create_wallet(self):
-            """
-            Try to create a denarii wallet
-            """
-            self.wallet.name = self.name_line_edit.text()
-            self.wallet.password = self.password_line_edit.text()
-
-            success = False
-            try:
-                success = self.denarii_client.create_wallet(self.wallet)
-                self.print_status("Create wallet ", success)
-                success = self.denarii_client.query_seed(self.wallet) and success
-                self.print_status("Query seed ", success)
-            except Exception as e:
-                print(e)
-
-            if success:
-                self.wallet_info_text_box.setText(self.wallet.phrase)
-                self.wallet_save_file_text_box.setText("Wallet saved to: " + DENARIID_WALLET_PATH)
-                self.create_wallet_text_box.setText(
-                    "Success. Make sure to write down your information. It will not be saved on this device.")
-            else:
-                self.create_wallet_text_box.setText("Failure")
-
         def set_wallet(self):
             """
             Open the wallet based on the user's information
@@ -613,9 +388,9 @@ try:
 
             try:
                 success = self.denarii_client.set_current_wallet(self.wallet)
-                self.print_status("Set current wallet ", success)
+                print_status("Set current wallet ", success)
                 success = self.denarii_client.query_seed(self.wallet) and success
-                self.print_status("Query seed ", success)
+                print_status("Query seed ", success)
             except Exception as e:
                 print(e)
 
@@ -636,7 +411,7 @@ try:
             success = False
             try:
                 success = self.denarii_client.restore_wallet(self.wallet)
-                self.print_status("Restore wallet ", success)
+                print_status("Restore wallet ", success)
             except Exception as e:
                 print(e)
 
@@ -659,7 +434,7 @@ try:
             try:
                 success = self.denarii_client.transfer_money(int(self.amount_line_edit.text()), self.wallet,
                                                              other_wallet)
-                self.print_status("Transfer money ", success)
+                print_status("Transfer money ", success)
             except Exception as e:
                 print(e)
 
@@ -677,7 +452,7 @@ try:
 
             try:
                 success = self.denarii_client.create_no_label_address(self.wallet)
-                self.print_status("Create subaddress ", success)
+                print_status("Create subaddress ", success)
             except Exception as e:
                 print(e)
 
@@ -738,7 +513,7 @@ try:
                 self.current_widget = self.USER_INFO
             elif self.current_widget == self.USER_INFO:
                 self.current_widget = self.WALLET_INFO
-                self.store_user_info()
+                self.USER_INFO.store_user_info()
             elif self.current_widget == self.WALLET_INFO:
                 # The next button on the wallet info screen should do nothing
                 self.current_widget = self.WALLET_INFO
@@ -811,13 +586,6 @@ try:
             """
             self.current_widget = self.SET_WALLET
             self.setup_set_wallet_screen()
-
-        @pyqtSlot()
-        def on_create_wallet_submit_clicked(self):
-            """
-            Create the wallet based on the user's input information
-            """
-            self.create_wallet()
 
         @pyqtSlot()
         def on_restore_wallet_submit_clicked(self):

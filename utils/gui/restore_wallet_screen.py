@@ -14,6 +14,17 @@ class RestoreWalletScreen(Screen):
     def __init__(self, main_layout, deletion_func, **kwargs):
         super().__init__(self.restore_wallet_screen_name, main_layout, deletion_func, **kwargs)
 
+        self.restore_wallet_label = None
+        self.wallet_save_file_text_box = None
+        self.restore_wallet_text_box = None
+        self.restore_wallet_submit_push_button = None
+        self.name_line_edit = None
+        self.password_line_edit = None
+        self.seed_line_edit = None
+
+    def init(self, **kwargs):
+        super().init(**kwargs)
+
         self.restore_wallet_label = Label("Restore Wallet")
         font = Font()
         font.setFamily("Arial")
@@ -46,3 +57,26 @@ class RestoreWalletScreen(Screen):
 
     def setup(self):
         super().setup()
+
+        self.deletion_func(self.main_layout)
+
+        self.main_layout.addLayout(self.first_horizontal_layout)
+        self.main_layout.addLayout(self.form_layout)
+        self.main_layout.addLayout(self.second_horizontal_layout)
+        self.main_layout.addLayout(self.third_horizontal_layout)
+        self.main_layout.addLayout(self.fourth_horizontal_layout)
+        self.main_layout.addLayout(self.fifth_horizontal_layout)
+
+        self.restore_wallet_submit_push_button.setVisible(True)
+
+        self.first_horizontal_layout.addWidget(self.restore_wallet_label, alignment=Qt.AlignCenter)
+        self.form_layout.addRow("Name", self.name_line_edit)
+        self.form_layout.addRow("Password", self.password_line_edit)
+        self.form_layout.addRow("Seed", self.seed_line_edit)
+        self.second_horizontal_layout.addWidget(self.wallet_save_file_text_box, alignment=Qt.AlignCenter)
+        self.third_horizontal_layout.addWidget(self.restore_wallet_text_box, alignment=Qt.AlignCenter)
+        self.fourth_horizontal_layout.addWidget(self.restore_wallet_submit_push_button, alignment=Qt.AlignCenter)
+        self.fifth_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
+
+    def teardown(self):
+        super().teardown()

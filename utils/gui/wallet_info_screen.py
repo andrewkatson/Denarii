@@ -2,6 +2,8 @@ from screen import *
 from label import *
 from font import *
 from push_button import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 
 
 class WalletInfoScreen(Screen):
@@ -11,6 +13,14 @@ class WalletInfoScreen(Screen):
 
     def __init__(self, main_layout, deletion_func, **kwargs):
         super().__init__(self.wallet_info_screen_name, main_layout, deletion_func, **kwargs)
+
+        self.wallet_info_label = None
+        self.create_wallet_push_button = None
+        self.restore_wallet_push_button = None
+        self.set_wallet_push_button = None
+
+    def init(self, **kwargs):
+        super().init(**kwargs)
 
         self.wallet_info_label = Label("Choose Wallet")
         font = Font()
@@ -38,3 +48,22 @@ class WalletInfoScreen(Screen):
 
     def setup(self):
         super().setup()
+
+        self.deletion_func(self.main_layout)
+
+        self.main_layout.addLayout(self.first_horizontal_layout)
+        self.main_layout.addLayout(self.second_horizontal_layout)
+        self.main_layout.addLayout(self.third_horizontal_layout)
+
+        self.create_wallet_push_button.setVisible(True)
+        self.restore_wallet_push_button.setVisible(True)
+        self.set_wallet_push_button.setVisible(True)
+
+        self.first_horizontal_layout.addWidget(self.wallet_info_label, alignment=Qt.AlignCenter)
+        self.second_horizontal_layout.addWidget(self.create_wallet_push_button, alignment=Qt.AlignCenter)
+        self.second_horizontal_layout.addWidget(self.restore_wallet_push_button, alignment=Qt.AlignCenter)
+        self.second_horizontal_layout.addWidget(self.set_wallet_push_button, alignment=Qt.AlignCenter)
+        self.third_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
+
+    def teardown(self):
+        super().teardown()

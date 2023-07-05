@@ -10,5 +10,18 @@ class RemoteWalletScreen(WalletScreen):
     def __init__(self, main_layout, deletion_func, **kwargs):
         super().__init__(main_layout, deletion_func, suffix=self.remote_wallet_suffix, **kwargs)
 
+    def init(self, **kwargs):
+        super().init(**kwargs)
+
     def setup(self):
         super().setup()
+
+    def teardown(self):
+        super().teardown()
+
+    def populate_wallet_screen(self):
+        """
+        Populate the wallet scene with user wallet information
+        """
+
+        super().populate_wallet_screen()

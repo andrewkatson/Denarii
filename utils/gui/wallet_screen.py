@@ -18,6 +18,21 @@ class WalletScreen(Screen):
     def __init__(self, main_layout, deletion_func, **kwargs):
         super().__init__(self.wallet_screen_name, main_layout, deletion_func, **kwargs)
 
+        self.wallet_header_label = None
+        self.your_address_label = None
+        self.your_balance_label = None
+        self.balance_text_box = None
+        self.address_text_box = None
+        self.wallet_info_status_text_box = None
+        self.wallet_transfer_status_text_box = None
+        self.address_line_edit = None
+        self.amount_line_edit = None
+        self.transfer_push_button = None
+        self.wallet = kwargs['wallet']
+
+    def init(self, **kwargs):
+        super().init(**kwargs)
+
         self.wallet_header_label = Label("Wallet")
         font = Font()
         font.setFamily("Arial")
@@ -64,11 +79,18 @@ class WalletScreen(Screen):
         self.address_line_edit = LineEdit()
         self.amount_line_edit = LineEdit()
 
-        self.transfer_push_button = PushButton("Transfer", self)
-        self.transfer_push_button.clicked.connect(self.on_transfer_clicked)
+        self.transfer_push_button = PushButton("Transfer", kwargs['parent'])
+        self.transfer_push_button.clicked.connect(kwargs['on_transfer_clicked'])
         self.transfer_push_button.setVisible(False)
         self.transfer_push_button.setStyleSheet(
             'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
 
     def setup(self):
         super().setup()
+        self.remove_all_widgets(self.main_layout)
+
+    def teardown(self):
+        super().teardown()
+
+    def populate_wallet_screen(self):
+        pass

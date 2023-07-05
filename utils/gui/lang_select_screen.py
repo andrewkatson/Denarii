@@ -12,6 +12,12 @@ class LangSelectScreen(Screen):
     def __init__(self, main_layout, deletion_func, **kwargs):
         super().__init__(self.lang_select_screen_name, main_layout, deletion_func, **kwargs)
 
+        self.pick_lang_label = None
+        self.english_radio_button = None
+
+    def init(self, **kwargs):
+        super().init(**kwargs)
+
         self.pick_lang_label = Label("Pick a Language")
         font = Font()
         font.setFamily("Arial")
@@ -28,3 +34,23 @@ class LangSelectScreen(Screen):
 
     def setup(self):
         super().setup()
+
+        # Remove anything on the screen
+        self.deletion_func(self.main_layout)
+
+        self.main_layout.addLayout(self.first_horizontal_layout)
+        self.main_layout.addLayout(self.second_horizontal_layout)
+        self.main_layout.addLayout(self.third_horizontal_layout)
+
+        # Add some text telling the user to select a language
+        self.first_horizontal_layout.addWidget(self.pick_lang_label, alignment=Qt.AlignCenter)
+
+        # Add a radio button for the user's language
+        self.english_radio_button.setVisible(True)
+        self.second_horizontal_layout.addWidget(self.english_radio_button, alignment=Qt.AlignCenter)
+
+        # Add a button to go the next screen
+        self.third_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
+
+    def teardown(self):
+        super().teardown()
