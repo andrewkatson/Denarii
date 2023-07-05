@@ -70,6 +70,8 @@ mac_library_info = [LibraryInfo("autoconf"), LibraryInfo("autogen"), LibraryInfo
 
 workspace_path = workspace_path_finder.find_workspace_path()
 
+github_path = workspace_path.parent
+print(f"GITHUB PATH {github_path}")
 
 def download_url(url, save_path, chunk_size=128):
     common.print_something(f"Downloading url {url} to {save_path}")
@@ -328,7 +330,7 @@ def miniupnp(external_dir_path):
     common.system(remove_command)
 
     # For now we have to clone this because miniupnp fails to download :(
-    clone_command = "git clone https://github.com/miniupnp/miniupnp.git"
+    clone_command = "git clone git@github.com:miniupnp/miniupnp.git"
     common.system(clone_command)
 
     common.chdir(miniupnp_path)
@@ -377,7 +379,7 @@ def supercop(external_dir_path):
     remove_command = "rm -rf " + str(supercop_path)
     common.system(remove_command)
 
-    clone_command = "git clone --recursive https://github.com/andrewkatson/supercop.git && cd supercop && git " \
+    clone_command = "git clone --recursive git@github.com:andrewkatson/supercop.git && cd supercop && git " \
                     "submodule init && git submodule update "
     common.system(clone_command)
 
@@ -480,7 +482,7 @@ def libzmq(external_dir_path):
     common.print_something("Getting libzmq")
     common.chdir(external_dir_path)
 
-    clone_command = "git clone https://github.com/zeromq/libzmq.git"
+    clone_command = "git clone git@github.com:zeromq/libzmq.git"
     common.system(clone_command)
 
     common.chdir(libzmq_path)
@@ -581,7 +583,7 @@ def supercop_win(external_dir_path):
     remove_command = "rm -rf " + str(supercop_path)
     common.system(remove_command)
 
-    clone_command = "git clone --recursive https://github.com/andrewkatson/supercop.git && git submodule init && git submodule update"
+    clone_command = "git clone --recursive git@github.com:andrewkatson/supercop.git && git submodule init && git submodule update"
     common.system(clone_command)
 
     common.chdir(supercop_path)
@@ -1132,14 +1134,15 @@ def convert_translation_files_mac():
 
 
 def run_translation_generation(translation_files):
+    translation_file_dir = workspace_path / "translations"
+
     translation_file_path = translation_file_dir / "translation_files.h"
 
-    if common.check_exists(translated_file_path, False):
-        common.print_something(f"{translated_file_path} already exists")
+    if common.check_exists(translation_file_path, False):
+        common.print_something(f"{translation_file_path} already exists")
         return
 
     common.print_something("Running translation generation")
-    translation_file_dir = workspace_path / "translations"
     # create the file first
     create_command = "cd " + \
         str(translation_file_dir) + " && echo > translation_files.h"
@@ -1165,14 +1168,15 @@ def run_translation_generation(translation_files):
 
 
 def run_translation_generation_win(translation_files):
+    translation_file_dir = workspace_path / "translations"
+
     translation_file_path = translation_file_dir / "translation_files.h"
 
-    if common.check_exists(translated_file_path, False):
-        common.print_something(f"{translated_file_path} already exists")
+    if common.check_exists(translation_file_path, False):
+        common.print_something(f"{translation_file_path} already exists")
         return
 
     common.print_something("Running translation generation for Windows")
-    translation_file_dir = workspace_path / "translations"
 
     # create the file first
     create_command = "cd " + \
@@ -1199,14 +1203,15 @@ def run_translation_generation_win(translation_files):
 
 
 def run_translation_generation_mac(translation_files):
+    translation_file_dir = workspace_path / "translations"\
+
     translation_file_path = translation_file_dir / "translation_files.h"
 
-    if common.check_exists(translated_file_path, False):
-        common.print_something(f"{translated_file_path} already exists")
+    if common.check_exists(translation_file_path, False):
+        common.print_something(f"{translation_file_path} already exists")
         return
 
     common.print_something("Running translation generation for Mac")
-    translation_file_dir = workspace_path / "translations"
 
     # create the file first
     create_command = "cd " + \
@@ -1282,7 +1287,7 @@ def generate_files_mac():
 
 
 def download_keiros_public():
-    keiros_public_path = path / "KeirosPublic"
+    keiros_public_path = workspace_path / "external" / "KeirosPublic"
 
     if common.check_exists(keiros_public_path, False):
         common.print_something(f"{keiros_public_path} already exists")
@@ -1293,14 +1298,14 @@ def download_keiros_public():
     path = workspace_path / "external"
     common.chdir(path)
 
-    clone_command = "git clone https://github.com/andrewkatson/KeirosPublic.git"
+    clone_command = "git clone git@github.com:andrewkatson/KeirosPublic.git"
     common.system(clone_command)
 
     common.check_exists(keiros_public_path)
 
 
 def download_protobuf():
-    protobuf_path = path / "protobuf"
+    protobuf_path = workspace_path / "external" / "protobuf"
 
     if common.check_exists(protobuf_path, False):
         common.print_something(f"{protobuf_path} already exists")
@@ -1863,9 +1868,9 @@ def setup_ui_win():
 
     move_misc()
 
-    build_binaries_win()
+    # build_binaries_win()
 
-    move_binaries_win()
+    # move_binaries_win()
 
 
 def setup_ui_mac():
@@ -1893,17 +1898,16 @@ if sys.platform == "linux":
 
     setup_ui()
 elif sys.platform == "msys" or sys.platform == "cygwin":
-
     build_dependencies_win()
 
     generate_files_win()
 
     setup_ui_win()
 elif sys.platform == "darwin":
-    # import_dependencies_mac()
+    import_dependencies_mac()
 
     build_dependencies_mac()
 
-    # generate_files_mac()
+    generate_files_mac()
 
-    # setup_ui_mac()
+    setup_ui_mac()

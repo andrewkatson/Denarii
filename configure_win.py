@@ -49,7 +49,7 @@ def get_libunwind():
 
     common.chdir(raw_path)
 
-    clone_command = "git clone https://github.com/llvm-mirror/libunwind.git"
+    clone_command = "git clone git@github.com:llvm-mirror/libunwind.git"
     common.system(clone_command)
 
     # need to modify the libunwind.h we are using
@@ -277,6 +277,8 @@ def import_dependencies_win():
 
 
 def randomx_win(external_dir_path):
+    randomx_path = external_dir_path / "randomx"
+
     build_path = randomx_path / "build"
 
     randomx_library_path = build_path / "librandomx.a"
@@ -287,7 +289,6 @@ def randomx_win(external_dir_path):
 
     common.print_something("Getting randomx")
 
-    randomx_path = external_dir_path / "randomx"
 
     common.chdir(randomx_path)
 
@@ -311,7 +312,7 @@ def miniupnp_win(external_dir_path):
     common.chdir(external_dir_path)
 
     # For now we have to clone this because miniupnp fails to download :(
-    clone_command = "git clone https://github.com/miniupnp/miniupnp.git"
+    clone_command = "git clone git@github.com:miniupnp/miniupnp.git"
     common.system(clone_command)
 
     common.chdir(miniupnp_path)
@@ -324,6 +325,7 @@ def miniupnp_win(external_dir_path):
 
 def openpgm_win(external_dir_path):
     openpgm_path = external_dir_path / "openpgm"
+    inner_path = openpgm_path / "openpgm" / "pgm"
     binary_path = inner_path / "build" / "lib" / "libpgm-v142-mt-gd-5_2_127.lib"
 
     if common.check_exists(binary_path, False):
@@ -334,12 +336,11 @@ def openpgm_win(external_dir_path):
 
     common.chdir(external_dir_path)
 
-    clone_command = "git clone https://github.com/steve-o/openpgm.git"
+    clone_command = "git clone git@github.com:steve-o/openpgm.git"
     common.system(clone_command)
 
     common.chdir(openpgm_path)
 
-    inner_path = openpgm_path / "openpgm" / "pgm"
     common.chdir(inner_path)
 
     make_command = "mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && msbuild /nologo /property:Configuration=Debug ALL_BUILD.vcxproj"
@@ -361,7 +362,7 @@ def libnorm_win(external_dir_path):
 
     common.chdir(external_dir_path)
 
-    clone_command = "git clone --recurse-submodules https://github.com/USNavalResearchLaboratory/norm.git"
+    clone_command = "git clone --recurse-submodules git@github.com:USNavalResearchLaboratory/norm.git"
     common.system(clone_command)
 
     old_path = external_dir_path / "norm"
