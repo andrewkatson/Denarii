@@ -44,6 +44,7 @@ class Screen:
         self.sixth_horizontal_layout = QHBoxLayout()
         self.seventh_horizontal_layout = QHBoxLayout()
         self.eight_horizontal_layout = QHBoxLayout()
+        self.ninth_horizontal_layout = QHBoxLayout()
         self.vertical_layout = QVBoxLayout()
         self.form_layout = QFormLayout()
 
