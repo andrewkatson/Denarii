@@ -1,3 +1,6 @@
+import threading
+import time
+
 from screen import *
 from font import *
 from label import *
@@ -31,6 +34,9 @@ class WalletScreen(Screen):
         self.transfer_push_button = None
         # Wallet is set in the specific wallet screen
         self.wallet = None
+        self.keep_refreshing_balance = True
+        self.balance_refresh_thread = threading.Thread(target=self.refresh_balance)
+        self.balance = 0
 
     def init(self, **kwargs):
         super().init(**kwargs)
@@ -118,9 +124,27 @@ class WalletScreen(Screen):
         else:
             self.wallet_transfer_status_text_box.setText("Failure transferring money")
 
+    def refresh_balance(self):
+        while self.keep_refreshing_balance:
+            if self.wallet is None:
+                continue
+
+            try:
+                self.balance = self.denarii_client.get_balance_of_wallet(self.wallet)
+                self.set_wallet_balance()
+
+            except Exception as e:
+                print(e)
+
+            time.sleep(10)
+
     @pyqtSlot()
     def on_transfer_clicked(self):
         """
         Transfer money to another person's wallet
         """
         self.transfer_money()
+
+    def set_wallet_balance(self):
+        # We need to adjust the balance because it is in picomonero
+        self.balance_text_box.setText(str(self.balance * 0.000000000001))

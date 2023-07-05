@@ -96,17 +96,15 @@ class LocalWalletScreen(WalletScreen):
         super().populate_wallet_screen()
 
         success = False
-        balance = 0
         try:
             success = self.denarii_client.get_address(self.wallet)
 
-            balance = self.denarii_client.get_balance_of_wallet(self.wallet)
+            self.balance = self.denarii_client.get_balance_of_wallet(self.wallet)
         except Exception as e:
             print(e)
 
         if success:
-            # We need to adjust the balance because it is in picomonero
-            self.balance_text_box.setText(str(balance * 0.000000000001))
+            self.set_wallet_balance()
             self.address_text_box.setText(str(self.wallet.address))
 
             # Add all the subaddresses to the vertical layout
