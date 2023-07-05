@@ -13,7 +13,10 @@ message GuiUser {
 
   string language = 2;
 
-  common.Wallet wallet = 3;
+  common.Wallet local_wallet = 3;
+  common.Wallet remote_wallet = 6;
 
   string email = 4;
+
+  string password = 5;
 }

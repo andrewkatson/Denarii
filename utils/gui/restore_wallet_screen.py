@@ -11,8 +11,9 @@ class RestoreWalletScreen(Screen):
     A screen that allows a user to choose to restore a wallet that exists on another computer.
     """
 
-    def __init__(self, main_layout, deletion_func, **kwargs):
-        super().__init__(self.restore_wallet_screen_name, main_layout, deletion_func, **kwargs)
+    def __init__(self, main_layout, deletion_func, denarii_client, gui_user, **kwargs):
+        super().__init__(self.restore_wallet_screen_name, main_layout=main_layout,
+                         deletion_func=deletion_func, denarii_client=denarii_client, gui_user=gui_user, **kwargs)
 
         self.restore_wallet_label = None
         self.wallet_save_file_text_box = None

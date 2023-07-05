@@ -173,49 +173,52 @@ try:
                                                 on_set_wallet_clicked=self.on_set_wallet_pushed,
                                                 main_layout=self.main_layout,
                                                 deletion_func=self.remove_all_widgets,
-                                                denarii_client=self.denarii_client)
+                                                denarii_client=self.denarii_client, gui_user=gui_user)
             self.CREATE_WALLET = CreateWalletScreen(push_buttons=common_buttons, parent=self,
                                                     main_layout=self.main_layout,
                                                     deletion_func=self.remove_all_widgets,
                                                     denarii_client=self.denarii_client,
                                                     remote_wallet=self.remote_wallet,
-                                                    local_wallet=self.local_wallet)
+                                                    local_wallet=self.local_wallet, gui_user=gui_user)
             self.RESTORE_WALLET = RestoreWalletScreen(push_buttons=common_buttons, parent=self,
                                                       main_layout=self.main_layout,
                                                       deletion_func=self.remove_all_widgets,
                                                       denarii_client=self.denarii_client,
                                                       remote_wallet=self.remote_wallet,
-                                                      local_wallet=self.local_wallet)
+                                                      local_wallet=self.local_wallet, gui_user=gui_user)
             self.SET_WALLET = SetWalletScreen(push_buttons=common_buttons, parent=self,
                                               main_layout=self.main_layout,
                                               deletion_func=self.remove_all_widgets,
                                               denarii_client=self.denarii_client,
                                               remote_wallet=self.remote_wallet,
-                                              local_wallet=self.local_wallet)
+                                              local_wallet=self.local_wallet, gui_user=gui_user)
             self.CURRENT_WALLET = None
-            self.LOCAL_WALLET = LocalWalletScreen(push_buttons={BACK_BUTTON: self.back_button},
-                                                  main_layout=self.main_layout,
-                                                  deletion_func=self.remove_all_widgets, parent=self,
-                                                  denarii_client=self.denarii_client,
-                                                  local_wallet=self.local_wallet)
-            self.REMOTE_WALLET = RemoteWalletScreen(push_buttons={BACK_BUTTON: self.back_button},
-                                                    main_layout=self.main_layout,
-                                                    deletion_func=self.remove_all_widgets,
-                                                    denarii_client=self.denarii_client,
-                                                    remote_wallet=self.remote_wallet)
+            self.LOCAL_WALLET_SCREEN = LocalWalletScreen(push_buttons={BACK_BUTTON: self.back_button},
+                                                         main_layout=self.main_layout,
+                                                         deletion_func=self.remove_all_widgets, parent=self,
+                                                         denarii_client=self.denarii_client,
+                                                         local_wallet=self.local_wallet, gui_user=gui_user)
+            self.REMOTE_WALLET_SCREEN = RemoteWalletScreen(push_buttons={BACK_BUTTON: self.back_button},
+                                                           main_layout=self.main_layout,
+                                                           deletion_func=self.remove_all_widgets,
+                                                           denarii_client=self.denarii_client,
+                                                           remote_wallet=self.remote_wallet, gui_user=gui_user)
 
             if os.path.exists(USER_SETTINGS_PATH):
                 load_user()
 
             # Determine what scene we are on based on what info the stored user has
-            if gui_user.language == "" and gui_user.name == "" and not gui_user.HasField("wallet"):
+            if gui_user.language == "" and gui_user.name == "" and not gui_user.HasField("local_wallet") \
+                    and not gui_user.HasField("remote_wallet"):
                 self.current_widget = self.LANG_SELECT
-            elif gui_user.language != "" and gui_user.name == "" and not gui_user.HasField("wallet"):
+            elif gui_user.language != "" and gui_user.name == "" and not gui_user.HasField("local_wallet") \
+                    and not gui_user.HasField("remote_wallet"):
                 self.current_widget = self.USER_INFO
-            elif gui_user.language != "" and gui_user.name != "" and not gui_user.HasField("wallet"):
+            elif gui_user.language != "" and gui_user.name != "" and not gui_user.HasField("local_wallet") \
+                    and not gui_user.HasField("remote_wallet"):
                 self.current_widget = self.WALLET_INFO
             else:
-                self.current_widget = self.LOCAL_WALLET
+                self.current_widget = self.current_wallet_widget
 
             self.last_widget = None
             self.setup_current_widget()
@@ -478,13 +481,13 @@ try:
         @property
         def current_wallet_widget(self):
             if self.which_wallet is None:
-                return self.LOCAL_WALLET
+                return self.LOCAL_WALLET_SCREEN
 
             if self.which_wallet == REMOTE_WALLET:
-                return self.REMOTE_WALLET
+                return self.REMOTE_WALLET_SCREEN
             elif self.which_wallet == LOCAL_WALLET:
-                return self.LOCAL_WALLET
-            return self.LOCAL_WALLET
+                return self.LOCAL_WALLET_SCREEN
+            return self.LOCAL_WALLET_SCREEN
 
 
     def get_main_window():

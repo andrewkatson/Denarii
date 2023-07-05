@@ -7,8 +7,9 @@ class LocalWalletScreen(WalletScreen):
     subaddresses,  and keeps all data on the computer
     """
 
-    def __init__(self, main_layout, deletion_func, **kwargs):
-        super().__init__(main_layout, deletion_func, suffix=self.local_wallet_suffix, **kwargs)
+    def __init__(self, main_layout, deletion_func, denarii_client, gui_user, **kwargs):
+        super().__init__(main_layout=main_layout, deletion_func=deletion_func, denarii_client=denarii_client,
+                         gui_user=gui_user, suffix=self.local_wallet_suffix, **kwargs)
 
         self.your_sub_address_label = None
         self.sub_address_text_boxes = None

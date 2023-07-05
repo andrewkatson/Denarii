@@ -27,11 +27,12 @@ class Screen:
 
     suffix_of_screen_name = "suffix"
 
-    def __init__(self, screen_name, main_layout, deletion_func, denarii_client, **kwargs):
+    def __init__(self, screen_name, main_layout, deletion_func, denarii_client, gui_user, **kwargs):
         self.screen_name = screen_name
         self.main_layout = main_layout
         self.deletion_func = deletion_func
         self.denarii_client = denarii_client
+        self.gui_user = gui_user
 
         if self.suffix_of_screen_name in kwargs:
             self.screen_name = f"{screen_name}{kwargs[self.suffix_of_screen_name]}"
