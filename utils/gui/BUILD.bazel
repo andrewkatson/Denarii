@@ -5,18 +5,32 @@ package(default_visibility = ["//visibility:public"])
 
 
 py_library(
+  name = "testing", 
+  srcs = ["denarii_client_testing.py"],
+  deps = [],
+  imports = [],
+)
+
+py_library(
     name = "other_gui",
-    srcs = glob(["*.py"], exclude = ["gui_main.py", "*_pb2.py"]),
-    deps = [],
-    imports = [] 
+    srcs = glob(["*.py"], exclude = ["gui_main.py", "*_pb2.py", "*test*.py"]),
+    deps = [":testing"],
+    imports = [":testing"] 
 )
 
 py_binary(
     name = "gui",
     srcs = ["gui_main.py"],
     deps = ["//:workspace_path_finder", ":other_gui"],
-    imports = [] ,
+    imports = [":other_gui"] ,
     main = "gui_main.py"
+)
+
+py_test(
+  name = "tests",
+  srcs = ["denarii_gui_tests.py"],
+  deps = [":other_gui", ":testing"],
+  imports = [":other_gui", ":testing"],
 )
 
 

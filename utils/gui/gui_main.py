@@ -2,6 +2,7 @@
 # It assumes that https://github.com/andrewkatson/KeirosPublic is located at either
 # %HOME/denarii or %HOMEDRIVE%%HOMEPATH%/Documents/Github/denarii
 
+import argparse
 import multiprocessing
 import pathlib
 import pickle as pkl
@@ -42,6 +43,14 @@ try:
     from line_edit import *
     from constants import *
 
+    parser = argparse.ArgumentParser(prog='Denarii Desktop GUI', description='A GUI for users to interact with denarii wallets')
+
+    parser.add_argument('debug', default=True, type=bool, help='Whether you want to run in debug mode. Debug mode won\'t start up denariid or denarii_wallet_rpc_server and will use a testing denarii client and denarii mobile client that mock out all the calls.', dest='debug')
+
+    args = parser.parse_args()
+
+    debug = args.debug
+
     # Modify PATH to include the path to where we are so in production we can find all our files.
     sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
@@ -51,7 +60,11 @@ try:
     # Modify the PATH to include the path to the denarii python client
     sys.path.append(str(workspace_path_finder.find_other_workspace_path("KeirosPublic") / "Client" / "Denarii"))
 
-    import denarii_client
+
+    if debug: 
+        import denarii_client_testing as denarii_client
+    else: 
+        import denarii_client
 
     # Modify the PATH to point to where all of python protos are located that are not nearby in the filesystem
     sys.path.append(str(workspace_path_finder.get_home() / "py_proto"))

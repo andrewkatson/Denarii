@@ -150,19 +150,19 @@ mytest*
 utils/gui/denarii_client.py
 utils/gui/workspace_path_finder.py
 utils/gui/denariid*
-utils/gui_denarii_wallet_rpc_server*
+utils/gui/denarii_wallet_rpc_server*
 utils/gui/google/
-utils/gui/Proto/wallet_pb2.py
-utils/gui/Proto/gui_user_pb2.py
+utils/gui/wallet_pb2.py
 utils/gui/gui_user_pb2.py
-utils/gui_wallet_pb.py
 utils/gui/identifier_pb2.py
 utils/gui/Security/
 utils/gui/build/
 utils/gui/dist/
 utils/gui/gui_main.spec
-synchronization_started.txt
-synchronized_ok.txt
+utils/gui/user_settings.pkl
+utils/gui/denarii_wallet_rpc_server.log
+utils/gui/synchronization_started.txt
+utils/gui/synchronized_ok.txt
 
 # Zips from setup
 external/openssl.zip
@@ -197,10 +197,6 @@ src/version.cpp
 tests/benchmark.h
 *.qm
 translations/translation_files.h
-utils/gui/user_settings.pkl
-utils/gui/denariid*
-utils/gui/denarii_wallet_rpc_server*
-utils/gui/denarii_wallet_rpc_server.log
 translations/translation_files.h
 wallet/
 

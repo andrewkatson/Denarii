@@ -148,7 +148,7 @@ class LocalWalletScreen(WalletScreen):
             self.vertical_layout.addWidget(sub_address_text_box, alignment=Qt.AlignCenter)
             self.sub_address_text_boxes.append(sub_address_text_box)
             self.wallet_info_status_text_box.setText(
-                "Success creating sub address. Use this to send to other people.")
+                "Success creating sub address. Use this to send denarii to other people.")
         else:
             self.wallet_info_status_text_box.setText("Failure creating sub address.")
 
