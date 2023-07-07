@@ -10,9 +10,9 @@ class LangSelectScreen(Screen):
     A screen that lets the user select a language
     """
 
-    def __init__(self, main_layout, deletion_func, denarii_client, gui_user, **kwargs):
+    def __init__(self, main_layout, deletion_func, denarii_client, gui_user, denarii_mobile_client, **kwargs):
         super().__init__(self.lang_select_screen_name, main_layout=main_layout,
-                         deletion_func=deletion_func, denarii_client=denarii_client, gui_user=gui_user, **kwargs)
+                         deletion_func=deletion_func, denarii_client=denarii_client, gui_user=gui_user, denarii_mobile_client=denarii_mobile_client, **kwargs)
 
         self.pick_lang_label = None
         self.english_radio_button = None

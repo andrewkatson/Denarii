@@ -11,9 +11,9 @@ class CreateWalletScreen(Screen):
     Screen that displays gui that lets user create a wallet
     """
 
-    def __init__(self, main_layout, deletion_func, denarii_client, gui_user, **kwargs):
+    def __init__(self, main_layout, deletion_func, denarii_client, gui_user, denarii_mobile_client, **kwargs):
         super().__init__(screen_name=self.create_wallet_screen_name, main_layout=main_layout,
-                         deletion_func=deletion_func, denarii_client=denarii_client, gui_user=gui_user, **kwargs)
+                         deletion_func=deletion_func, denarii_client=denarii_client, gui_user=gui_user, denarii_mobile_client=denarii_mobile_client, **kwargs)
 
         self.create_wallet_label = None
         self.wallet_seed_text_box = None

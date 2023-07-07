@@ -6,7 +6,7 @@ package(default_visibility = ["//visibility:public"])
 
 py_library(
   name = "testing", 
-  srcs = ["denarii_client_testing.py"],
+  srcs = ["denarii_client_testing.py", "denarii_mobile_client_testing.py"],
   deps = [],
   imports = [],
 )

@@ -7,9 +7,9 @@ class RemoteWalletScreen(WalletScreen):
     denarii and stores the data in the cloud.
     """
 
-    def __init__(self, main_layout, deletion_func, denarii_client, gui_user, **kwargs):
+    def __init__(self, main_layout, deletion_func, denarii_client, gui_user, denarii_mobile_client, **kwargs):
         super().__init__(main_layout=main_layout, deletion_func=deletion_func, denarii_client=denarii_client,
-                         gui_user=gui_user, suffix=self.remote_wallet_suffix, **kwargs)
+                         gui_user=gui_user, suffix=self.remote_wallet_suffix, denarii_mobile_client=denarii_mobile_client, **kwargs)
 
     def init(self, **kwargs):
         super().init(**kwargs)

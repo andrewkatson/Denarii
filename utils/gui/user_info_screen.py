@@ -13,9 +13,9 @@ class UserInfoScreen(Screen):
     A screen that allows the user to enter in their information for later usage.
     """
 
-    def __init__(self, main_layout, deletion_func, denarii_client, gui_user, **kwargs):
+    def __init__(self, main_layout, deletion_func, denarii_client, gui_user, denarii_mobile_client, **kwargs):
         super().__init__(self.user_info_screen_name, main_layout=main_layout,
-                         deletion_func=deletion_func, denarii_client=denarii_client, gui_user=gui_user, **kwargs)
+                         deletion_func=deletion_func, denarii_client=denarii_client, gui_user=gui_user, denarii_mobile_client=denarii_mobile_client, **kwargs)
 
         self.user_info_label = None
         self.name_line_edit = None

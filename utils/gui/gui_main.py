@@ -55,8 +55,10 @@ try:
 
     if DEBUG: 
         import denarii_client_testing as denarii_client
+        import denarii_mobile_client_testing as denarii_mobile_client
     else: 
         import denarii_client
+        import denarii_mobile_client
 
     # Modify the PATH to point to where all of python protos are located that are not nearby in the filesystem
     sys.path.append(str(workspace_path_finder.get_home() / "py_proto"))
@@ -110,6 +112,7 @@ try:
             super().__init__(parent)
 
             self.denarii_client = denarii_client.DenariiClient()
+            self.denarii_mobile_client = denarii_mobile_client.DenariiMobileClient()
 
             if DEBUG:
                 print("Debug mode so no binaries are being started up")
@@ -165,7 +168,8 @@ try:
                            'on_set_wallet_clicked': self.on_set_wallet_pushed,
                            'remote_wallet': self.remote_wallet,
                            'local_wallet': self.local_wallet, 
-                           'set_wallet_type_callback': self.set_wallet_type}
+                           'set_wallet_type_callback': self.set_wallet_type,
+                           'denarii_mobile_client': self.denarii_mobile_client}
 
             if os.path.exists(USER_SETTINGS_PATH):
                 load_user()
@@ -173,44 +177,44 @@ try:
 
             # Widgets
             self.LANG_SELECT = LangSelectScreen(push_buttons=common_buttons, gui_user=gui_user, parent=self, main_layout=self.main_layout,
-                                                deletion_func=self.remove_all_widgets,
+                                                deletion_func=self.remove_all_widgets, denarii_mobile_client=self.denarii_mobile_client,
                                                 denarii_client=self.denarii_client)
-            self.USER_INFO = UserInfoScreen(push_buttons=common_buttons, main_layout=self.main_layout,
+            self.USER_INFO = UserInfoScreen(push_buttons=common_buttons, main_layout=self.main_layout, denarii_mobile_client=self.denarii_mobile_client,
                                             deletion_func=self.remove_all_widgets, gui_user=gui_user,
                                             denarii_client=self.denarii_client, parent=self)
-            self.WALLET_INFO = WalletInfoScreen(push_buttons=common_buttons, parent=self,
+            self.WALLET_INFO = WalletInfoScreen(push_buttons=common_buttons, parent=self, denarii_mobile_client=self.denarii_mobile_client,
                                                 on_create_wallet_clicked=self.on_create_wallet_clicked,
                                                 on_restore_wallet_clicked=self.on_restore_wallet_pushed,
                                                 on_set_wallet_clicked=self.on_set_wallet_pushed,
                                                 main_layout=self.main_layout,
                                                 deletion_func=self.remove_all_widgets,
                                                 denarii_client=self.denarii_client, gui_user=gui_user)
-            self.CREATE_WALLET = CreateWalletScreen(push_buttons=common_buttons, parent=self,
+            self.CREATE_WALLET = CreateWalletScreen(push_buttons=common_buttons, parent=self, denarii_mobile_client=self.denarii_mobile_client,
                                                     main_layout=self.main_layout,
                                                     deletion_func=self.remove_all_widgets,
                                                     denarii_client=self.denarii_client,
                                                     remote_wallet=self.remote_wallet,
                                                     local_wallet=self.local_wallet, gui_user=gui_user, set_wallet_type_callback=self.set_wallet_type)
-            self.RESTORE_WALLET = RestoreWalletScreen(push_buttons=common_buttons, parent=self,
+            self.RESTORE_WALLET = RestoreWalletScreen(push_buttons=common_buttons, parent=self, denarii_mobile_client=self.denarii_mobile_client,
                                                       main_layout=self.main_layout,
                                                       deletion_func=self.remove_all_widgets,
                                                       denarii_client=self.denarii_client,
                                                       remote_wallet=self.remote_wallet,
                                                       local_wallet=self.local_wallet, gui_user=gui_user, set_wallet_type_callback=self.set_wallet_type)
-            self.SET_WALLET = SetWalletScreen(push_buttons=common_buttons, parent=self,
+            self.SET_WALLET = SetWalletScreen(push_buttons=common_buttons, parent=self, denarii_mobile_client=self.denarii_mobile_client,
                                               main_layout=self.main_layout,
                                               deletion_func=self.remove_all_widgets,
                                               denarii_client=self.denarii_client,
                                               remote_wallet=self.remote_wallet,
                                               local_wallet=self.local_wallet, gui_user=gui_user, set_wallet_type_callback=self.set_wallet_type)
             self.CURRENT_WALLET = None
-            self.LOCAL_WALLET_SCREEN = LocalWalletScreen(push_buttons=common_buttons,
+            self.LOCAL_WALLET_SCREEN = LocalWalletScreen(push_buttons=common_buttons, denarii_mobile_client=self.denarii_mobile_client,
                                                          main_layout=self.main_layout,
                                                          deletion_func=self.remove_all_widgets, parent=self,
                                                          denarii_client=self.denarii_client,
                                                          local_wallet=self.local_wallet, gui_user=gui_user)
             self.REMOTE_WALLET_SCREEN = RemoteWalletScreen(push_buttons=common_buttons,
-                                                           main_layout=self.main_layout,
+                                                           main_layout=self.main_layout, denarii_mobile_client=self.denarii_mobile_client,
                                                            deletion_func=self.remove_all_widgets,
                                                            denarii_client=self.denarii_client,
                                                            parent=self,

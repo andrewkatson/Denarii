@@ -11,9 +11,9 @@ class WalletInfoScreen(Screen):
     A screen that allows the user to choose whether to open, create, or restore a wallet
     """
 
-    def __init__(self, main_layout, deletion_func, denarii_client, gui_user, **kwargs):
+    def __init__(self, main_layout, deletion_func, denarii_client, gui_user, denarii_mobile_client, **kwargs):
         super().__init__(self.wallet_info_screen_name, main_layout=main_layout,
-                         deletion_func=deletion_func, denarii_client=denarii_client, gui_user=gui_user, **kwargs)
+                         deletion_func=deletion_func, denarii_client=denarii_client, gui_user=gui_user, denarii_mobile_client=denarii_mobile_client, **kwargs)
 
         self.wallet_info_label = None
         self.create_wallet_push_button = None

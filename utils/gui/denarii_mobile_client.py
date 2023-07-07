@@ -1,0 +1,3 @@
+
+class DenariiMobileClient:
+    pass
