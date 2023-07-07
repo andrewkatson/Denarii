@@ -12,7 +12,7 @@ DEBUG = args.debug
 
 USER_SETTINGS_PATH = str(workspace_path_finder.find_workspace_path() / "utils" / "gui" / "user_settings.pkl")
 
-TEST_WALLET_PATH = str(workspace_path_finder.find_workspace_path() / "utils" / "gui")
+TEST_STORE_PATH = str(workspace_path_finder.find_workspace_path() / "utils" / "gui")
 
 BACK_BUTTON = "BACK"
 NEXT_BUTTON = "NEXT"

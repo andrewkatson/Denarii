@@ -30,7 +30,7 @@ def generate_address(num_letters):
     return ''.join(list_of_letters)
 
 def store_wallet(wallet):
-    path = pathlib.Path(f'{TEST_WALLET_PATH}/{wallet.name}.wallet')
+    path = pathlib.Path(f'{TEST_STORE_PATH}/{wallet.name}.wallet')
     with open(path, "wb") as output_file:
         pkl.dump(wallet, output_file)
 
@@ -43,9 +43,9 @@ def load_wallet(wallet_path):
 
 def load_all_wallets():
     wallets = {}
-    for path in os.listdir(TEST_WALLET_PATH):
+    for path in os.listdir(TEST_STORE_PATH):
 
-        full_path = os.path.join(TEST_WALLET_PATH, path)
+        full_path = os.path.join(TEST_STORE_PATH, path)
 
         if os.path.isfile(full_path):
             if '.wallet' in path:

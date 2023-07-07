@@ -371,3 +371,20 @@ class DenariiMobileClient:
         _, ok = self.send_denarii_mobile_request('send_money_to_seller', params)
 
         return ok
+    
+    def is_transaction_settled(self, user_id, ask_id):
+        """
+        @return a list of special response objects that have the fields 'transaction_was_settled' and 'ask_id
+        """
+
+        params = {
+            'user_id': user_id,
+            'ask_id': ask_id
+        }
+
+        res, ok = self.send_denarii_mobile_request('is_transaction_settled', params)
+
+        if not ok: 
+            return False, []
+        else: 
+            return True, res
