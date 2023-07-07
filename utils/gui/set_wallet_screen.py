@@ -1,9 +1,9 @@
-from screen import *
 from font import *
 from label import *
-from push_button import *
 from line_edit import *
+from push_button import *
 from radio_button import *
+from screen import *
 
 
 class SetWalletScreen(Screen):

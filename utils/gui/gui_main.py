@@ -2,7 +2,6 @@
 # It assumes that https://github.com/andrewkatson/KeirosPublic is located at either
 # %HOME/denarii or %HOMEDRIVE%%HOMEPATH%/Documents/Github/denarii
 
-import argparse
 import multiprocessing
 import pathlib
 import pickle as pkl
@@ -26,10 +25,15 @@ try:
     from PyQt5.QtGui import *
     from PyQt5.QtWidgets import *
 
+    from constants import *
     from create_wallet_screen import *
     from font import *
+    from label import *
     from lang_select_screen import *
+    from line_edit import *
     from local_wallet_screen import *
+    from push_button import *
+    from radio_button import *
     from remote_wallet_screen import *
     from restore_wallet_screen import *
     from screen import *
@@ -37,19 +41,7 @@ try:
     from user_info_screen import *
     from wallet_info_screen import *
     from wallet_screen import *
-    from label import *
-    from push_button import *
-    from radio_button import *
-    from line_edit import *
-    from constants import *
 
-    parser = argparse.ArgumentParser(prog='Denarii Desktop GUI', description='A GUI for users to interact with denarii wallets')
-
-    parser.add_argument('debug', default=True, type=bool, help='Whether you want to run in debug mode. Debug mode won\'t start up denariid or denarii_wallet_rpc_server and will use a testing denarii client and denarii mobile client that mock out all the calls.', dest='debug')
-
-    args = parser.parse_args()
-
-    debug = args.debug
 
     # Modify PATH to include the path to where we are so in production we can find all our files.
     sys.path.append(os.path.dirname(os.path.realpath(__file__)))
@@ -121,15 +113,19 @@ try:
 
             self.denarii_client = denarii_client.DenariiClient()
 
-            self.denariid = self.run_denariid_setup()
-
-            self.denarii_wallet_rpc_server = self.setup_denarii_wallet_rpc_server()
-            if self.denarii_wallet_rpc_server is not None and self.denarii_wallet_rpc_server.returncode == 0:
-                print("Wallet rpc server started up")
+            if debug:
+                print("Debug mode so no binaries are being started up")
             else:
-                print("Wallet rpc server not started up or was already active")
-                if self.denarii_wallet_rpc_server is not None:
-                    print(self.denarii_wallet_rpc_server.returncode)
+
+                self.denariid = self.run_denariid_setup()
+
+                self.denarii_wallet_rpc_server = self.setup_denarii_wallet_rpc_server()
+                if self.denarii_wallet_rpc_server is not None and self.denarii_wallet_rpc_server.returncode == 0:
+                    print("Wallet rpc server started up")
+                else:
+                    print("Wallet rpc server not started up or was already active")
+                    if self.denarii_wallet_rpc_server is not None:
+                        print(self.denarii_wallet_rpc_server.returncode)
 
             # Setup threads that will monitor the server and wallet rpc and ensure they are healthy.
             self.server_thread = self.setup_server_thread()
@@ -543,9 +539,12 @@ try:
 
         app.exec_()
 
-        window.centralWidget().shutdown_denariid()
-        window.centralWidget().shutdown_denarii_wallet_rpc_server()
-        window.centralWidget().shutdown_threads()
+        if debug: 
+            print("Debug mode so we don't need to shut any binaries down")
+        else:
+            window.centralWidget().shutdown_denariid()
+            window.centralWidget().shutdown_denarii_wallet_rpc_server()
+            window.centralWidget().shutdown_threads()
         app.exit(0)
         sys.exit()
 

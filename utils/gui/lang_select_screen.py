@@ -1,8 +1,8 @@
-from screen import *
-from label import *
 from font import *
+from label import *
 from radio_button import *
 from push_button import *
+from screen import *
 
 
 class LangSelectScreen(Screen):

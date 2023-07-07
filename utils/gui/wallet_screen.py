@@ -1,12 +1,13 @@
 import threading
 import time
 
-from screen import *
+from PyQt5.QtCore import *
+
 from font import *
 from label import *
-from PyQt5.QtCore import *
 from line_edit import *
 from push_button import *
+from screen import *
 from wallet import *
 
 class WalletScreen(Screen):

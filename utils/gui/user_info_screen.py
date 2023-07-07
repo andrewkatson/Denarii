@@ -1,10 +1,11 @@
-from screen import *
-from label import *
-from font import *
-from line_edit import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+
+from font import *
+from label import *
+from line_edit import *
 from push_button import *
+from screen import *
 
 
 class UserInfoScreen(Screen):

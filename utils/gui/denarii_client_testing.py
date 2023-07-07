@@ -45,15 +45,15 @@ class DenariiClient:
         if wallet.name in self.wallets:
             return False
 
-        self.wallets[wallet.name] = TestingWallet(wallet.name, wallet.password)
+        self.wallets[wallet.name] = TestingWallet(wallet.name, wallet.password, seed=generate_phrase(4))
         return True
 
     def restore_wallet(self, wallet):
         if wallet.name in self.wallets:
             existing_wallet = self.wallets.get(wallet.name)
             if wallet.password == existing_wallet.password:
-                return True
-            return False
+                if wallet.phrase == existing_wallet.seed:
+                    return True
         return False
 
     def get_address(self, wallet):
@@ -93,15 +93,15 @@ class DenariiClient:
         if wallet.name in self.wallets:
             wallet.phrase = self.wallets.get(wallet.name).seed
             return True
-
-        existing_wallet = self.wallets.get(wallet.name)
-        wallet.phrase = generate_phrase(4)
-        existing_wallet.seed = wallet.phrase
-        return True
+        return False
     
     def create_no_label_address(self, wallet):
         if wallet.name in self.wallets:
-            wallet.sub_addresses.append(generate_address(15))
+            new_sub_address = generate_address(15)
+            wallet.sub_addresses.append(new_sub_address)
+
+            mirror_wallet = self.wallets.get(wallet.name)
+            mirror_wallet.append(new_sub_address)
             return True
         
         return False
