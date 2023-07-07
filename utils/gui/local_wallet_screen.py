@@ -68,7 +68,7 @@ class LocalWalletScreen(WalletScreen):
         self.create_sub_address_push_button.setVisible(True)
         self.start_mining_push_button.setVisible(True)
         self.stop_mining_push_button.setVisible(True)
-        self.back_button.setVisible(False)
+        self.back_button.setVisible(True)
 
         self.first_horizontal_layout.addWidget(self.wallet_header_label, alignment=Qt.AlignCenter)
         self.second_horizontal_layout.addWidget(self.your_balance_label, alignment=Qt.AlignCenter)

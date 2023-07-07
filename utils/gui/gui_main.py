@@ -53,7 +53,7 @@ try:
     sys.path.append(str(workspace_path_finder.find_other_workspace_path("KeirosPublic") / "Client" / "Denarii"))
 
 
-    if debug: 
+    if DEBUG: 
         import denarii_client_testing as denarii_client
     else: 
         import denarii_client
@@ -68,8 +68,6 @@ try:
     sys.path.append(str(workspace_path_finder.find_workspace_path() / "bazel-bin" / "utils" / "gui"))
 
     gui_user = GuiUser()
-
-    USER_SETTINGS_PATH = str(workspace_path_finder.find_workspace_path() / "utils" / "gui" / "user_settings.pkl")
 
     MAIN_DENARII_PATH_LINUX = "denariid"
 
@@ -113,7 +111,7 @@ try:
 
             self.denarii_client = denarii_client.DenariiClient()
 
-            if debug:
+            if DEBUG:
                 print("Debug mode so no binaries are being started up")
             else:
 
@@ -128,12 +126,15 @@ try:
                         print(self.denarii_wallet_rpc_server.returncode)
 
             # Setup threads that will monitor the server and wallet rpc and ensure they are healthy.
-            self.server_thread = self.setup_server_thread()
-            self.wallet_thread = self.setup_wallet_thread()
+            if DEBUG:
+                print("Debug mode so no binary servers are going to be started up")
+            else:
+                self.server_thread = self.setup_server_thread()
+                self.wallet_thread = self.setup_wallet_thread()
 
-            # Start the threads up.
-            self.server_thread.start()
-            self.wallet_thread.start()
+                # Start the threads up.
+                self.server_thread.start()
+                self.wallet_thread.start()
 
             self.main_layout = QVBoxLayout()
             self.setLayout(self.main_layout)
@@ -539,7 +540,7 @@ try:
 
         app.exec_()
 
-        if debug: 
+        if DEBUG: 
             print("Debug mode so we don't need to shut any binaries down")
         else:
             window.centralWidget().shutdown_denariid()

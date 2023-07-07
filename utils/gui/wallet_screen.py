@@ -37,6 +37,7 @@ class WalletScreen(Screen):
         self.wallet = None
         self.keep_refreshing_balance = True
         self.balance_refresh_thread = threading.Thread(target=self.refresh_balance)
+        self.balance_refresh_thread.start()
         self.balance = 0
 
     def init(self, **kwargs):
@@ -129,6 +130,8 @@ class WalletScreen(Screen):
 
     def refresh_balance(self):
         while self.keep_refreshing_balance:
+            # Need time for wallet to be set
+            time.sleep(10)
             if self.wallet is None:
                 continue
 
@@ -138,8 +141,6 @@ class WalletScreen(Screen):
 
             except Exception as e:
                 print(e)
-
-            time.sleep(10)
 
     @pyqtSlot()
     def on_transfer_clicked(self):
