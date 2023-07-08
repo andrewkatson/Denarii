@@ -3,34 +3,73 @@ load("@com_google_protobuf//:protobuf.bzl", "py_proto_library")
 
 package(default_visibility = ["//visibility:public"])
 
+py_library(
+  name = "constants",
+  srcs = ["constants.py"],
+  deps = [":workspace_path_finder"],
+  imports = [":workspace_path_finder"]
+)
 
 py_library(
-  name = "testing", 
-  srcs = ["denarii_client_testing.py", "denarii_mobile_client_testing.py"],
+  name = "workspace_path_finder",
+  srcs = ["workspace_path_finder.py"],
   deps = [],
-  imports = [],
+  imports = []
+)
+
+py_library(
+  name = "testing_gui_elements",
+  srcs = [
+    "denarii_testing_widget.py", "denarii_testing_window.py", "denarii_testing_font.py", "denarii_testing_label.py",
+    "denarii_testing_line_edit.py", "denarii_testing_push_button.py", "denarii_testing_radio_button.py", "denarii_testing_clicked.py",
+    "denarii_testing_qt.py", "denarii_testing_toggled.py"
+  ], 
+  deps = [":constants"], 
+  imports = [":constants"],
+)
+
+py_library(
+  name = "testing_clients", 
+  srcs = ["denarii_client_testing.py", "denarii_mobile_client_testing.py"],
+  deps = [":constants"], 
+  imports = [":constants"],
+)
+
+py_library(
+  name = "clients",
+  srcs = ["denarii_client.py", "denarii_mobile_client.py"],
+  deps = [":workspace_path_finder"],
+  imports = [":workspace_path_finder"]
 )
 
 py_library(
     name = "other_gui",
-    srcs = glob(["*.py"], exclude = ["gui_main.py", "*_pb2.py", "*test*.py"]),
-    deps = [":testing"],
-    imports = [":testing"] 
+    srcs = glob(
+      [
+      "*.py"
+      ], exclude = [
+        "gui_main.py", "*_pb2.py", "*test*.py", "constants.py",
+        "workspace_path_finder.py", "denarii_client.py", "denarii_mobile_client.py"
+    ]),
+    deps = [":testing_clients", ":clients"],
+    imports = [":testing_clients", ":clients"] 
 )
 
 py_binary(
     name = "gui",
     srcs = ["gui_main.py"],
-    deps = ["//:workspace_path_finder", ":other_gui"],
+    deps = [":other_gui"],
     imports = [":other_gui"] ,
     main = "gui_main.py"
 )
 
 py_test(
-  name = "tests",
+  name = "denarii_gui_tests",
   srcs = ["denarii_gui_tests.py"],
-  deps = [":other_gui", ":testing"],
-  imports = [":other_gui", ":testing"],
+  deps = [":other_gui", ":testing_gui_elements"],
+  imports = [":other_gui", ":testing_gui_elements"],
+  args = ["--denarii_testing=True"],
+  size = "medium",
 )
 
 

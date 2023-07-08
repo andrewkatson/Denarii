@@ -2,8 +2,6 @@
 # It assumes that https://github.com/andrewkatson/KeirosPublic is located at either
 # %HOME/denarii or %HOMEDRIVE%%HOMEPATH%/Documents/Github/denarii
 
-import multiprocessing
-import pathlib
 import pickle as pkl
 import psutil
 import os
@@ -38,6 +36,7 @@ try:
     from restore_wallet_screen import *
     from screen import *
     from set_wallet_screen import *
+    from stoppable_thread import StoppableThread
     from user_info_screen import *
     from wallet_info_screen import *
     from wallet_screen import *
@@ -130,7 +129,7 @@ try:
 
             # Setup threads that will monitor the server and wallet rpc and ensure they are healthy.
             if DEBUG:
-                print("Debug mode so no binary servers are going to be started up")
+                print("Debug mode so no binary threads are going to be started up")
             else:
                 self.server_thread = self.setup_server_thread()
                 self.wallet_thread = self.setup_wallet_thread()
@@ -317,10 +316,10 @@ try:
             return None
 
         def setup_server_thread(self):
-            return threading.Thread(target=self.monitor_server_thread)
+            return StoppableThread(target=self.monitor_server_thread)
 
         def setup_wallet_thread(self):
-            return threading.Thread(target=self.monitor_wallet_thread)
+            return StoppableThread(target=self.monitor_wallet_thread)
 
         def monitor_server_thread(self):
             """
@@ -392,6 +391,11 @@ try:
                     widget.setParent(None)
                 else:
                     self.remove_all_widgets(item.layout())
+        
+        def shutdown_all_screens(self):
+
+            # We should only have to turn down the current one. 
+            self.current_widget.teardown()
 
         @pyqtSlot()
         def next_clicked(self):
@@ -518,7 +522,7 @@ try:
                 """
 
         window.setGeometry(QApplication.desktop().availableGeometry())
-        window.setWindowTitle("Denarii Wallet")
+        window.setWindowTitle("Denarii Desktop GUI")
         window.setStyleSheet(stylesheet)
 
         return window
@@ -531,6 +535,17 @@ try:
         window.setCentralWidget(Widget(window))
         central_widget = window.centralWidget()
         central_widget.setGeometry(QRect(0, 0, 4000, 4000))
+
+
+    def shutdown_threads():
+
+        for thread in threading.enumerate():
+            
+            if thread.name != 'MainThread':
+                thread.stop()
+
+                while not thread.stopped():
+                    time.sleep(1)
 
 
     def main():
@@ -550,9 +565,14 @@ try:
             window.centralWidget().shutdown_denariid()
             window.centralWidget().shutdown_denarii_wallet_rpc_server()
             window.centralWidget().shutdown_threads()
-        app.exit(0)
-        sys.exit()
 
+        window.centralWidget().shutdown_all_screens()
+    
+        app.exit(0)
+
+        shutdown_threads()
+
+        sys.exit()
 
     if __name__ == "__main__":
         main()

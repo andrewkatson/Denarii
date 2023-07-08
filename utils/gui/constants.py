@@ -4,11 +4,13 @@ import workspace_path_finder
 
 parser = argparse.ArgumentParser(prog='Denarii Desktop GUI', description='A GUI for users to interact with denarii wallets')
 optional_grp = parser.add_argument_group(title='Optional')
-optional_grp.add_argument('--debug', default=True, type=bool, help='Whether you want to run in debug mode. Debug mode won\'t start up denariid or denarii_wallet_rpc_server and will use a testing denarii client and denarii mobile client that mock out all the calls.', required=False)
+optional_grp.add_argument('--denarii_debug', default=True, type=bool, help='Whether you want to run in debug mode. Debug mode won\'t start up denariid or denarii_wallet_rpc_server and will use a testing denarii client and denarii mobile client that mock out all the calls.', required=False)
+optional_grp.add_argument('--denarii_testing', default=False, type=bool, help='Whether you want to run in test mode. Test mode does not apply to the main gui program and instead applies to the sub classes. The main thing it does is swap out the buttons and widgets for fake ones.', required=False)
 
-args = parser.parse_args()
+args, unknown = parser.parse_known_args()
 
-DEBUG = args.debug
+DEBUG = args.denarii_debug
+TESTING = args.denarii_testing
 
 USER_SETTINGS_PATH = str(workspace_path_finder.find_workspace_path() / "utils" / "gui" / "user_settings.pkl")
 

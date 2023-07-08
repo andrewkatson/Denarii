@@ -73,7 +73,7 @@ class RestoreWalletScreen(Screen):
         self.pick_wallet_type.setFont(font)
 
         self.remote_wallet_radio_button = RadioButton("Remote", kwargs['parent'],
-                                                      wallet_type_callback=self.set_which_wallet, next_button=self.next_button)
+                                                      wallet_type_callback=self.set_which_wallet)
         self.remote_wallet_radio_button.toggled.connect(self.remote_wallet_radio_button.on_wallet_type_clicked)
         self.remote_wallet_radio_button.wallet_type_option = "Remote"
         self.remote_wallet_radio_button.setVisible(False)
@@ -81,7 +81,7 @@ class RestoreWalletScreen(Screen):
             'QRadioButton{font: 30pt Helvetica MS;} QRadioButton::indicator { width: 30px; height: 30px;};')
 
         self.local_wallet_radio_button = RadioButton("Local", kwargs['parent'],
-                                                     wallet_type_callback=self.set_which_wallet, next_button=self.next_button)
+                                                     wallet_type_callback=self.set_which_wallet)
         self.local_wallet_radio_button.toggled.connect(self.local_wallet_radio_button.on_wallet_type_clicked)
         self.local_wallet_radio_button.wallet_type_option = "Local"
         self.local_wallet_radio_button.setVisible(False)

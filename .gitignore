@@ -163,6 +163,8 @@ utils/gui/user_settings.pkl
 utils/gui/denarii_wallet_rpc_server.log
 utils/gui/synchronization_started.txt
 utils/gui/synchronized_ok.txt
+utils/gui/*.wallet
+utils/gui/*.user
 
 # Zips from setup
 external/openssl.zip

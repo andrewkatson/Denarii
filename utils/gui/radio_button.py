@@ -5,11 +5,10 @@ from constants import *
 
 class RadioButton(QRadioButton):
 
-    def __init__(self, text, parent, user=None, wallet_type_callback=None, next_button=None):
+    def __init__(self, text, parent, user=None, wallet_type_callback=None):
         super().__init__(text=text, parent=parent)
         self.user = user
         self.wallet_type_callback = wallet_type_callback
-        self.next_button = next_button
 
     @pyqtSlot()
     def on_lang_select_clicked(self):

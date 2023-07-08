@@ -23,15 +23,15 @@ The below assumes you have all the necessary files in one folder. The configurat
 
 ### Flags
 
-If you want to not start up the clients and use a testing client then don't pass any flags to the job. If you want real clients use `debug=False`.
+If you want to not start up the clients and use a testing client then don't pass any flags to the job. If you want real clients use `denarii_debug=False`.
 
 ### Windows 
 
-`start dist/gui_main.exe --debug=False` and run the command prompt as administrator. Or wherever the file is located.
+`start dist/gui_main.exe --denarii_debug=False` and run the command prompt as administrator. Or wherever the file is located.
 
 ### Linux
 
-`bazel run :gui -- --debug=False` or `./dist/gui_main --debug=False` or wherever that file is located.
+`bazel run :gui -- --denarii_debug=False` or `./dist/gui_main --denarii_debug=False` or wherever that file is located.
 
 ### Mac
 

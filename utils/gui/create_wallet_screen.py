@@ -1,9 +1,19 @@
-from font import *
-from label import *
-from line_edit import *
-from push_button import *
-from radio_button import *
 from screen import *
+
+if TESTING:
+    from denarii_testing_font import Font
+    from denarii_testing_label import Label
+    from denarii_testing_line_edit import LineEdit
+    from denarii_testing_qt import TextSelectableByMouse, AlignRight, AlignBottom, AlignCenter, AlignLeft
+    from denarii_testing_push_button import PushButton
+    from denarii_testing_radio_button import RadioButton
+else:
+    from font import *
+    from label import *
+    from line_edit import *
+    from qt import TextSelectableByMouse, AlignRight, AlignBottom, AlignCenter, AlignLeft
+    from push_button import *
+    from radio_button import *
 
 
 class CreateWalletScreen(Screen):
@@ -47,14 +57,14 @@ class CreateWalletScreen(Screen):
         font.setFamily("Arial")
         font.setPixelSize(50)
         self.wallet_seed_text_box.setFont(font)
-        self.wallet_seed_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        self.wallet_seed_text_box.setTextInteractionFlags(TextSelectableByMouse)
 
         self.wallet_save_file_text_box = Label("")
         font = Font()
         font.setFamily("Arial")
         font.setPixelSize(50)
         self.wallet_save_file_text_box.setFont(font)
-        self.wallet_save_file_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        self.wallet_save_file_text_box.setTextInteractionFlags(TextSelectableByMouse)
 
         self.create_wallet_text_box = Label("")
         font = Font()
@@ -63,11 +73,11 @@ class CreateWalletScreen(Screen):
         self.create_wallet_text_box.setFont(font)
 
         self.wallet_info_text_box = Label("")
-        font = QFont()
+        font = Font()
         font.setFamily("Arial")
         font.setPixelSize(50)
         self.wallet_info_text_box.setFont(font)
-        self.wallet_info_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        self.wallet_info_text_box.setTextInteractionFlags(TextSelectableByMouse)
 
         self.create_wallet_submit_push_button = PushButton("Submit", kwargs['parent'])
         self.create_wallet_submit_push_button.clicked.connect(lambda: self.on_create_wallet_submit_clicked())
@@ -77,7 +87,7 @@ class CreateWalletScreen(Screen):
 
         self.name_line_edit = LineEdit()
         self.password_line_edit = LineEdit()
-        self.password_line_edit.setEchoMode(QLineEdit.Password)
+        self.password_line_edit.setEchoMode(LineEdit.Password)
 
         self.pick_wallet_type = Label("Pick a Wallet Type")
         font = Font()
@@ -86,7 +96,7 @@ class CreateWalletScreen(Screen):
         self.pick_wallet_type.setFont(font)
 
         self.remote_wallet_radio_button = RadioButton("Remote", kwargs['parent'],
-                                                      wallet_type_callback=self.set_which_wallet, next_button=self.next_button)
+                                                      wallet_type_callback=self.set_which_wallet)
         self.remote_wallet_radio_button.toggled.connect(self.remote_wallet_radio_button.on_wallet_type_clicked)
         self.remote_wallet_radio_button.wallet_type_option = "Remote"
         self.remote_wallet_radio_button.setVisible(False)
@@ -94,7 +104,7 @@ class CreateWalletScreen(Screen):
             'QRadioButton{font: 30pt Helvetica MS;} QRadioButton::indicator { width: 30px; height: 30px;};')
 
         self.local_wallet_radio_button = RadioButton("Local", kwargs['parent'],
-                                                     wallet_type_callback=self.set_which_wallet, next_button=self.next_button)
+                                                     wallet_type_callback=self.set_which_wallet)
         self.local_wallet_radio_button.toggled.connect(self.local_wallet_radio_button.on_wallet_type_clicked)
         self.local_wallet_radio_button.wallet_type_option = "Local"
         self.local_wallet_radio_button.setVisible(False)
@@ -120,24 +130,23 @@ class CreateWalletScreen(Screen):
         self.local_wallet_radio_button.setVisible(True)
         self.remote_wallet_radio_button.setVisible(True)
 
-        self.first_horizontal_layout.addWidget(self.create_wallet_label, alignment=Qt.AlignCenter)
+        self.first_horizontal_layout.addWidget(self.create_wallet_label, alignment=AlignCenter)
         self.form_layout.addRow("Name", self.name_line_edit)
         self.form_layout.addRow("Password", self.password_line_edit)
-        self.second_horizontal_layout.addWidget(self.wallet_info_text_box, alignment=Qt.AlignCenter)
-        self.third_horizontal_layout.addWidget(self.wallet_save_file_text_box, alignment=Qt.AlignCenter)
-        self.fourth_horizontal_layout.addWidget(self.create_wallet_text_box, alignment=Qt.AlignCenter)
-        self.fifth_horizontal_layout.addWidget(self.create_wallet_submit_push_button, alignment=Qt.AlignCenter)
-        self.sixth_horizontal_layout.addWidget(self.pick_wallet_type, alignment=Qt.AlignCenter)
-        self.seventh_horizontal_layout.addWidget(self.remote_wallet_radio_button, alignment=Qt.AlignCenter)
-        self.seventh_horizontal_layout.addWidget(self.local_wallet_radio_button, alignment=Qt.AlignCenter)
-        self.eight_horizontal_layout.addWidget(self.back_button, alignment=(Qt.AlignLeft | Qt.AlignBottom))
-        self.eight_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
+        self.second_horizontal_layout.addWidget(self.wallet_info_text_box, alignment=AlignCenter)
+        self.third_horizontal_layout.addWidget(self.wallet_save_file_text_box, alignment=AlignCenter)
+        self.fourth_horizontal_layout.addWidget(self.create_wallet_text_box, alignment=AlignCenter)
+        self.fifth_horizontal_layout.addWidget(self.create_wallet_submit_push_button, alignment=AlignCenter)
+        self.sixth_horizontal_layout.addWidget(self.pick_wallet_type, alignment=AlignCenter)
+        self.seventh_horizontal_layout.addWidget(self.remote_wallet_radio_button, alignment=AlignCenter)
+        self.seventh_horizontal_layout.addWidget(self.local_wallet_radio_button, alignment=AlignCenter)
+        self.eight_horizontal_layout.addWidget(self.back_button, alignment=(AlignLeft | AlignBottom))
+        self.eight_horizontal_layout.addWidget(self.next_button, alignment=(AlignRight | AlignBottom))
 
 
     def teardown(self):
         super().teardown()
 
-    @pyqtSlot()
     def on_create_wallet_submit_clicked(self):
         """
         Create the wallet based on the user's input information

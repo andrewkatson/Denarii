@@ -30,7 +30,7 @@ class LangSelectScreen(Screen):
         font.setPixelSize(50)
         self.pick_lang_label.setFont(font)
 
-        self.english_radio_button = RadioButton("English", kwargs['parent'], self.gui_user, next_button=self.next_button)
+        self.english_radio_button = RadioButton("English", kwargs['parent'], self.gui_user)
         self.english_radio_button.toggled.connect(self.english_radio_button.on_lang_select_clicked)
         self.english_radio_button.language = "English"
         self.english_radio_button.setVisible(False)

@@ -1,4 +1,3 @@
-import threading
 import time
 
 from PyQt5.QtCore import *
@@ -8,6 +7,7 @@ from label import *
 from line_edit import *
 from push_button import *
 from screen import *
+from stoppable_thread import StoppableThread
 from wallet import *
 
 class WalletScreen(Screen):
@@ -35,8 +35,8 @@ class WalletScreen(Screen):
         self.transfer_push_button = None
         # Wallet is set in the specific wallet screen
         self.wallet = None
-        self.keep_refreshing_balance = True
-        self.balance_refresh_thread = threading.Thread(target=self.refresh_balance)
+        self.keep_refreshing_balance = False
+        self.balance_refresh_thread = StoppableThread(target=self.refresh_balance)
         self.balance_refresh_thread.start()
         self.balance = 0
 
@@ -101,8 +101,12 @@ class WalletScreen(Screen):
         super().setup()
         self.deletion_func(self.main_layout)
 
+        self.keep_refreshing_balance = True
+
     def teardown(self):
         super().teardown()
+
+        self.keep_refreshing_balance = False
 
     def populate_wallet_screen(self):
         pass

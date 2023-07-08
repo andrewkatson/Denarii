@@ -1,6 +1,9 @@
-from PyQt5.QtWidgets import *
-
 from constants import *
+
+if TESTING:
+    from denarii_testing_widget import *
+else: 
+    from widget import *
 
 
 def add_additional_gui_elements(element_key, element_dict, **kwargs):
@@ -39,17 +42,17 @@ class Screen:
         if self.suffix_of_screen_name in kwargs:
             self.screen_name = f"{screen_name}_{kwargs[self.suffix_of_screen_name]}"
 
-        self.first_horizontal_layout = QHBoxLayout()
-        self.second_horizontal_layout = QHBoxLayout()
-        self.third_horizontal_layout = QHBoxLayout()
-        self.fourth_horizontal_layout = QHBoxLayout()
-        self.fifth_horizontal_layout = QHBoxLayout()
-        self.sixth_horizontal_layout = QHBoxLayout()
-        self.seventh_horizontal_layout = QHBoxLayout()
-        self.eight_horizontal_layout = QHBoxLayout()
-        self.ninth_horizontal_layout = QHBoxLayout()
-        self.vertical_layout = QVBoxLayout()
-        self.form_layout = QFormLayout()
+        self.first_horizontal_layout = HBoxLayout()
+        self.second_horizontal_layout = HBoxLayout()
+        self.third_horizontal_layout = HBoxLayout()
+        self.fourth_horizontal_layout = HBoxLayout()
+        self.fifth_horizontal_layout = HBoxLayout()
+        self.sixth_horizontal_layout = HBoxLayout()
+        self.seventh_horizontal_layout = HBoxLayout()
+        self.eight_horizontal_layout = HBoxLayout()
+        self.ninth_horizontal_layout = HBoxLayout()
+        self.vertical_layout = VBoxLayout()
+        self.form_layout = FormLayout()
 
         self.radio_buttons = {}
         self.labels = {}
