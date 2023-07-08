@@ -1,5 +1,4 @@
 class LineEdit:
-
     def __init__(self) -> None:
         self.echo_mode = None
         self.text_inner = ""

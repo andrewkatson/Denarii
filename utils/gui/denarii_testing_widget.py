@@ -1,6 +1,4 @@
-
 class Widget:
-    
     def __init__(self):
         self.main_layout = None
         self.child_layouts = []
@@ -15,28 +13,35 @@ class Widget:
     def setAlignment(self, alignment):
         self.alignment = alignment
 
+
 class HBoxLayout:
-    
     def __init__(self) -> None:
         self.widgets = []
+        self.child_layouts = []
 
-    def addWidgets(self, new_widget, alignment):
+    def addWidget(self, new_widget, alignment):
+        new_widget.setAlignment(alignment)
         self.widgets.append(new_widget)
 
+    def addLayout(self, layout):
+        self.child_layouts.append(layout)
+
+
 class VBoxLayout:
-      
     def __init__(self) -> None:
         self.widgets = []
+        self.child_layouts = []
 
-    def addWidgets(self, new_widget, alignment):
+    def addWidget(self, new_widget, alignment):
         new_widget.setAlignment(alignment)
-        self.widgets.append(new_widget)  
+        self.widgets.append(new_widget)
+
 
 class FormLayout:
-    
     def __init__(self) -> None:
         self.text = ""
-        self.line_edit = None 
+        self.line_edit = None
+        self.child_layouts = []
 
     def addRow(self, text, line_edit):
         self.text = text

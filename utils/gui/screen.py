@@ -1,8 +1,10 @@
 from constants import *
+from show_text import *
+
 
 if TESTING:
     from denarii_testing_widget import *
-else: 
+else:
     from widget import *
 
 
@@ -16,6 +18,7 @@ class Screen:
     """
     A screen that has widgets in it that are displayed on the gui.
     """
+
     radio_button_name = "radio_buttons"
     label_name = "labels"
     push_button_name = "push_buttons"
@@ -31,7 +34,16 @@ class Screen:
 
     suffix_of_screen_name = "suffix"
 
-    def __init__(self, screen_name, main_layout, deletion_func, denarii_client, gui_user, denarii_mobile_client, **kwargs):
+    def __init__(
+        self,
+        screen_name,
+        main_layout,
+        deletion_func,
+        denarii_client,
+        gui_user,
+        denarii_mobile_client,
+        **kwargs,
+    ):
         self.screen_name = screen_name
         self.main_layout = main_layout
         self.deletion_func = deletion_func
@@ -59,7 +71,9 @@ class Screen:
         self.push_buttons = {}
         self.line_edits = {}
 
-        add_additional_gui_elements(self.radio_button_name, self.radio_buttons, **kwargs)
+        add_additional_gui_elements(
+            self.radio_button_name, self.radio_buttons, **kwargs
+        )
         add_additional_gui_elements(self.label_name, self.labels, **kwargs)
         add_additional_gui_elements(self.push_button_name, self.push_buttons, **kwargs)
         add_additional_gui_elements(self.line_edit_name, self.line_edits, **kwargs)

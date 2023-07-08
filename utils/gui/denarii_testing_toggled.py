@@ -1,5 +1,4 @@
 class Toggled:
-
     def __init__(self):
         self.callback = None
 

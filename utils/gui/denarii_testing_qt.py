@@ -1,9 +1,9 @@
-TextSelectableByMouse = 'TextSelectableByMouse'
+TextSelectableByMouse = "TextSelectableByMouse"
 
-AlignCenter = 'AlignCenter'
+AlignCenter = 1
 
-AlignRight = 'AlignRight'
+AlignRight = 2
 
-AlignLeft = 'AlignLeft'
+AlignLeft = 3
 
-AlignBottom = 'AlignBottom'
+AlignBottom = 4

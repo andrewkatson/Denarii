@@ -1,5 +1,4 @@
 class Clicked:
-
     def __init__(self):
         self.callback = None
 

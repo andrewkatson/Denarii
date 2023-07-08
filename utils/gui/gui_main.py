@@ -14,7 +14,6 @@ import workspace_path_finder
 
 
 try:
-
     # DO NOT REMOVE THESE
     # They look like they aren't used but they are when building the exe
     # We try to import google.protobuf in case we are using a built exe using pyinstaller instead of bazel run
@@ -41,7 +40,6 @@ try:
     from wallet_info_screen import *
     from wallet_screen import *
 
-
     # Modify PATH to include the path to where we are so in production we can find all our files.
     sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
@@ -49,13 +47,18 @@ try:
     sys.path.append(os.path.dirname(SCRIPT_DIR))
 
     # Modify the PATH to include the path to the denarii python client
-    sys.path.append(str(workspace_path_finder.find_other_workspace_path("KeirosPublic") / "Client" / "Denarii"))
+    sys.path.append(
+        str(
+            workspace_path_finder.find_other_workspace_path("KeirosPublic")
+            / "Client"
+            / "Denarii"
+        )
+    )
 
-
-    if DEBUG: 
+    if DEBUG:
         import denarii_client_testing as denarii_client
         import denarii_mobile_client_testing as denarii_mobile_client
-    else: 
+    else:
         import denarii_client
         import denarii_mobile_client
 
@@ -66,7 +69,9 @@ try:
     from gui_user import *
 
     # Modify the PATH to point to where the gui_user proto is
-    sys.path.append(str(workspace_path_finder.find_workspace_path() / "bazel-bin" / "utils" / "gui"))
+    sys.path.append(
+        str(workspace_path_finder.find_workspace_path() / "bazel-bin" / "utils" / "gui")
+    )
 
     gui_user = GuiUser()
 
@@ -74,19 +79,31 @@ try:
 
     MAIN_DENARII_PATH_WINDOWS = "denariid.exe"
 
-    DENARIID_PATH_LINUX = str(workspace_path_finder.find_workspace_path() / "utils" / "gui" / "denariid")
+    DENARIID_PATH_LINUX = str(
+        workspace_path_finder.find_workspace_path() / "utils" / "gui" / "denariid"
+    )
 
-    DENARIID_PATH_WINDOWS = str(workspace_path_finder.find_workspace_path() / "utils" / "gui" / "denariid.exe")
+    DENARIID_PATH_WINDOWS = str(
+        workspace_path_finder.find_workspace_path() / "utils" / "gui" / "denariid.exe"
+    )
 
     MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX = "denarii_wallet_rpc_server"
 
     MAIN_DENARII_WALLET_RPC_SERVER_PATH_WINDOWS = "denarii_wallet_rpc_server.exe"
 
     DENARII_WALLET_RPC_SERVER_PATH_LINUX = str(
-        workspace_path_finder.find_workspace_path() / "utils" / "gui" / "denarii_wallet_rpc_server")
+        workspace_path_finder.find_workspace_path()
+        / "utils"
+        / "gui"
+        / "denarii_wallet_rpc_server"
+    )
 
     DENARII_WALLET_RPC_SERVER_PATH_WINDOWS = str(
-        workspace_path_finder.find_workspace_path() / "utils" / "gui" / "denarii_wallet_rpc_server.exe")
+        workspace_path_finder.find_workspace_path()
+        / "utils"
+        / "gui"
+        / "denarii_wallet_rpc_server.exe"
+    )
 
     # Files used to tell this program that the synchronization process is already done or is starting. Both indicators
     # that the denariid is working.
@@ -98,13 +115,11 @@ try:
         with open(USER_SETTINGS_PATH, "wb") as output_file:
             pkl.dump(gui_user, output_file)
 
-
     def load_user():
         global gui_user
 
         with open(USER_SETTINGS_PATH, "rb") as input_file:
             gui_user = pkl.load(input_file)
-
 
     class Widget(QWidget):
         def __init__(self, parent):
@@ -116,11 +131,13 @@ try:
             if DEBUG:
                 print("Debug mode so no binaries are being started up")
             else:
-
                 self.denariid = self.run_denariid_setup()
 
                 self.denarii_wallet_rpc_server = self.setup_denarii_wallet_rpc_server()
-                if self.denarii_wallet_rpc_server is not None and self.denarii_wallet_rpc_server.returncode == 0:
+                if (
+                    self.denarii_wallet_rpc_server is not None
+                    and self.denarii_wallet_rpc_server.returncode == 0
+                ):
                     print("Wallet rpc server started up")
                 else:
                     print("Wallet rpc server not started up or was already active")
@@ -158,73 +175,136 @@ try:
             self.back_button.setStyleSheet("font-size: 18pt")
             self.back_button.clicked.connect(self.back_clicked)
 
-            common_buttons = {NEXT_BUTTON: self.next_button, BACK_BUTTON: self.back_button}
+            common_buttons = {
+                NEXT_BUTTON: self.next_button,
+                BACK_BUTTON: self.back_button,
+            }
 
-            self.kwargs = {'push_buttons': common_buttons, 'gui_user': gui_user,
-                           'parent': self, 'main_layout': self.main_layout, 'deletion_func': self.remove_all_widgets,
-                           'denarii_client': denarii_client, 'on_create_wallet_clicked': self.on_create_wallet_clicked,
-                           'on_restore_wallet_clicked': self.on_restore_wallet_pushed,
-                           'on_set_wallet_clicked': self.on_set_wallet_pushed,
-                           'remote_wallet': self.remote_wallet,
-                           'local_wallet': self.local_wallet, 
-                           'set_wallet_type_callback': self.set_wallet_type,
-                           'denarii_mobile_client': self.denarii_mobile_client}
+            self.kwargs = {
+                "push_buttons": common_buttons,
+                "gui_user": gui_user,
+                "parent": self,
+                "main_layout": self.main_layout,
+                "deletion_func": self.remove_all_widgets,
+                "denarii_client": denarii_client,
+                "on_create_wallet_clicked": self.on_create_wallet_clicked,
+                "on_restore_wallet_clicked": self.on_restore_wallet_pushed,
+                "on_set_wallet_clicked": self.on_set_wallet_pushed,
+                "remote_wallet": self.remote_wallet,
+                "local_wallet": self.local_wallet,
+                "set_wallet_type_callback": self.set_wallet_type,
+                "denarii_mobile_client": self.denarii_mobile_client,
+            }
 
             if os.path.exists(USER_SETTINGS_PATH):
                 load_user()
 
-
             # Widgets
-            self.LANG_SELECT = LangSelectScreen(push_buttons=common_buttons, gui_user=gui_user, parent=self, main_layout=self.main_layout,
-                                                deletion_func=self.remove_all_widgets, denarii_mobile_client=self.denarii_mobile_client,
-                                                denarii_client=self.denarii_client)
-            self.USER_INFO = UserInfoScreen(push_buttons=common_buttons, main_layout=self.main_layout, denarii_mobile_client=self.denarii_mobile_client,
-                                            deletion_func=self.remove_all_widgets, gui_user=gui_user,
-                                            denarii_client=self.denarii_client, parent=self)
-            self.WALLET_INFO = WalletInfoScreen(push_buttons=common_buttons, parent=self, denarii_mobile_client=self.denarii_mobile_client,
-                                                on_create_wallet_clicked=self.on_create_wallet_clicked,
-                                                on_restore_wallet_clicked=self.on_restore_wallet_pushed,
-                                                on_set_wallet_clicked=self.on_set_wallet_pushed,
-                                                main_layout=self.main_layout,
-                                                deletion_func=self.remove_all_widgets,
-                                                denarii_client=self.denarii_client, gui_user=gui_user)
-            self.CREATE_WALLET = CreateWalletScreen(push_buttons=common_buttons, parent=self, denarii_mobile_client=self.denarii_mobile_client,
-                                                    main_layout=self.main_layout,
-                                                    deletion_func=self.remove_all_widgets,
-                                                    denarii_client=self.denarii_client,
-                                                    remote_wallet=self.remote_wallet,
-                                                    local_wallet=self.local_wallet, gui_user=gui_user, set_wallet_type_callback=self.set_wallet_type)
-            self.RESTORE_WALLET = RestoreWalletScreen(push_buttons=common_buttons, parent=self, denarii_mobile_client=self.denarii_mobile_client,
-                                                      main_layout=self.main_layout,
-                                                      deletion_func=self.remove_all_widgets,
-                                                      denarii_client=self.denarii_client,
-                                                      remote_wallet=self.remote_wallet,
-                                                      local_wallet=self.local_wallet, gui_user=gui_user, set_wallet_type_callback=self.set_wallet_type)
-            self.SET_WALLET = SetWalletScreen(push_buttons=common_buttons, parent=self, denarii_mobile_client=self.denarii_mobile_client,
-                                              main_layout=self.main_layout,
-                                              deletion_func=self.remove_all_widgets,
-                                              denarii_client=self.denarii_client,
-                                              remote_wallet=self.remote_wallet,
-                                              local_wallet=self.local_wallet, gui_user=gui_user, set_wallet_type_callback=self.set_wallet_type)
+            self.LANG_SELECT = LangSelectScreen(
+                push_buttons=common_buttons,
+                gui_user=gui_user,
+                parent=self,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_mobile_client=self.denarii_mobile_client,
+                denarii_client=self.denarii_client,
+            )
+            self.USER_INFO = UserInfoScreen(
+                push_buttons=common_buttons,
+                main_layout=self.main_layout,
+                denarii_mobile_client=self.denarii_mobile_client,
+                deletion_func=self.remove_all_widgets,
+                gui_user=gui_user,
+                denarii_client=self.denarii_client,
+                parent=self,
+            )
+            self.WALLET_INFO = WalletInfoScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                on_create_wallet_clicked=self.on_create_wallet_clicked,
+                on_restore_wallet_clicked=self.on_restore_wallet_pushed,
+                on_set_wallet_clicked=self.on_set_wallet_pushed,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                gui_user=gui_user,
+            )
+            self.CREATE_WALLET = CreateWalletScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+                set_wallet_type_callback=self.set_wallet_type,
+            )
+            self.RESTORE_WALLET = RestoreWalletScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+                set_wallet_type_callback=self.set_wallet_type,
+            )
+            self.SET_WALLET = SetWalletScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+                set_wallet_type_callback=self.set_wallet_type,
+            )
             self.CURRENT_WALLET = None
-            self.LOCAL_WALLET_SCREEN = LocalWalletScreen(push_buttons=common_buttons, denarii_mobile_client=self.denarii_mobile_client,
-                                                         main_layout=self.main_layout,
-                                                         deletion_func=self.remove_all_widgets, parent=self,
-                                                         denarii_client=self.denarii_client,
-                                                         local_wallet=self.local_wallet, gui_user=gui_user)
-            self.REMOTE_WALLET_SCREEN = RemoteWalletScreen(push_buttons=common_buttons,
-                                                           main_layout=self.main_layout, denarii_mobile_client=self.denarii_mobile_client,
-                                                           deletion_func=self.remove_all_widgets,
-                                                           denarii_client=self.denarii_client,
-                                                           parent=self,
-                                                           remote_wallet=self.remote_wallet, gui_user=gui_user)
+            self.LOCAL_WALLET_SCREEN = LocalWalletScreen(
+                push_buttons=common_buttons,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                parent=self,
+                denarii_client=self.denarii_client,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+            )
+            self.REMOTE_WALLET_SCREEN = RemoteWalletScreen(
+                push_buttons=common_buttons,
+                main_layout=self.main_layout,
+                denarii_mobile_client=self.denarii_mobile_client,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                parent=self,
+                remote_wallet=self.remote_wallet,
+                gui_user=gui_user,
+            )
 
             # Determine what scene we are on based on what info the stored user has
-            if (gui_user.language is None or gui_user.language == "") and (gui_user.name is None or gui_user.name == ""):
+            if (gui_user.language is None or gui_user.language == "") and (
+                gui_user.name is None or gui_user.name == ""
+            ):
                 self.current_widget = self.LANG_SELECT
-            elif gui_user.language is not None and gui_user.language != "" and (gui_user.name is None or gui_user.name == ""):
+            elif (
+                gui_user.language is not None
+                and gui_user.language != ""
+                and (gui_user.name is None or gui_user.name == "")
+            ):
                 self.current_widget = self.USER_INFO
-            elif gui_user.language is not None and gui_user.language != "" and gui_user.name is not None and gui_user.name != "":
+            elif (
+                gui_user.language is not None
+                and gui_user.language != ""
+                and gui_user.name is not None
+                and gui_user.name != ""
+            ):
                 self.current_widget = self.WALLET_INFO
             else:
                 self.current_widget = self.WALLET_INFO
@@ -248,7 +328,6 @@ try:
             return self.denariid
 
         def already_started_denariid(self):
-
             for proc in psutil.process_iter():
                 if proc.name() == "denariid":
                     return True
@@ -258,7 +337,6 @@ try:
             return False
 
         def already_started_denarii_wallet_rpc_server(self):
-
             for proc in psutil.process_iter():
                 if proc.name() == "denarii_wallet_rpc_server":
                     return True
@@ -272,17 +350,37 @@ try:
                 return None
 
             if os.path.exists(MAIN_DENARII_PATH_LINUX):
-                return subprocess.Popen("sudo " + MAIN_DENARII_PATH_LINUX + " --no-igd", shell=True, encoding='utf-8',
-                                        stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                return subprocess.Popen(
+                    "sudo " + MAIN_DENARII_PATH_LINUX + " --no-igd",
+                    shell=True,
+                    encoding="utf-8",
+                    stderr=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                )
             elif os.path.exists(MAIN_DENARII_PATH_WINDOWS):
-                return subprocess.Popen("start " + MAIN_DENARII_PATH_WINDOWS + " --no-igd", shell=True,
-                                        encoding='utf-8', stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                return subprocess.Popen(
+                    "start " + MAIN_DENARII_PATH_WINDOWS + " --no-igd",
+                    shell=True,
+                    encoding="utf-8",
+                    stderr=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                )
             elif os.path.exists(DENARIID_PATH_LINUX):
-                return subprocess.Popen("sudo " + DENARIID_PATH_LINUX + " --no-igd", shell=True, encoding='utf-8',
-                                        stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                return subprocess.Popen(
+                    "sudo " + DENARIID_PATH_LINUX + " --no-igd",
+                    shell=True,
+                    encoding="utf-8",
+                    stderr=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                )
             elif os.path.exists(DENARIID_PATH_WINDOWS):
-                return subprocess.Popen("start " + DENARIID_PATH_WINDOWS + " --no-igd", shell=True, encoding='utf-8',
-                                        stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                return subprocess.Popen(
+                    "start " + DENARIID_PATH_WINDOWS + " --no-igd",
+                    shell=True,
+                    encoding="utf-8",
+                    stderr=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                )
 
             return None
 
@@ -295,23 +393,52 @@ try:
 
             if os.path.exists(MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX):
                 return subprocess.Popen(
-                    "sudo " + MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login",
-                    shell=True, encoding='utf-8', stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                    "sudo "
+                    + MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX
+                    + " --rpc-bind-port=8080"
+                    + f" --wallet-dir={DENARIID_WALLET_PATH}"
+                    + " --disable-rpc-login",
+                    shell=True,
+                    encoding="utf-8",
+                    stderr=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                )
             elif os.path.exists(MAIN_DENARII_WALLET_RPC_SERVER_PATH_WINDOWS):
                 return subprocess.Popen(
-
-                    "start " + MAIN_DENARII_WALLET_RPC_SERVER_PATH_WINDOWS + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login",
-                    shell=True, encoding='utf-8', stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                    "start "
+                    + MAIN_DENARII_WALLET_RPC_SERVER_PATH_WINDOWS
+                    + " --rpc-bind-port=8080"
+                    + f" --wallet-dir={DENARIID_WALLET_PATH}"
+                    + " --disable-rpc-login",
+                    shell=True,
+                    encoding="utf-8",
+                    stderr=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                )
             elif os.path.exists(DENARII_WALLET_RPC_SERVER_PATH_LINUX):
                 return subprocess.Popen(
-
-                    "sudo " + DENARII_WALLET_RPC_SERVER_PATH_LINUX + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login",
-                    shell=True, encoding='utf-8', stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                    "sudo "
+                    + DENARII_WALLET_RPC_SERVER_PATH_LINUX
+                    + " --rpc-bind-port=8080"
+                    + f" --wallet-dir={DENARIID_WALLET_PATH}"
+                    + " --disable-rpc-login",
+                    shell=True,
+                    encoding="utf-8",
+                    stderr=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                )
             elif os.path.exists(DENARII_WALLET_RPC_SERVER_PATH_WINDOWS):
                 return subprocess.Popen(
-
-                    "start " + DENARII_WALLET_RPC_SERVER_PATH_WINDOWS + " --rpc-bind-port=8080" + f" --wallet-dir={DENARIID_WALLET_PATH}" + " --disable-rpc-login",
-                    shell=True, encoding='utf-8', stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                    "start "
+                    + DENARII_WALLET_RPC_SERVER_PATH_WINDOWS
+                    + " --rpc-bind-port=8080"
+                    + f" --wallet-dir={DENARIID_WALLET_PATH}"
+                    + " --disable-rpc-login",
+                    shell=True,
+                    encoding="utf-8",
+                    stderr=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                )
 
             return None
 
@@ -329,7 +456,9 @@ try:
             while True:
                 time.sleep(60)
 
-                if os.path.exists(SYNCHRONIZATION_STARTED) or os.path.exists(SYNCHRONIZED_OK):
+                if os.path.exists(SYNCHRONIZATION_STARTED) or os.path.exists(
+                    SYNCHRONIZED_OK
+                ):
                     print("Synchronized")
                     if os.path.exists(SYNCHRONIZATION_STARTED):
                         os.remove(SYNCHRONIZATION_STARTED)
@@ -350,7 +479,6 @@ try:
             return
 
         def shutdown_denariid(self):
-
             if self.denariid is None:
                 return
 
@@ -391,10 +519,9 @@ try:
                     widget.setParent(None)
                 else:
                     self.remove_all_widgets(item.layout())
-        
-        def shutdown_all_screens(self):
 
-            # We should only have to turn down the current one. 
+        def shutdown_all_screens(self):
+            # We should only have to turn down the current one.
             self.current_widget.teardown()
 
         @pyqtSlot()
@@ -501,12 +628,10 @@ try:
             return self.LOCAL_WALLET_SCREEN
 
         def set_wallet_type(self, type):
-
             if type == REMOTE_WALLET:
                 self.which_wallet = REMOTE_WALLET
-            else: 
+            else:
                 self.which_wallet = LOCAL_WALLET
-
 
     def get_main_window():
         """
@@ -527,7 +652,6 @@ try:
 
         return window
 
-
     def create_central_widget(window):
         """
         Create the central widget for the main window
@@ -536,17 +660,13 @@ try:
         central_widget = window.centralWidget()
         central_widget.setGeometry(QRect(0, 0, 4000, 4000))
 
-
     def shutdown_threads():
-
         for thread in threading.enumerate():
-            
-            if thread.name != 'MainThread':
+            if thread.name != "MainThread":
                 thread.stop()
 
                 while not thread.stopped():
                     time.sleep(1)
-
 
     def main():
         app = QApplication(sys.argv)
@@ -559,7 +679,7 @@ try:
 
         app.exec_()
 
-        if DEBUG: 
+        if DEBUG:
             print("Debug mode so we don't need to shut any binaries down")
         else:
             window.centralWidget().shutdown_denariid()
@@ -567,7 +687,7 @@ try:
             window.centralWidget().shutdown_threads()
 
         window.centralWidget().shutdown_all_screens()
-    
+
         app.exit(0)
 
         shutdown_threads()

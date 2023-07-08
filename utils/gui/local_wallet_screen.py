@@ -2,6 +2,27 @@ import multiprocessing
 
 from wallet_screen import *
 
+if TESTING:
+    from denarii_testing_font import Font
+    from denarii_testing_label import Label
+    from denarii_testing_qt import (
+        TextSelectableByMouse,
+        AlignBottom,
+        AlignCenter,
+        AlignLeft,
+    )
+    from denarii_testing_push_button import PushButton
+else:
+    from font import *
+    from label import *
+    from qt import (
+        TextSelectableByMouse,
+        AlignBottom,
+        AlignCenter,
+        AlignLeft,
+    )
+    from push_button import *
+
 
 class LocalWalletScreen(WalletScreen):
     """
@@ -9,9 +30,24 @@ class LocalWalletScreen(WalletScreen):
     subaddresses,  and keeps all data on the computer
     """
 
-    def __init__(self, main_layout, deletion_func, denarii_client, gui_user, denarii_mobile_client, **kwargs):
-        super().__init__(main_layout=main_layout, deletion_func=deletion_func, denarii_client=denarii_client,
-                         gui_user=gui_user, suffix=self.local_wallet_suffix, denarii_mobile_client=denarii_mobile_client, **kwargs)
+    def __init__(
+        self,
+        main_layout,
+        deletion_func,
+        denarii_client,
+        gui_user,
+        denarii_mobile_client,
+        **kwargs
+    ):
+        super().__init__(
+            main_layout=main_layout,
+            deletion_func=deletion_func,
+            denarii_client=denarii_client,
+            gui_user=gui_user,
+            suffix=self.local_wallet_suffix,
+            denarii_mobile_client=denarii_mobile_client,
+            **kwargs
+        )
 
         self.your_sub_address_label = None
         self.sub_address_text_boxes = None
@@ -22,7 +58,7 @@ class LocalWalletScreen(WalletScreen):
     def init(self, **kwargs):
         super().init(**kwargs)
 
-        self.wallet = kwargs['local_wallet']
+        self.wallet = kwargs["local_wallet"]
 
         self.your_sub_address_label = Label("Your Subaddresses:")
         font = Font()
@@ -31,23 +67,34 @@ class LocalWalletScreen(WalletScreen):
         self.your_sub_address_label.setFont(font)
         self.sub_address_text_boxes = []
 
-        self.create_sub_address_push_button = PushButton("Create subaddress", kwargs['parent'])
-        self.create_sub_address_push_button.clicked.connect(lambda: self.on_create_sub_address_clicked())
+        self.create_sub_address_push_button = PushButton(
+            "Create subaddress", kwargs["parent"]
+        )
+        self.create_sub_address_push_button.clicked.connect(
+            lambda: self.on_create_sub_address_clicked()
+        )
         self.create_sub_address_push_button.setVisible(False)
         self.create_sub_address_push_button.setStyleSheet(
-            'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
 
-        self.start_mining_push_button = PushButton("Start mining", kwargs['parent'])
-        self.start_mining_push_button.clicked.connect(lambda: self.on_start_mining_clicked())
+        self.start_mining_push_button = PushButton("Start mining", kwargs["parent"])
+        self.start_mining_push_button.clicked.connect(
+            lambda: self.on_start_mining_clicked()
+        )
         self.start_mining_push_button.setVisible(False)
         self.start_mining_push_button.setStyleSheet(
-            'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
 
-        self.stop_mining_push_button = PushButton("Stop mining", kwargs['parent'])
-        self.stop_mining_push_button.clicked.connect(lambda: self.on_stop_mining_clicked())
+        self.stop_mining_push_button = PushButton("Stop mining", kwargs["parent"])
+        self.stop_mining_push_button.clicked.connect(
+            lambda: self.on_stop_mining_clicked()
+        )
         self.stop_mining_push_button.setVisible(False)
         self.stop_mining_push_button.setStyleSheet(
-            'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
 
     def setup(self):
         super().setup()
@@ -70,21 +117,47 @@ class LocalWalletScreen(WalletScreen):
         self.stop_mining_push_button.setVisible(True)
         self.back_button.setVisible(True)
 
-        self.first_horizontal_layout.addWidget(self.wallet_header_label, alignment=Qt.AlignCenter)
-        self.second_horizontal_layout.addWidget(self.your_balance_label, alignment=Qt.AlignCenter)
-        self.second_horizontal_layout.addWidget(self.balance_text_box, alignment=Qt.AlignCenter)
-        self.third_horizontal_layout.addWidget(self.your_address_label, alignment=Qt.AlignCenter)
-        self.third_horizontal_layout.addWidget(self.address_text_box, alignment=Qt.AlignCenter)
-        self.fourth_horizontal_layout.addWidget(self.your_sub_address_label, alignment=Qt.AlignCenter)
-        self.fourth_horizontal_layout.addWidget(self.create_sub_address_push_button, alignment=Qt.AlignCenter)
+        self.first_horizontal_layout.addWidget(
+            self.wallet_header_label, alignment=AlignCenter
+        )
+        self.second_horizontal_layout.addWidget(
+            self.your_balance_label, alignment=AlignCenter
+        )
+        self.second_horizontal_layout.addWidget(
+            self.balance_text_box, alignment=AlignCenter
+        )
+        self.third_horizontal_layout.addWidget(
+            self.your_address_label, alignment=AlignCenter
+        )
+        self.third_horizontal_layout.addWidget(
+            self.address_text_box, alignment=AlignCenter
+        )
+        self.fourth_horizontal_layout.addWidget(
+            self.your_sub_address_label, alignment=AlignCenter
+        )
+        self.fourth_horizontal_layout.addWidget(
+            self.create_sub_address_push_button, alignment=AlignCenter
+        )
         self.form_layout.addRow("Address", self.address_line_edit)
         self.form_layout.addRow("Amount", self.amount_line_edit)
-        self.fifth_horizontal_layout.addWidget(self.transfer_push_button, alignment=Qt.AlignCenter)
-        self.sixth_horizontal_layout.addWidget(self.start_mining_push_button, alignment=Qt.AlignCenter)
-        self.sixth_horizontal_layout.addWidget(self.stop_mining_push_button, alignment=Qt.AlignCenter)
-        self.seventh_horizontal_layout.addWidget(self.wallet_transfer_status_text_box, alignment=Qt.AlignCenter)
-        self.eight_horizontal_layout.addWidget(self.wallet_info_status_text_box, alignment=Qt.AlignCenter)
-        self.ninth_horizontal_layout.addWidget(self.back_button, alignment=(Qt.AlignLeft | Qt.AlignBottom))
+        self.fifth_horizontal_layout.addWidget(
+            self.transfer_push_button, alignment=AlignCenter
+        )
+        self.sixth_horizontal_layout.addWidget(
+            self.start_mining_push_button, alignment=AlignCenter
+        )
+        self.sixth_horizontal_layout.addWidget(
+            self.stop_mining_push_button, alignment=AlignCenter
+        )
+        self.seventh_horizontal_layout.addWidget(
+            self.wallet_transfer_status_text_box, alignment=AlignCenter
+        )
+        self.eight_horizontal_layout.addWidget(
+            self.wallet_info_status_text_box, alignment=AlignCenter
+        )
+        self.ninth_horizontal_layout.addWidget(
+            self.back_button, alignment=(AlignLeft | AlignBottom)
+        )
 
         self.populate_wallet_screen()
 
@@ -117,8 +190,10 @@ class LocalWalletScreen(WalletScreen):
                 font.setFamily("Arial")
                 font.setPixelSize(50)
                 sub_address_text_box.setFont(font)
-                sub_address_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
-                self.vertical_layout.addWidget(sub_address_text_box, alignment=Qt.AlignCenter)
+                sub_address_text_box.setTextInteractionFlags(TextSelectableByMouse)
+                self.vertical_layout.addWidget(
+                    sub_address_text_box, alignment=AlignCenter
+                )
                 self.sub_address_text_boxes.append(sub_address_text_box)
 
             self.wallet_info_status_text_box.setText("Success loading wallet info")
@@ -139,18 +214,22 @@ class LocalWalletScreen(WalletScreen):
             print(e)
 
         if success:
-            sub_address_text_box = Label(str(self.wallet.sub_addresses[len(self.wallet.sub_addresses) - 1]))
+            sub_address_text_box = Label(
+                str(self.wallet.sub_addresses[len(self.wallet.sub_addresses) - 1])
+            )
             font = Font()
             font.setFamily("Arial")
             font.setPixelSize(50)
             sub_address_text_box.setFont(font)
-            sub_address_text_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
-            self.vertical_layout.addWidget(sub_address_text_box, alignment=Qt.AlignCenter)
+            sub_address_text_box.setTextInteractionFlags(TextSelectableByMouse)
+            self.vertical_layout.addWidget(
+                sub_address_text_box, alignment=AlignCenter
+            )
             self.sub_address_text_boxes.append(sub_address_text_box)
-            self.wallet_info_status_text_box.setText(
-                "Success creating sub address. Use this to send denarii to other people.")
+
+            _ = ShowText(self.wallet_info_status_text_box, "Success creating sub address. \n Use this to send denarii to other people.")
         else:
-            self.wallet_info_status_text_box.setText("Failure creating sub address.")
+            _ = ShowText(self.wallet_info_status_text_box, "Failure creating sub address.")
 
     def start_mining(self):
         """
@@ -160,14 +239,16 @@ class LocalWalletScreen(WalletScreen):
         success = False
 
         try:
-            success = self.denarii_client.start_mining(True, False, multiprocessing.cpu_count() - 2)
+            success = self.denarii_client.start_mining(
+                True, False, multiprocessing.cpu_count() - 2
+            )
         except Exception as e:
             print(e)
 
         if success:
-            self.wallet_info_status_text_box.setText("Started mining")
+            _ = ShowText(self.wallet_info_status_text_box, "Started mining")
         else:
-            self.wallet_info_status_text_box.setText("Failed to start mining")
+            _ = ShowText(self.wallet_info_status_text_box, "Failed to start mining")
 
     def stop_mining(self):
         """
@@ -182,25 +263,22 @@ class LocalWalletScreen(WalletScreen):
             print(e)
 
         if success:
-            self.wallet_info_status_text_box.setText("Stopped mining")
+            _ = ShowText(self.wallet_info_status_text_box, "Stopped mining")
         else:
-            self.wallet_info_status_text_box.setText("Failed to stop mining")
+            _ = ShowText(self.wallet_info_status_text_box, "Failed to stop mining")
 
-    @pyqtSlot()
     def on_create_sub_address_clicked(self):
         """
         Create a subaddress
         """
         self.create_sub_address()
 
-    @pyqtSlot()
     def on_start_mining_clicked(self):
         """
         Start mining
         """
         self.start_mining()
 
-    @pyqtSlot()
     def on_stop_mining_clicked(self):
         """
         Stop mining

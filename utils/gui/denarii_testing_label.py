@@ -1,11 +1,12 @@
-class Label: 
-    
+class Label:
     def __init__(self, name) -> None:
         self.name = name
-        self.font = None 
+        self.font = None
         self.text_interaction_flags = []
         self.text = ""
-    
+        self.is_visible = False
+        self.alignment = None
+
     def setFont(self, font):
         self.font = font
 
@@ -14,3 +15,9 @@ class Label:
 
     def setText(self, text):
         self.text = text
+
+    def setVisible(self, visible):
+        self.is_visible = visible
+
+    def setAlignment(self, alignment):
+        self.alignment = alignment

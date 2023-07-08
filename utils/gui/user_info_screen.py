@@ -13,9 +13,24 @@ class UserInfoScreen(Screen):
     A screen that allows the user to enter in their information for later usage.
     """
 
-    def __init__(self, main_layout, deletion_func, denarii_client, gui_user, denarii_mobile_client, **kwargs):
-        super().__init__(self.user_info_screen_name, main_layout=main_layout,
-                         deletion_func=deletion_func, denarii_client=denarii_client, gui_user=gui_user, denarii_mobile_client=denarii_mobile_client, **kwargs)
+    def __init__(
+        self,
+        main_layout,
+        deletion_func,
+        denarii_client,
+        gui_user,
+        denarii_mobile_client,
+        **kwargs
+    ):
+        super().__init__(
+            self.user_info_screen_name,
+            main_layout=main_layout,
+            deletion_func=deletion_func,
+            denarii_client=denarii_client,
+            gui_user=gui_user,
+            denarii_mobile_client=denarii_mobile_client,
+            **kwargs
+        )
 
         self.user_info_label = None
         self.name_line_edit = None
@@ -50,12 +65,12 @@ class UserInfoScreen(Screen):
         font.setPixelSize(50)
         self.user_info_status_text_box.setFont(font)
 
-        self.submit_button = PushButton("Submit", kwargs['parent'])
+        self.submit_button = PushButton("Submit", kwargs["parent"])
         self.submit_button.clicked.connect(lambda: self.on_submit_clicked())
         self.submit_button.setVisible(False)
         self.submit_button.setStyleSheet(
-            'QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};')
-
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
 
     def setup(self):
         super().setup()
@@ -71,16 +86,25 @@ class UserInfoScreen(Screen):
 
         self.submit_button.setVisible(True)
 
-        self.first_horizontal_layout.addWidget(self.user_info_label, alignment=Qt.AlignCenter)
+        self.first_horizontal_layout.addWidget(
+            self.user_info_label, alignment=Qt.AlignCenter
+        )
         self.form_layout.addRow("Name", self.name_line_edit)
         self.form_layout.addRow("Email", self.email_line_edit)
         self.form_layout.addRow("Password", self.password_line_edit)
         self.form_layout.addRow("Confirm Password", self.confirm_password_line_edit)
-        self.second_horizontal_layout.addWidget(self.submit_button, alignment=Qt.AlignCenter)
-        self.third_horizontal_layout.addWidget(self.user_info_status_text_box, alignment=Qt.AlignCenter)
-        self.fourth_horizontal_layout.addWidget(self.back_button, alignment=(Qt.AlignLeft | Qt.AlignBottom))
-        self.fourth_horizontal_layout.addWidget(self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom))
-
+        self.second_horizontal_layout.addWidget(
+            self.submit_button, alignment=Qt.AlignCenter
+        )
+        self.third_horizontal_layout.addWidget(
+            self.user_info_status_text_box, alignment=Qt.AlignCenter
+        )
+        self.fourth_horizontal_layout.addWidget(
+            self.back_button, alignment=(Qt.AlignLeft | Qt.AlignBottom)
+        )
+        self.fourth_horizontal_layout.addWidget(
+            self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom)
+        )
 
     def teardown(self):
         super().teardown()
@@ -89,11 +113,14 @@ class UserInfoScreen(Screen):
         """
         Store the user's input information in the user proto
         """
-        if self.password_line_edit.text() != "" and self.confirm_password_line_edit.text() != "" and self.password_line_edit.text() != self.confirm_password_line_edit.text():
-            self.user_info_status_text_box.setText("Failure: passwords did not match")
+        if (
+            self.password_line_edit.text() != ""
+            and self.confirm_password_line_edit.text() != ""
+            and self.password_line_edit.text() != self.confirm_password_line_edit.text()
+        ):
+            _ = ShowText(self.user_info_status_text_box, "Failure: passwords did not match")
         else:
-            self.user_info_status_text_box.setText("Success: saved user password")
-
+            _ = ShowText(self.user_info_status_text_box, "Success")
             self.gui_user.name = self.name_line_edit.text()
             self.gui_user.email = self.email_line_edit.text()
             self.gui_user.password = self.password_line_edit.text()

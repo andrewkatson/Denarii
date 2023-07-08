@@ -3,8 +3,8 @@ from PyQt5.QtWidgets import *
 
 from constants import *
 
-class RadioButton(QRadioButton):
 
+class RadioButton(QRadioButton):
     def __init__(self, text, parent, user=None, wallet_type_callback=None):
         super().__init__(text=text, parent=parent)
         self.user = user
@@ -26,7 +26,7 @@ class RadioButton(QRadioButton):
         """
         button = self.sender()
 
-        if button.wallet_type_option == 'Remote':
+        if button.wallet_type_option == "Remote":
             self.wallet_type_callback(REMOTE_WALLET)
         else:
             self.wallet_type_callback(LOCAL_WALLET)
