@@ -13,6 +13,7 @@ class ShowText:
         self.thread_to_show.start()
 
     def show_text(self):
+        self.text_box.setVisible(True)
         self.text_box.setText(self.text_to_show)
 
         time.sleep(self.time_seconds)

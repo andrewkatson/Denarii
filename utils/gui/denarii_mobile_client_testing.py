@@ -115,7 +115,7 @@ def load_all_things():
                     user_name = split[0]
                     things["user"] = {user_name: load(path)}
 
-        return things
+    return things
 
 
 def create_identifier():
@@ -265,17 +265,26 @@ class DenariiMobileClient:
     def get_user_id(self, username, email, password):
         users = self.get_users()
 
-        # Register
+        # Register the first user
         if len(users) == 0:
             self.user = User(username, email, password)
             self.user.user_id = create_identifier()
+            users[username] = self.user
             store_user(self.user)
             return True, [{"user_id": self.user.user_id}]
 
-        # Login
         for key, value in users.items():
-            if key == username:
+            # Login if they exist
+            if key == username and value.password == password and value.email == email:
                 self.user = value
+                return True, [{"user_id": self.user.user_id}]
+            elif key == username and value.email == email and value.password != password: 
+                return False, []
+            else: 
+                self.user = User(username, email, password)
+                self.user.user_id = create_identifier()
+                users[username] = self.user
+                store_user(self.user)
                 return True, [{"user_id": self.user.user_id}]
 
         return False, []
@@ -333,7 +342,7 @@ class DenariiMobileClient:
         store_user(user)
 
         return True, [
-            {"seed": user.wallet.seed, "wallet_address": user.wallet.addresss}
+            {"seed": user.wallet.seed, "wallet_address": user.wallet.address}
         ]
 
     def restore_wallet(self, user_id, wallet_name, password, seed):
