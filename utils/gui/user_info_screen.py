@@ -1,12 +1,29 @@
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-
-from font import *
-from label import *
-from line_edit import *
-from push_button import *
 from screen import *
 
+if TESTING:
+    from denarii_testing_font import Font
+    from denarii_testing_label import Label
+    from denarii_testing_line_edit import LineEdit
+    from denarii_testing_qt import (
+        AlignRight,
+        AlignBottom,
+        AlignCenter,
+        AlignLeft,
+    )
+    from denarii_testing_push_button import PushButton
+    from denarii_testing_radio_button import RadioButton
+else:
+    from font import *
+    from label import *
+    from line_edit import *
+    from qt import (
+        AlignRight,
+        AlignBottom,
+        AlignCenter,
+        AlignLeft,
+    )
+    from push_button import *
+    from radio_button import *
 
 class UserInfoScreen(Screen):
     """
@@ -55,9 +72,9 @@ class UserInfoScreen(Screen):
         self.name_line_edit = LineEdit()
         self.email_line_edit = LineEdit()
         self.password_line_edit = LineEdit()
-        self.password_line_edit.setEchoMode(QLineEdit.Password)
+        self.password_line_edit.setEchoMode(LineEdit.Password)
         self.confirm_password_line_edit = LineEdit()
-        self.confirm_password_line_edit.setEchoMode(QLineEdit.Password)
+        self.confirm_password_line_edit.setEchoMode(LineEdit.Password)
 
         self.user_info_status_text_box = Label("")
         font = Font()
@@ -87,23 +104,23 @@ class UserInfoScreen(Screen):
         self.submit_button.setVisible(True)
 
         self.first_horizontal_layout.addWidget(
-            self.user_info_label, alignment=Qt.AlignCenter
+            self.user_info_label, alignment=AlignCenter
         )
         self.form_layout.addRow("Name", self.name_line_edit)
         self.form_layout.addRow("Email", self.email_line_edit)
         self.form_layout.addRow("Password", self.password_line_edit)
         self.form_layout.addRow("Confirm Password", self.confirm_password_line_edit)
         self.second_horizontal_layout.addWidget(
-            self.submit_button, alignment=Qt.AlignCenter
+            self.submit_button, alignment=AlignCenter
         )
         self.third_horizontal_layout.addWidget(
-            self.user_info_status_text_box, alignment=Qt.AlignCenter
+            self.user_info_status_text_box, alignment=AlignCenter
         )
         self.fourth_horizontal_layout.addWidget(
-            self.back_button, alignment=(Qt.AlignLeft | Qt.AlignBottom)
+            self.back_button, alignment=(AlignLeft | AlignBottom)
         )
         self.fourth_horizontal_layout.addWidget(
-            self.next_button, alignment=(Qt.AlignRight | Qt.AlignBottom)
+            self.next_button, alignment=(AlignRight | AlignBottom)
         )
 
     def teardown(self):

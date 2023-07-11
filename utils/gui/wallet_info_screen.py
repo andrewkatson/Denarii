@@ -1,15 +1,32 @@
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-
-from font import *
-from label import *
-from push_button import *
 from screen import *
+
+if TESTING:
+    from denarii_testing_font import Font
+    from denarii_testing_label import Label
+    from denarii_testing_line_edit import LineEdit
+    from denarii_testing_qt import (
+        AlignBottom,
+        AlignCenter,
+        AlignLeft,
+    )
+    from denarii_testing_push_button import PushButton
+    from denarii_testing_radio_button import RadioButton
+else:
+    from font import *
+    from label import *
+    from line_edit import *
+    from qt import (
+        AlignBottom,
+        AlignCenter,
+        AlignLeft,
+    )
+    from push_button import *
+    from radio_button import *
 
 
 class WalletInfoScreen(Screen):
     """
-    A screen that allows the user to choose whether to open, create, or restore a wallet
+    A screen that allows the user to choose whether to open, create, or restore a wallet. Yes it is terribly named.
     """
 
     def __init__(
@@ -86,19 +103,19 @@ class WalletInfoScreen(Screen):
         self.set_wallet_push_button.setVisible(True)
 
         self.first_horizontal_layout.addWidget(
-            self.wallet_info_label, alignment=Qt.AlignCenter
+            self.wallet_info_label, alignment=AlignCenter
         )
         self.second_horizontal_layout.addWidget(
-            self.create_wallet_push_button, alignment=Qt.AlignCenter
+            self.create_wallet_push_button, alignment=AlignCenter
         )
         self.second_horizontal_layout.addWidget(
-            self.restore_wallet_push_button, alignment=Qt.AlignCenter
+            self.restore_wallet_push_button, alignment=AlignCenter
         )
         self.second_horizontal_layout.addWidget(
-            self.set_wallet_push_button, alignment=Qt.AlignCenter
+            self.set_wallet_push_button, alignment=AlignCenter
         )
         self.third_horizontal_layout.addWidget(
-            self.back_button, alignment=(Qt.AlignLeft | Qt.AlignBottom)
+            self.back_button, alignment=(AlignLeft | AlignBottom)
         )
 
     def teardown(self):

@@ -22,6 +22,9 @@ from lang_select_screen import LangSelectScreen
 from local_wallet_screen import LocalWalletScreen
 from remote_wallet_screen import RemoteWalletScreen
 from restore_wallet_screen import RestoreWalletScreen
+from set_wallet_screen import SetWalletScreen
+from user_info_screen import UserInfoScreen
+from wallet_info_screen import WalletInfoScreen
 
 
 def deletion_function(layout):
@@ -37,6 +40,18 @@ def next_clicked():
 
 
 def back_clicked():
+    pass
+
+
+def on_create_wallet_clicked():
+    pass
+
+
+def on_set_wallet_clicked():
+    pass
+
+
+def on_restore_wallet_clicked():
     pass
 
 
@@ -454,7 +469,9 @@ class DenariiDesktopGUIRestoreWalletScreenTestCase(unittest.TestCase):
 
     def test_restore_local_wallet(self):
         self.restore_wallet_screen.name_line_edit.text_inner = self.local_wallet.name
-        self.restore_wallet_screen.password_line_edit.text_inner = self.local_wallet.password
+        self.restore_wallet_screen.password_line_edit.text_inner = (
+            self.local_wallet.password
+        )
         self.restore_wallet_screen.seed_line_edit.text_inner = self.local_wallet.phrase
 
         self.restore_wallet_screen.restore_wallet()
@@ -470,6 +487,264 @@ class DenariiDesktopGUIRestoreWalletScreenTestCase(unittest.TestCase):
             self.restore_wallet_screen.restore_wallet_text_box.text,
             "Success",
         )
+
+
+class DenariiDesktopGUISetWalletScreenTestCase(unittest.TestCase):
+    def setUp(self) -> None:
+        super().setUp()
+
+        self.window = Window()
+        self.main_widget = Widget()
+        self.main_widget.setMainLayout(HBoxLayout())
+        self.window.setCentralWidget(self.main_widget)
+
+        self.denarii_mobile_client = DenariiMobileClient()
+        self.denarii_client = DenariiClient()
+
+        self.remote_wallet = Wallet(name="remote", password="remote_password")
+        self.local_wallet = Wallet(name="local", password="local_password")
+
+        # We must create each wallet
+        create_remote_wallet(
+            self.denarii_mobile_client, self.remote_wallet, "set_wallet_screen"
+        )
+        self.denarii_client.create_wallet(self.local_wallet)
+
+        # We must set the wallet to the local one
+        self.denarii_client.set_current_wallet(self.local_wallet)
+
+        self.local_seed = self.denarii_client.query_seed(self.local_wallet)
+
+        self.gui_user = GuiUser()
+
+        self.next_button = PushButton("Next Page", self)
+        self.next_button.setStyleSheet("color:black")
+        self.next_button.setStyleSheet("font-weight: bold")
+        self.next_button.setStyleSheet("font-size: 18pt")
+        self.next_button.clicked.connect(next_clicked)
+
+        self.back_button = PushButton("Back", self)
+        self.back_button.setStyleSheet("color:black")
+        self.back_button.setStyleSheet("font-weight: bold")
+        self.back_button.setStyleSheet("font-size: 18pt")
+        self.back_button.clicked.connect(back_clicked)
+
+        common_buttons = {NEXT_BUTTON: self.next_button, BACK_BUTTON: self.back_button}
+
+        self.set_wallet_screen = SetWalletScreen(
+            push_buttons=common_buttons,
+            denarii_mobile_client=self.denarii_mobile_client,
+            main_layout=self.main_widget.main_layout,
+            deletion_func=deletion_function,
+            parent=self.main_widget,
+            denarii_client=self.denarii_client,
+            remote_wallet=self.remote_wallet,
+            local_wallet=self.local_wallet,
+            gui_user=self.gui_user,
+            set_wallet_type_callback=set_wallet_type,
+        )
+
+        self.set_wallet_screen.init(
+            parent=self.main_widget,
+            local_wallet=self.local_wallet,
+            remote_wallet=self.remote_wallet,
+            set_wallet_type_callback=set_wallet_type,
+        )
+
+    def tearDown(self):
+        super().tearDown()
+
+    def test_setup(self):
+        self.set_wallet_screen.setup()
+
+    def test_teardown(self):
+        self.set_wallet_screen.teardown()
+
+    def test_set_local_wallet(self):
+        self.set_wallet_screen.name_line_edit.text_inner = self.local_wallet.name
+        self.set_wallet_screen.password_line_edit.text_inner = (
+            self.local_wallet.password
+        )
+
+        self.set_wallet_screen.set_wallet()
+
+        self.assertIsNotNone(self.set_wallet_screen.set_wallet_text_box.text)
+        self.assertRegex(
+            self.set_wallet_screen.set_wallet_text_box.text, "Success. Your seed is .*"
+        )
+
+
+class DenariiDesktopGUIUserInfoScreenTestCase(unittest.TestCase):
+    def setUp(self) -> None:
+        super().setUp()
+
+        self.window = Window()
+        self.main_widget = Widget()
+        self.main_widget.setMainLayout(HBoxLayout())
+        self.window.setCentralWidget(self.main_widget)
+
+        self.denarii_mobile_client = DenariiMobileClient()
+        self.denarii_client = DenariiClient()
+
+        self.remote_wallet = Wallet(name="remote", password="remote_password")
+        self.local_wallet = Wallet(name="local", password="local_password")
+
+        # We must create each wallet
+        create_remote_wallet(
+            self.denarii_mobile_client, self.remote_wallet, "user_info_screen"
+        )
+        self.denarii_client.create_wallet(self.local_wallet)
+
+        # We must set the wallet to the local one
+        self.denarii_client.set_current_wallet(self.local_wallet)
+
+        self.local_seed = self.denarii_client.query_seed(self.local_wallet)
+
+        self.gui_user = GuiUser()
+
+        self.next_button = PushButton("Next Page", self)
+        self.next_button.setStyleSheet("color:black")
+        self.next_button.setStyleSheet("font-weight: bold")
+        self.next_button.setStyleSheet("font-size: 18pt")
+        self.next_button.clicked.connect(next_clicked)
+
+        self.back_button = PushButton("Back", self)
+        self.back_button.setStyleSheet("color:black")
+        self.back_button.setStyleSheet("font-weight: bold")
+        self.back_button.setStyleSheet("font-size: 18pt")
+        self.back_button.clicked.connect(back_clicked)
+
+        common_buttons = {NEXT_BUTTON: self.next_button, BACK_BUTTON: self.back_button}
+
+        self.user_info_screen = UserInfoScreen(
+            push_buttons=common_buttons,
+            denarii_mobile_client=self.denarii_mobile_client,
+            main_layout=self.main_widget.main_layout,
+            deletion_func=deletion_function,
+            parent=self.main_widget,
+            denarii_client=self.denarii_client,
+            remote_wallet=self.remote_wallet,
+            local_wallet=self.local_wallet,
+            gui_user=self.gui_user,
+        )
+
+        self.user_info_screen.init(
+            parent=self.main_widget,
+            local_wallet=self.local_wallet,
+            remote_wallet=self.remote_wallet,
+        )
+
+    def tearDown(self):
+        super().tearDown()
+
+    def test_setup(self):
+        self.user_info_screen.setup()
+
+    def test_teardown(self):
+        self.user_info_screen.teardown()
+
+    def test_store_user_info_with_matching_passwords(self):
+        self.user_info_screen.name_line_edit.text_inner = "Name"
+        self.user_info_screen.email_line_edit.text_inner = "email@email.com"
+        self.user_info_screen.password_line_edit.text_inner = "pass"
+        self.user_info_screen.confirm_password_line_edit.text_inner = "confirm_pass"
+
+        self.user_info_screen.store_user_info()
+
+        self.assertIsNotNone(self.user_info_screen.user_info_status_text_box.text)
+        self.assertEqual(
+            self.user_info_screen.user_info_status_text_box.text,
+            "Failure: passwords did not match",
+        )
+
+    def test_store_user_info_with_not_matching_passwords(self):
+        self.user_info_screen.name_line_edit.text_inner = "Name"
+        self.user_info_screen.email_line_edit.text_inner = "email@email.com"
+        self.user_info_screen.password_line_edit.text_inner = "pass"
+        self.user_info_screen.confirm_password_line_edit.text_inner = "pass"
+
+        self.user_info_screen.store_user_info()
+
+        self.assertIsNotNone(self.user_info_screen.user_info_status_text_box.text)
+        self.assertEqual(
+            self.user_info_screen.user_info_status_text_box.text, "Success"
+        )
+
+
+class DenariiDesktopGUIWalletInfoScreenTestCase(unittest.TestCase):
+    def setUp(self) -> None:
+        super().setUp()
+
+        self.window = Window()
+        self.main_widget = Widget()
+        self.main_widget.setMainLayout(HBoxLayout())
+        self.window.setCentralWidget(self.main_widget)
+
+        self.denarii_mobile_client = DenariiMobileClient()
+        self.denarii_client = DenariiClient()
+
+        self.remote_wallet = Wallet(name="remote", password="remote_password")
+        self.local_wallet = Wallet(name="local", password="local_password")
+
+        # We must create each wallet
+        create_remote_wallet(
+            self.denarii_mobile_client, self.remote_wallet, "wallet_info_screen"
+        )
+        self.denarii_client.create_wallet(self.local_wallet)
+
+        # We must set the wallet to the local one
+        self.denarii_client.set_current_wallet(self.local_wallet)
+
+        self.local_seed = self.denarii_client.query_seed(self.local_wallet)
+
+        self.gui_user = GuiUser()
+
+        self.next_button = PushButton("Next Page", self)
+        self.next_button.setStyleSheet("color:black")
+        self.next_button.setStyleSheet("font-weight: bold")
+        self.next_button.setStyleSheet("font-size: 18pt")
+        self.next_button.clicked.connect(next_clicked)
+
+        self.back_button = PushButton("Back", self)
+        self.back_button.setStyleSheet("color:black")
+        self.back_button.setStyleSheet("font-weight: bold")
+        self.back_button.setStyleSheet("font-size: 18pt")
+        self.back_button.clicked.connect(back_clicked)
+
+        common_buttons = {NEXT_BUTTON: self.next_button, BACK_BUTTON: self.back_button}
+
+        self.wallet_info_screeen = WalletInfoScreen(
+            push_buttons=common_buttons,
+            denarii_mobile_client=self.denarii_mobile_client,
+            main_layout=self.main_widget.main_layout,
+            deletion_func=deletion_function,
+            parent=self.main_widget,
+            denarii_client=self.denarii_client,
+            remote_wallet=self.remote_wallet,
+            local_wallet=self.local_wallet,
+            gui_user=self.gui_user,
+            on_create_wallet_clicked=on_create_wallet_clicked,
+            on_set_wallet_clicked=on_set_wallet_clicked,
+            on_restore_wallet_clicked=on_restore_wallet_clicked,
+        )
+
+        self.wallet_info_screeen.init(
+            parent=self.main_widget,
+            local_wallet=self.local_wallet,
+            remote_wallet=self.remote_wallet,
+            on_create_wallet_clicked=on_create_wallet_clicked,
+            on_set_wallet_clicked=on_set_wallet_clicked,
+            on_restore_wallet_clicked=on_restore_wallet_clicked,
+        )
+
+    def tearDown(self):
+        super().tearDown()
+
+    def test_setup(self):
+        self.wallet_info_screeen.setup()
+
+    def test_teardown(self):
+        self.wallet_info_screeen.teardown()
 
 
 if __name__ == "__main__":
