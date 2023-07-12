@@ -1,3 +1,4 @@
+import os
 import pathlib
 import pickle as pkl
 import random
@@ -34,6 +35,16 @@ def store(thing, suffix):
 
 def store_user(user):
     store(user, "user")
+
+def delete(thing, suffix):
+    if TESTING:
+        print(f"Testing so we are not going to delete anything for suffix {suffix}")
+    else: 
+        path = pathlib.Path(f"{TEST_STORE_PATH}/{thing.name}.{suffix}")
+        os.remove(path)
+
+def delete_user(user):
+    delete(user, "user")
 
 
 def load(path):
@@ -354,7 +365,7 @@ class DenariiMobileClient:
         user = self.check_user_is_current_user_and_get(user_id)
 
         if user.wallet.name == wallet_name and user.wallet.password == password:
-            return True, [{"wallet_address": user.wallet.address}]
+            return True, [{"wallet_address": user.wallet.address, "seed": user.wallet.seed}]
 
         return False, []
 
@@ -556,3 +567,21 @@ class DenariiMobileClient:
 
         store_user(asking_user)
         return True, [{"ask_id": ask_id, "transaction_was_settled": True}]
+    
+    def delete_user(self, user_id):
+
+        users = self.get_users
+
+        final_users = {}
+
+        deleted_something = False
+        for key, value in users.items():
+            if value.user_id == user_id:
+                deleted_something = True
+                delete_user(value)
+            else: 
+                final_users[key] = value
+
+        self.things['user'] = final_users
+
+        return deleted_something

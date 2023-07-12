@@ -184,35 +184,53 @@ class SetWalletScreen(Screen):
 
         success = False
 
-        try:
-            success = self.denarii_client.set_current_wallet(self.wallet)
-            print_status("Set current wallet ", success)
-            success = self.denarii_client.query_seed(self.wallet) and success
-            print_status("Query seed ", success)
+        if self.which_wallet == REMOTE_WALLET:
+            try: 
+                success, res  = self.denarii_mobile_client.get_user_id(self.gui_user.name, self.gui_user.email, self.gui_user.password)
+                if success:
+                    self.gui_user.user_id = res[0]['user_id']
+                    success, res = self.denarii_mobile_client.open_wallet(self.gui_user.user_id, self.wallet.name, self.wallet.password)
+                    if success: 
+                        only_res = res[0]
+                        self.wallet.address = only_res['wallet_address']
+                        self.wallet.phrase = only_res['seed']
+                        self.display_seed("Success. Your seed is: ", self.wallet.phrase)
+                        self.next_button.setVisible(True)
+                    else: 
+                        _ = ShowText(self.set_wallet_text_box, "Failed: could not open remote wallet")
+                        self.next_button.setVisible(False)
+                else:
+                    _ = ShowText(self.set_wallet_text_box, "Failed: could not login or create user")
+                    self.next_button.setVisible(False)
+            except Exception as set_wallet_e: 
+                print(set_wallet_e)
+                _ = ShowText(self.set_wallet_text_box, "Failed: unknown error")
+                self.next_button.setVisible(False)
+        elif self.which_wallet == LOCAL_WALLET:
+            try:
+                success = self.denarii_client.set_current_wallet(self.wallet)
+                success = self.denarii_client.query_seed(self.wallet) and success
+                if success:
+                    self.next_button.setVisible(True)
+            except Exception as set_wallet_e:
+                print(set_wallet_e)
+                _ = ShowText(self.set_wallet_text_box, "Failed: unknown error")
+                self.next_button.setVisible(False)
+
             if success:
-                self.next_button.setVisible(True)
-        except Exception as set_wallet_e:
-            print(set_wallet_e)
-            _ = ShowText(self.set_wallet_text_box, "Failed: unknown error")
-            self.next_button.setVisible(False)
+                self.display_seed("Success. Your seed is: ", self.wallet.phrase)
+            else:
+                _ = ShowText(self.set_wallet_text_box, "Failed: could not open the wallet or get the seed")
+        else: 
+            _ = ShowText(self.set_wallet_text_box, "Failed: need to set a wallet type")
 
-        if success:
-            split = self.wallet.phrase.split()
-            thirds = int(len(split) / 3)
-            first = " ".join(split[:thirds])
-            second = " ".join(split[thirds : thirds * 2])
-            third = "".join(split[thirds * 2 :])
-
-            _ = ShowText(self.set_wallet_text_box, f"Success. Your seed is \n {first}\n{second}\n{third}")
-        else:
-            _ = ShowText(self.set_wallet_text_box, "Failure")
 
     def on_set_wallet_submit_clicked(self):
         """
         Set a wallet based on the user's input information
         """
         if self.which_wallet is None:
-            _ = ShowText(self.set_wallet_text_box, "Failure: need to set the wallet type")
+            _ = ShowText(self.set_wallet_text_box, "Failed: need to set a wallet type")
             return
 
         self.set_wallet()
@@ -232,3 +250,13 @@ class SetWalletScreen(Screen):
         self.which_wallet = which_wallet
 
         self.set_wallet_type_callback(self.which_wallet)
+
+    def display_seed(self, prefix, seed): 
+
+        split = seed.split()
+        thirds = int(len(split) / 3)
+        first = " ".join(split[:thirds])
+        second = " ".join(split[thirds : thirds * 2])
+        third = "".join(split[thirds * 2 :])
+
+        self.set_wallet_text_box.setText(f"{prefix}\n{first}\n{second}\n{third}")

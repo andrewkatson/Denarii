@@ -552,11 +552,6 @@ class DenariiDesktopGUISetWalletScreenTestCase(unittest.TestCase):
         )
         self.denarii_client.create_wallet(self.local_wallet)
 
-        # We must set the wallet to the local one
-        self.denarii_client.set_current_wallet(self.local_wallet)
-
-        self.local_seed = self.denarii_client.query_seed(self.local_wallet)
-
         self.next_button = PushButton("Next Page", self)
         self.next_button.setStyleSheet("color:black")
         self.next_button.setStyleSheet("font-weight: bold")
@@ -594,6 +589,8 @@ class DenariiDesktopGUISetWalletScreenTestCase(unittest.TestCase):
         self.set_wallet_screen.teardown()
 
     def test_set_local_wallet(self):
+        self.set_wallet_screen.which_wallet = LOCAL_WALLET
+
         self.set_wallet_screen.name_line_edit.text_inner = self.local_wallet.name
         self.set_wallet_screen.password_line_edit.text_inner = (
             self.local_wallet.password
@@ -603,7 +600,23 @@ class DenariiDesktopGUISetWalletScreenTestCase(unittest.TestCase):
 
         self.assertIsNotNone(self.set_wallet_screen.set_wallet_text_box.text)
         self.assertRegex(
-            self.set_wallet_screen.set_wallet_text_box.text, "Success. Your seed is .*"
+            self.set_wallet_screen.set_wallet_text_box.text, "Success. Your seed is: .*"
+        )
+    
+    def test_set_remote_wallet(self):
+
+        self.set_wallet_screen.which_wallet = REMOTE_WALLET
+
+        self.set_wallet_screen.name_line_edit.text_inner = self.remote_wallet.name
+        self.set_wallet_screen.password_line_edit.text_inner = (
+            self.remote_wallet.password
+        )
+
+        self.set_wallet_screen.set_wallet()
+
+        self.assertIsNotNone(self.set_wallet_screen.set_wallet_text_box.text)
+        self.assertRegex(
+            self.set_wallet_screen.set_wallet_text_box.text, "Success. Your seed is: .*"
         )
 
 

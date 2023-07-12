@@ -152,7 +152,7 @@ class DenariiMobileClient:
 
     def send_denarii(self, user_id, wallet_name, address, amount):
         """
-        @param whether the request succeeded or not
+        @return whether the request succeeded or not
         """
         params = {
             "user_id": user_id,
@@ -291,7 +291,7 @@ class DenariiMobileClient:
         security_code,
     ):
         """
-        @param whether the request succeeded or not
+        @return whether the request succeeded or not
         """
 
         params = {
@@ -308,7 +308,7 @@ class DenariiMobileClient:
 
     def clear_credit_card_info(self, user_id):
         """
-        @param whether the request succeeded or not
+        @return whether the request succeeded or not
         """
 
         params = {"user_id": user_id}
@@ -319,7 +319,7 @@ class DenariiMobileClient:
 
     def get_money_from_buyer(self, user_id, amount, currency):
         """
-        @param whether the request succeeded or not
+        @return whether the request succeeded or not
         """
 
         params = {"user_id": user_id, "amount": amount, "currency": currency}
@@ -330,7 +330,7 @@ class DenariiMobileClient:
 
     def send_money_to_seller(self, user_id, amount, currency):
         """
-        @param whether the request succeeded or not
+        @return whether the request succeeded or not
         """
         params = {"user_id": user_id, "amount": amount, "currency": currency}
 
@@ -351,3 +351,14 @@ class DenariiMobileClient:
             return False, []
         else:
             return True, res
+    
+    def delete_user(self, user_id):
+        """
+        @return whether the request succeeded or not
+        """
+
+        params = {"user_id": user_id}
+
+        _, ok = self.send_denarii_mobile_request("delete_user", params)
+
+        return ok
