@@ -89,12 +89,6 @@ class DenariiDesktopGUICreateWalletScreenTestCase(unittest.TestCase):
         self.remote_wallet = Wallet(name="remote", password="remote_password")
         self.local_wallet = Wallet(name="local", password="local_password")
 
-        # We must create each wallet
-        create_remote_wallet(
-            self.denarii_mobile_client, self.remote_wallet, "create_wallet_screen"
-        )
-        self.denarii_client.create_wallet(self.local_wallet)
-
         self.gui_user = GuiUser()
         self.gui_user.name = "name"
         self.gui_user.password = "password"
