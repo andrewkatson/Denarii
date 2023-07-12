@@ -42,15 +42,6 @@ class SetWalletScreen(Screen):
         denarii_mobile_client,
         **kwargs,
     ):
-        super().__init__(
-            self.set_wallet_screen_name,
-            main_layout=main_layout,
-            deletion_func=deletion_func,
-            denarii_client=denarii_client,
-            gui_user=gui_user,
-            denarii_mobile_client=denarii_mobile_client,
-            **kwargs,
-        )
 
         self.set_wallet_label = None
         self.set_wallet_text_box = None
@@ -64,6 +55,16 @@ class SetWalletScreen(Screen):
         self.remote_wallet_radio_button = None
         self.local_wallet_radio_button = None
         self.set_wallet_type_callback = kwargs["set_wallet_type_callback"]
+
+        super().__init__(
+            self.set_wallet_screen_name,
+            main_layout=main_layout,
+            deletion_func=deletion_func,
+            denarii_client=denarii_client,
+            gui_user=gui_user,
+            denarii_mobile_client=denarii_mobile_client,
+            **kwargs,
+        )
 
     def init(self, **kwargs):
         super().init(**kwargs)
@@ -192,6 +193,7 @@ class SetWalletScreen(Screen):
                 self.next_button.setVisible(True)
         except Exception as set_wallet_e:
             print(set_wallet_e)
+            _ = ShowText(self.set_wallet_text_box, "Failed: unknown error")
             self.next_button.setVisible(False)
 
         if success:

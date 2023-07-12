@@ -43,16 +43,6 @@ class WalletScreen(Screen):
         denarii_mobile_client,
         **kwargs
     ):
-        super().__init__(
-            self.wallet_screen_name,
-            main_layout=main_layout,
-            deletion_func=deletion_func,
-            denarii_client=denarii_client,
-            gui_user=gui_user,
-            denarii_mobile_client=denarii_mobile_client,
-            **kwargs
-        )
-
         self.wallet_header_label = None
         self.your_address_label = None
         self.your_balance_label = None
@@ -69,6 +59,17 @@ class WalletScreen(Screen):
         self.balance_refresh_thread = StoppableThread(target=self.refresh_balance)
         self.balance_refresh_thread.start()
         self.balance = 0
+
+        super().__init__(
+            self.wallet_screen_name,
+            main_layout=main_layout,
+            deletion_func=deletion_func,
+            denarii_client=denarii_client,
+            gui_user=gui_user,
+            denarii_mobile_client=denarii_mobile_client,
+            **kwargs
+        )
+
 
     def init(self, **kwargs):
         super().init(**kwargs)

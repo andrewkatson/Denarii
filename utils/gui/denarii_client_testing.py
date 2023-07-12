@@ -110,9 +110,13 @@ class DenariiClient:
         if wallet.name in self.wallets:
             return False
 
+
+        seed = generate_phrase(4)
         self.wallets[wallet.name] = TestingWallet(
-            wallet.name, wallet.password, seed=generate_phrase(4)
+            wallet.name, wallet.password, seed=seed
         )
+
+        wallet.phrase = seed
 
         store_wallet(self.wallets[wallet.name])
 
@@ -124,6 +128,7 @@ class DenariiClient:
             existing_wallet = self.wallets.get(wallet.name)
             if wallet.password == existing_wallet.password:
                 if wallet.phrase == existing_wallet.seed:
+                    wallet.address = existing_wallet.address
                     store_wallet(existing_wallet)
                     self.opened_wallet = existing_wallet
                     return True

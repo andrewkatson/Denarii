@@ -25,7 +25,7 @@ def generate_address(num_letters):
 
 def store(thing, suffix):
     if TESTING:
-        print(f"Testing so we are not going to store anything for suffx {suffix}")
+        print(f"Testing so we are not going to store anything for suffix {suffix}")
     else:
         path = pathlib.Path(f"{TEST_STORE_PATH}/{thing.name}.{suffix}")
         with open(path, "wb") as output_file:
@@ -253,7 +253,7 @@ class DenariiMobileClient:
 
     def check_user_is_current_user_and_get(self, user_id):
         if self.user is None:
-            raise ValueError("Need to set a user before creating a wallet")
+            raise ValueError("Need to set a user before doing the current action")
 
         user = self.get_user_with_id(user_id)
 
@@ -264,30 +264,21 @@ class DenariiMobileClient:
 
     def get_user_id(self, username, email, password):
         users = self.get_users()
-
-        # Register the first user
-        if len(users) == 0:
-            self.user = User(username, email, password)
-            self.user.user_id = create_identifier()
-            users[username] = self.user
-            store_user(self.user)
-            return True, [{"user_id": self.user.user_id}]
-
-        for key, value in users.items():
+        for _, value in users.items():
             # Login if they exist
-            if key == username and value.password == password and value.email == email:
+            if value.name == username and value.password == password and value.email == email:
                 self.user = value
                 return True, [{"user_id": self.user.user_id}]
-            elif key == username and value.email == email and value.password != password: 
+            # If they are a known user but their password doesnt match fail
+            elif value.name == username and value.email == email and value.password != password: 
                 return False, []
-            else: 
-                self.user = User(username, email, password)
-                self.user.user_id = create_identifier()
-                users[username] = self.user
-                store_user(self.user)
-                return True, [{"user_id": self.user.user_id}]
 
-        return False, []
+        # If all else fails create the user (register)
+        self.user = User(username, email, password)
+        self.user.user_id = create_identifier()
+        users[username] = self.user
+        store_user(self.user)
+        return True, [{"user_id": self.user.user_id}]
 
     def reset_password(self, username, email, password):
         users = self.get_users()
@@ -334,11 +325,13 @@ class DenariiMobileClient:
 
     def create_wallet(self, user_id, wallet_name, password):
         user = self.check_user_is_current_user_and_get(user_id)
+        
+        if user.wallet is not None: 
+            return ValueError("User wallet was not none and attempted creation of new wallet")
 
         user.wallet = Wallet(wallet_name, password)
         user.wallet.seed = generate_phrase(4)
         user.wallet.address = generate_address(15)
-
         store_user(user)
 
         return True, [

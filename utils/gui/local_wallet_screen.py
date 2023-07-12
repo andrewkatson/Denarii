@@ -39,6 +39,13 @@ class LocalWalletScreen(WalletScreen):
         denarii_mobile_client,
         **kwargs
     ):
+
+        self.your_sub_address_label = None
+        self.sub_address_text_boxes = None
+        self.create_sub_address_push_button = None
+        self.start_mining_push_button = None
+        self.stop_mining_push_button = None
+
         super().__init__(
             main_layout=main_layout,
             deletion_func=deletion_func,
@@ -48,12 +55,6 @@ class LocalWalletScreen(WalletScreen):
             denarii_mobile_client=denarii_mobile_client,
             **kwargs
         )
-
-        self.your_sub_address_label = None
-        self.sub_address_text_boxes = None
-        self.create_sub_address_push_button = None
-        self.start_mining_push_button = None
-        self.stop_mining_push_button = None
 
     def init(self, **kwargs):
         super().init(**kwargs)

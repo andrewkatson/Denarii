@@ -28,6 +28,11 @@ class LangSelectScreen(Screen):
         denarii_mobile_client,
         **kwargs
     ):
+
+        self.pick_lang_label = None
+        self.english_radio_button = None
+        self.submit_button = None
+
         super().__init__(
             self.lang_select_screen_name,
             main_layout=main_layout,
@@ -37,10 +42,6 @@ class LangSelectScreen(Screen):
             denarii_mobile_client=denarii_mobile_client,
             **kwargs
         )
-
-        self.pick_lang_label = None
-        self.english_radio_button = None
-        self.submit_button = None
 
     def init(self, **kwargs):
         super().init(**kwargs)

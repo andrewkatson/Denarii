@@ -9,3 +9,5 @@ class Wallet:
         self.sub_addresses = []
         self.balance = 0
 
+    def __str__(self) -> str:
+        return f"{self.name}::{self.address}"

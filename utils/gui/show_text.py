@@ -13,6 +13,9 @@ class ShowText:
         self.thread_to_show.start()
 
     def show_text(self):
+        if self.text_box is None: 
+            raise ValueError("Text box cannot be None")
+
         self.text_box.setVisible(True)
         self.text_box.setText(self.text_to_show)
 

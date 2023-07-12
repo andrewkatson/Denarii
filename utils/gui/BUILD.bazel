@@ -69,7 +69,7 @@ py_test(
   deps = [":other_gui", ":testing_gui_elements"],
   imports = [":other_gui", ":testing_gui_elements"],
   args = ["--denarii_testing=True"],
-  size = "medium",
+  size = "small",
 )
 
 

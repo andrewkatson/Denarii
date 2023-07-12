@@ -39,6 +39,15 @@ class UserInfoScreen(Screen):
         denarii_mobile_client,
         **kwargs
     ):
+
+        self.user_info_label = None
+        self.name_line_edit = None
+        self.email_line_edit = None
+        self.password_line_edit = None
+        self.confirm_password_line_edit = None
+        self.user_info_status_text_box = None
+        self.submit_button = None
+
         super().__init__(
             self.user_info_screen_name,
             main_layout=main_layout,
@@ -48,14 +57,6 @@ class UserInfoScreen(Screen):
             denarii_mobile_client=denarii_mobile_client,
             **kwargs
         )
-
-        self.user_info_label = None
-        self.name_line_edit = None
-        self.email_line_edit = None
-        self.password_line_edit = None
-        self.confirm_password_line_edit = None
-        self.user_info_status_text_box = None
-        self.submit_button = None
 
     def init(self, **kwargs):
         super().init(**kwargs)

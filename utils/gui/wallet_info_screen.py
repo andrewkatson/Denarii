@@ -38,6 +38,12 @@ class WalletInfoScreen(Screen):
         denarii_mobile_client,
         **kwargs
     ):
+
+        self.wallet_info_label = None
+        self.create_wallet_push_button = None
+        self.restore_wallet_push_button = None
+        self.set_wallet_push_button = None
+
         super().__init__(
             self.wallet_info_screen_name,
             main_layout=main_layout,
@@ -47,11 +53,6 @@ class WalletInfoScreen(Screen):
             denarii_mobile_client=denarii_mobile_client,
             **kwargs
         )
-
-        self.wallet_info_label = None
-        self.create_wallet_push_button = None
-        self.restore_wallet_push_button = None
-        self.set_wallet_push_button = None
 
     def init(self, **kwargs):
         super().init(**kwargs)

@@ -34,14 +34,6 @@ class RestoreWalletScreen(Screen):
     """
 
     def __init__(self, main_layout, deletion_func, denarii_client, gui_user, **kwargs):
-        super().__init__(
-            self.restore_wallet_screen_name,
-            main_layout=main_layout,
-            deletion_func=deletion_func,
-            denarii_client=denarii_client,
-            gui_user=gui_user,
-            **kwargs
-        )
 
         self.restore_wallet_label = None
         self.wallet_save_file_text_box = None
@@ -57,6 +49,15 @@ class RestoreWalletScreen(Screen):
         self.remote_wallet_radio_button = None
         self.local_wallet_radio_button = None
         self.set_wallet_type_callback = kwargs["set_wallet_type_callback"]
+
+        super().__init__(
+            self.restore_wallet_screen_name,
+            main_layout=main_layout,
+            deletion_func=deletion_func,
+            denarii_client=denarii_client,
+            gui_user=gui_user,
+            **kwargs
+        )
 
     def init(self, **kwargs):
         super().init(**kwargs)
@@ -188,21 +189,47 @@ class RestoreWalletScreen(Screen):
         self.wallet.phrase = self.seed_line_edit.text()
 
         success = False
-        try:
-            success = self.denarii_client.restore_wallet(self.wallet)
-            print_status("Restore wallet ", success)
-            if success:
-                self.next_button.setVisible(True)
-        except Exception as e:
-            print(e)
-            self.next_button.setVisible(False)
+        if self.which_wallet == REMOTE_WALLET:
+            try: 
+                success, res  = self.denarii_mobile_client.get_user_id(self.gui_user.name, self.gui_user.email, self.gui_user.password)
+                if success:
+                    self.gui_user.user_id = res[0]['user_id']
+                    success, res = self.denarii_mobile_client.restore_wallet(self.gui_user.user_id, self.wallet.name, self.wallet.password, self.wallet.phrase)
+                    if success: 
+                        only_res = res[0]
+                        self.wallet.address = only_res['wallet_address']
+                        _ = ShowText(self.restore_wallet_text_box, "Success")
+                        self.next_button.setVisible(True)
+                    else: 
+                        _ = ShowText(self.restore_wallet_text_box, "Failed: could not restore remote wallet")
+                        self.next_button.setVisible(False)
+                else:
+                    _ = ShowText(self.restore_wallet_text_box, "Failed: could not login or create user")
+                    self.next_button.setVisible(False)
+            except Exception as create_remote_wallet_e:
+                print(create_remote_wallet_e)
+                _ = ShowText(self.restore_wallet_text_box, "Failed: unknown error")
+                self.next_button.setVisible(False)
 
-        if success:
-            wallet_save_file_show_text = ShowText(self.wallet_save_file_text_box, "Wallet saved to: \n " + DENARIID_WALLET_PATH)
-            restore_wallet_text_box = ShowText(self.restore_wallet_text_box, "Success")
-        else:
-            wallet_save_file_show_text = ShowText(self.wallet_save_file_text_box, "Wallet already at (or does not exist): \n " + DENARIID_WALLET_PATH)
-            restore_wallet_text_box = ShowText(self.restore_wallet_text_box, "Failure")
+        elif self.which_wallet == LOCAL_WALLET:
+            try:
+                success = self.denarii_client.restore_wallet(self.wallet)
+                if success:
+                    self.next_button.setVisible(True)
+            except Exception as e:
+                print(e)
+                _ = ShowText(self.restore_wallet_text_box, "Failed: unknown error")
+                self.next_button.setVisible(False)
+
+            if success:
+                wallet_save_file_show_text = ShowText(self.wallet_save_file_text_box, "Wallet saved to: \n " + DENARIID_WALLET_PATH)
+                restore_wallet_text_box = ShowText(self.restore_wallet_text_box, "Success")
+            else:
+                wallet_save_file_show_text = ShowText(self.wallet_save_file_text_box, "Wallet already at (or does not exist): \n " + DENARIID_WALLET_PATH)
+                restore_wallet_text_box = ShowText(self.restore_wallet_text_box, "Failure")
+        else: 
+            _ = ShowText(self.restore_wallet_text_box, "Failure: need to set the wallet type")
+
 
 
     def on_restore_wallet_submit_clicked(self):

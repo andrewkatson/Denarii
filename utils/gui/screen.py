@@ -80,7 +80,6 @@ class Screen:
 
         self.next_button = None
         self.back_button = None
-
         self.init(**kwargs)
 
     def init(self, **kwargs):

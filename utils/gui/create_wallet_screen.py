@@ -42,16 +42,6 @@ class CreateWalletScreen(Screen):
         denarii_mobile_client,
         **kwargs,
     ):
-        super().__init__(
-            screen_name=self.create_wallet_screen_name,
-            main_layout=main_layout,
-            deletion_func=deletion_func,
-            denarii_client=denarii_client,
-            gui_user=gui_user,
-            denarii_mobile_client=denarii_mobile_client,
-            **kwargs,
-        )
-
         self.create_wallet_label = None
         self.wallet_seed_text_box = None
         self.wallet_save_file_text_box = None
@@ -67,6 +57,17 @@ class CreateWalletScreen(Screen):
         self.remote_wallet_radio_button = None
         self.local_wallet_radio_button = None
         self.set_wallet_type_callback = kwargs["set_wallet_type_callback"]
+
+        super().__init__(
+            screen_name=self.create_wallet_screen_name,
+            main_layout=main_layout,
+            deletion_func=deletion_func,
+            denarii_client=denarii_client,
+            gui_user=gui_user,
+            denarii_mobile_client=denarii_mobile_client,
+            **kwargs,
+        )
+
 
     def init(self, **kwargs):
         super().init(**kwargs)
@@ -237,23 +238,26 @@ class CreateWalletScreen(Screen):
                         self.wallet.address = only_res['wallet_address']
                         self.display_seed(self.wallet.phrase)
                         _ = ShowText(self.create_wallet_text_box, "Success. Make sure to write down your information. \n It will not be saved on this device.")
+                        self.next_button.setVisible(True)
                     else: 
                         _ = ShowText(self.create_wallet_text_box, "Failed: could not create remote wallet")
+                        self.next_button.setVisible(False)
                 else:
                     _ = ShowText(self.create_wallet_text_box, "Failed: could not login or create user")
+                    self.next_button.setVisible(False)
             except Exception as create_remote_wallet_e:
                 print(create_remote_wallet_e)
+                _ = ShowText(self.create_wallet_text_box, "Failed: unknown error")
                 self.next_button.setVisible(False)
         elif self.which_wallet == LOCAL_WALLET:
             try:
                 success = self.denarii_client.create_wallet(self.wallet)
-                print_status("Create wallet ", success)
                 success = self.denarii_client.query_seed(self.wallet) and success
-                print_status("Query seed ", success)
                 if success:
                     self.next_button.setVisible(True)
             except Exception as create_wallet_e:
                 print(create_wallet_e)
+                _ = ShowText(self.create_wallet_text_box, "Failed: unknown error")
                 self.next_button.setVisible(False)
 
             if success:
@@ -265,8 +269,10 @@ class CreateWalletScreen(Screen):
 
             else:
                 wallet_failure_show = ShowText(self.create_wallet_text_box, "Failed: could not create local wallet")
+                self.next_button.setVisible(False)
         else: 
             _ = ShowText(self.create_wallet_text_box, "Failed: need to set the wallet type")
+            self.next_button.setVisible(False)
 
     @property
     def wallet(self):
