@@ -113,7 +113,11 @@ try:
     def store_user():
         global gui_user
         with open(USER_SETTINGS_PATH, "wb") as output_file:
+            # We dont save the user identifier. 
+            user_id = gui_user.user_id
+            gui_user.user_id = None
             pkl.dump(gui_user, output_file)
+            gui_user.user_id = user_id
 
     def load_user():
         global gui_user

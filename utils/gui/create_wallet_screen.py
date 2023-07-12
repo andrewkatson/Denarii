@@ -222,32 +222,51 @@ class CreateWalletScreen(Screen):
         self.wallet.password = self.password_line_edit.text()
 
         success = False
-        try:
-            success = self.denarii_client.create_wallet(self.wallet)
-            print_status("Create wallet ", success)
-            success = self.denarii_client.query_seed(self.wallet) and success
-            print_status("Query seed ", success)
+
+        if self.which_wallet == REMOTE_WALLET:
+            try: 
+                success, res  = self.denarii_mobile_client.get_user_id(self.gui_user.name, self.gui_user.email, self.gui_user.password)
+                if success:
+                    self.gui_user.user_id = res[0]['user_id']
+
+                    success, res = self.denarii_mobile_client.create_wallet(self.gui_user.user_id, self.wallet.name, self.wallet.password)
+
+                    if success: 
+                        only_res = res[0]
+                        self.wallet.phrase = only_res['seed']
+                        self.wallet.address = only_res['wallet_address']
+                        self.display_seed(self.wallet.phrase)
+                        _ = ShowText(self.create_wallet_text_box, "Success. Make sure to write down your information. \n It will not be saved on this device.")
+                    else: 
+                        _ = ShowText(self.create_wallet_text_box, "Failed: could not create remote wallet")
+                else:
+                    _ = ShowText(self.create_wallet_text_box, "Failed: could not login or create user")
+            except Exception as create_remote_wallet_e:
+                print(create_remote_wallet_e)
+                self.next_button.setVisible(False)
+        elif self.which_wallet == LOCAL_WALLET:
+            try:
+                success = self.denarii_client.create_wallet(self.wallet)
+                print_status("Create wallet ", success)
+                success = self.denarii_client.query_seed(self.wallet) and success
+                print_status("Query seed ", success)
+                if success:
+                    self.next_button.setVisible(True)
+            except Exception as create_wallet_e:
+                print(create_wallet_e)
+                self.next_button.setVisible(False)
+
             if success:
-                self.next_button.setVisible(True)
-        except Exception as create_wallet_e:
-            print(create_wallet_e)
-            self.next_button.setVisible(False)
+                self.display_seed(self.wallet.phrase)
 
-        if success:
-            split = self.wallet.phrase.split()
-            thirds = int(len(split) / 3)
-            first = " ".join(split[:thirds])
-            second = " ".join(split[thirds : thirds * 2])
-            third = "".join(split[thirds * 2 :])
+                wallet_save_path_show = ShowText(self.wallet_save_file_text_box, "Wallet saved to: \n " + DENARIID_WALLET_PATH)
 
-            self.wallet_info_text_box.setText(f"{first}\n{second}\n{third}")
+                wallet_success_show = ShowText(self.create_wallet_text_box, "Success. Make sure to write down your information. \n It will not be saved on this device.")
 
-            wallet_save_path_show = ShowText(self.wallet_save_file_text_box, "Wallet saved to: \n " + DENARIID_WALLET_PATH)
-
-            wallet_success_show = ShowText(self.create_wallet_text_box, "Success. Make sure to write down your information. \n It will not be saved on this device.")
-
-        else:
-            wallet_failure_show = ShowText(self.create_wallet_text_box, "Failure")
+            else:
+                wallet_failure_show = ShowText(self.create_wallet_text_box, "Failed: could not create local wallet")
+        else: 
+            _ = ShowText(self.create_wallet_text_box, "Failed: need to set the wallet type")
 
     @property
     def wallet(self):
@@ -264,3 +283,13 @@ class CreateWalletScreen(Screen):
         self.which_wallet = which_wallet
 
         self.set_wallet_type_callback(self.which_wallet)
+
+    def display_seed(self, seed): 
+
+        split = seed.split()
+        thirds = int(len(split) / 3)
+        first = " ".join(split[:thirds])
+        second = " ".join(split[thirds : thirds * 2])
+        third = "".join(split[thirds * 2 :])
+
+        self.wallet_info_text_box.setText(f"{first}\n{second}\n{third}")

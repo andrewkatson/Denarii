@@ -96,6 +96,9 @@ class DenariiDesktopGUICreateWalletScreenTestCase(unittest.TestCase):
         self.denarii_client.create_wallet(self.local_wallet)
 
         self.gui_user = GuiUser()
+        self.gui_user.name = "name"
+        self.gui_user.password = "password"
+        self.gui_user.email = "email@email.com"
 
         self.next_button = PushButton("Next Page", self)
         self.next_button.setStyleSheet("color:black")
@@ -138,6 +141,8 @@ class DenariiDesktopGUICreateWalletScreenTestCase(unittest.TestCase):
         self.create_wallet_screen.teardown()
 
     def test_create_local_wallet(self):
+        self.create_wallet_screen.which_wallet = LOCAL_WALLET
+
         self.create_wallet_screen.name_line_edit.text_inner = "Name"
         self.create_wallet_screen.password_line_edit.text_inner = "Password"
 
@@ -152,6 +157,27 @@ class DenariiDesktopGUICreateWalletScreenTestCase(unittest.TestCase):
             self.create_wallet_screen.wallet_save_file_text_box.text,
             "Wallet saved to:.*",
         )
+
+        self.assertIsNotNone(self.create_wallet_screen.create_wallet_text_box.text)
+        self.assertEqual(
+            self.create_wallet_screen.create_wallet_text_box.text,
+            "Success. Make sure to write down your information. \n It will not be saved on this device.",
+        )
+
+    def test_create_remote_wallet(self):
+        self.create_wallet_screen.which_wallet = REMOTE_WALLET
+
+        self.create_wallet_screen.name_line_edit.text_inner = "Name"
+        self.create_wallet_screen.password_line_edit.text_inner = "Password"
+
+        self.create_wallet_screen.create_wallet()
+
+        # Best we can do is check that they have a seed
+        self.assertIsNotNone(self.create_wallet_screen.wallet_info_text_box.text)
+        self.assertNotEqual(self.create_wallet_screen.wallet_info_text_box.text, "")
+
+        # We dont save a file with create wallet when its remote
+        self.assertEqual(self.create_wallet_screen.wallet_save_file_text_box.text, "")
 
         self.assertIsNotNone(self.create_wallet_screen.create_wallet_text_box.text)
         self.assertEqual(
@@ -182,6 +208,9 @@ class DenariiDesktopGUILanguageSelectScreenTestCase(unittest.TestCase):
         self.denarii_client.create_wallet(self.local_wallet)
 
         self.gui_user = GuiUser()
+        self.gui_user.name = "name"
+        self.gui_user.password = "password"
+        self.gui_user.email = "email@email.com"
 
         self.next_button = PushButton("Next Page", self)
         self.next_button.setStyleSheet("color:black")
@@ -256,6 +285,9 @@ class DenariiDesktopGUILocalWalletScreenTestCase(unittest.TestCase):
         self.denarii_client.set_current_wallet(self.local_wallet)
 
         self.gui_user = GuiUser()
+        self.gui_user.name = "name"
+        self.gui_user.password = "password"
+        self.gui_user.email = "email@email.com"
 
         self.next_button = PushButton("Next Page", self)
         self.next_button.setStyleSheet("color:black")
@@ -354,6 +386,9 @@ class DenariiDesktopGUIRemoteWalletScreenTestCase(unittest.TestCase):
         self.denarii_client.set_current_wallet(self.local_wallet)
 
         self.gui_user = GuiUser()
+        self.gui_user.name = "name"
+        self.gui_user.password = "password"
+        self.gui_user.email = "email@email.com"
 
         self.next_button = PushButton("Next Page", self)
         self.next_button.setStyleSheet("color:black")
@@ -423,6 +458,9 @@ class DenariiDesktopGUIRestoreWalletScreenTestCase(unittest.TestCase):
         self.local_seed = self.denarii_client.query_seed(self.local_wallet)
 
         self.gui_user = GuiUser()
+        self.gui_user.name = "name"
+        self.gui_user.password = "password"
+        self.gui_user.email = "email@email.com"
 
         self.next_button = PushButton("Next Page", self)
         self.next_button.setStyleSheet("color:black")
@@ -516,6 +554,9 @@ class DenariiDesktopGUISetWalletScreenTestCase(unittest.TestCase):
         self.local_seed = self.denarii_client.query_seed(self.local_wallet)
 
         self.gui_user = GuiUser()
+        self.gui_user.name = "name"
+        self.gui_user.password = "password"
+        self.gui_user.email = "email@email.com"
 
         self.next_button = PushButton("Next Page", self)
         self.next_button.setStyleSheet("color:black")
@@ -601,6 +642,9 @@ class DenariiDesktopGUIUserInfoScreenTestCase(unittest.TestCase):
         self.local_seed = self.denarii_client.query_seed(self.local_wallet)
 
         self.gui_user = GuiUser()
+        self.gui_user.name = "name"
+        self.gui_user.password = "password"
+        self.gui_user.email = "email@email.com"
 
         self.next_button = PushButton("Next Page", self)
         self.next_button.setStyleSheet("color:black")
@@ -698,6 +742,9 @@ class DenariiDesktopGUIWalletInfoScreenTestCase(unittest.TestCase):
         self.local_seed = self.denarii_client.query_seed(self.local_wallet)
 
         self.gui_user = GuiUser()
+        self.gui_user.name = "name"
+        self.gui_user.password = "password"
+        self.gui_user.email = "email@email.com"
 
         self.next_button = PushButton("Next Page", self)
         self.next_button.setStyleSheet("color:black")

@@ -17,6 +17,7 @@ class GuiUser:
         self.local_wallet = local_wallet
         self.remote_wallet = remote_wallet
         self.language = language
+        self.user_id = None
 
     def __str__(self):
         return f"{self.name}:{self.email}:{self.language}"
