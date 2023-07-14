@@ -36,12 +36,14 @@ def store(thing, suffix):
 def store_user(user):
     store(user, "user")
 
+
 def delete(thing, suffix):
     if TESTING:
         print(f"Testing so we are not going to delete anything for suffix {suffix}")
-    else: 
+    else:
         path = pathlib.Path(f"{TEST_STORE_PATH}/{thing.name}.{suffix}")
         os.remove(path)
+
 
 def delete_user(user):
     delete(user, "user")
@@ -63,6 +65,10 @@ def generate_random_asks(num_asks):
     for i in range(num_asks):
         asks.append(generate_random_ask())
     return asks
+
+
+def generate_balance():
+    return random.uniform(0, 1000)
 
 
 def load_all_test_things():
@@ -124,7 +130,7 @@ def load_all_things():
                 if ".user" in path:
                     split = path.split(".user")
                     user_name = split[0]
-                    things["user"] = {user_name: load(path)}
+                    things["user"] = {user_name: load(full_path)}
 
     return things
 
@@ -277,11 +283,19 @@ class DenariiMobileClient:
         users = self.get_users()
         for _, value in users.items():
             # Login if they exist
-            if value.name == username and value.password == password and value.email == email:
+            if (
+                value.name == username
+                and value.password == password
+                and value.email == email
+            ):
                 self.user = value
                 return True, [{"user_id": self.user.user_id}]
             # If they are a known user but their password doesnt match fail
-            elif value.name == username and value.email == email and value.password != password: 
+            elif (
+                value.name == username
+                and value.email == email
+                and value.password != password
+            ):
                 return False, []
 
         # If all else fails create the user (register)
@@ -295,7 +309,8 @@ class DenariiMobileClient:
         users = self.get_users()
 
         if len(users) == 0:
-            raise ValueError("There are no users to reset the password of")
+            print("There are no users to reset the password of")
+            return False
 
         for key, value in users.items():
             if key == username:
@@ -309,7 +324,8 @@ class DenariiMobileClient:
         users = self.get_users()
 
         if len(users) == 0:
-            raise ValueError("There are no users to request a reset of their password")
+            print("There are no users to request a reset of their password")
+            return False
 
         for _, value in users.items():
             if value.username == username_or_email or value.email == username_or_email:
@@ -323,7 +339,8 @@ class DenariiMobileClient:
         users = self.get_users()
 
         if len(users) == 0:
-            raise ValueError("There are no users to verify the reset of")
+            print("There are no users to verify the reset of")
+            return False
 
         for _, value in users.items():
             if value.username == username_or_email or value.email == username_or_email:
@@ -336,18 +353,17 @@ class DenariiMobileClient:
 
     def create_wallet(self, user_id, wallet_name, password):
         user = self.check_user_is_current_user_and_get(user_id)
-        
-        if user.wallet is not None: 
-            return ValueError("User wallet was not none and attempted creation of new wallet")
 
-        user.wallet = Wallet(wallet_name, password)
+        if user.wallet is not None:
+            print("Tried to create a user wallet and it was not None")
+            return False, []
+
+        user.wallet = Wallet(wallet_name, password, balance=generate_balance())
         user.wallet.seed = generate_phrase(4)
         user.wallet.address = generate_address(15)
         store_user(user)
 
-        return True, [
-            {"seed": user.wallet.seed, "wallet_address": user.wallet.address}
-        ]
+        return True, [{"seed": user.wallet.seed, "wallet_address": user.wallet.address}]
 
     def restore_wallet(self, user_id, wallet_name, password, seed):
         user = self.check_user_is_current_user_and_get(user_id)
@@ -365,13 +381,14 @@ class DenariiMobileClient:
         user = self.check_user_is_current_user_and_get(user_id)
 
         if user.wallet.name == wallet_name and user.wallet.password == password:
-            return True, [{"wallet_address": user.wallet.address, "seed": user.wallet.seed}]
+            return True, [
+                {"wallet_address": user.wallet.address, "seed": user.wallet.seed}
+            ]
 
         return False, []
 
     def get_balance(self, user_id, wallet_name):
         user = self.check_user_is_current_user_and_get(user_id)
-
         if user.wallet is None:
             return False, []
         return True, [{"balance": user.wallet.balance}]
@@ -567,9 +584,8 @@ class DenariiMobileClient:
 
         store_user(asking_user)
         return True, [{"ask_id": ask_id, "transaction_was_settled": True}]
-    
-    def delete_user(self, user_id):
 
+    def delete_user(self, user_id):
         users = self.get_users
 
         final_users = {}
@@ -579,9 +595,9 @@ class DenariiMobileClient:
             if value.user_id == user_id:
                 deleted_something = True
                 delete_user(value)
-            else: 
+            else:
                 final_users[key] = value
 
-        self.things['user'] = final_users
+        self.things["user"] = final_users
 
         return deleted_something

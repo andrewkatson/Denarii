@@ -1,10 +1,10 @@
 from constants import *
-from show_text import *
-
 
 if TESTING:
+    from denarii_testing_message_box import MessageBox
     from denarii_testing_widget import *
 else:
+    from message_box import MessageBox
     from widget import *
 
 
@@ -31,6 +31,8 @@ class Screen:
     restore_wallet_screen_name = "RESTORE_WALLET_SCREEN"
     set_wallet_screen_name = "OPEN_WALLET_SCREEN_NAME"
     wallet_screen_name = "WALLET_SCREEN_NAME"
+    buy_denarii_screen_name = "BUY_DENARII_SCREEN_NAME"
+    sell_denarii_screen_name = "SELL_DENARII_SCREEN_NAME"
 
     suffix_of_screen_name = "suffix"
 
@@ -99,8 +101,16 @@ class Screen:
     def teardown(self):
         print(f"Tearing down screen: {self.screen_name}")
 
+        self.deletion_func(self.main_layout)
+
     def __eq__(self, other):
         return self.screen_name == other.screen_name
 
     def __str__(self):
         return self.screen_name
+
+    def status_message_box(self, status):
+        msg = MessageBox()
+        msg.setWindowTitle("Status")
+        msg.setText(status)
+        msg.exec_()

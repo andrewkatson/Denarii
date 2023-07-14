@@ -4,6 +4,8 @@ if TESTING:
     from denarii_testing_font import Font
     from denarii_testing_label import Label
     from denarii_testing_line_edit import LineEdit
+    from denarii_testing_message_box import MessageBox
+    from denarii_testing_push_button import PushButton
     from denarii_testing_qt import (
         TextSelectableByMouse,
         AlignRight,
@@ -11,12 +13,13 @@ if TESTING:
         AlignCenter,
         AlignLeft,
     )
-    from denarii_testing_push_button import PushButton
     from denarii_testing_radio_button import RadioButton
 else:
     from font import *
     from label import *
     from line_edit import *
+    from message_box import MessageBox
+    from push_button import *
     from qt import (
         TextSelectableByMouse,
         AlignRight,
@@ -24,7 +27,6 @@ else:
         AlignCenter,
         AlignLeft,
     )
-    from push_button import *
     from radio_button import *
 
 
@@ -94,12 +96,6 @@ class CreateWalletScreen(Screen):
         self.wallet_save_file_text_box.setFont(font)
         self.wallet_save_file_text_box.setTextInteractionFlags(TextSelectableByMouse)
 
-        self.create_wallet_text_box = Label("")
-        font = Font()
-        font.setFamily("Arial")
-        font.setPixelSize(50)
-        self.create_wallet_text_box.setFont(font)
-
         self.wallet_info_text_box = Label("")
         font = Font()
         font.setFamily("Arial")
@@ -163,7 +159,6 @@ class CreateWalletScreen(Screen):
         self.main_layout.addLayout(self.fifth_horizontal_layout)
         self.main_layout.addLayout(self.sixth_horizontal_layout)
         self.main_layout.addLayout(self.seventh_horizontal_layout)
-        self.main_layout.addLayout(self.eight_horizontal_layout)
 
         self.create_wallet_submit_push_button.setVisible(True)
         self.local_wallet_radio_button.setVisible(True)
@@ -181,24 +176,21 @@ class CreateWalletScreen(Screen):
             self.wallet_save_file_text_box, alignment=AlignCenter
         )
         self.fourth_horizontal_layout.addWidget(
-            self.create_wallet_text_box, alignment=AlignCenter
-        )
-        self.fifth_horizontal_layout.addWidget(
             self.create_wallet_submit_push_button, alignment=AlignCenter
         )
-        self.sixth_horizontal_layout.addWidget(
+        self.fifth_horizontal_layout.addWidget(
             self.pick_wallet_type, alignment=AlignCenter
         )
-        self.seventh_horizontal_layout.addWidget(
+        self.sixth_horizontal_layout.addWidget(
             self.remote_wallet_radio_button, alignment=AlignCenter
         )
-        self.seventh_horizontal_layout.addWidget(
+        self.sixth_horizontal_layout.addWidget(
             self.local_wallet_radio_button, alignment=AlignCenter
         )
-        self.eight_horizontal_layout.addWidget(
+        self.seventh_horizontal_layout.addWidget(
             self.back_button, alignment=(AlignLeft | AlignBottom)
         )
-        self.eight_horizontal_layout.addWidget(
+        self.seventh_horizontal_layout.addWidget(
             self.next_button, alignment=(AlignRight | AlignBottom)
         )
 
@@ -210,7 +202,10 @@ class CreateWalletScreen(Screen):
         Create the wallet based on the user's input information
         """
         if self.which_wallet is None:
-            _ = ShowText(self.create_wallet_text_box, "Failure: need to set the wallet type")
+            msg = MessageBox()
+            msg.setWindowTitle("Status")
+            msg.setText("Failure: need to set the wallet type")
+            msg.exec_()
             return
 
         self.create_wallet()
@@ -237,17 +232,17 @@ class CreateWalletScreen(Screen):
                         self.wallet.phrase = only_res['seed']
                         self.wallet.address = only_res['wallet_address']
                         self.display_seed(self.wallet.phrase)
-                        _ = ShowText(self.create_wallet_text_box, "Success. Make sure to write down your information. \n It will not be saved on this device.")
+                        self.status_message_box("Success. Make sure to write down your information. \n It will not be saved on this device.")
                         self.next_button.setVisible(True)
                     else: 
-                        _ = ShowText(self.create_wallet_text_box, "Failed: could not create remote wallet")
+                        self.status_message_box("Failed: could not create remote wallet")
                         self.next_button.setVisible(False)
                 else:
-                    _ = ShowText(self.create_wallet_text_box, "Failed: could not login or create user")
+                    self.status_message_box("Failed: could not login or create user")
                     self.next_button.setVisible(False)
             except Exception as create_remote_wallet_e:
                 print(create_remote_wallet_e)
-                _ = ShowText(self.create_wallet_text_box, "Failed: unknown error")
+                self.status_message_box("Failed: unknown error")
                 self.next_button.setVisible(False)
         elif self.which_wallet == LOCAL_WALLET:
             try:
@@ -257,21 +252,18 @@ class CreateWalletScreen(Screen):
                     self.next_button.setVisible(True)
             except Exception as create_wallet_e:
                 print(create_wallet_e)
-                _ = ShowText(self.create_wallet_text_box, "Failed: unknown error")
+                self.status_message_box("Failed: unknown error")
                 self.next_button.setVisible(False)
 
             if success:
                 self.display_seed(self.wallet.phrase)
-
-                wallet_save_path_show = ShowText(self.wallet_save_file_text_box, "Wallet saved to: \n " + DENARIID_WALLET_PATH)
-
-                wallet_success_show = ShowText(self.create_wallet_text_box, "Success. Make sure to write down your information. \n It will not be saved on this device.")
-
-            else:
-                wallet_failure_show = ShowText(self.create_wallet_text_box, "Failed: could not create local wallet")
+                self.wallet_save_file_text_box.setText("Wallet saved to: \n " + DENARIID_WALLET_PATH)
+                self.status_message_box("Success. Make sure to write down your information. \n It will not be saved on this device.")
+            else:   
+                self.status_message_box("Failed: could not create local wallet")
                 self.next_button.setVisible(False)
         else: 
-            _ = ShowText(self.create_wallet_text_box, "Failed: need to set the wallet type")
+            self.status_message_box("Failed: need to set the wallet type")
             self.next_button.setVisible(False)
 
     @property

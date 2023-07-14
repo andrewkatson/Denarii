@@ -35,7 +35,7 @@ If you want to not start up the clients and use a testing client then don't pass
 
 ### Mac
 
-`./dist/gui_main` or wherever that file is located.
+`./dist/gui_main --denarii_debug=False` or wherever that file is located.
 
 ## Considerations
 * Between runs you will need to kill `denarii_wallet_rpc_server` sometimes because it can get orphaned on Linux. But if you re-run it will just work so you don't *have* to kill it.

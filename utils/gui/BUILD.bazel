@@ -22,7 +22,7 @@ py_library(
   srcs = [
     "denarii_testing_widget.py", "denarii_testing_window.py", "denarii_testing_font.py", "denarii_testing_label.py",
     "denarii_testing_line_edit.py", "denarii_testing_push_button.py", "denarii_testing_radio_button.py", "denarii_testing_clicked.py",
-    "denarii_testing_qt.py", "denarii_testing_toggled.py"
+    "denarii_testing_qt.py", "denarii_testing_toggled.py", "denarii_testing_message_box.py"
   ], 
   deps = [":constants"], 
   imports = [":constants"],

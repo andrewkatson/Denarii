@@ -5,23 +5,33 @@ from wallet_screen import *
 if TESTING:
     from denarii_testing_font import Font
     from denarii_testing_label import Label
+    from denarii_testing_line_edit import LineEdit
+    from denarii_testing_message_box import MessageBox
+    from denarii_testing_push_button import PushButton
     from denarii_testing_qt import (
         TextSelectableByMouse,
+        AlignRight,
         AlignBottom,
         AlignCenter,
         AlignLeft,
     )
-    from denarii_testing_push_button import PushButton
+    from denarii_testing_radio_button import RadioButton
 else:
     from font import *
     from label import *
+    from line_edit import *
+    from message_box import MessageBox
+    from push_button import *
     from qt import (
         TextSelectableByMouse,
+        AlignRight,
         AlignBottom,
         AlignCenter,
         AlignLeft,
     )
-    from push_button import *
+    from radio_button import *
+
+
 
 
 class LocalWalletScreen(WalletScreen):
@@ -109,8 +119,6 @@ class LocalWalletScreen(WalletScreen):
         self.main_layout.addLayout(self.form_layout)
         self.main_layout.addLayout(self.sixth_horizontal_layout)
         self.main_layout.addLayout(self.seventh_horizontal_layout)
-        self.main_layout.addLayout(self.eight_horizontal_layout)
-        self.main_layout.addLayout(self.ninth_horizontal_layout)
 
         self.transfer_push_button.setVisible(True)
         self.create_sub_address_push_button.setVisible(True)
@@ -151,12 +159,6 @@ class LocalWalletScreen(WalletScreen):
             self.stop_mining_push_button, alignment=AlignCenter
         )
         self.seventh_horizontal_layout.addWidget(
-            self.wallet_transfer_status_text_box, alignment=AlignCenter
-        )
-        self.eight_horizontal_layout.addWidget(
-            self.wallet_info_status_text_box, alignment=AlignCenter
-        )
-        self.ninth_horizontal_layout.addWidget(
             self.back_button, alignment=(AlignLeft | AlignBottom)
         )
 
@@ -197,9 +199,9 @@ class LocalWalletScreen(WalletScreen):
                 )
                 self.sub_address_text_boxes.append(sub_address_text_box)
 
-            self.wallet_info_status_text_box.setText("Success loading wallet info")
+            self.status_message_box("Success loading wallet info")
         else:
-            self.wallet_info_status_text_box.setText("Failure loading wallet info")
+            self.status_message_box("Failure loading wallet info")
 
     def create_sub_address(self):
         """
@@ -228,9 +230,9 @@ class LocalWalletScreen(WalletScreen):
             )
             self.sub_address_text_boxes.append(sub_address_text_box)
 
-            _ = ShowText(self.wallet_info_status_text_box, "Success creating sub address. \n Use this to send denarii to other people.")
+            self.status_message_box("Success creating sub address. \n Use this to send denarii to other people.")
         else:
-            _ = ShowText(self.wallet_info_status_text_box, "Failure creating sub address.")
+            self.status_message_box("Failure creating sub address.")
 
     def start_mining(self):
         """
@@ -247,9 +249,9 @@ class LocalWalletScreen(WalletScreen):
             print(e)
 
         if success:
-            _ = ShowText(self.wallet_info_status_text_box, "Started mining")
+            self.status_message_box("Started mining")
         else:
-            _ = ShowText(self.wallet_info_status_text_box, "Failed to start mining")
+            self.status_message_box("Failed to start mining")
 
     def stop_mining(self):
         """
@@ -264,9 +266,9 @@ class LocalWalletScreen(WalletScreen):
             print(e)
 
         if success:
-            _ = ShowText(self.wallet_info_status_text_box, "Stopped mining")
+            self.status_message_box("Stopped mining")
         else:
-            _ = ShowText(self.wallet_info_status_text_box, "Failed to stop mining")
+            self.status_message_box("Failed to stop mining")
 
     def on_create_sub_address_clicked(self):
         """

@@ -3,15 +3,26 @@ from screen import *
 if TESTING:
     from denarii_testing_font import Font
     from denarii_testing_label import Label
+    from denarii_testing_message_box import MessageBox
     from denarii_testing_push_button import PushButton
-    from denarii_testing_qt import AlignRight, AlignBottom, AlignCenter
+    from denarii_testing_qt import (
+        AlignRight,
+        AlignBottom,
+        AlignCenter,
+    )
     from denarii_testing_radio_button import RadioButton
 else:
     from font import *
     from label import *
+    from message_box import MessageBox
     from push_button import *
-    from qt import AlignRight, AlignBottom, AlignCenter
+    from qt import (
+        AlignRight,
+        AlignBottom,
+        AlignCenter,
+    )
     from radio_button import *
+
 
 
 class LangSelectScreen(Screen):

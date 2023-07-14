@@ -17,11 +17,13 @@ from gui_user import GuiUser
 from wallet import Wallet
 
 # Classes to test
+from buy_denarii_screen import BuyDenariiScreen
 from create_wallet_screen import CreateWalletScreen
 from lang_select_screen import LangSelectScreen
 from local_wallet_screen import LocalWalletScreen
 from remote_wallet_screen import RemoteWalletScreen
 from restore_wallet_screen import RestoreWalletScreen
+from sell_denarii_screen import SellDenariiScreen
 from set_wallet_screen import SetWalletScreen
 from user_info_screen import UserInfoScreen
 from wallet_info_screen import WalletInfoScreen
@@ -55,6 +57,18 @@ def on_restore_wallet_clicked():
     pass
 
 
+def on_buy_screen_clicked():
+    pass
+
+
+def on_sell_screen_clicked():
+    pass
+
+
+def on_remote_wallet_screen_clicked():
+    pass
+
+
 def create_remote_wallet(user, denarii_mobile_client, wallet):
     success, create_user_res = denarii_mobile_client.get_user_id(
         user.name, user.email, user.password
@@ -71,8 +85,8 @@ def create_remote_wallet(user, denarii_mobile_client, wallet):
     assert other_success
 
     only_res = create_wallet_res[0]
-    wallet.phrase = only_res['seed']
-    wallet.address = only_res['wallet_address']
+    wallet.phrase = only_res["seed"]
+    wallet.address = only_res["wallet_address"]
 
     return create_wallet_res
 
@@ -92,7 +106,9 @@ class DenariiDesktopGUICreateWalletScreenTestCase(unittest.TestCase):
         self.gui_user = GuiUser()
         self.gui_user.name = f"create_wallet_screen_name_{self._testMethodName}"
         self.gui_user.password = "password"
-        self.gui_user.email = f"create_wallet_screen_email_{self._testMethodName}@email.com"
+        self.gui_user.email = (
+            f"create_wallet_screen_email_{self._testMethodName}@email.com"
+        )
 
         self.remote_wallet = Wallet(name="remote", password="remote_password")
         self.local_wallet = Wallet(name="local", password="local_password")
@@ -147,7 +163,7 @@ class DenariiDesktopGUICreateWalletScreenTestCase(unittest.TestCase):
 
         # Best we can do is check that they have a seed
         self.assertIsNotNone(self.create_wallet_screen.wallet_info_text_box.text)
-        self.assertNotEqual(self.create_wallet_screen.wallet_info_text_box.text, "")
+        self.assertNotEqual(self.local_wallet.phrase, "")
 
         self.assertIsNotNone(self.create_wallet_screen.wallet_save_file_text_box.text)
         self.assertRegex(
@@ -155,11 +171,6 @@ class DenariiDesktopGUICreateWalletScreenTestCase(unittest.TestCase):
             "Wallet saved to:.*",
         )
 
-        self.assertIsNotNone(self.create_wallet_screen.create_wallet_text_box.text)
-        self.assertEqual(
-            self.create_wallet_screen.create_wallet_text_box.text,
-            "Success. Make sure to write down your information. \n It will not be saved on this device.",
-        )
 
     def test_create_remote_wallet(self):
         self.create_wallet_screen.which_wallet = REMOTE_WALLET
@@ -171,16 +182,11 @@ class DenariiDesktopGUICreateWalletScreenTestCase(unittest.TestCase):
 
         # Best we can do is check that they have a seed
         self.assertIsNotNone(self.create_wallet_screen.wallet_info_text_box.text)
-        self.assertNotEqual(self.create_wallet_screen.wallet_info_text_box.text, "")
+        self.assertNotEqual(self.remote_wallet.phrase, "")
 
         # We dont save a file with create wallet when its remote
         self.assertEqual(self.create_wallet_screen.wallet_save_file_text_box.text, "")
 
-        self.assertIsNotNone(self.create_wallet_screen.create_wallet_text_box.text)
-        self.assertEqual(
-            self.create_wallet_screen.create_wallet_text_box.text,
-            "Success. Make sure to write down your information. \n It will not be saved on this device.",
-        )
 
 
 class DenariiDesktopGUILanguageSelectScreenTestCase(unittest.TestCase):
@@ -201,7 +207,9 @@ class DenariiDesktopGUILanguageSelectScreenTestCase(unittest.TestCase):
         self.gui_user = GuiUser()
         self.gui_user.name = f"language_select_screen_user_{self._testMethodName}"
         self.gui_user.password = "password"
-        self.gui_user.email = f"language_select_screen_email_{self._testMethodName}@email.com"
+        self.gui_user.email = (
+            f"language_select_screen_email_{self._testMethodName}@email.com"
+        )
 
         # We must create each wallet
         create_remote_wallet(
@@ -275,7 +283,9 @@ class DenariiDesktopGUILocalWalletScreenTestCase(unittest.TestCase):
         self.gui_user = GuiUser()
         self.gui_user.name = f"local_wallet_screen_user_{self._testMethodName}"
         self.gui_user.password = "password"
-        self.gui_user.email = f"local_wallet_screen_email_{self._testMethodName}@email.com"
+        self.gui_user.email = (
+            f"local_wallet_screen_email_{self._testMethodName}@email.com"
+        )
 
         # We must create each wallet
         create_remote_wallet(
@@ -320,6 +330,12 @@ class DenariiDesktopGUILocalWalletScreenTestCase(unittest.TestCase):
     def test_teardown(self):
         self.local_wallet_screen.teardown()
 
+    def test_populate_wallet_screen(self):
+        self.local_wallet_screen.populate_wallet_screen()
+
+        self.assertIsNotNone(self.local_wallet_screen.balance_text_box)
+        self.assertIsNotNone(self.local_wallet_screen.address_text_box)
+
     def test_create_sub_address(self):
         self.assertEqual(len(self.local_wallet_screen.sub_address_text_boxes), 0)
 
@@ -327,31 +343,14 @@ class DenariiDesktopGUILocalWalletScreenTestCase(unittest.TestCase):
 
         self.assertEqual(len(self.local_wallet_screen.sub_address_text_boxes), 1)
 
-        self.assertEqual(
-            self.local_wallet_screen.wallet_info_status_text_box.text,
-            "Success creating sub address. \n Use this to send denarii to other people.",
-        )
 
     def test_mining(self):
         self.local_wallet_screen.start_mining()
 
-        self.assertEqual(
-            self.local_wallet_screen.wallet_info_status_text_box.text, "Started mining"
-        )
-
         self.local_wallet_screen.stop_mining()
-
-        self.assertEqual(
-            self.local_wallet_screen.wallet_info_status_text_box.text, "Stopped mining"
-        )
 
     def test_stop_mining_without_starting(self):
         self.local_wallet_screen.stop_mining()
-
-        self.assertEqual(
-            self.local_wallet_screen.wallet_info_status_text_box.text,
-            "Failed to stop mining",
-        )
 
 
 class DenariiDesktopGUIRemoteWalletScreenTestCase(unittest.TestCase):
@@ -372,7 +371,9 @@ class DenariiDesktopGUIRemoteWalletScreenTestCase(unittest.TestCase):
         self.gui_user = GuiUser()
         self.gui_user.name = f"remote_wallet_screen_user_{self._testMethodName}"
         self.gui_user.password = "password"
-        self.gui_user.email = f"remote_wallet_screen_password_{self._testMethodName}@email.com"
+        self.gui_user.email = (
+            f"remote_wallet_screen_password_{self._testMethodName}@email.com"
+        )
 
         # We must create each wallet
         create_remote_wallet(
@@ -406,6 +407,8 @@ class DenariiDesktopGUIRemoteWalletScreenTestCase(unittest.TestCase):
             denarii_client=self.denarii_client,
             remote_wallet=self.remote_wallet,
             gui_user=self.gui_user,
+            on_buy_screen_clicked=on_buy_screen_clicked,
+            on_sell_screen_clicked=on_sell_screen_clicked,
         )
 
     def tearDown(self):
@@ -416,6 +419,12 @@ class DenariiDesktopGUIRemoteWalletScreenTestCase(unittest.TestCase):
 
     def test_teardown(self):
         self.remote_wallet_screen.teardown()
+
+    def test_populate_wallet_screen(self):
+        self.remote_wallet_screen.populate_wallet_screen()
+
+        self.assertIsNotNone(self.remote_wallet_screen.balance_text_box)
+        self.assertIsNotNone(self.remote_wallet_screen.address_text_box)
 
 
 class DenariiDesktopGUIRestoreWalletScreenTestCase(unittest.TestCase):
@@ -436,7 +445,9 @@ class DenariiDesktopGUIRestoreWalletScreenTestCase(unittest.TestCase):
         self.gui_user = GuiUser()
         self.gui_user.name = f"restore_wallet_screen_user_{self._testMethodName}"
         self.gui_user.password = "password"
-        self.gui_user.email = f"restore_wallet_screen_email_{self._testMethodName}@email.com"
+        self.gui_user.email = (
+            f"restore_wallet_screen_email_{self._testMethodName}@email.com"
+        )
 
         # We must create each wallet
         create_remote_wallet(
@@ -502,12 +513,6 @@ class DenariiDesktopGUIRestoreWalletScreenTestCase(unittest.TestCase):
             "Wallet saved to:.*",
         )
 
-        self.assertIsNotNone(self.restore_wallet_screen.restore_wallet_text_box.text)
-        self.assertEqual(
-            self.restore_wallet_screen.restore_wallet_text_box.text,
-            "Success",
-        )
-
     def test_restore_remote_wallet(self):
         self.restore_wallet_screen.which_wallet = REMOTE_WALLET
 
@@ -518,13 +523,6 @@ class DenariiDesktopGUIRestoreWalletScreenTestCase(unittest.TestCase):
         self.restore_wallet_screen.seed_line_edit.text_inner = self.remote_wallet.phrase
 
         self.restore_wallet_screen.restore_wallet()
-
-        self.assertIsNotNone(self.restore_wallet_screen.restore_wallet_text_box.text)
-        self.assertEqual(
-            self.restore_wallet_screen.restore_wallet_text_box.text,
-            "Success",
-        )
-
 
 class DenariiDesktopGUISetWalletScreenTestCase(unittest.TestCase):
     def setUp(self) -> None:
@@ -544,7 +542,9 @@ class DenariiDesktopGUISetWalletScreenTestCase(unittest.TestCase):
         self.gui_user = GuiUser()
         self.gui_user.name = f"set_wallet_screen_user_{self._testMethodName}"
         self.gui_user.password = "password"
-        self.gui_user.email = f"set_wallet_screen_email_{self._testMethodName}@email.com"
+        self.gui_user.email = (
+            f"set_wallet_screen_email_{self._testMethodName}@email.com"
+        )
 
         # We must create each wallet
         create_remote_wallet(
@@ -602,9 +602,8 @@ class DenariiDesktopGUISetWalletScreenTestCase(unittest.TestCase):
         self.assertRegex(
             self.set_wallet_screen.set_wallet_text_box.text, "Success. Your seed is: .*"
         )
-    
-    def test_set_remote_wallet(self):
 
+    def test_set_remote_wallet(self):
         self.set_wallet_screen.which_wallet = REMOTE_WALLET
 
         self.set_wallet_screen.name_line_edit.text_inner = self.remote_wallet.name
@@ -694,11 +693,6 @@ class DenariiDesktopGUIUserInfoScreenTestCase(unittest.TestCase):
 
         self.user_info_screen.store_user_info()
 
-        self.assertIsNotNone(self.user_info_screen.user_info_status_text_box.text)
-        self.assertEqual(
-            self.user_info_screen.user_info_status_text_box.text,
-            "Failure: passwords did not match",
-        )
 
     def test_store_user_info_with_not_matching_passwords(self):
         self.user_info_screen.name_line_edit.text_inner = "Name"
@@ -707,11 +701,6 @@ class DenariiDesktopGUIUserInfoScreenTestCase(unittest.TestCase):
         self.user_info_screen.confirm_password_line_edit.text_inner = "pass"
 
         self.user_info_screen.store_user_info()
-
-        self.assertIsNotNone(self.user_info_screen.user_info_status_text_box.text)
-        self.assertEqual(
-            self.user_info_screen.user_info_status_text_box.text, "Success"
-        )
 
 
 class DenariiDesktopGUIWalletInfoScreenTestCase(unittest.TestCase):
@@ -732,7 +721,9 @@ class DenariiDesktopGUIWalletInfoScreenTestCase(unittest.TestCase):
         self.gui_user = GuiUser()
         self.gui_user.name = f"wallet_info_screen_user_{self._testMethodName}"
         self.gui_user.password = "password"
-        self.gui_user.email = f"wallet_info_screen_email_{self._testMethodName}@email.com"
+        self.gui_user.email = (
+            f"wallet_info_screen_email_{self._testMethodName}@email.com"
+        )
 
         # We must create each wallet
         create_remote_wallet(
@@ -782,6 +773,144 @@ class DenariiDesktopGUIWalletInfoScreenTestCase(unittest.TestCase):
 
     def test_teardown(self):
         self.wallet_info_screeen.teardown()
+
+
+class DenariiDesktopGUIBuyDenariiScreenTestCase(unittest.TestCase):
+    def setUp(self) -> None:
+        super().setUp()
+
+        self.window = Window()
+        self.main_widget = Widget()
+        self.main_widget.setMainLayout(HBoxLayout())
+        self.window.setCentralWidget(self.main_widget)
+
+        self.denarii_mobile_client = DenariiMobileClient()
+        self.denarii_client = DenariiClient()
+
+        self.remote_wallet = Wallet(name="remote", password="remote_password")
+        self.local_wallet = Wallet(name="local", password="local_password")
+
+        self.gui_user = GuiUser()
+        self.gui_user.name = f"buy_denarii_screen_user_{self._testMethodName}"
+        self.gui_user.password = "password"
+        self.gui_user.email = (
+            f"buy_denarii_screen_email_{self._testMethodName}@email.com"
+        )
+
+        # We must create each wallet
+        create_remote_wallet(
+            self.gui_user, self.denarii_mobile_client, self.remote_wallet
+        )
+        self.denarii_client.create_wallet(self.local_wallet)
+
+        # We must set the wallet to the local one
+        self.denarii_client.set_current_wallet(self.local_wallet)
+
+        self.next_button = PushButton("Next Page", self)
+        self.next_button.setStyleSheet("color:black")
+        self.next_button.setStyleSheet("font-weight: bold")
+        self.next_button.setStyleSheet("font-size: 18pt")
+        self.next_button.clicked.connect(next_clicked)
+
+        self.back_button = PushButton("Back", self)
+        self.back_button.setStyleSheet("color:black")
+        self.back_button.setStyleSheet("font-weight: bold")
+        self.back_button.setStyleSheet("font-size: 18pt")
+        self.back_button.clicked.connect(back_clicked)
+
+        common_buttons = {NEXT_BUTTON: self.next_button, BACK_BUTTON: self.back_button}
+
+        self.buy_denarii_screen = BuyDenariiScreen(
+            push_buttons=common_buttons,
+            parent=self,
+            denarii_mobile_client=self.denarii_mobile_client,
+            main_layout=self.main_widget.main_layout,
+            deletion_func=deletion_function,
+            denarii_client=self.denarii_client,
+            remote_wallet=self.remote_wallet,
+            local_wallet=self.local_wallet,
+            gui_user=self.gui_user,
+            on_remote_wallet_screen_clicked=on_remote_wallet_screen_clicked,
+            on_sell_screen_clicked=on_sell_screen_clicked,
+        )
+
+    def tearDown(self):
+        super().tearDown()
+
+    def test_setup(self):
+        self.buy_denarii_screen.setup()
+
+    def test_teardown(self):
+        self.buy_denarii_screen.teardown()
+
+
+class DenariiDesktopGUISellDenariiScreenTestCase(unittest.TestCase):
+    def setUp(self) -> None:
+        super().setUp()
+
+        self.window = Window()
+        self.main_widget = Widget()
+        self.main_widget.setMainLayout(HBoxLayout())
+        self.window.setCentralWidget(self.main_widget)
+
+        self.denarii_mobile_client = DenariiMobileClient()
+        self.denarii_client = DenariiClient()
+
+        self.remote_wallet = Wallet(name="remote", password="remote_password")
+        self.local_wallet = Wallet(name="local", password="local_password")
+
+        self.gui_user = GuiUser()
+        self.gui_user.name = f"sell_denarii_screen_user_{self._testMethodName}"
+        self.gui_user.password = "password"
+        self.gui_user.email = (
+            f"sell_denarii_screen_email_{self._testMethodName}@email.com"
+        )
+
+        # We must create each wallet
+        create_remote_wallet(
+            self.gui_user, self.denarii_mobile_client, self.remote_wallet
+        )
+        self.denarii_client.create_wallet(self.local_wallet)
+
+        # We must set the wallet to the local one
+        self.denarii_client.set_current_wallet(self.local_wallet)
+
+        self.next_button = PushButton("Next Page", self)
+        self.next_button.setStyleSheet("color:black")
+        self.next_button.setStyleSheet("font-weight: bold")
+        self.next_button.setStyleSheet("font-size: 18pt")
+        self.next_button.clicked.connect(next_clicked)
+
+        self.back_button = PushButton("Back", self)
+        self.back_button.setStyleSheet("color:black")
+        self.back_button.setStyleSheet("font-weight: bold")
+        self.back_button.setStyleSheet("font-size: 18pt")
+        self.back_button.clicked.connect(back_clicked)
+
+        common_buttons = {NEXT_BUTTON: self.next_button, BACK_BUTTON: self.back_button}
+
+        self.sell_denarii_screen = SellDenariiScreen(
+            push_buttons=common_buttons,
+            parent=self,
+            denarii_mobile_client=self.denarii_mobile_client,
+            main_layout=self.main_widget.main_layout,
+            deletion_func=deletion_function,
+            denarii_client=self.denarii_client,
+            remote_wallet=self.remote_wallet,
+            local_wallet=self.local_wallet,
+            gui_user=self.gui_user,
+            on_remote_wallet_screen_clicked=on_remote_wallet_screen_clicked,
+            on_buy_screen_clicked=on_buy_screen_clicked,
+        )
+
+    def tearDown(self):
+        super().tearDown()
+
+    def test_setup(self):
+        self.sell_denarii_screen.setup()
+
+    def test_teardown(self):
+        self.sell_denarii_screen.teardown()
 
 
 if __name__ == "__main__":

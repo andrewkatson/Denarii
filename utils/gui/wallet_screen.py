@@ -4,25 +4,35 @@ from screen import *
 from stoppable_thread import StoppableThread
 from wallet import *
 
-
 if TESTING:
     from denarii_testing_font import Font
     from denarii_testing_label import Label
     from denarii_testing_line_edit import LineEdit
+    from denarii_testing_message_box import MessageBox
+    from denarii_testing_push_button import PushButton
     from denarii_testing_qt import (
         TextSelectableByMouse,
+        AlignRight,
+        AlignBottom,
+        AlignCenter,
+        AlignLeft,
     )
-    from denarii_testing_push_button import PushButton
+    from denarii_testing_radio_button import RadioButton
 else:
-    from PyQt5.QtCore import *
-
     from font import *
     from label import *
     from line_edit import *
+    from message_box import MessageBox
+    from push_button import *
     from qt import (
         TextSelectableByMouse,
+        AlignRight,
+        AlignBottom,
+        AlignCenter,
+        AlignLeft,
     )
-    from push_button import *
+    from radio_button import *
+
 
 
 class WalletScreen(Screen):
@@ -48,8 +58,6 @@ class WalletScreen(Screen):
         self.your_balance_label = None
         self.balance_text_box = None
         self.address_text_box = None
-        self.wallet_info_status_text_box = None
-        self.wallet_transfer_status_text_box = None
         self.address_line_edit = None
         self.amount_line_edit = None
         self.transfer_push_button = None
@@ -107,18 +115,6 @@ class WalletScreen(Screen):
         self.address_text_box.setFont(font)
         self.address_text_box.setTextInteractionFlags(TextSelectableByMouse)
 
-        self.wallet_info_status_text_box = Label("")
-        font = Font()
-        font.setFamily("Arial")
-        font.setPixelSize(50)
-        self.wallet_info_status_text_box.setFont(font)
-
-        self.wallet_transfer_status_text_box = Label("")
-        font = Font()
-        font.setFamily("Arial")
-        font.setPixelSize(50)
-        self.wallet_transfer_status_text_box.setFont(font)
-
         self.address_line_edit = LineEdit()
         self.amount_line_edit = LineEdit()
 
@@ -131,6 +127,7 @@ class WalletScreen(Screen):
 
     def setup(self):
         super().setup()
+
         self.deletion_func(self.main_layout)
 
         self.keep_refreshing_balance = True
@@ -161,9 +158,9 @@ class WalletScreen(Screen):
             print(e)
 
         if success:
-            self.wallet_transfer_status_text_box.setText("Success transferring money")
+            self.status_message_box("Success transferring money")
         else:
-            self.wallet_transfer_status_text_box.setText("Failure transferring money")
+            self.status_message_box("Failure transferring money")
 
     def refresh_balance(self):
         while self.keep_refreshing_balance:
@@ -173,7 +170,25 @@ class WalletScreen(Screen):
                 continue
 
             try:
-                self.balance = self.denarii_client.get_balance_of_wallet(self.wallet)
+
+                if self.suffix_of_screen_name == self.remote_wallet_suffix:
+                    self.balance = 0
+
+                    if self.gui_user.user_id is None:
+                        success, res = self.denarii_mobile_client.get_user_id(self.gui_user.name, self.gui_user.email, self.gui_user.password)
+                        if success: 
+                            self.gui_user.user_id = res[0]['user_id']
+                            success, res= self.try_to_get_balance_of_remote_wallet()
+                            if success: 
+                                self.balance = res[0]['balance']
+                    else: 
+                        success, res = self.try_to_get_balance_of_remote_wallet()
+
+                        if success: 
+                            self.balance = res[0]['balance']
+
+                else:
+                    self.balance = self.denarii_client.get_balance_of_wallet(self.wallet)
                 self.set_wallet_balance()
 
             except Exception as e:
@@ -188,3 +203,7 @@ class WalletScreen(Screen):
     def set_wallet_balance(self):
         # We need to adjust the balance because it is in picomonero
         self.balance_text_box.setText(str(self.balance * 0.000000000001))
+
+    def try_to_get_balance_of_remote_wallet(self):
+        return self.denarii_mobile_client.get_balance(self.gui_user.user_id, self.wallet.name)
+

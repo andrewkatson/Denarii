@@ -4,24 +4,31 @@ if TESTING:
     from denarii_testing_font import Font
     from denarii_testing_label import Label
     from denarii_testing_line_edit import LineEdit
+    from denarii_testing_message_box import MessageBox
+    from denarii_testing_push_button import PushButton
     from denarii_testing_qt import (
+        TextSelectableByMouse,
+        AlignRight,
         AlignBottom,
         AlignCenter,
         AlignLeft,
     )
-    from denarii_testing_push_button import PushButton
     from denarii_testing_radio_button import RadioButton
 else:
     from font import *
     from label import *
     from line_edit import *
+    from message_box import MessageBox
+    from push_button import *
     from qt import (
+        TextSelectableByMouse,
+        AlignRight,
         AlignBottom,
         AlignCenter,
         AlignLeft,
     )
-    from push_button import *
     from radio_button import *
+
 
 
 class WalletInfoScreen(Screen):

@@ -22,6 +22,7 @@ try:
     from PyQt5.QtGui import *
     from PyQt5.QtWidgets import *
 
+    from buy_denarii_screen import *
     from constants import *
     from create_wallet_screen import *
     from font import *
@@ -34,6 +35,7 @@ try:
     from remote_wallet_screen import *
     from restore_wallet_screen import *
     from screen import *
+    from sell_denarii_screen import *
     from set_wallet_screen import *
     from stoppable_thread import StoppableThread
     from user_info_screen import *
@@ -113,7 +115,7 @@ try:
     def store_user():
         global gui_user
         with open(USER_SETTINGS_PATH, "wb") as output_file:
-            # We dont save the user identifier. 
+            # We dont save the user identifier.
             user_id = gui_user.user_id
             gui_user.user_id = None
             pkl.dump(gui_user, output_file)
@@ -198,6 +200,9 @@ try:
                 "local_wallet": self.local_wallet,
                 "set_wallet_type_callback": self.set_wallet_type,
                 "denarii_mobile_client": self.denarii_mobile_client,
+                "on_sell_screen_clicked": self.on_sell_denarii_screen_pushed,
+                "on_buy_screen_clicked": self.on_buy_denarii_screen_pushed,
+                "on_remote_wallet_screen_clicked": self.on_remote_wallet_screen_pushed
             }
 
             if os.path.exists(USER_SETTINGS_PATH):
@@ -290,7 +295,37 @@ try:
                 parent=self,
                 remote_wallet=self.remote_wallet,
                 gui_user=gui_user,
+                on_buy_screen_clicked=self.on_buy_denarii_screen_pushed,
+                on_sell_screen_clicked=self.on_sell_denarii_screen_pushed,
             )
+            self.BUY_DENARII = BuyDenariiScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+                on_remote_wallet_screen_clicked=self.on_remote_wallet_screen_pushed,
+                on_sell_screen_clicked=self.on_sell_denarii_screen_pushed,
+            )
+            self.SELL_DENARII = SellDenariiScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+                on_remote_wallet_screen_clicked=self.on_remote_wallet_screen_pushed,
+                on_buy_screen_clicked=self.on_buy_denarii_screen_pushed,
+            )
+
+            self.last_widget_stack = []
 
             # Determine what scene we are on based on what info the stored user has
             if (gui_user.language is None or gui_user.language == "") and (
@@ -313,12 +348,21 @@ try:
             else:
                 self.current_widget = self.WALLET_INFO
 
-            self.last_widget = None
             self.setup_current_widget()
 
             self.parent = parent
 
             self.success = False
+
+        def get_last_widget(self):
+            if len(self.last_widget_stack) == 0: 
+                return None 
+            return self.last_widget_stack[len(self.last_widget_stack) - 1]
+
+        def pop_last_widget(self):
+            if len(self.last_widget_stack) == 0: 
+                return self.current_widget 
+            return self.last_widget_stack.pop()
 
         def run_denariid_setup(self):
             self.denariid = self.setup_denariid()
@@ -526,14 +570,15 @@ try:
 
         def shutdown_all_screens(self):
             # We should only have to turn down the current one.
-            self.current_widget.teardown()
+            if self.current_widget is not None:
+                self.current_widget.teardown()
 
         @pyqtSlot()
         def next_clicked(self):
             """
             What to do when the next page button is clicked depending on the current screen
             """
-            self.last_widget = self.current_widget
+            self.last_widget_stack.append(self.current_widget)
             if self.current_widget == self.LANG_SELECT:
                 self.current_widget = self.USER_INFO
             elif self.current_widget == self.USER_INFO:
@@ -557,23 +602,8 @@ try:
             """
             What to do when the back_button button is clicked depending on the current screen
             """
-            self.last_widget = self.current_widget
-            if self.current_widget == self.LANG_SELECT:
-                # The back button on lang select should do nothing
-                self.current_widget = self.LANG_SELECT
-            elif self.current_widget == self.USER_INFO:
-                self.current_widget = self.LANG_SELECT
-            elif self.current_widget == self.WALLET_INFO:
-                self.current_widget = self.USER_INFO
-            elif self.current_widget == self.CREATE_WALLET:
-                self.current_widget = self.WALLET_INFO
-            elif self.current_widget == self.RESTORE_WALLET:
-                self.current_widget = self.WALLET_INFO
-            elif self.current_widget == self.SET_WALLET:
-                self.current_widget = self.WALLET_INFO
-            elif self.current_widget == self.current_wallet_widget:
-                self.current_widget = self.WALLET_INFO
 
+            self.current_widget = self.pop_last_widget()
             self.setup_current_widget()
 
             store_user()
@@ -583,6 +613,7 @@ try:
             """
             Setup the wallet creation screen when the user decides to create one
             """
+            self.last_widget_stack.append(self.current_widget)
             self.current_widget = self.CREATE_WALLET
             self.setup_current_widget()
 
@@ -591,6 +622,7 @@ try:
             """
             Setup the restore wallet screen when the user decides to restore one
             """
+            self.last_widget_stack.append(self.current_widget)
             self.current_widget = self.RESTORE_WALLET
             self.setup_current_widget()
 
@@ -599,15 +631,45 @@ try:
             """
             Setup the set wallet to set one saved to disk
             """
+            self.last_widget_stack.append(self.current_widget)
             self.current_widget = self.SET_WALLET
             self.setup_current_widget()
 
-        def setup_current_widget(self):
-            if self.last_widget is not None:
-                self.last_widget.teardown()
+        @pyqtSlot()
+        def on_buy_denarii_screen_pushed(self):
+            """
+            Navigate to the buy denarii screen of the remote wallet
+            """
+            self.last_widget_stack.append(self.current_widget)
+            self.current_widget = self.BUY_DENARII
+            self.setup_current_widget()
 
-            self.current_widget.init(**self.kwargs)
-            self.current_widget.setup()
+        @pyqtSlot()
+        def on_sell_denarii_screen_pushed(self):
+            """
+            Navigate to the sell denarii screen of the remote wallet
+            """
+            self.last_widget_stack.append(self.current_widget)
+            self.current_widget = self.SELL_DENARII
+            self.setup_current_widget()
+
+        @pyqtSlot()
+        def on_remote_wallet_screen_pushed(self):
+            """
+            Navigate to the remote wallet screen
+            """
+            self.last_widget_stack.append(self.current_widget)
+            self.current_widget = self.REMOTE_WALLET_SCREEN
+            self.setup_current_widget()
+
+        def setup_current_widget(self):
+            if self.get_last_widget() is not None:
+                self.get_last_widget().teardown()
+
+            if self.current_widget is not None: 
+                self.current_widget.init(**self.kwargs)
+
+                self.current_widget.setup()
 
         @property
         def wallet(self):

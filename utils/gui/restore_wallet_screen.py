@@ -4,6 +4,8 @@ if TESTING:
     from denarii_testing_font import Font
     from denarii_testing_label import Label
     from denarii_testing_line_edit import LineEdit
+    from denarii_testing_message_box import MessageBox
+    from denarii_testing_push_button import PushButton
     from denarii_testing_qt import (
         TextSelectableByMouse,
         AlignRight,
@@ -11,12 +13,13 @@ if TESTING:
         AlignCenter,
         AlignLeft,
     )
-    from denarii_testing_push_button import PushButton
     from denarii_testing_radio_button import RadioButton
 else:
     from font import *
     from label import *
     from line_edit import *
+    from message_box import MessageBox
+    from push_button import *
     from qt import (
         TextSelectableByMouse,
         AlignRight,
@@ -24,8 +27,9 @@ else:
         AlignCenter,
         AlignLeft,
     )
-    from push_button import *
     from radio_button import *
+
+
 
 
 class RestoreWalletScreen(Screen):
@@ -37,7 +41,6 @@ class RestoreWalletScreen(Screen):
 
         self.restore_wallet_label = None
         self.wallet_save_file_text_box = None
-        self.restore_wallet_text_box = None
         self.restore_wallet_submit_push_button = None
         self.name_line_edit = None
         self.password_line_edit = None
@@ -76,12 +79,6 @@ class RestoreWalletScreen(Screen):
         font.setPixelSize(50)
         self.wallet_save_file_text_box.setFont(font)
         self.wallet_save_file_text_box.setTextInteractionFlags(TextSelectableByMouse)
-
-        self.restore_wallet_text_box = Label("")
-        font = Font()
-        font.setFamily("Arial")
-        font.setPixelSize(50)
-        self.restore_wallet_text_box.setFont(font)
 
         self.restore_wallet_submit_push_button = PushButton("Submit", kwargs["parent"])
         self.restore_wallet_submit_push_button.clicked.connect(
@@ -139,7 +136,6 @@ class RestoreWalletScreen(Screen):
         self.main_layout.addLayout(self.fourth_horizontal_layout)
         self.main_layout.addLayout(self.fifth_horizontal_layout)
         self.main_layout.addLayout(self.sixth_horizontal_layout)
-        self.main_layout.addLayout(self.seventh_horizontal_layout)
 
         self.restore_wallet_submit_push_button.setVisible(True)
         self.local_wallet_radio_button.setVisible(True)
@@ -155,24 +151,21 @@ class RestoreWalletScreen(Screen):
             self.wallet_save_file_text_box, alignment=AlignCenter
         )
         self.third_horizontal_layout.addWidget(
-            self.restore_wallet_text_box, alignment=AlignCenter
-        )
-        self.fourth_horizontal_layout.addWidget(
             self.restore_wallet_submit_push_button, alignment=AlignCenter
         )
-        self.fifth_horizontal_layout.addWidget(
+        self.fourth_horizontal_layout.addWidget(
             self.pick_wallet_type, alignment=AlignCenter
         )
-        self.sixth_horizontal_layout.addWidget(
+        self.fifth_horizontal_layout.addWidget(
             self.remote_wallet_radio_button, alignment=AlignCenter
         )
-        self.sixth_horizontal_layout.addWidget(
+        self.fifth_horizontal_layout.addWidget(
             self.local_wallet_radio_button, alignment=AlignCenter
         )
-        self.seventh_horizontal_layout.addWidget(
+        self.sixth_horizontal_layout.addWidget(
             self.back_button, alignment=(AlignLeft | AlignBottom)
         )
-        self.seventh_horizontal_layout.addWidget(
+        self.sixth_horizontal_layout.addWidget(
             self.next_button, alignment=(AlignRight | AlignBottom)
         )
 
@@ -198,17 +191,17 @@ class RestoreWalletScreen(Screen):
                     if success: 
                         only_res = res[0]
                         self.wallet.address = only_res['wallet_address']
-                        _ = ShowText(self.restore_wallet_text_box, "Success")
+                        self.status_message_box("Success")
                         self.next_button.setVisible(True)
                     else: 
-                        _ = ShowText(self.restore_wallet_text_box, "Failed: could not restore remote wallet")
+                        self.status_message_box("Failed: could not restore remote wallet")
                         self.next_button.setVisible(False)
                 else:
-                    _ = ShowText(self.restore_wallet_text_box, "Failed: could not login or create user")
+                    self.status_message_box("Failed: could not login or create user")
                     self.next_button.setVisible(False)
             except Exception as create_remote_wallet_e:
                 print(create_remote_wallet_e)
-                _ = ShowText(self.restore_wallet_text_box, "Failed: unknown error")
+                self.status_message_box("Failed: unknown error")
                 self.next_button.setVisible(False)
 
         elif self.which_wallet == LOCAL_WALLET:
@@ -218,17 +211,17 @@ class RestoreWalletScreen(Screen):
                     self.next_button.setVisible(True)
             except Exception as e:
                 print(e)
-                _ = ShowText(self.restore_wallet_text_box, "Failed: unknown error")
+                self.status_message_box("Failed: unknown error")
                 self.next_button.setVisible(False)
 
             if success:
-                wallet_save_file_show_text = ShowText(self.wallet_save_file_text_box, "Wallet saved to: \n " + DENARIID_WALLET_PATH)
-                restore_wallet_text_box = ShowText(self.restore_wallet_text_box, "Success")
+                self.wallet_save_file_text_box.setText("Wallet saved to: \n " + DENARIID_WALLET_PATH)
+                self.status_message_box("Success")
             else:
-                wallet_save_file_show_text = ShowText(self.wallet_save_file_text_box, "Wallet already at (or does not exist): \n " + DENARIID_WALLET_PATH)
-                restore_wallet_text_box = ShowText(self.restore_wallet_text_box, "Failure")
+                self.wallet_save_file_text_box.setText("Wallet already at (or does not exist): \n " + DENARIID_WALLET_PATH)
+                self.status_message_box("Failure")
         else: 
-            _ = ShowText(self.restore_wallet_text_box, "Failure: need to set the wallet type")
+            self.status_message_box("Failure: need to set the wallet type")
 
 
 
@@ -237,7 +230,7 @@ class RestoreWalletScreen(Screen):
         Restore a wallet based on the user's input information
         """
         if self.which_wallet is None:
-            _ = ShowText(self.restore_wallet_text_box, "Failure: need to set the wallet type")
+            self.status_message_box("Failure: need to set the wallet type")
             return
 
         self.restore_wallet()

@@ -4,6 +4,8 @@ if TESTING:
     from denarii_testing_font import Font
     from denarii_testing_label import Label
     from denarii_testing_line_edit import LineEdit
+    from denarii_testing_message_box import MessageBox
+    from denarii_testing_push_button import PushButton
     from denarii_testing_qt import (
         TextSelectableByMouse,
         AlignRight,
@@ -11,12 +13,13 @@ if TESTING:
         AlignCenter,
         AlignLeft,
     )
-    from denarii_testing_push_button import PushButton
     from denarii_testing_radio_button import RadioButton
 else:
     from font import *
     from label import *
     from line_edit import *
+    from message_box import MessageBox
+    from push_button import *
     from qt import (
         TextSelectableByMouse,
         AlignRight,
@@ -24,8 +27,9 @@ else:
         AlignCenter,
         AlignLeft,
     )
-    from push_button import *
     from radio_button import *
+
+
 
 
 class SetWalletScreen(Screen):
@@ -197,14 +201,14 @@ class SetWalletScreen(Screen):
                         self.display_seed("Success. Your seed is: ", self.wallet.phrase)
                         self.next_button.setVisible(True)
                     else: 
-                        _ = ShowText(self.set_wallet_text_box, "Failed: could not open remote wallet")
+                        self.status_message_box("Failed: could not open remote wallet")
                         self.next_button.setVisible(False)
                 else:
-                    _ = ShowText(self.set_wallet_text_box, "Failed: could not login or create user")
+                    self.status_message_box("Failed: could not login or create user")
                     self.next_button.setVisible(False)
             except Exception as set_wallet_e: 
                 print(set_wallet_e)
-                _ = ShowText(self.set_wallet_text_box, "Failed: unknown error")
+                self.status_message_box("Failed: unknown error")
                 self.next_button.setVisible(False)
         elif self.which_wallet == LOCAL_WALLET:
             try:
@@ -214,15 +218,15 @@ class SetWalletScreen(Screen):
                     self.next_button.setVisible(True)
             except Exception as set_wallet_e:
                 print(set_wallet_e)
-                _ = ShowText(self.set_wallet_text_box, "Failed: unknown error")
+                self.status_message_box("Failed: unknown error")
                 self.next_button.setVisible(False)
 
             if success:
                 self.display_seed("Success. Your seed is: ", self.wallet.phrase)
             else:
-                _ = ShowText(self.set_wallet_text_box, "Failed: could not open the wallet or get the seed")
+                self.status_message_box("Failed: could not open the wallet or get the seed")
         else: 
-            _ = ShowText(self.set_wallet_text_box, "Failed: need to set a wallet type")
+            self.status_message_box("Failed: need to set a wallet type")
 
 
     def on_set_wallet_submit_clicked(self):
@@ -230,7 +234,7 @@ class SetWalletScreen(Screen):
         Set a wallet based on the user's input information
         """
         if self.which_wallet is None:
-            _ = ShowText(self.set_wallet_text_box, "Failed: need to set a wallet type")
+            self.status_message_box("Failed: need to set a wallet type")
             return
 
         self.set_wallet()
@@ -259,4 +263,4 @@ class SetWalletScreen(Screen):
         second = " ".join(split[thirds : thirds * 2])
         third = "".join(split[thirds * 2 :])
 
-        self.set_wallet_text_box.setText(f"{prefix}\n{first}\n{second}\n{third}")
+        self.set_wallet_text_box.setText(f"{prefix}{first}\n{second}\n{third}")

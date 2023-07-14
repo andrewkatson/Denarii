@@ -4,26 +4,32 @@ if TESTING:
     from denarii_testing_font import Font
     from denarii_testing_label import Label
     from denarii_testing_line_edit import LineEdit
+    from denarii_testing_message_box import MessageBox
+    from denarii_testing_push_button import PushButton
     from denarii_testing_qt import (
+        TextSelectableByMouse,
         AlignRight,
         AlignBottom,
         AlignCenter,
         AlignLeft,
     )
-    from denarii_testing_push_button import PushButton
     from denarii_testing_radio_button import RadioButton
 else:
     from font import *
     from label import *
     from line_edit import *
+    from message_box import MessageBox
+    from push_button import *
     from qt import (
+        TextSelectableByMouse,
         AlignRight,
         AlignBottom,
         AlignCenter,
         AlignLeft,
     )
-    from push_button import *
     from radio_button import *
+
+
 
 class UserInfoScreen(Screen):
     """
@@ -77,12 +83,6 @@ class UserInfoScreen(Screen):
         self.confirm_password_line_edit = LineEdit()
         self.confirm_password_line_edit.setEchoMode(LineEdit.Password)
 
-        self.user_info_status_text_box = Label("")
-        font = Font()
-        font.setFamily("Arial")
-        font.setPixelSize(50)
-        self.user_info_status_text_box.setFont(font)
-
         self.submit_button = PushButton("Submit", kwargs["parent"])
         self.submit_button.clicked.connect(lambda: self.on_submit_clicked())
         self.submit_button.setVisible(False)
@@ -100,7 +100,6 @@ class UserInfoScreen(Screen):
         self.main_layout.addLayout(self.form_layout)
         self.main_layout.addLayout(self.second_horizontal_layout)
         self.main_layout.addLayout(self.third_horizontal_layout)
-        self.main_layout.addLayout(self.fourth_horizontal_layout)
 
         self.submit_button.setVisible(True)
 
@@ -115,12 +114,9 @@ class UserInfoScreen(Screen):
             self.submit_button, alignment=AlignCenter
         )
         self.third_horizontal_layout.addWidget(
-            self.user_info_status_text_box, alignment=AlignCenter
-        )
-        self.fourth_horizontal_layout.addWidget(
             self.back_button, alignment=(AlignLeft | AlignBottom)
         )
-        self.fourth_horizontal_layout.addWidget(
+        self.third_horizontal_layout.addWidget(
             self.next_button, alignment=(AlignRight | AlignBottom)
         )
 
@@ -136,9 +132,9 @@ class UserInfoScreen(Screen):
             and self.confirm_password_line_edit.text() != ""
             and self.password_line_edit.text() != self.confirm_password_line_edit.text()
         ):
-            _ = ShowText(self.user_info_status_text_box, "Failure: passwords did not match")
+           self.status_message_box("Failure: passwords did not match")
         else:
-            _ = ShowText(self.user_info_status_text_box, "Success")
+            self.status_message_box("Success")
             self.gui_user.name = self.name_line_edit.text()
             self.gui_user.email = self.email_line_edit.text()
             self.gui_user.password = self.password_line_edit.text()
