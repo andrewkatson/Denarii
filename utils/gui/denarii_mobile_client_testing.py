@@ -328,10 +328,14 @@ class DenariiMobileClient:
             return False
 
         for _, value in users.items():
-            if value.username == username_or_email or value.email == username_or_email:
+            if value.name == username_or_email or value.email == username_or_email:
                 value.reset_requested = True
-                value.reset_id = create_identifier()
-                print(f"Rest id is {value.reset_id}")
+                # We need a static reset identifier for testing
+                if TESTING:
+                    value.reset_id = 4
+                else: 
+                    value.reset_id = create_identifier()
+                    print(f"Reset Id: {value.reset_id}")
                 store_user(value)
                 return True
         return False
@@ -344,7 +348,7 @@ class DenariiMobileClient:
             return False
 
         for _, value in users.items():
-            if value.username == username_or_email or value.email == username_or_email:
+            if value.name == username_or_email or value.email == username_or_email:
                 if value.reset_requested and value.reset_id == reset_id:
                     value.reset_requested = False
                     value.reset_id = -1

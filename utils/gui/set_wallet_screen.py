@@ -195,7 +195,8 @@ class SetWalletScreen(Screen):
                     only_res = res[0]
                     self.wallet.address = only_res['wallet_address']
                     self.wallet.phrase = only_res['seed']
-                    self.display_seed("Success. Your seed is: ", self.wallet.phrase)
+                    self.display_seed("Your seed is: ", self.wallet.phrase)
+                    self.status_message_box("Success")
                     self.next_button.setVisible(True)
                 else: 
                     self.status_message_box("Failed: could not open remote wallet")
@@ -216,7 +217,8 @@ class SetWalletScreen(Screen):
                 self.next_button.setVisible(False)
 
             if success:
-                self.display_seed("Success. Your seed is: ", self.wallet.phrase)
+                self.display_seed("Your seed is: ", self.wallet.phrase)
+                self.status_message_box("Success")
             else:
                 self.status_message_box("Failed: could not open the wallet or get the seed")
         else: 

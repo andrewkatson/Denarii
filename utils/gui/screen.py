@@ -88,6 +88,9 @@ class Screen:
 
         self.next_button = None
         self.back_button = None
+
+        self.status_msg = None
+
         self.init(**kwargs)
 
     def init(self, **kwargs):
@@ -116,7 +119,7 @@ class Screen:
         return self.screen_name
 
     def status_message_box(self, status):
-        msg = MessageBox()
-        msg.setWindowTitle("Status")
-        msg.setText(status)
-        msg.exec_()
+        self.status_msg = MessageBox()
+        self.status_msg.setWindowTitle("Status")
+        self.status_msg.setText(status)
+        self.status_msg.exec_()
