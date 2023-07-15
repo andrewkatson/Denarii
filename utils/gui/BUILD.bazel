@@ -3,6 +3,11 @@ load("@com_google_protobuf//:protobuf.bzl", "py_proto_library")
 
 package(default_visibility = ["//visibility:public"])
 
+filegroup(
+  name = "images", 
+  srcs = ["red_x.png"]
+)
+
 py_library(
   name = "constants",
   srcs = ["constants.py"],
@@ -22,7 +27,7 @@ py_library(
   srcs = [
     "denarii_testing_widget.py", "denarii_testing_window.py", "denarii_testing_font.py", "denarii_testing_label.py",
     "denarii_testing_line_edit.py", "denarii_testing_push_button.py", "denarii_testing_radio_button.py", "denarii_testing_clicked.py",
-    "denarii_testing_qt.py", "denarii_testing_toggled.py", "denarii_testing_message_box.py"
+    "denarii_testing_qt.py", "denarii_testing_toggled.py", "denarii_testing_message_box.py", "denarii_testing_pixmap.py",
   ], 
   deps = [":constants"], 
   imports = [":constants"],
@@ -52,7 +57,8 @@ py_library(
         "workspace_path_finder.py", "denarii_client.py", "denarii_mobile_client.py"
     ]),
     deps = [":testing_clients", ":clients"],
-    imports = [":testing_clients", ":clients"] 
+    imports = [":testing_clients", ":clients"], 
+    data = [":images"],
 )
 
 py_binary(
