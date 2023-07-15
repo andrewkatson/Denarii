@@ -30,15 +30,21 @@ try:
     from lang_select_screen import *
     from line_edit import *
     from local_wallet_screen import *
+    from login_or_register_screen import *
+    from login_screen import *
     from push_button import *
     from radio_button import *
+    from register_screen import *
     from remote_wallet_screen import *
+    from request_reset_screen import *
+    from reset_password_screen import *
     from restore_wallet_screen import *
     from screen import *
     from sell_denarii_screen import *
     from set_wallet_screen import *
     from stoppable_thread import StoppableThread
     from user_info_screen import *
+    from verify_reset_screen import *
     from wallet_info_screen import *
     from wallet_screen import *
 
@@ -202,7 +208,9 @@ try:
                 "denarii_mobile_client": self.denarii_mobile_client,
                 "on_sell_screen_clicked": self.on_sell_denarii_screen_pushed,
                 "on_buy_screen_clicked": self.on_buy_denarii_screen_pushed,
-                "on_remote_wallet_screen_clicked": self.on_remote_wallet_screen_pushed
+                "on_remote_wallet_screen_clicked": self.on_remote_wallet_screen_pushed,
+                "on_login_clicked": self.on_login_pushed,
+                "on_register_clicked": self.on_register_pushed
             }
 
             if os.path.exists(USER_SETTINGS_PATH):
@@ -217,15 +225,6 @@ try:
                 deletion_func=self.remove_all_widgets,
                 denarii_mobile_client=self.denarii_mobile_client,
                 denarii_client=self.denarii_client,
-            )
-            self.USER_INFO = UserInfoScreen(
-                push_buttons=common_buttons,
-                main_layout=self.main_layout,
-                denarii_mobile_client=self.denarii_mobile_client,
-                deletion_func=self.remove_all_widgets,
-                gui_user=gui_user,
-                denarii_client=self.denarii_client,
-                parent=self,
             )
             self.WALLET_INFO = WalletInfoScreen(
                 push_buttons=common_buttons,
@@ -324,9 +323,78 @@ try:
                 on_remote_wallet_screen_clicked=self.on_remote_wallet_screen_pushed,
                 on_buy_screen_clicked=self.on_buy_denarii_screen_pushed,
             )
+            self.LOGIN_OR_REGISTER = LoginOrRegisterScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+                on_login_clicked=self.on_login_pushed,
+                on_register_clicked=self.on_register_pushed
+            )
+            self.LOGIN_SCREEN = LoginScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+            )
+            self.REGISTER_SCREEN = RegisterScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+            )
+            self.REQUEST_RESET_SCREEN = RequestResetScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+            )
+            self.RESET_PASSWORD_SCREEN = ResetPasswordScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+            )
+            self.VERIFY_RESET_SCREEN = VerifyResetScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+            )
 
             self.last_widget_stack = []
 
+            self.current_widget = self.LANG_SELECT
             # Determine what scene we are on based on what info the stored user has
             if (gui_user.language is None or gui_user.language == "") and (
                 gui_user.name is None or gui_user.name == ""
@@ -337,16 +405,7 @@ try:
                 and gui_user.language != ""
                 and (gui_user.name is None or gui_user.name == "")
             ):
-                self.current_widget = self.USER_INFO
-            elif (
-                gui_user.language is not None
-                and gui_user.language != ""
-                and gui_user.name is not None
-                and gui_user.name != ""
-            ):
-                self.current_widget = self.WALLET_INFO
-            else:
-                self.current_widget = self.WALLET_INFO
+                self.current_widget = self.LOGIN_OR_REGISTER
 
             self.setup_current_widget()
 
@@ -355,13 +414,13 @@ try:
             self.success = False
 
         def get_last_widget(self):
-            if len(self.last_widget_stack) == 0: 
-                return None 
+            if len(self.last_widget_stack) == 0:
+                return None
             return self.last_widget_stack[len(self.last_widget_stack) - 1]
 
         def pop_last_widget(self):
-            if len(self.last_widget_stack) == 0: 
-                return self.current_widget 
+            if len(self.last_widget_stack) == 0:
+                return self.current_widget
             return self.last_widget_stack.pop()
 
         def run_denariid_setup(self):
@@ -580,9 +639,17 @@ try:
             """
             self.last_widget_stack.append(self.current_widget)
             if self.current_widget == self.LANG_SELECT:
-                self.current_widget = self.USER_INFO
-            elif self.current_widget == self.USER_INFO:
+                self.current_widget = self.LOGIN_OR_REGISTER
+            elif self.current_widget == self.LOGIN_SCREEN:
                 self.current_widget = self.WALLET_INFO
+            elif self.current_widget == self.REGISTER_SCREEN:
+                self.current_widget = self.LOGIN_SCREEN
+            elif self.current_widget == self.REQUEST_RESET_SCREEN:
+                self.current_widget = self.VERIFY_RESET_SCREEN
+            elif self.current_widget == self.VERIFY_RESET_SCREEN:
+                self.current_widget = self.RESET_PASSWORD_SCREEN
+            elif self.current_widget == self.RESET_PASSWORD_SCREEN:
+                self.current_widget = self.LOGIN_SCREEN
             elif self.current_widget == self.WALLET_INFO:
                 # The next button on the wallet info screen should do nothing
                 self.current_widget = self.WALLET_INFO
@@ -661,12 +728,30 @@ try:
             self.last_widget_stack.append(self.current_widget)
             self.current_widget = self.REMOTE_WALLET_SCREEN
             self.setup_current_widget()
+        
+        @pyqtSlot()
+        def on_login_pushed(self):
+            """
+            Navigate to the login screen
+            """
+            self.last_widget_stack.append(self.current_widget)
+            self.current_widget = self.LOGIN_SCREEN
+            self.setup_current_widget()
+
+        @pyqtSlot()
+        def on_register_pushed(self):
+            """
+            Navigate to the register screen
+            """
+            self.last_widget_stack.append(self.current_widget)
+            self.current_widget = self.REGISTER_SCREEN
+            self.setup_current_widget()
 
         def setup_current_widget(self):
             if self.get_last_widget() is not None:
                 self.get_last_widget().teardown()
 
-            if self.current_widget is not None: 
+            if self.current_widget is not None:
                 self.current_widget.init(**self.kwargs)
 
                 self.current_widget.setup()

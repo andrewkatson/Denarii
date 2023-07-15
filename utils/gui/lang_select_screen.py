@@ -124,3 +124,6 @@ class LangSelectScreen(Screen):
     def on_submit_clicked(self):
         if self.gui_user.language is not None and self.gui_user.language != "":
             self.next_button.setVisible(True)
+            self.status_message_box("Success")
+        else: 
+            self.status_message_box("Failure: need to pick a language")

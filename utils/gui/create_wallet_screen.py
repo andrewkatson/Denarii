@@ -221,24 +221,17 @@ class CreateWalletScreen(Screen):
 
         if self.which_wallet == REMOTE_WALLET:
             try: 
-                success, res  = self.denarii_mobile_client.get_user_id(self.gui_user.name, self.gui_user.email, self.gui_user.password)
-                if success:
-                    self.gui_user.user_id = res[0]['user_id']
+                success, res = self.denarii_mobile_client.create_wallet(self.gui_user.user_id, self.wallet.name, self.wallet.password)
 
-                    success, res = self.denarii_mobile_client.create_wallet(self.gui_user.user_id, self.wallet.name, self.wallet.password)
-
-                    if success: 
-                        only_res = res[0]
-                        self.wallet.phrase = only_res['seed']
-                        self.wallet.address = only_res['wallet_address']
-                        self.display_seed(self.wallet.phrase)
-                        self.status_message_box("Success. Make sure to write down your information. \n It will not be saved on this device.")
-                        self.next_button.setVisible(True)
-                    else: 
-                        self.status_message_box("Failed: could not create remote wallet")
-                        self.next_button.setVisible(False)
-                else:
-                    self.status_message_box("Failed: could not login or create user")
+                if success: 
+                    only_res = res[0]
+                    self.wallet.phrase = only_res['seed']
+                    self.wallet.address = only_res['wallet_address']
+                    self.display_seed(self.wallet.phrase)
+                    self.status_message_box("Success. Make sure to write down your information. \n It will not be saved on this device.")
+                    self.next_button.setVisible(True)
+                else: 
+                    self.status_message_box("Failed: could not create remote wallet")
                     self.next_button.setVisible(False)
             except Exception as create_remote_wallet_e:
                 print(create_remote_wallet_e)

@@ -33,6 +33,12 @@ class Screen:
     wallet_screen_name = "WALLET_SCREEN_NAME"
     buy_denarii_screen_name = "BUY_DENARII_SCREEN_NAME"
     sell_denarii_screen_name = "SELL_DENARII_SCREEN_NAME"
+    login_or_register_screen_name = "LOGIN_OR_REGISTER_SCREEN_NAME"
+    login_screen_name = "LOGIN_SCREEN_NAME"
+    register_screen_name = "REGISTER_SCREEN_NAME"
+    request_reset_screen_name = "REQUEST_RESET_SCREEN_NAME"
+    reset_password_screen_name = "RESET_PASSWORD_SCREEN_NAME"
+    verify_reset_screen_name = "VERIFY_RESET_SCREEN_NAME"
 
     suffix_of_screen_name = "suffix"
 

@@ -331,6 +331,7 @@ class DenariiMobileClient:
             if value.username == username_or_email or value.email == username_or_email:
                 value.reset_requested = True
                 value.reset_id = create_identifier()
+                print(f"Rest id is {value.reset_id}")
                 store_user(value)
                 return True
         return False
