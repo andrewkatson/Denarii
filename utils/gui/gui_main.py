@@ -25,6 +25,7 @@ try:
     from buy_denarii_screen import *
     from constants import *
     from create_wallet_screen import *
+    from credit_card_info_screen import *
     from font import *
     from label import *
     from lang_select_screen import *
@@ -43,7 +44,6 @@ try:
     from sell_denarii_screen import *
     from set_wallet_screen import *
     from stoppable_thread import StoppableThread
-    from user_info_screen import *
     from verify_reset_screen import *
     from wallet_info_screen import *
     from wallet_screen import *
@@ -296,6 +296,7 @@ try:
                 gui_user=gui_user,
                 on_buy_screen_clicked=self.on_buy_denarii_screen_pushed,
                 on_sell_screen_clicked=self.on_sell_denarii_screen_pushed,
+                on_credit_card_info_screen_clicked=self.on_credit_card_info_screen_pushed
             )
             self.BUY_DENARII = BuyDenariiScreen(
                 push_buttons=common_buttons,
@@ -309,6 +310,7 @@ try:
                 gui_user=gui_user,
                 on_remote_wallet_screen_clicked=self.on_remote_wallet_screen_pushed,
                 on_sell_screen_clicked=self.on_sell_denarii_screen_pushed,
+                on_credit_card_info_screen_clicked=self.on_credit_card_info_screen_pushed
             )
             self.SELL_DENARII = SellDenariiScreen(
                 push_buttons=common_buttons,
@@ -322,6 +324,21 @@ try:
                 gui_user=gui_user,
                 on_remote_wallet_screen_clicked=self.on_remote_wallet_screen_pushed,
                 on_buy_screen_clicked=self.on_buy_denarii_screen_pushed,
+                on_credit_card_info_screen_clicked=self.on_credit_card_info_screen_pushed
+            )
+            self.CREDIT_CARD_INFO_SCREEN = CreditCardInfoScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+                on_remote_wallet_screen_clicked=self.on_remote_wallet_screen_pushed,
+                on_buy_screen_clicked=self.on_buy_denarii_screen_pushed,
+                on_sell_screen_clicked=self.on_sell_denarii_screen_pushed,
             )
             self.LOGIN_OR_REGISTER = LoginOrRegisterScreen(
                 push_buttons=common_buttons,
@@ -675,77 +692,73 @@ try:
 
             store_user()
 
+        def go_to_this_widget(self, widget):
+            self.last_widget_stack.append(self.current_widget)
+            self.current_widget = widget
+            self.setup_current_widget()
+
         @pyqtSlot()
         def on_create_wallet_clicked(self):
             """
             Setup the wallet creation screen when the user decides to create one
             """
-            self.last_widget_stack.append(self.current_widget)
-            self.current_widget = self.CREATE_WALLET
-            self.setup_current_widget()
+            self.go_to_this_widget(self.CREATE_WALLET)
 
         @pyqtSlot()
         def on_restore_wallet_pushed(self):
             """
             Setup the restore wallet screen when the user decides to restore one
             """
-            self.last_widget_stack.append(self.current_widget)
-            self.current_widget = self.RESTORE_WALLET
-            self.setup_current_widget()
+            self.go_to_this_widget(self.RESTORE_WALLET)
 
         @pyqtSlot()
         def on_set_wallet_pushed(self):
             """
             Setup the set wallet to set one saved to disk
             """
-            self.last_widget_stack.append(self.current_widget)
-            self.current_widget = self.SET_WALLET
-            self.setup_current_widget()
+            self.go_to_this_widget(self.SET_WALLET)
 
         @pyqtSlot()
         def on_buy_denarii_screen_pushed(self):
             """
             Navigate to the buy denarii screen of the remote wallet
             """
-            self.last_widget_stack.append(self.current_widget)
-            self.current_widget = self.BUY_DENARII
-            self.setup_current_widget()
+            self.go_to_this_widget(self.BUY_DENARII)
 
         @pyqtSlot()
         def on_sell_denarii_screen_pushed(self):
             """
             Navigate to the sell denarii screen of the remote wallet
             """
-            self.last_widget_stack.append(self.current_widget)
-            self.current_widget = self.SELL_DENARII
-            self.setup_current_widget()
+            self.go_to_this_widget(self.SELL_DENARII)
 
         @pyqtSlot()
         def on_remote_wallet_screen_pushed(self):
             """
             Navigate to the remote wallet screen
             """
-            self.last_widget_stack.append(self.current_widget)
-            self.current_widget = self.REMOTE_WALLET_SCREEN
-            self.setup_current_widget()
+            self.go_to_this_widget(self.REMOTE_WALLET_SCREEN)
         
         @pyqtSlot()
         def on_login_pushed(self):
             """
             Navigate to the login screen
             """
-            self.last_widget_stack.append(self.current_widget)
-            self.current_widget = self.LOGIN_SCREEN
-            self.setup_current_widget()
+            self.go_to_this_widget(self.LOGIN_SCREEN)
 
         @pyqtSlot()
         def on_register_pushed(self):
             """
             Navigate to the register screen
             """
-            self.last_widget_stack.append(self.current_widget)
-            self.current_widget = self.REGISTER_SCREEN
-            self.setup_current_widget()
+            self.go_to_this_widget(self.REGISTER_SCREEN)
+
+        @pyqtSlot()
+        def on_credit_card_info_screen_pushed(self):
+            """
+            Navigate to the credit card info screen
+            """
+            self.go_to_this_widget(self.CREDIT_CARD_INFO_SCREEN)
 
         def setup_current_widget(self):
             if self.get_last_widget() is not None:

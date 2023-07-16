@@ -11,3 +11,6 @@ class VBoxLayout(QVBoxLayout):
 
 class FormLayout(QFormLayout):
     pass
+
+class GridLayout(QGridLayout):
+    pass

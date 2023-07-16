@@ -81,6 +81,10 @@ def on_login_clicked():
 def on_register_clicked():
     pass
 
+def on_credit_card_info_screen_clicked():
+    pass
+
+
 def create_remote_user(user, denarii_mobile_client):
 
     success, create_user_res = denarii_mobile_client.get_user_id(
@@ -981,6 +985,7 @@ class DenariiDesktopGUIBuyDenariiScreenTestCase(unittest.TestCase):
             gui_user=self.gui_user,
             on_remote_wallet_screen_clicked=on_remote_wallet_screen_clicked,
             on_sell_screen_clicked=on_sell_screen_clicked,
+            on_credit_card_info_screen_clicked=on_credit_card_info_screen_clicked
         )
 
     def tearDown(self):
@@ -1050,6 +1055,7 @@ class DenariiDesktopGUISellDenariiScreenTestCase(unittest.TestCase):
             gui_user=self.gui_user,
             on_remote_wallet_screen_clicked=on_remote_wallet_screen_clicked,
             on_buy_screen_clicked=on_buy_screen_clicked,
+            on_credit_card_info_screen_clicked=on_credit_card_info_screen_clicked
         )
 
     def tearDown(self):

@@ -50,6 +50,8 @@ class RemoteWalletScreen(WalletScreen):
         
         self.buy_screen_push_button = None
         self.sell_screen_push_button = None 
+        self.credit_card_info_screen_push_button = None 
+        self.on_credit_card_info_screen_clicked = kwargs['on_credit_card_info_screen_clicked']
         self.on_buy_screen_clicked = kwargs['on_buy_screen_clicked']
         self.on_sell_screen_clicked = kwargs['on_sell_screen_clicked']
         super().__init__(
@@ -82,6 +84,15 @@ class RemoteWalletScreen(WalletScreen):
         )
         self.sell_screen_push_button.setVisible(False)
         self.sell_screen_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
+
+        self.on_credit_card_info_screen_clicked = PushButton("Credit Card", kwargs["parent"])
+        self.on_credit_card_info_screen_clicked.clicked.connect(
+            lambda: self.on_credit_card_info_screen_clicked()
+        )
+        self.on_credit_card_info_screen_clicked.setVisible(False)
+        self.on_credit_card_info_screen_clicked.setStyleSheet(
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
 
@@ -129,6 +140,7 @@ class RemoteWalletScreen(WalletScreen):
         )
         self.fifth_horizontal_layout.addWidget(self.buy_screen_push_button, alignment=AlignCenter)
         self.fifth_horizontal_layout.addWidget(self.sell_screen_push_button, alignment=AlignCenter)
+        self.fifth_horizontal_layout.addWidget(self.credit_card_info_screen_push_button, alignment=AlignCenter)
 
         self.populate_wallet_screen()
 

@@ -65,7 +65,7 @@ class WalletScreen(Screen):
         self.wallet = None
         self.keep_refreshing_balance = False
         self.balance_refresh_thread = StoppableThread(target=self.refresh_balance)
-        self.balance_refresh_thread.start()
+
         self.balance = 0
 
         super().__init__(
@@ -110,7 +110,7 @@ class WalletScreen(Screen):
 
         self.address_text_box = Label("")
         font = Font()
-        font.setFamily("Arial")
+        font.setFamily("Arial")        
         font.setPixelSize(50)
         self.address_text_box.setFont(font)
         self.address_text_box.setTextInteractionFlags(TextSelectableByMouse)
@@ -131,6 +131,8 @@ class WalletScreen(Screen):
         self.deletion_func(self.main_layout)
 
         self.keep_refreshing_balance = True
+        
+        self.balance_refresh_thread.start()
 
     def teardown(self):
         super().teardown()

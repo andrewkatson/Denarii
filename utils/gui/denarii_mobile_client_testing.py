@@ -582,6 +582,9 @@ class DenariiMobileClient:
 
         ask = self.get_ask_with_id(ask_id)
 
+        if not ask.is_settled: 
+            return True, [{"ask_id": ask_id, "transaction_was_settled": False}]
+
         if ask.amount == 0:
             asking_user.asks = self.get_remaining_asks(asking_user.asks, ask_id)
         else:
@@ -591,6 +594,8 @@ class DenariiMobileClient:
         return True, [{"ask_id": ask_id, "transaction_was_settled": True}]
 
     def delete_user(self, user_id):
+        _ = self.check_user_is_current_user_and_get(user_id)
+
         users = self.get_users
 
         final_users = {}

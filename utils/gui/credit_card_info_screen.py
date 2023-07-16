@@ -30,41 +30,25 @@ else:
     from radio_button import *
 
 
-
-class SellDenariiScreen(Screen):
+class CreditCardInfoScreen(Screen):
     """
-    A screen that allows the user to sell denarii with their credit card to other users
+    A screen that allows the user to set or clear their credit card info
     """
 
-    def __init__(
-        self,
-        main_layout,
-        deletion_func,
-        denarii_client,
-        gui_user,
-        denarii_mobile_client,
-        **kwargs
-    ):
+    def __init__(self, main_layout, deletion_func, denarii_client, gui_user, denarii_mobile_client, **kwargs):
+
+        self.remote_wallet_screen_push_button = None
+        self.sell_screen_push_button = None
         self.buy_screen_push_button = None
-        self.remote_wallet_screen_push_button = None 
-        self.credit_card_info_screen_push_button = None
-        
 
-        super().__init__(
-            self.sell_denarii_screen_name,
-            main_layout=main_layout,
-            deletion_func=deletion_func,
-            denarii_client=denarii_client,
-            gui_user=gui_user,
-            denarii_mobile_client=denarii_mobile_client,
-            **kwargs
-        )
+        super().__init__(self.credit_card_info_screen_name, main_layout, deletion_func, denarii_client, gui_user, denarii_mobile_client, **kwargs)
+
 
     def init(self, **kwargs):
-        super().init(**kwargs)
-
+         super().init(**kwargs)
+    
     def setup(self):
         super().setup()
-
+    
     def teardown(self):
         super().teardown()

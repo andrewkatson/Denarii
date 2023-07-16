@@ -39,6 +39,7 @@ class Screen:
     request_reset_screen_name = "REQUEST_RESET_SCREEN_NAME"
     reset_password_screen_name = "RESET_PASSWORD_SCREEN_NAME"
     verify_reset_screen_name = "VERIFY_RESET_SCREEN_NAME"
+    credit_card_info_screen_name = "CREDIT_CARD_INFO_SCREEN_NAME"
 
     suffix_of_screen_name = "suffix"
 
@@ -71,8 +72,15 @@ class Screen:
         self.seventh_horizontal_layout = HBoxLayout()
         self.eight_horizontal_layout = HBoxLayout()
         self.ninth_horizontal_layout = HBoxLayout()
+        self.tenth_horizontal_layout = HBoxLayout()
+        self.eleventh_horizontal_layout = HBoxLayout()
+
         self.vertical_layout = VBoxLayout()
+        
         self.form_layout = FormLayout()
+
+        self.grid_layout = GridLayout()
+        self.second_grid_layout = GridLayout()
 
         self.radio_buttons = {}
         self.labels = {}
