@@ -32,7 +32,7 @@ class DenariiMobileClient:
             }
             print("Sending " + str(inputs))
             res = requests.post(
-                ip + ":" + port + "/json_rpc",
+                ip + ":" + port,
                 data=json.dumps(inputs),
                 headers={"content-type": "application/json"},
             )
