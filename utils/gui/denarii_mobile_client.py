@@ -4,7 +4,7 @@ import requests
 
 class DenariiMobileClient:
     def __init__(self):
-        self.denarii_mobile_users_endpoint = "denariimobilebackend.com/users"
+        self.denarii_mobile_users_endpoint = "denariimobilebackend.com"
 
     def send_denarii_mobile_request(self, method, params):
         return self.send_request(
@@ -25,14 +25,13 @@ class DenariiMobileClient:
         ok = False
         try:
             inputs = {
-                "method": method,
                 "params": params,
                 "jsonrpc": "2.0",
                 "id": 0,
             }
             print("Sending " + str(inputs))
             res = requests.post(
-                ip + ":" + port,
+                f"{ip}:{port}/users/{method}/",
                 data=json.dumps(inputs),
                 headers={"content-type": "application/json"},
             )
