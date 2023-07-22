@@ -4,7 +4,7 @@ import requests
 
 class DenariiMobileClient:
     def __init__(self):
-        self.denarii_mobile_users_endpoint = "denariimobilebackend.com"
+        self.denarii_mobile_users_endpoint = "https://denariimobilebackend.com"
 
     def send_denarii_mobile_request(self, method, params):
         return self.send_request(
