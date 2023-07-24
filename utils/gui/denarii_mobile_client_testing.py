@@ -1,3 +1,4 @@
+import datetime
 import os
 import pathlib
 import pickle as pkl
@@ -188,6 +189,12 @@ class User:
         self.wallet = None
         self.asks = []
         self.credit_card = None
+        self.support_tickets = []
+        self.report_id = -1
+        self.verification_report_status = "never_run"
+        self.identity_is_verified = False
+        self.creation_time = datetime.datetime.now()
+        self.updated_time = datetime.datetime.now()
 
 
 class Wallet:
@@ -197,6 +204,8 @@ class Wallet:
         self.seed = seed
         self.address = address
         self.balance = balance
+        self.creation_time = datetime.datetime.now()
+        self.updated_time = datetime.datetime.now()
 
 
 class DenariiAsk:
@@ -207,6 +216,8 @@ class DenariiAsk:
         self.ask_id = -1
         self.amount_bought = 0
         self.is_settled = False
+        self.creation_time = datetime.datetime.now()
+        self.updated_time = datetime.datetime.now()
 
 
 class CreditCard:
@@ -218,6 +229,27 @@ class CreditCard:
         self.expiration_date_year = expiration_date_year
         self.security_code = security_code
         self.balance = round(random.uniform(1, 100))
+        self.creation_time = datetime.datetime.now()
+        self.updated_time = datetime.datetime.now()
+
+
+class SupportTicket:
+    def __init__(self, description, title, resolved) -> None:
+        self.description = description
+        self.title = title
+        self.resolved = resolved
+        self.comments = []
+        self.support_ticket_id = round(random.uniform(1, 100))
+        self.creation_time = datetime.datetime.now()
+        self.updated_time = datetime.datetime.now()
+
+
+class SupportTicketComment:
+    def __init__(self, author, content) -> None:
+        self.author = author
+        self.content = content
+        self.creation_time = datetime.datetime.now()
+        self.updated_time = datetime.datetime.now()
 
 
 class DenariiMobileClient:
@@ -253,8 +285,17 @@ class DenariiMobileClient:
                 return ask
         raise ValueError("There is no ask with that id for the given user")
 
+    def get_support_ticket_with_id(self, user, support_ticket_id):
+        for ticket in user.support_tickets:
+            if ticket.support_ticket_id == support_ticket_id:
+                return ticket
+        raise ValueError(
+            "That support ticket id correspond to no ticket for the given user"
+        )
+
     def get_remaining_asks(self, asks, ask_id):
         remaining_asks = []
+
         for other_ask in asks:
             if other_ask.ask_id != ask_id:
                 remaining_asks.append(other_ask)
@@ -333,7 +374,7 @@ class DenariiMobileClient:
                 # We need a static reset identifier for testing
                 if TESTING:
                     value.reset_id = 4
-                else: 
+                else:
                     value.reset_id = create_identifier()
                     print(f"Reset Id: {value.reset_id}")
                 store_user(value)
@@ -582,7 +623,7 @@ class DenariiMobileClient:
 
         ask = self.get_ask_with_id(ask_id)
 
-        if not ask.is_settled: 
+        if not ask.is_settled:
             return True, [{"ask_id": ask_id, "transaction_was_settled": False}]
 
         if ask.amount == 0:
@@ -611,3 +652,220 @@ class DenariiMobileClient:
         self.things["user"] = final_users
 
         return deleted_something
+
+    def get_ask_with_identifier(self, user_id, ask_id):
+        _ = self.check_user_is_current_user_and_get(user_id)
+
+        ask = self.get_ask_with_id(ask_id)
+
+        return True, [
+            {
+                "ask_id": ask.ask_id,
+                "amount": ask.amount,
+                "amount_bought": ask.amount_bought,
+            }
+        ]
+
+    def transfer_denarii_back_to_seller(self, user_id, ask_id):
+        user = self.check_user_is_current_user_and_get(user_id)
+
+        asking_user = self.get_user_with_ask(ask_id)
+
+        ask = self.get_ask_with_id(asking_user, ask_id)
+
+        if asking_user.wallet.balance < ask.amount_bought:
+            return False, []
+
+        user.wallet.balance += ask.amount_bought
+
+        asking_user.wallet.balance -= ask.amount_bought
+
+        amount_bought = ask.amount_bought
+
+        ask.amount -= ask.amount_bought
+        ask.amount_bought = 0
+        ask.in_escrow = False
+        ask.is_settled = True
+
+        store_user(asking_user)
+        store_user(user)
+
+        return True, [{"ask_id": ask.ask_id}]
+
+    def send_money_back_to_buyer(self, user_id, amount, currency):
+        user = self.check_user_is_current_user_and_get(user_id)
+
+        user.credit_card.balance += amount
+        store_user(user)
+        return True
+
+    def cancel_buy_of_ask(self, user_id, ask_id):
+        user = self.check_user_is_current_user_and_get(user_id)
+
+        ask = self.get_ask_with_id(ask_id)
+
+        ask.in_escrow = False
+        ask.amount_bought = 0
+
+        store_user(user)
+        return True
+
+    def verify_identity(
+        self,
+        user_id,
+        first_name,
+        middle_name,
+        last_name,
+        email,
+        dob,
+        ssn,
+        zipcode,
+        phone,
+        work_locations,
+    ):
+        user = self.check_user_is_current_user_and_get(user_id)
+
+        user.identity_is_verified = True
+        user.verification_report_status = "complete"
+
+        store_user(user)
+
+        return True, [{"verification_status": "is_verified"}]
+
+    def is_a_verified_person(self, user_id):
+        user = self.check_user_is_current_user_and_get(user_id)
+
+        if user.identity_is_verified:
+            return True, [{"verification_status": "is_verified"}]
+        elif (
+            not user.identity_is_verified
+            and user.verification_report_status == "complete"
+        ):
+            return True, [{"verification_status": "failed_verification"}]
+        elif user.verification_report_status == "pending":
+            return True, [{"verification_status": "verification_pending"}]
+        else:
+            return True, [{"verification_status": "is_not_verified"}]
+
+    def get_all_asks(self, user_id):
+        user = self.check_user_is_current_user_and_get(user_id)
+
+        filtered_asks = []
+
+        for ask in user.asks:
+            filtered_asks.append[{"ask_id": ask.ask_id}]
+
+        return True, filtered_asks
+
+    def create_support_ticket(self, user_id, title, description):
+        user = self.check_user_is_current_user_and_get(user_id)
+
+        support_ticket = SupportTicket(description, title, False)
+
+        user.support_tickets.append(support_ticket)
+
+        return True, [
+            {
+                "support_ticket_id": support_ticket.support_ticket_id,
+                "creation_time_body": support_ticket.creation_time.isoformat(),
+            }
+        ]
+
+    def update_support_ticket(self, user_id, support_ticket_id, comment):
+        user = self.check_user_is_current_user_and_get(user_id)
+
+        comment = SupportTicketComment(user.name, comment)
+
+        ticket = self.get_support_ticket_with_id(user, support_ticket_id)
+
+        ticket.comments.append(comment)
+
+        return True, [
+            {
+                "support_ticket_id": support_ticket_id,
+                "updated_time_body": comment.updated_time.isoformat(),
+            }
+        ]
+
+    def delete_support_ticket(self, user_id, support_ticket_id):
+        user = self.check_user_is_current_user_and_get(user_id)
+
+        remaining_tickets = []
+
+        for ticket in user.support_tickets:
+            if ticket.support_ticket_id != support_ticket_id:
+                remaining_tickets.append(ticket)
+
+        user.support_tickets = remaining_tickets
+
+        store_user(user)
+
+        return True, [{"support_ticket_id": support_ticket_id}]
+
+    def get_support_tickets(self, user_id, can_be_resolved):
+        user = self.check_user_is_current_user_and_get(user_id)
+
+        filtered_support_tickets = []
+
+        for ticket in filtered_support_tickets:
+            if ticket.resolved and can_be_resolved:
+                filtered_support_tickets.append(
+                    {
+                        "support_ticket_id": ticket.support_ticket_id,
+                        "author": user.name,
+                        "title": ticket.title,
+                        "description": ticket.description,
+                        "updated_time_body": ticket.updated_time.isoformat(),
+                        "creation_time_body": ticket.creation_time.isoformat(),
+                        "resolved": "True",
+                    }
+                )
+            elif not ticket.resolved:
+                filtered_support_tickets.append(
+                    {
+                        "support_ticket_id": ticket.support_ticket_id,
+                        "author": user.name,
+                        "title": ticket.title,
+                        "description": ticket.description,
+                        "updated_time_body": ticket.updated_time.isoformat(),
+                        "creation_time_body": ticket.creation_time.isoformat(),
+                        "resolved": "False",
+                    }
+                )
+
+        return True, filtered_support_tickets
+
+    def get_comments_on_ticket(self, user_id, support_ticket_id):
+        user = self.check_user_is_current_user_and_get(user_id)
+
+        ticket = self.get_support_ticket_with_id(user, support_ticket_id)
+
+        filtered_comments = []
+
+        for comment in ticket.comments:
+            filtered_comments.append(
+                {
+                    "author": comment.author,
+                    "conent": comment.content,
+                    "updated_time_body": comment.updated_time.isoformat(),
+                    "creation_time_body": comment.creation_time.isoformat(),
+                }
+            )
+
+        return True, filtered_comments
+
+    def resolve_support_ticket(self, user_id, support_ticket_id):
+        user = self.check_user_is_current_user_and_get(user_id)
+
+        ticket = self.get_support_ticket_with_id(user, support_ticket_id)
+
+        ticket.resolved = True
+
+        store_user(user)
+
+        return True, [
+            {
+                "support_ticket_id": support_ticket_id,
+                "updated_time_body": ticket.updated_time.isoformat(),
+            }
+        ]

@@ -339,7 +339,7 @@ class DenariiMobileClient:
 
     def is_transaction_settled(self, user_id, ask_id):
         """
-        @return a list of special response objects that have the fields 'transaction_was_settled' and 'ask_id
+        @return a list of special response objects that have the fields 'transaction_was_settled' and 'ask_id'
         """
 
         params = {"user_id": user_id, "ask_id": ask_id}
@@ -350,7 +350,7 @@ class DenariiMobileClient:
             return False, []
         else:
             return True, res
-    
+
     def delete_user(self, user_id):
         """
         @return whether the request succeeded or not
@@ -361,3 +361,210 @@ class DenariiMobileClient:
         _, ok = self.send_denarii_mobile_request("delete_user", params)
 
         return ok
+
+    def get_ask_with_identifier(self, user_id, ask_id):
+        """
+        @return a list of special response objects that have the fields 'ask_id', 'amount', and 'amount_bought'
+        """
+
+        params = {"user_id": user_id, "ask_id": ask_id}
+
+        res, ok = self.send_denarii_mobile_request("get_ask_with_identifier", params)
+
+        if not ok:
+            return False, []
+        else:
+            return True, res
+
+    def transfer_denarii_back_to_seller(self, user_id, ask_id):
+        """
+        @return a list of response objects that have the field 'ask_id'
+        """
+
+        params = {"user_id": user_id, "ask_id": ask_id}
+
+        res, ok = self.send_denarii_mobile_request(
+            "transfer_denarii_back_to_seller", params
+        )
+
+        if not ok:
+            return False, []
+        else:
+            return True, res
+
+    def send_money_back_to_buyer(self, user_id, amount, currency):
+        """
+        @return  whethe the request succeeded or not
+        """
+
+        params = {"user_id": user_id, "amount": amount, "currency": currency}
+
+        _, ok = self.send_denarii_mobile_request("send_money_back_to_buyer", params)
+
+        return ok
+
+    def cancel_buy_of_ask(self, user_id, ask_id):
+        """
+        @return whether the request succeeded or not
+        """
+
+        params = {"user_id": user_id, "ask_id": ask_id}
+
+        _, ok = self.send_denarii_mobile_request("cancel_buy_of_ask", params)
+
+        return ok
+
+    def verify_identity(
+        self,
+        user_id,
+        first_name,
+        middle_name,
+        last_name,
+        email,
+        dob,
+        ssn,
+        zipcode,
+        phone,
+        work_locations,
+    ):
+        """
+        @return a list of response objects that have the field 'verification_status'
+        """
+
+        params = {
+            "user_id": user_id,
+            "first_name": first_name,
+            "middle_name": middle_name,
+            "last_name": last_name,
+            "email": email,
+            "dob": dob,
+            "ssn": ssn,
+            "zipcode": zipcode,
+            "phone": phone,
+            "work_locations": work_locations,
+        }
+
+        res, ok = self.send_denarii_mobile_request("verify_identity", params)
+
+        if not ok:
+            return False, []
+        else:
+            return True, res
+
+    def is_a_verified_person(self, user_id):
+        """
+        @return a list of response objects that have the field 'verification_status'
+        """
+
+        params = {"user_id": user_id}
+
+        res, ok = self.send_denarii_mobile_request("is_a_verified_person", params)
+
+        if not ok:
+            return False, []
+        else:
+            return True, res
+
+    def get_all_asks(self, user_id):
+        """
+        @return a list of response objects that have the field 'ask_id'
+        """
+
+        params = {
+            "user_id": user_id,
+        }
+
+        res, ok = self.send_denarii_mobile_request("get_all_asks", params)
+
+        if not ok:
+            return False, []
+        else:
+            return True, res
+
+    def create_support_ticket(self, user_id):
+        """
+        @return a list of response objects that have the fields 'support_ticket_id' and 'creation_time_body'
+        """
+
+        params = {"user_id": user_id}
+
+        res, ok = self.send_denarii_mobile_request("create_support_ticket", params)
+
+        if not ok:
+            return False, []
+        else:
+            return True, res
+
+    def update_support_ticket(self, user_id, support_ticket_id, comment):
+        """
+        @return a list of response objects that have the fields 'support_ticket_id', 'updated_time_body'
+        """
+
+        params = {
+            "user_id": user_id,
+            "support_ticket_id": support_ticket_id,
+            "comment": comment,
+        }
+
+        res, ok = self.send_denarii_mobile_request("update_support_ticket", params)
+
+        if not ok:
+            return False, []
+        else:
+            return True, res
+
+    def delete_support_ticket(self, user_id, support_ticket_id):
+        """
+        @return a list of response objects that have the field 'support_ticket_id'
+        """
+
+        params = {"user_id": user_id, "support_ticket_id": support_ticket_id}
+
+        res, ok = self.send_denarii_mobile_request("delete_support_ticket", params)
+
+        if not ok:
+            return False, []
+        else:
+            return True, res
+
+    def get_support_tickets(self, user_id, can_be_resolved):
+        """
+        @return a list of response objects that have the fields 'support_ticket_id', 'author', 'title', 'description', 'updated_time_body', 'creation_time_body', 'resolved'
+        """
+
+        params = {"user_id": user_id, "can_be_resolved": can_be_resolved}
+
+        res, ok = self.send_denarii_mobile_request("get_support_tickets", params)
+
+        if not ok:
+            return False, []
+        else:
+            return True, res
+
+    def get_comments_on_ticket(self, user_id, support_ticket_id):
+        """
+        @return a list of response objects that have the fields 'author', 'content', 'updated_time_body', 'creation_time_body'
+        """
+
+        params = {"user_id": user_id, "support_ticket_id": support_ticket_id}
+
+        res, ok = self.send_denarii_mobile_request("get_comments_on_ticket", params)
+
+        if not ok:
+            return False, []
+        else:
+            return True, res
+
+    def resolve_support_tickets(self, user_id, support_ticket_id):
+        """
+        @return a list of response objects that have the fields 'support_ticket_id', and 'updated_time_body'
+        """
+
+        params = {"user_id": user_id, "support_ticket_id": support_ticket_id}
+
+        res, ok = self.send_denarii_mobile_request("resolve_support_ticket", params)
+
+        if not ok:
+            return False, []
+        else:
+            return True, res
