@@ -30,8 +30,6 @@ else:
     from radio_button import *
 
 
-
-
 class RemoteWalletScreen(WalletScreen):
     """
     A screen that allows the user to interact with a remote wallet. Aka one that allows the buying and selling of
@@ -47,13 +45,18 @@ class RemoteWalletScreen(WalletScreen):
         denarii_mobile_client,
         **kwargs
     ):
-        
         self.buy_screen_push_button = None
-        self.sell_screen_push_button = None 
-        self.credit_card_info_screen_push_button = None 
-        self.on_credit_card_info_screen_clicked = kwargs['on_credit_card_info_screen_clicked']
-        self.on_buy_screen_clicked = kwargs['on_buy_screen_clicked']
-        self.on_sell_screen_clicked = kwargs['on_sell_screen_clicked']
+        self.sell_screen_push_button = None
+        self.credit_card_info_screen_push_button = None
+        self.user_settings_screen_push_button = None 
+        self.verification_screen_push_button = None
+        self.on_credit_card_info_screen_clicked = kwargs[
+            "on_credit_card_info_screen_clicked"
+        ]
+        self.on_buy_screen_clicked = kwargs["on_buy_screen_clicked"]
+        self.on_sell_screen_clicked = kwargs["on_sell_screen_clicked"]
+        self.on_user_settings_screen_clicked = kwargs["on_user_settings_screen_clicked"]
+        self.on_verification_screen_clicked = kwargs["on_verification_screen_clicked"]
         super().__init__(
             main_layout=main_layout,
             deletion_func=deletion_func,
@@ -87,18 +90,38 @@ class RemoteWalletScreen(WalletScreen):
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
 
-        self.on_credit_card_info_screen_clicked = PushButton("Credit Card", kwargs["parent"])
-        self.on_credit_card_info_screen_clicked.clicked.connect(
+        self.credit_card_info_screen_push_button = PushButton(
+            "Credit Card", kwargs["parent"]
+        )
+        self.credit_card_info_screen_push_button.clicked.connect(
             lambda: self.on_credit_card_info_screen_clicked()
         )
-        self.on_credit_card_info_screen_clicked.setVisible(False)
-        self.on_credit_card_info_screen_clicked.setStyleSheet(
+        self.credit_card_info_screen_push_button.setVisible(False)
+        self.credit_card_info_screen_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
+
+        self.user_settings_screen_push_button = PushButton("User Settings", kwargs["parent"])
+        self.user_settings_screen_push_button.clicked.connect(
+            lambda: self.on_user_settings_screen_clicked()
+        )
+        self.user_settings_screen_push_button.setVisible(False)
+        self.user_settings_screen_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
+
+        self.verification_screen_push_button = PushButton("Identity Verification", kwargs["parent"])
+        self.verification_screen_push_button.clicked.connect(
+            lambda: self.on_verification_screen_clicked()
+        )
+        self.verification_screen_push_button.setVisible(False)
+        self.verification_screen_push_button.setStyleSheet(
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
 
     def setup(self):
         super().setup()
-        
+
         self.main_layout.addLayout(self.first_horizontal_layout)
         self.main_layout.addLayout(self.second_horizontal_layout)
         self.main_layout.addLayout(self.third_horizontal_layout)
@@ -106,12 +129,10 @@ class RemoteWalletScreen(WalletScreen):
         self.main_layout.addLayout(self.form_layout)
         self.main_layout.addLayout(self.fifth_horizontal_layout)
 
-
         self.transfer_push_button.setVisible(True)
         self.buy_screen_push_button.setVisible(True)
         self.sell_screen_push_button.setVisible(True)
         self.back_button.setVisible(True)
-
 
         self.first_horizontal_layout.addWidget(
             self.wallet_header_label, alignment=AlignCenter
@@ -138,9 +159,22 @@ class RemoteWalletScreen(WalletScreen):
         self.fifth_horizontal_layout.addWidget(
             self.back_button, alignment=(AlignLeft | AlignBottom)
         )
-        self.fifth_horizontal_layout.addWidget(self.buy_screen_push_button, alignment=AlignCenter)
-        self.fifth_horizontal_layout.addWidget(self.sell_screen_push_button, alignment=AlignCenter)
-        self.fifth_horizontal_layout.addWidget(self.credit_card_info_screen_push_button, alignment=AlignCenter)
+        self.fifth_horizontal_layout.addWidget(
+            self.buy_screen_push_button, alignment=AlignCenter
+        )
+        self.fifth_horizontal_layout.addWidget(
+            self.sell_screen_push_button, alignment=AlignCenter
+        )
+        self.fifth_horizontal_layout.addWidget(
+            self.credit_card_info_screen_push_button, alignment=AlignCenter
+        )
+        self.fifth_horizontal_layout.addWidget(
+            self.user_settings_screen_push_button, alignment=AlignCenter
+        )
+        self.fifth_horizontal_layout.addWidget(
+            self.verification_screen_push_button, alignment=AlignCenter
+        )
+        
 
         self.populate_wallet_screen()
 
@@ -156,20 +190,21 @@ class RemoteWalletScreen(WalletScreen):
 
         success = False
         try:
-
             if self.gui_user.user_id is None:
-                success, res = self.denarii_mobile_client.get_user_id(self.gui_user.name, self.gui_user.email, self.gui_user.password)
-                if success: 
-                    self.gui_user.user_id = res[0]['user_id']
+                success, res = self.denarii_mobile_client.get_user_id(
+                    self.gui_user.name, self.gui_user.email, self.gui_user.password
+                )
+                if success:
+                    self.gui_user.user_id = res[0]["user_id"]
                     success, res = self.try_to_get_balance_of_remote_wallet()
 
-                    if success: 
-                        self.balance = res[0]['balance']
-            else: 
+                    if success:
+                        self.balance = res[0]["balance"]
+            else:
                 success, res = self.try_to_get_balance_of_remote_wallet()
 
-                if success: 
-                        self.balance = res[0]['balance']
+                if success:
+                    self.balance = res[0]["balance"]
 
         except Exception as e:
             print(e)

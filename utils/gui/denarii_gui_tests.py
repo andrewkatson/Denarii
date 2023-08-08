@@ -1,4 +1,6 @@
 import sys
+import threading
+import time
 import unittest
 
 from constants import *
@@ -19,6 +21,7 @@ from wallet import Wallet
 # Classes to test
 from buy_denarii_screen import BuyDenariiScreen
 from create_wallet_screen import CreateWalletScreen
+from credit_card_info_screen import CreditCardInfoScreen
 from lang_select_screen import LangSelectScreen
 from local_wallet_screen import LocalWalletScreen
 from login_or_register_screen import LoginOrRegisterScreen
@@ -30,6 +33,9 @@ from reset_password_screen import ResetPasswordScreen
 from restore_wallet_screen import RestoreWalletScreen
 from sell_denarii_screen import SellDenariiScreen
 from set_wallet_screen import SetWalletScreen
+from support_ticket_screen import SupportTicketScreen
+from user_settings_screen import UserSettingsScreen
+from verification_screen import VerificationScreen
 from verify_reset_screen import VerifyResetScreen
 from wallet_info_screen import WalletInfoScreen
 
@@ -81,12 +87,24 @@ def on_login_clicked():
 def on_register_clicked():
     pass
 
+
 def on_credit_card_info_screen_clicked():
     pass
 
 
-def create_remote_user(user, denarii_mobile_client):
+def on_user_settings_screen_clicked():
+    pass
 
+
+def on_verification_screen_clicked():
+    pass
+
+
+def on_support_ticket_clicked():
+    pass
+
+
+def create_remote_user(user, denarii_mobile_client):
     success, create_user_res = denarii_mobile_client.get_user_id(
         user.name, user.email, user.password
     )
@@ -97,12 +115,11 @@ def create_remote_user(user, denarii_mobile_client):
     user_id = create_user_res[0]["user_id"]
 
     user.user_id = user_id
-    
+
     return user_id
 
 
 def create_remote_wallet(user, denarii_mobile_client, wallet):
-
     user_id = create_remote_user(user, denarii_mobile_client)
 
     other_success, create_wallet_res = denarii_mobile_client.create_wallet(
@@ -121,6 +138,10 @@ def create_remote_wallet(user, denarii_mobile_client, wallet):
 class DenariiDesktopGUICreateWalletScreenTestCase(unittest.TestCase):
     def setUp(self):
         super().setUp()
+
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
 
         self.window = Window()
         self.main_widget = Widget()
@@ -171,6 +192,11 @@ class DenariiDesktopGUICreateWalletScreenTestCase(unittest.TestCase):
 
     def tearDown(self):
         super().tearDown()
+
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
 
     def test_setup(self):
         self.create_wallet_screen.setup()
@@ -225,6 +251,9 @@ class DenariiDesktopGUICreateWalletScreenTestCase(unittest.TestCase):
 class DenariiDesktopGUILanguageSelectScreenTestCase(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
 
         self.window = Window()
         self.main_widget = Widget()
@@ -278,6 +307,9 @@ class DenariiDesktopGUILanguageSelectScreenTestCase(unittest.TestCase):
 
     def tearDown(self):
         super().tearDown()
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
 
     def test_setup(self):
         self.lang_select_screen.setup()
@@ -305,6 +337,9 @@ class DenariiDesktopGUILanguageSelectScreenTestCase(unittest.TestCase):
 class DenariiDesktopGUILocalWalletScreenTestCase(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
 
         self.window = Window()
         self.main_widget = Widget()
@@ -361,6 +396,13 @@ class DenariiDesktopGUILocalWalletScreenTestCase(unittest.TestCase):
     def tearDown(self):
         super().tearDown()
 
+        # We need to teardown the screen in case there are threads running. 
+        self.local_wallet_screen.teardown()
+
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
+
     def test_setup(self):
         self.local_wallet_screen.setup()
 
@@ -373,7 +415,9 @@ class DenariiDesktopGUILocalWalletScreenTestCase(unittest.TestCase):
         self.assertIsNotNone(self.local_wallet_screen.balance_text_box)
         self.assertIsNotNone(self.local_wallet_screen.address_text_box)
 
-        self.assertEqual(self.local_wallet_screen.status_msg.text, "Success loading wallet info")
+        self.assertEqual(
+            self.local_wallet_screen.status_msg.text, "Success loading wallet info"
+        )
 
     def test_create_sub_address(self):
         self.assertEqual(len(self.local_wallet_screen.sub_address_text_boxes), 0)
@@ -382,8 +426,10 @@ class DenariiDesktopGUILocalWalletScreenTestCase(unittest.TestCase):
 
         self.assertEqual(len(self.local_wallet_screen.sub_address_text_boxes), 1)
 
-        self.assertEqual(self.local_wallet_screen.status_msg.text, "Success creating sub address. \n Use this to send denarii to other people.")
-
+        self.assertEqual(
+            self.local_wallet_screen.status_msg.text,
+            "Success creating sub address. \n Use this to send denarii to other people.",
+        )
 
     def test_mining(self):
         self.local_wallet_screen.start_mining()
@@ -394,17 +440,20 @@ class DenariiDesktopGUILocalWalletScreenTestCase(unittest.TestCase):
 
         self.assertEqual(self.local_wallet_screen.status_msg.text, "Stopped mining")
 
-
     def test_stop_mining_without_starting(self):
         self.local_wallet_screen.stop_mining()
 
-        self.assertEqual(self.local_wallet_screen.status_msg.text, "Failed to stop mining")
-
+        self.assertEqual(
+            self.local_wallet_screen.status_msg.text, "Failed to stop mining"
+        )
 
 
 class DenariiDesktopGUIRemoteWalletScreenTestCase(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
 
         self.window = Window()
         self.main_widget = Widget()
@@ -458,10 +507,21 @@ class DenariiDesktopGUIRemoteWalletScreenTestCase(unittest.TestCase):
             gui_user=self.gui_user,
             on_buy_screen_clicked=on_buy_screen_clicked,
             on_sell_screen_clicked=on_sell_screen_clicked,
+            on_credit_card_info_screen_clicked=on_credit_card_info_screen_clicked,
+            on_user_settings_screen_clicked=on_user_settings_screen_clicked,
+            on_verification_screen_clicked=on_verification_screen_clicked,
         )
 
     def tearDown(self):
         super().tearDown()
+
+
+        # We need to teardown the screen in case there are threads running. 
+        self.remote_wallet_screen.teardown()
+
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
 
     def test_setup(self):
         self.remote_wallet_screen.setup()
@@ -475,12 +535,17 @@ class DenariiDesktopGUIRemoteWalletScreenTestCase(unittest.TestCase):
         self.assertIsNotNone(self.remote_wallet_screen.balance_text_box)
         self.assertIsNotNone(self.remote_wallet_screen.address_text_box)
 
-        self.assertEqual(self.remote_wallet_screen.status_msg.text, "Success loading wallet info")
+        self.assertEqual(
+            self.remote_wallet_screen.status_msg.text, "Success loading wallet info"
+        )
 
 
 class DenariiDesktopGUIRestoreWalletScreenTestCase(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
 
         self.window = Window()
         self.main_widget = Widget()
@@ -541,6 +606,13 @@ class DenariiDesktopGUIRestoreWalletScreenTestCase(unittest.TestCase):
     def tearDown(self):
         super().tearDown()
 
+        # We need to teardown the screen in case there are threads running. 
+        self.restore_wallet_screen.teardown()
+
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
+
     def test_setup(self):
         self.restore_wallet_screen.setup()
 
@@ -566,7 +638,6 @@ class DenariiDesktopGUIRestoreWalletScreenTestCase(unittest.TestCase):
 
         self.assertEqual(self.restore_wallet_screen.status_msg.text, "Success")
 
-
     def test_restore_remote_wallet(self):
         self.restore_wallet_screen.which_wallet = REMOTE_WALLET
 
@@ -584,6 +655,9 @@ class DenariiDesktopGUIRestoreWalletScreenTestCase(unittest.TestCase):
 class DenariiDesktopGUISetWalletScreenTestCase(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
 
         self.window = Window()
         self.main_widget = Widget()
@@ -639,6 +713,12 @@ class DenariiDesktopGUISetWalletScreenTestCase(unittest.TestCase):
     def tearDown(self):
         super().tearDown()
 
+        # We need to teardown the screen in case there are threads running. 
+        self.set_wallet_screen.teardown()
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
+
     def test_setup(self):
         self.set_wallet_screen.setup()
 
@@ -662,7 +742,6 @@ class DenariiDesktopGUISetWalletScreenTestCase(unittest.TestCase):
 
         self.assertEqual(self.set_wallet_screen.status_msg.text, "Success")
 
-
     def test_set_remote_wallet(self):
         self.set_wallet_screen.which_wallet = REMOTE_WALLET
 
@@ -684,6 +763,9 @@ class DenariiDesktopGUISetWalletScreenTestCase(unittest.TestCase):
 class DenariiDesktopGUILoginScreenTestCase(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
 
         self.window = Window()
         self.main_widget = Widget()
@@ -741,6 +823,12 @@ class DenariiDesktopGUILoginScreenTestCase(unittest.TestCase):
     def tearDown(self):
         super().tearDown()
 
+        # We need to teardown the screen in case there are threads running. 
+        self.login_screen.teardown()
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
+
     def test_setup(self):
         self.login_screen.setup()
 
@@ -756,7 +844,6 @@ class DenariiDesktopGUILoginScreenTestCase(unittest.TestCase):
 
         self.assertEqual(self.login_screen.status_msg.text, "Success")
 
-
     def test_store_user_info_with_not_matching_passwords(self):
         self.login_screen.name_line_edit.text_inner = "Name"
         self.login_screen.email_line_edit.text_inner = "email@email.com"
@@ -764,12 +851,17 @@ class DenariiDesktopGUILoginScreenTestCase(unittest.TestCase):
 
         self.login_screen.store_user_info()
 
-        self.assertEqual(self.login_screen.status_msg.text, "Failure: passwords did not match")
+        self.assertEqual(
+            self.login_screen.status_msg.text, "Failure: passwords did not match"
+        )
 
-        
+
 class DenariiDesktopGUIRegisterScreenTestCase(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
 
         self.window = Window()
         self.main_widget = Widget()
@@ -827,6 +919,12 @@ class DenariiDesktopGUIRegisterScreenTestCase(unittest.TestCase):
     def tearDown(self):
         super().tearDown()
 
+        # We need to teardown the screen in case there are threads running. 
+        self.register_screen.teardown()
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
+
     def test_setup(self):
         self.register_screen.setup()
 
@@ -843,7 +941,6 @@ class DenariiDesktopGUIRegisterScreenTestCase(unittest.TestCase):
 
         self.assertEqual(self.register_screen.status_msg.text, "Success")
 
-
     def test_store_user_info_with_not_matching_passwords(self):
         self.register_screen.name_line_edit.text_inner = "Name"
         self.register_screen.email_line_edit.text_inner = "email@email.com"
@@ -852,13 +949,17 @@ class DenariiDesktopGUIRegisterScreenTestCase(unittest.TestCase):
 
         self.register_screen.store_user_info()
 
-        self.assertEqual(self.register_screen.status_msg.text, "Failure: passwords did not match")
-
+        self.assertEqual(
+            self.register_screen.status_msg.text, "Failure: passwords did not match"
+        )
 
 
 class DenariiDesktopGUIWalletInfoScreenTestCase(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
 
         self.window = Window()
         self.main_widget = Widget()
@@ -921,6 +1022,12 @@ class DenariiDesktopGUIWalletInfoScreenTestCase(unittest.TestCase):
     def tearDown(self):
         super().tearDown()
 
+        # We need to teardown the screen in case there are threads running. 
+        self.wallet_info_screeen.teardown()
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
+
     def test_setup(self):
         self.wallet_info_screeen.setup()
 
@@ -931,6 +1038,9 @@ class DenariiDesktopGUIWalletInfoScreenTestCase(unittest.TestCase):
 class DenariiDesktopGUIBuyDenariiScreenTestCase(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
 
         self.window = Window()
         self.main_widget = Widget()
@@ -985,11 +1095,19 @@ class DenariiDesktopGUIBuyDenariiScreenTestCase(unittest.TestCase):
             gui_user=self.gui_user,
             on_remote_wallet_screen_clicked=on_remote_wallet_screen_clicked,
             on_sell_screen_clicked=on_sell_screen_clicked,
-            on_credit_card_info_screen_clicked=on_credit_card_info_screen_clicked
+            on_credit_card_info_screen_clicked=on_credit_card_info_screen_clicked,
+            on_user_settings_screen_clicked=on_user_settings_screen_clicked,
+            on_verification_screen_clicked=on_verification_screen_clicked,
         )
 
     def tearDown(self):
         super().tearDown()
+
+        # We need to teardown the screen in case there are threads running. 
+        self.buy_denarii_screen.teardown()
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
 
     def test_setup(self):
         self.buy_denarii_screen.setup()
@@ -1001,6 +1119,9 @@ class DenariiDesktopGUIBuyDenariiScreenTestCase(unittest.TestCase):
 class DenariiDesktopGUISellDenariiScreenTestCase(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
 
         self.window = Window()
         self.main_widget = Widget()
@@ -1055,11 +1176,19 @@ class DenariiDesktopGUISellDenariiScreenTestCase(unittest.TestCase):
             gui_user=self.gui_user,
             on_remote_wallet_screen_clicked=on_remote_wallet_screen_clicked,
             on_buy_screen_clicked=on_buy_screen_clicked,
-            on_credit_card_info_screen_clicked=on_credit_card_info_screen_clicked
+            on_credit_card_info_screen_clicked=on_credit_card_info_screen_clicked,
+            on_user_settings_screen_clicked=on_user_settings_screen_clicked,
+            on_verification_screen_clicked=on_verification_screen_clicked,
         )
 
     def tearDown(self):
         super().tearDown()
+
+        # We need to teardown the screen in case there are threads running. 
+        self.sell_denarii_screen.teardown()
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
 
     def test_setup(self):
         self.sell_denarii_screen.setup()
@@ -1071,6 +1200,9 @@ class DenariiDesktopGUISellDenariiScreenTestCase(unittest.TestCase):
 class DenariiDesktopGUILoginOrRegisterScreenTestCase(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
 
         self.window = Window()
         self.main_widget = Widget()
@@ -1130,6 +1262,12 @@ class DenariiDesktopGUILoginOrRegisterScreenTestCase(unittest.TestCase):
     def tearDown(self):
         super().tearDown()
 
+        # We need to teardown the screen in case there are threads running. 
+        self.login_or_register_screen.teardown()
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
+
     def test_setup(self):
         self.login_or_register_screen.setup()
 
@@ -1140,6 +1278,9 @@ class DenariiDesktopGUILoginOrRegisterScreenTestCase(unittest.TestCase):
 class DenariiDesktopGUIRequestResetScreenTestCase(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
 
         self.window = Window()
         self.main_widget = Widget()
@@ -1197,16 +1338,22 @@ class DenariiDesktopGUIRequestResetScreenTestCase(unittest.TestCase):
     def tearDown(self):
         super().tearDown()
 
+        # We need to teardown the screen in case there are threads running. 
+        self.request_reset_screen.teardown()
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
+
     def test_setup(self):
         self.request_reset_screen.setup()
 
     def test_teardown(self):
         self.request_reset_screen.teardown()
 
-
     def test_request_reset(self):
-
-        self.request_reset_screen.name_or_email_line_edit.text_inner = self.gui_user.name
+        self.request_reset_screen.name_or_email_line_edit.text_inner = (
+            self.gui_user.name
+        )
 
         self.request_reset_screen.on_submit_clicked()
 
@@ -1216,6 +1363,9 @@ class DenariiDesktopGUIRequestResetScreenTestCase(unittest.TestCase):
 class DenariiDesktopGUIResetPasswordScreenTestCase(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
 
         self.window = Window()
         self.main_widget = Widget()
@@ -1273,20 +1423,28 @@ class DenariiDesktopGUIResetPasswordScreenTestCase(unittest.TestCase):
     def tearDown(self):
         super().tearDown()
 
+        # We need to teardown the screen in case there are threads running. 
+        self.reset_password_screen.teardown()
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
+
     def test_setup(self):
         self.reset_password_screen.setup()
 
     def test_teardown(self):
         self.reset_password_screen.teardown()
 
-
     def test_reset_password(self):
-
         self.reset_password_screen.name_line_edit.text_inner = self.gui_user.name
         self.reset_password_screen.email_line_edit.text_inner = self.gui_user.email
-        self.reset_password_screen.password_line_edit.text_inner = self.gui_user.password
-        self.reset_password_screen.confirm_password_line_edit.text_inner =self.gui_user.password
-                                                                      
+        self.reset_password_screen.password_line_edit.text_inner = (
+            self.gui_user.password
+        )
+        self.reset_password_screen.confirm_password_line_edit.text_inner = (
+            self.gui_user.password
+        )
+
         self.reset_password_screen.on_submit_clicked()
 
         self.assertEqual(self.reset_password_screen.status_msg.text, "Success")
@@ -1295,6 +1453,9 @@ class DenariiDesktopGUIResetPasswordScreenTestCase(unittest.TestCase):
 class DenariiDesktopGUIVerifyResetScreenTestCase(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
 
         self.window = Window()
         self.main_widget = Widget()
@@ -1354,6 +1515,12 @@ class DenariiDesktopGUIVerifyResetScreenTestCase(unittest.TestCase):
 
     def tearDown(self):
         super().tearDown()
+        
+        # We need to teardown the screen in case there are threads running. 
+        self.verify_reset_screen.teardown()
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
 
     def test_setup(self):
         self.verify_reset_screen.setup()
@@ -1361,14 +1528,332 @@ class DenariiDesktopGUIVerifyResetScreenTestCase(unittest.TestCase):
     def test_teardown(self):
         self.verify_reset_screen.teardown()
 
-    
     def test_verify_reset(self):
-
         self.verify_reset_screen.reset_id_line_edit.text_inner = 4
 
         self.verify_reset_screen.on_submit_clicked()
 
         self.assertEqual(self.verify_reset_screen.status_msg.text, "Success")
+
+
+class DenariiDesktopGUICreditCardInfoScreenTestCase(unittest.TestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
+
+        self.window = Window()
+        self.main_widget = Widget()
+        self.main_widget.setMainLayout(HBoxLayout())
+        self.window.setCentralWidget(self.main_widget)
+
+        self.denarii_mobile_client = DenariiMobileClient()
+        self.denarii_client = DenariiClient()
+
+        self.remote_wallet = Wallet(name="remote", password="remote_password")
+        self.local_wallet = Wallet(name="local", password="local_password")
+
+        self.gui_user = GuiUser()
+        self.gui_user.name = f"credit_card_info_screen_user_{self._testMethodName}"
+        self.gui_user.password = "password"
+        self.gui_user.email = (
+            f"credit_card_info_screen_email_{self._testMethodName}@email.com"
+        )
+
+        # We must create each wallet
+        create_remote_wallet(
+            self.gui_user, self.denarii_mobile_client, self.remote_wallet
+        )
+        self.denarii_client.create_wallet(self.local_wallet)
+
+        # We must set the wallet to the local one
+        self.denarii_client.set_current_wallet(self.local_wallet)
+
+        self.next_button = PushButton("Next Page", self)
+        self.next_button.setStyleSheet("color:black")
+        self.next_button.setStyleSheet("font-weight: bold")
+        self.next_button.setStyleSheet("font-size: 18pt")
+        self.next_button.clicked.connect(next_clicked)
+
+        self.back_button = PushButton("Back", self)
+        self.back_button.setStyleSheet("color:black")
+        self.back_button.setStyleSheet("font-weight: bold")
+        self.back_button.setStyleSheet("font-size: 18pt")
+        self.back_button.clicked.connect(back_clicked)
+
+        common_buttons = {NEXT_BUTTON: self.next_button, BACK_BUTTON: self.back_button}
+
+        self.credit_card_info_screen = CreditCardInfoScreen(
+            push_buttons=common_buttons,
+            parent=self,
+            denarii_mobile_client=self.denarii_mobile_client,
+            main_layout=self.main_widget.main_layout,
+            deletion_func=deletion_function,
+            denarii_client=self.denarii_client,
+            remote_wallet=self.remote_wallet,
+            local_wallet=self.local_wallet,
+            gui_user=self.gui_user,
+            on_remote_wallet_screen_clicked=on_remote_wallet_screen_clicked,
+            on_buy_screen_clicked=on_buy_screen_clicked,
+            on_credit_card_info_screen_clicked=on_credit_card_info_screen_clicked,
+            on_user_settings_screen_clicked=on_user_settings_screen_clicked,
+            on_verification_screen_clicked=on_verification_screen_clicked,
+        )
+
+    def tearDown(self):
+        super().tearDown()
+
+        # We need to teardown the screen in case there are threads running. 
+        self.credit_card_info_screen.teardown()
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
+
+    def test_setup(self):
+        self.credit_card_info_screen.setup()
+
+    def test_teardown(self):
+        self.credit_card_info_screen.teardown()
+
+
+class DenariiDesktopGUISupportTicketScreenTestCase(unittest.TestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
+
+        self.window = Window()
+        self.main_widget = Widget()
+        self.main_widget.setMainLayout(HBoxLayout())
+        self.window.setCentralWidget(self.main_widget)
+
+        self.denarii_mobile_client = DenariiMobileClient()
+        self.denarii_client = DenariiClient()
+
+        self.remote_wallet = Wallet(name="remote", password="remote_password")
+        self.local_wallet = Wallet(name="local", password="local_password")
+
+        self.gui_user = GuiUser()
+        self.gui_user.name = f"support_ticket_screen_user_{self._testMethodName}"
+        self.gui_user.password = "password"
+        self.gui_user.email = (
+            f"support_ticket_screen_email_{self._testMethodName}@email.com"
+        )
+
+        # We must create each wallet
+        create_remote_wallet(
+            self.gui_user, self.denarii_mobile_client, self.remote_wallet
+        )
+        self.denarii_client.create_wallet(self.local_wallet)
+
+        # We must set the wallet to the local one
+        self.denarii_client.set_current_wallet(self.local_wallet)
+
+        self.next_button = PushButton("Next Page", self)
+        self.next_button.setStyleSheet("color:black")
+        self.next_button.setStyleSheet("font-weight: bold")
+        self.next_button.setStyleSheet("font-size: 18pt")
+        self.next_button.clicked.connect(next_clicked)
+
+        self.back_button = PushButton("Back", self)
+        self.back_button.setStyleSheet("color:black")
+        self.back_button.setStyleSheet("font-weight: bold")
+        self.back_button.setStyleSheet("font-size: 18pt")
+        self.back_button.clicked.connect(back_clicked)
+
+        common_buttons = {NEXT_BUTTON: self.next_button, BACK_BUTTON: self.back_button}
+
+        self.support_ticket_screen = SupportTicketScreen(
+            push_buttons=common_buttons,
+            parent=self,
+            denarii_mobile_client=self.denarii_mobile_client,
+            main_layout=self.main_widget.main_layout,
+            deletion_func=deletion_function,
+            denarii_client=self.denarii_client,
+            remote_wallet=self.remote_wallet,
+            local_wallet=self.local_wallet,
+            gui_user=self.gui_user,
+            on_user_settings_screen_clicked=on_user_settings_screen_clicked,
+        )
+
+    def tearDown(self):
+        super().tearDown()
+
+        # We need to teardown the screen in case there are threads running. 
+        self.support_ticket_screen.teardown()
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
+
+    def test_setup(self):
+        self.support_ticket_screen.setup()
+
+    def test_teardown(self):
+        self.support_ticket_screen.teardown()
+
+
+class DenariiDesktopGUIUserSettingsScreenTestCase(unittest.TestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
+
+        self.window = Window()
+        self.main_widget = Widget()
+        self.main_widget.setMainLayout(HBoxLayout())
+        self.window.setCentralWidget(self.main_widget)
+
+        self.denarii_mobile_client = DenariiMobileClient()
+        self.denarii_client = DenariiClient()
+
+        self.remote_wallet = Wallet(name="remote", password="remote_password")
+        self.local_wallet = Wallet(name="local", password="local_password")
+
+        self.gui_user = GuiUser()
+        self.gui_user.name = f"user_settings_screen_user_{self._testMethodName}"
+        self.gui_user.password = "password"
+        self.gui_user.email = (
+            f"user_settings_screen_email_{self._testMethodName}@email.com"
+        )
+
+        # We must create each wallet
+        create_remote_wallet(
+            self.gui_user, self.denarii_mobile_client, self.remote_wallet
+        )
+        self.denarii_client.create_wallet(self.local_wallet)
+
+        # We must set the wallet to the local one
+        self.denarii_client.set_current_wallet(self.local_wallet)
+
+        self.next_button = PushButton("Next Page", self)
+        self.next_button.setStyleSheet("color:black")
+        self.next_button.setStyleSheet("font-weight: bold")
+        self.next_button.setStyleSheet("font-size: 18pt")
+        self.next_button.clicked.connect(next_clicked)
+
+        self.back_button = PushButton("Back", self)
+        self.back_button.setStyleSheet("color:black")
+        self.back_button.setStyleSheet("font-weight: bold")
+        self.back_button.setStyleSheet("font-size: 18pt")
+        self.back_button.clicked.connect(back_clicked)
+
+        common_buttons = {NEXT_BUTTON: self.next_button, BACK_BUTTON: self.back_button}
+
+        self.user_settings_screen = UserSettingsScreen(
+            push_buttons=common_buttons,
+            parent=self,
+            denarii_mobile_client=self.denarii_mobile_client,
+            main_layout=self.main_widget.main_layout,
+            deletion_func=deletion_function,
+            denarii_client=self.denarii_client,
+            remote_wallet=self.remote_wallet,
+            local_wallet=self.local_wallet,
+            gui_user=self.gui_user,
+            on_remote_wallet_screen_clicked=on_remote_wallet_screen_clicked,
+            on_buy_screen_clicked=on_buy_screen_clicked,
+            on_credit_card_info_screen_clicked=on_credit_card_info_screen_clicked,
+            on_verification_screen_clicked=on_verification_screen_clicked,
+            on_support_ticket_clicked=on_support_ticket_clicked,
+        )
+
+    def tearDown(self):
+        super().tearDown()
+
+        # We need to teardown the screen in case there are threads running. 
+        self.user_settings_screen.teardown()
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
+
+    def test_setup(self):
+        self.user_settings_screen.setup()
+
+    def test_teardown(self):
+        self.user_settings_screen.teardown()
+
+
+class DenariiDesktopGUIVerificationScreenTestCase(unittest.TestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        self.start_time = time.time()
+
+        print(f"Running {self.id()}-{self._testMethodName}")
+
+        self.window = Window()
+        self.main_widget = Widget()
+        self.main_widget.setMainLayout(HBoxLayout())
+        self.window.setCentralWidget(self.main_widget)
+
+        self.denarii_mobile_client = DenariiMobileClient()
+        self.denarii_client = DenariiClient()
+
+        self.remote_wallet = Wallet(name="remote", password="remote_password")
+        self.local_wallet = Wallet(name="local", password="local_password")
+
+        self.gui_user = GuiUser()
+        self.gui_user.name = f"verification_screen_user_{self._testMethodName}"
+        self.gui_user.password = "password"
+        self.gui_user.email = (
+            f"verification_screen_email_{self._testMethodName}@email.com"
+        )
+
+        # We must create each wallet
+        create_remote_wallet(
+            self.gui_user, self.denarii_mobile_client, self.remote_wallet
+        )
+        self.denarii_client.create_wallet(self.local_wallet)
+
+        # We must set the wallet to the local one
+        self.denarii_client.set_current_wallet(self.local_wallet)
+
+        self.next_button = PushButton("Next Page", self)
+        self.next_button.setStyleSheet("color:black")
+        self.next_button.setStyleSheet("font-weight: bold")
+        self.next_button.setStyleSheet("font-size: 18pt")
+        self.next_button.clicked.connect(next_clicked)
+
+        self.back_button = PushButton("Back", self)
+        self.back_button.setStyleSheet("color:black")
+        self.back_button.setStyleSheet("font-weight: bold")
+        self.back_button.setStyleSheet("font-size: 18pt")
+        self.back_button.clicked.connect(back_clicked)
+
+        common_buttons = {NEXT_BUTTON: self.next_button, BACK_BUTTON: self.back_button}
+
+        self.verification_screen = VerificationScreen(
+            push_buttons=common_buttons,
+            parent=self,
+            denarii_mobile_client=self.denarii_mobile_client,
+            main_layout=self.main_widget.main_layout,
+            deletion_func=deletion_function,
+            denarii_client=self.denarii_client,
+            remote_wallet=self.remote_wallet,
+            local_wallet=self.local_wallet,
+            gui_user=self.gui_user,
+            on_remote_wallet_screen_clicked=on_remote_wallet_screen_clicked,
+            on_buy_screen_clicked=on_buy_screen_clicked,
+            on_credit_card_info_screen_clicked=on_credit_card_info_screen_clicked,
+            on_user_settings_screen_clicked=on_user_settings_screen_clicked,
+        )
+
+    def tearDown(self):
+        super().tearDown()
+
+        # We need to teardown the screen in case there are threads running. 
+        self.verification_screen.teardown()
+        print(f"Finished Running {self.id()}-{self._testMethodName}")
+        t = time.time() - self.start_time
+        print("%s: %.3f" % (self.id(), t))
+
+    def test_setup(self):
+        self.verification_screen.setup()
+
+    def test_teardown(self):
+        self.verification_screen.teardown()
+
 
 
 if __name__ == "__main__":

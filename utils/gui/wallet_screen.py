@@ -63,7 +63,6 @@ class WalletScreen(Screen):
         self.transfer_push_button = None
         # Wallet is set in the specific wallet screen
         self.wallet = None
-        self.keep_refreshing_balance = False
         self.balance_refresh_thread = StoppableThread(target=self.refresh_balance)
 
         self.balance = 0
@@ -129,15 +128,16 @@ class WalletScreen(Screen):
         super().setup()
 
         self.deletion_func(self.main_layout)
-
-        self.keep_refreshing_balance = True
         
         self.balance_refresh_thread.start()
 
     def teardown(self):
         super().teardown()
 
-        self.keep_refreshing_balance = False
+        self.balance_refresh_thread.stop()
+
+        if self.balance_refresh_thread.is_alive():
+            self.balance_refresh_thread.join()
 
     def populate_wallet_screen(self):
         pass
@@ -165,7 +165,7 @@ class WalletScreen(Screen):
             self.status_message_box("Failure transferring money")
 
     def refresh_balance(self):
-        while self.keep_refreshing_balance:
+        while not self.balance_refresh_thread.stopped():
             # Need time for wallet to be set
             time.sleep(10)
             if self.wallet is None:

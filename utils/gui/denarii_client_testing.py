@@ -8,10 +8,10 @@ import pickle as pkl
 import random
 import requests
 import string
-import threading
 import time
 
 from constants import *
+from stoppable_thread import StoppableThread
 
 word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
 
@@ -105,6 +105,7 @@ class DenariiClient:
             self.wallets[name] = wallet
 
         self.opened_wallet = None
+        self.mining_thread = None
 
     def create_wallet(self, wallet):
         if wallet.name in self.wallets:
@@ -189,19 +190,22 @@ class DenariiClient:
         return False
 
     def start_mining(self, do_background_mining, ignore_battery, threads):
-        self.keep_mining = True
-        self.mining_thread = threading.Thread(target=self.mine)
+        self.mining_thread = StoppableThread(target=self.mine)
         self.mining_thread.start()
         return True
 
     def stop_mining(self):
-        self.keep_mining = False
         store_wallet(self.opened_wallet)
-        self.mining_thread.join()
+        if self.mining_thread is not None:
+            self.mining_thread.stop()
+            if self.mining_thread.is_alive():
+                self.mining_thread.join()
+        else:
+            return False
         return True
 
     def mine(self):
-        while self.keep_mining:
+        while not self.mining_thread.stopped():
             time.sleep(1)
 
             self.opened_wallet.balance += random.uniform(1.0, 100.0) / 0.000000000001

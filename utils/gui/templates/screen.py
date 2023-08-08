@@ -30,27 +30,40 @@ else:
     from radio_button import *
 
 
-class CreditCardInfoScreen(Screen):
+
+class SomeScreenName(Screen):
     """
-    A screen that allows the user to set or clear their credit card info
+    A template for a screen
     """
 
-    def __init__(self, main_layout, deletion_func, denarii_client, gui_user, denarii_mobile_client, **kwargs):
+    def __init__(
+        self,
+        main_layout,
+        deletion_func,
+        denarii_client,
+        gui_user,
+        denarii_mobile_client,
+        **kwargs
+    ):
+        # Define the class variables and set them to None here
+        
 
-        self.remote_wallet_screen_push_button = None
-        self.sell_screen_push_button = None
-        self.buy_screen_push_button = None
-        self.user_settings_screen_push_button = None 
-        self.verification_screen_push_button = None
-
-        super().__init__(self.credit_card_info_screen_name, main_layout, deletion_func, denarii_client, gui_user, denarii_mobile_client, **kwargs)
-
+        super().__init__(
+            # Define my_name in the base screen.py class and reference it here
+            self.my_name,
+            main_layout=main_layout,
+            deletion_func=deletion_func,
+            denarii_client=denarii_client,
+            gui_user=gui_user,
+            denarii_mobile_client=denarii_mobile_client,
+            **kwargs
+        )
 
     def init(self, **kwargs):
-         super().init(**kwargs)
-    
+        super().init(**kwargs)
+
     def setup(self):
         super().setup()
-    
+
     def teardown(self):
         super().teardown()

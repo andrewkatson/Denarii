@@ -40,6 +40,9 @@ class Screen:
     reset_password_screen_name = "RESET_PASSWORD_SCREEN_NAME"
     verify_reset_screen_name = "VERIFY_RESET_SCREEN_NAME"
     credit_card_info_screen_name = "CREDIT_CARD_INFO_SCREEN_NAME"
+    verification_screen_name = "VERIFICATON_SCREEN_NAME"
+    user_settings_screen_name = "USER_SETTINGS_SCREEN_NAME"
+    support_ticket_screen_name = "SUPPORT_TICKET_SCREEN_NAME"
 
     suffix_of_screen_name = "suffix"
 

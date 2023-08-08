@@ -55,6 +55,6 @@ class GridLayout:
     def __init__(self) -> None:
         self.widgets = []
 
-    def addWidget(self, new_widget, alignment):
+    def addWidget(self, new_widget, row, col, alignment=None):
         new_widget.setAlignment(alignment)
         self.widgets.append(new_widget)

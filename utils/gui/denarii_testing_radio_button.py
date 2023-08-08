@@ -44,7 +44,7 @@ class RadioButton:
     def on_buy_regardless_of_price_clicked(self):
         self.buy_regardless_of_price_callback(False)
 
-    def fail_if_full_amount_isnt_met(self):
+    def on_fail_if_full_amount_isnt_met(self):
         self.fail_if_full_amount_isnt_met_callback(True)
 
     def setAlignment(self, alignment):

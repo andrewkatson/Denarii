@@ -44,6 +44,9 @@ try:
     from sell_denarii_screen import *
     from set_wallet_screen import *
     from stoppable_thread import StoppableThread
+    from support_ticket_screen import *
+    from user_settings_screen import *
+    from verification_screen import *
     from verify_reset_screen import *
     from wallet_info_screen import *
     from wallet_screen import *
@@ -73,8 +76,8 @@ try:
     # Modify the PATH to point to where all of python protos are located that are not nearby in the filesystem
     sys.path.append(str(workspace_path_finder.get_home() / "py_proto"))
 
-    from wallet import *
-    from gui_user import *
+    from wallet import Wallet
+    from gui_user import GuiUser
 
     # Modify the PATH to point to where the gui_user proto is
     sys.path.append(
@@ -210,7 +213,10 @@ try:
                 "on_buy_screen_clicked": self.on_buy_denarii_screen_pushed,
                 "on_remote_wallet_screen_clicked": self.on_remote_wallet_screen_pushed,
                 "on_login_clicked": self.on_login_pushed,
-                "on_register_clicked": self.on_register_pushed
+                "on_register_clicked": self.on_register_pushed,
+                "on_verification_screen_clicked": self.on_verification_screen_pushed,
+                "on_user_settings_screen_clicked": self.on_user_settings_screen_pushed,
+                "on_support_ticket_screen_clicked": self.on_support_ticket_screen_pushed
             }
 
             if os.path.exists(USER_SETTINGS_PATH):
@@ -296,7 +302,9 @@ try:
                 gui_user=gui_user,
                 on_buy_screen_clicked=self.on_buy_denarii_screen_pushed,
                 on_sell_screen_clicked=self.on_sell_denarii_screen_pushed,
-                on_credit_card_info_screen_clicked=self.on_credit_card_info_screen_pushed
+                on_credit_card_info_screen_clicked=self.on_credit_card_info_screen_pushed,
+                on_verification_screen_clicked=self.on_verification_screen_pushed,
+                on_user_settings_screen_clicked=self.on_user_settings_screen_pushed,
             )
             self.BUY_DENARII = BuyDenariiScreen(
                 push_buttons=common_buttons,
@@ -310,7 +318,9 @@ try:
                 gui_user=gui_user,
                 on_remote_wallet_screen_clicked=self.on_remote_wallet_screen_pushed,
                 on_sell_screen_clicked=self.on_sell_denarii_screen_pushed,
-                on_credit_card_info_screen_clicked=self.on_credit_card_info_screen_pushed
+                on_credit_card_info_screen_clicked=self.on_credit_card_info_screen_pushed,
+                on_verification_screen_clicked=self.on_verification_screen_pushed,
+                on_user_settings_screen_clicked=self.on_user_settings_screen_pushed,
             )
             self.SELL_DENARII = SellDenariiScreen(
                 push_buttons=common_buttons,
@@ -324,7 +334,9 @@ try:
                 gui_user=gui_user,
                 on_remote_wallet_screen_clicked=self.on_remote_wallet_screen_pushed,
                 on_buy_screen_clicked=self.on_buy_denarii_screen_pushed,
-                on_credit_card_info_screen_clicked=self.on_credit_card_info_screen_pushed
+                on_credit_card_info_screen_clicked=self.on_credit_card_info_screen_pushed,
+                on_verification_screen_clicked=self.on_verification_screen_pushed,
+                on_user_settings_screen_clicked=self.on_user_settings_screen_pushed,
             )
             self.CREDIT_CARD_INFO_SCREEN = CreditCardInfoScreen(
                 push_buttons=common_buttons,
@@ -339,6 +351,8 @@ try:
                 on_remote_wallet_screen_clicked=self.on_remote_wallet_screen_pushed,
                 on_buy_screen_clicked=self.on_buy_denarii_screen_pushed,
                 on_sell_screen_clicked=self.on_sell_denarii_screen_pushed,
+                on_verification_screen_clicked=self.on_verification_screen_pushed,
+                on_user_settings_screen_clicked=self.on_user_settings_screen_pushed,
             )
             self.LOGIN_OR_REGISTER = LoginOrRegisterScreen(
                 push_buttons=common_buttons,
@@ -351,7 +365,7 @@ try:
                 local_wallet=self.local_wallet,
                 gui_user=gui_user,
                 on_login_clicked=self.on_login_pushed,
-                on_register_clicked=self.on_register_pushed
+                on_register_clicked=self.on_register_pushed,
             )
             self.LOGIN_SCREEN = LoginScreen(
                 push_buttons=common_buttons,
@@ -407,6 +421,51 @@ try:
                 remote_wallet=self.remote_wallet,
                 local_wallet=self.local_wallet,
                 gui_user=gui_user,
+            )
+            self.USER_SETTINGS_SCREEN = UserSettingsScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+                on_remote_wallet_screen_clicked=self.on_remote_wallet_screen_pushed,
+                on_buy_screen_clicked=self.on_buy_denarii_screen_pushed,
+                on_sell_screen_clicked=self.on_sell_denarii_screen_pushed,
+                on_credit_card_info_screen_clicked=self.on_credit_card_info_screen_pushed,
+                on_verification_screen_clicked=self.on_verification_screen_pushed,
+                on_support_ticket_screen_clicked=self.on_support_ticket_screen_pushed,
+            )
+            self.VERIFICATION_SCREEN = VerificationScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+                on_remote_wallet_screen_clicked=self.on_remote_wallet_screen_pushed,
+                on_buy_screen_clicked=self.on_buy_denarii_screen_pushed,
+                on_sell_screen_clicked=self.on_sell_denarii_screen_pushed,
+                on_credit_card_info_screen_clicked=self.on_credit_card_info_screen_pushed,
+                on_user_settings_screen_clicked=self.on_user_settings_screen_pushed,
+            )
+            self.SUPPORT_TICKET_SCREEN = SupportTicketScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+                on_user_settings_screen_clicked=self.on_user_settings_screen_pushed,
             )
 
             self.last_widget_stack = []
@@ -577,7 +636,7 @@ try:
             Restart the server thread if there are any issues with it
             """
 
-            while True:
+            while not self.server_thread.stopped():
                 time.sleep(60)
 
                 if os.path.exists(SYNCHRONIZATION_STARTED) or os.path.exists(
@@ -738,7 +797,7 @@ try:
             Navigate to the remote wallet screen
             """
             self.go_to_this_widget(self.REMOTE_WALLET_SCREEN)
-        
+
         @pyqtSlot()
         def on_login_pushed(self):
             """
@@ -759,6 +818,27 @@ try:
             Navigate to the credit card info screen
             """
             self.go_to_this_widget(self.CREDIT_CARD_INFO_SCREEN)
+
+        @pyqtSlot()
+        def on_user_settings_screen_pushed(self):
+            """
+            Navigate to the user settings screen
+            """
+            self.go_to_this_widget(self.USER_SETTINGS_SCREEN)
+
+        @pyqtSlot()
+        def on_verification_screen_pushed(self):
+            """
+            Navigate to the verification screen
+            """
+            self.go_to_this_widget(self.VERIFICATION_SCREEN)
+
+        @pyqtSlot()
+        def on_support_ticket_screen_pushed(self):
+            """
+            Navigate to the support ticket screen
+            """
+            self.go_to_this_widget(self.SUPPORT_TICKET_SCREEN)
 
         def setup_current_widget(self):
             if self.get_last_widget() is not None:
@@ -824,14 +904,6 @@ try:
         central_widget = window.centralWidget()
         central_widget.setGeometry(QRect(0, 0, 4000, 4000))
 
-    def shutdown_threads():
-        for thread in threading.enumerate():
-            if thread.name != "MainThread":
-                thread.stop()
-
-                while not thread.stopped():
-                    time.sleep(1)
-
     def main():
         app = QApplication(sys.argv)
 
@@ -853,8 +925,6 @@ try:
         window.centralWidget().shutdown_all_screens()
 
         app.exit(0)
-
-        shutdown_threads()
 
         sys.exit()
 

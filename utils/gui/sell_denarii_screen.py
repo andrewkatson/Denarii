@@ -47,7 +47,9 @@ class SellDenariiScreen(Screen):
     ):
         self.buy_screen_push_button = None
         self.remote_wallet_screen_push_button = None 
-        self.credit_card_info_screen_push_button = None
+        self.credit_card_info_screen_push_button = None        
+        self.user_settings_screen_push_button = None 
+        self.verification_screen_push_button = None
         
 
         super().__init__(

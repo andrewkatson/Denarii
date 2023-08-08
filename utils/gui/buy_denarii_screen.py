@@ -9,6 +9,7 @@ if TESTING:
     from denarii_testing_label import Label
     from denarii_testing_line_edit import LineEdit
     from denarii_testing_message_box import MessageBox
+    from denarii_testing_pixmap import Pixmap
     from denarii_testing_push_button import PushButton
     from denarii_testing_qt import (
         TextSelectableByMouse,
@@ -23,6 +24,7 @@ else:
     from label import *
     from line_edit import *
     from message_box import MessageBox
+    from pixmap import Pixmap
     from push_button import *
     from qt import (
         TextSelectableByMouse,
@@ -46,28 +48,29 @@ class BuyDenariiScreen(Screen):
         denarii_client,
         gui_user,
         denarii_mobile_client,
-        **kwargs
+        **kwargs,
     ):
         self.remote_wallet_screen_push_button = None
         self.sell_screen_push_button = None
-        self.credit_card__info_screen_push_button = None
+        self.credit_card_info_screen_push_button = None
+        self.user_settings_screen_push_button = None
+        self.verification_screen_push_button = None
         self.buy_denarii_label = None
         self.submit_push_button = None
         self.amount_line_edit = None
         self.price_line_edit = None
-        self.amount_label = None
-        self.price_label = None
         self.asks_label = None
         self.amount_col_label = None
         self.price_col_label = None
         self.amount_bought_col_label = None
         self.queued_buys_label = None
-        self.buy_regardless_of_price_radio_button = None 
-        self.dont_buy_regardless_or_price_radio_button = None 
+        self.buy_regardless_of_price_radio_button = None
+        self.dont_buy_regardless_or_price_radio_button = None
         self.fail_if_full_amount_cant_be_bought_radio_button = None
         self.succeed_even_when_full_amount_cant_be_bought_radio_button = None
-        self.buy_regardless_of_price_label = None 
+        self.buy_regardless_of_price_label = None
         self.fail_if_full_amount_isnt_met_label = None
+        self.cancel_buy_col_label = None
 
         self.buy_regardless_of_price = False
         self.fail_if_full_amount_isnt_met = True
@@ -75,11 +78,7 @@ class BuyDenariiScreen(Screen):
         self.current_asks = []
         self.queued_buys = []
 
-        self.keep_refreshing_prices = False
-
         self.asks_refresh_thread = StoppableThread(target=self.refresh_prices)
-
-        self.keep_refreshing_settled_transactions = False
 
         self.settled_transactions_thread = StoppableThread(
             target=self.refresh_settled_transactions
@@ -88,6 +87,8 @@ class BuyDenariiScreen(Screen):
         self.current_asks_lock = threading.Lock()
         self.queued_buys_lock = threading.Lock()
 
+        self.parent = kwargs["parent"]
+
         super().__init__(
             self.buy_denarii_screen_name,
             main_layout=main_layout,
@@ -95,7 +96,7 @@ class BuyDenariiScreen(Screen):
             denarii_client=denarii_client,
             gui_user=gui_user,
             denarii_mobile_client=denarii_mobile_client,
-            **kwargs
+            **kwargs,
         )
 
     def init(self, **kwargs):
@@ -128,12 +129,36 @@ class BuyDenariiScreen(Screen):
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
 
-        self.credit_card_info_screen_push_button = PushButton("Credit Card", kwargs["parent"])
+        self.credit_card_info_screen_push_button = PushButton(
+            "Credit Card", kwargs["parent"]
+        )
         self.credit_card_info_screen_push_button.clicked.connect(
             lambda: kwargs["on_credit_card_info_screen_clicked"]()
         )
         self.credit_card_info_screen_push_button.setVisible(False)
         self.credit_card_info_screen_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
+
+        self.user_settings_screen_push_button = PushButton(
+            "User Settings", kwargs["parent"]
+        )
+        self.user_settings_screen_push_button.clicked.connect(
+            lambda: kwargs["on_user_settings_screen_clicked"]()
+        )
+        self.user_settings_screen_push_button.setVisible(False)
+        self.user_settings_screen_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
+
+        self.verification_screen_push_button = PushButton(
+            "Identity Verification", kwargs["parent"]
+        )
+        self.verification_screen_push_button.clicked.connect(
+            lambda: kwargs["on_verification_screen_clicked"]()
+        )
+        self.verification_screen_push_button.setVisible(False)
+        self.verification_screen_push_button.setStyleSheet(
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
 
@@ -143,18 +168,6 @@ class BuyDenariiScreen(Screen):
         self.submit_push_button.setStyleSheet(
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
-
-        self.amount_label = Label("Amount: ")
-        font = Font()
-        font.setFamily("Arial")
-        font.setPixelSize(50)
-        self.amount_label.setFont(font)
-
-        self.price_label = Label("Price: ")
-        font = Font()
-        font.setFamily("Arial")
-        font.setPixelSize(50)
-        self.price_label.setFont(font)
 
         self.amount_line_edit = LineEdit()
         self.price_line_edit = LineEdit()
@@ -183,6 +196,12 @@ class BuyDenariiScreen(Screen):
         font.setPixelSize(50)
         self.amount_bought_col_label.setFont(font)
 
+        self.cancel_buy_col_label = Label("Cancel Buy")
+        font = Font()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.cancel_buy_col_label.setFont(font)
+
         self.queued_buys_label = Label("Queued Buys")
         font = Font()
         font.setFamily("Arial")
@@ -195,14 +214,18 @@ class BuyDenariiScreen(Screen):
         font.setPixelSize(50)
         self.buy_regardless_of_price_label.setFont(font)
 
-        self.fail_if_full_amount_isnt_met_label = Label("Fail if Full Amount Cannot Be Bought")
+        self.fail_if_full_amount_isnt_met_label = Label(
+            "Fail if Full Amount Cannot Be Bought"
+        )
         font = Font()
         font.setFamily("Arial")
         font.setPixelSize(50)
         self.fail_if_full_amount_isnt_met_label.setFont(font)
 
         self.buy_regardless_of_price_radio_button = RadioButton(
-            "True", kwargs["parent"], buy_regardless_of_price_callback=self.set_buy_regardless_or_price
+            "True",
+            kwargs["parent"],
+            buy_regardless_of_price_callback=self.set_buy_regardless_or_price,
         )
         self.buy_regardless_of_price_radio_button.toggled.connect(
             self.buy_regardless_of_price_radio_button.on_buy_regardless_of_price_clicked
@@ -214,12 +237,16 @@ class BuyDenariiScreen(Screen):
         )
 
         self.dont_buy_regardless_or_price_radio_button = RadioButton(
-            "False", kwargs["parent"], buy_regardless_of_price_callback=self.set_buy_regardless_or_price
+            "False",
+            kwargs["parent"],
+            buy_regardless_of_price_callback=self.set_buy_regardless_or_price,
         )
         self.dont_buy_regardless_or_price_radio_button.toggled.connect(
             self.dont_buy_regardless_or_price_radio_button.on_wallet_type_clicked
         )
-        self.dont_buy_regardless_or_price_radio_button.buy_regardless_of_price_option = False
+        self.dont_buy_regardless_or_price_radio_button.buy_regardless_of_price_option = (
+            False
+        )
         self.dont_buy_regardless_or_price_radio_button.setChecked(True)
         self.dont_buy_regardless_or_price_radio_button.setVisible(False)
         self.dont_buy_regardless_or_price_radio_button.setStyleSheet(
@@ -227,12 +254,16 @@ class BuyDenariiScreen(Screen):
         )
 
         self.fail_if_full_amount_cant_be_bought_radio_button = RadioButton(
-            "True", kwargs["parent"], wallet_type_callback=self.set_fail_if_full_amount_isnt_met
+            "True",
+            kwargs["parent"],
+            wallet_type_callback=self.set_fail_if_full_amount_isnt_met,
         )
         self.fail_if_full_amount_cant_be_bought_radio_button.toggled.connect(
             self.fail_if_full_amount_cant_be_bought_radio_button.on_fail_if_full_amount_isnt_met
         )
-        self.fail_if_full_amount_cant_be_bought_radio_button.fail_if_full_amount_isnt_met_option = True
+        self.fail_if_full_amount_cant_be_bought_radio_button.fail_if_full_amount_isnt_met_option = (
+            True
+        )
         self.fail_if_full_amount_cant_be_bought_radio_button.setChecked(True)
         self.fail_if_full_amount_cant_be_bought_radio_button.setVisible(False)
         self.fail_if_full_amount_cant_be_bought_radio_button.setStyleSheet(
@@ -240,12 +271,16 @@ class BuyDenariiScreen(Screen):
         )
 
         self.succeed_even_when_full_amount_cant_be_bought_radio_button = RadioButton(
-            "False", kwargs["parent"], wallet_type_callback=self.set_fail_if_full_amount_isnt_met
+            "False",
+            kwargs["parent"],
+            wallet_type_callback=self.set_fail_if_full_amount_isnt_met,
         )
         self.succeed_even_when_full_amount_cant_be_bought_radio_button.toggled.connect(
             self.succeed_even_when_full_amount_cant_be_bought_radio_button.on_fail_if_full_amount_isnt_met
         )
-        self.succeed_even_when_full_amount_cant_be_bought_radio_button.fail_if_full_amount_isnt_met_option = False
+        self.succeed_even_when_full_amount_cant_be_bought_radio_button.fail_if_full_amount_isnt_met_option = (
+            False
+        )
         self.succeed_even_when_full_amount_cant_be_bought_radio_button.setVisible(False)
         self.succeed_even_when_full_amount_cant_be_bought_radio_button.setStyleSheet(
             "QRadioButton{font: 30pt Helvetica MS;} QRadioButton::indicator { width: 30px; height: 30px;};"
@@ -257,6 +292,7 @@ class BuyDenariiScreen(Screen):
         self.deletion_func(self.main_layout)
 
         self.main_layout.addLayout(self.first_horizontal_layout)
+        self.main_layout.addLayout(self.form_layout)
         self.main_layout.addLayout(self.second_horizontal_layout)
         self.main_layout.addLayout(self.third_horizontal_layout)
         self.main_layout.addLayout(self.fourth_horizontal_layout)
@@ -272,6 +308,9 @@ class BuyDenariiScreen(Screen):
 
         self.remote_wallet_screen_push_button.setVisible(True)
         self.sell_screen_push_button.setVisible(True)
+        self.credit_card_info_screen_push_button.setVisible(True)
+        self.user_settings_screen_push_button.setVisible(True)
+        self.verification_screen_push_button.setVisible(True)
         self.submit_push_button.setVisible(True)
         self.fail_if_full_amount_cant_be_bought_radio_button.setVisible(True)
         self.succeed_even_when_full_amount_cant_be_bought_radio_button.setVisible(True)
@@ -281,49 +320,62 @@ class BuyDenariiScreen(Screen):
         self.first_horizontal_layout.addWidget(
             self.buy_denarii_label, alignment=AlignCenter
         )
+        self.form_layout.addRow("Amount", self.amount_line_edit)
+        self.form_layout.addRow("Price", self.price_line_edit)
         self.second_horizontal_layout.addWidget(
-            self.amount_label, alignment=AlignCenter
-        )
-        self.second_horizontal_layout.addWidget(
-            self.amount_line_edit, alignment=AlignCenter
-        )
-        self.third_horizontal_layout.addWidget(self.price_label, alignment=AlignCenter)
-        self.third_horizontal_layout.addWidget(
-            self.price_line_edit, alignment=AlignCenter
-        )
-        self.fourth_horizontal_layout.addWidget(
             self.submit_push_button, alignment=AlignCenter
         )
-        self.fifth_horizontal_layout.addWidget(self.asks_label, alignment=AlignCenter)
-        self.sixth_horizontal_layout.addWidget(self.buy_regardless_of_price_label, alignment=AlignCenter)
-        self.seventh_horizontal_layout.addWidget(self.buy_regardless_of_price_radio_button, alignment=AlignCenter)
-        self.seventh_horizontal_layout.addWidget(self.dont_buy_regardless_or_price_radio_button, alignment=AlignCenter)
-        self.eight_horizontal_layout.addWidget(self.fail_if_full_amount_isnt_met_label, alignment=AlignCenter)
-        self.ninth_horizontal_layout.addWidget(self.fail_if_full_amount_cant_be_bought_radio_button, alignment=AlignCenter)
-        self.ninth_horizontal_layout.addWidget(self.succeed_even_when_full_amount_cant_be_bought_radio_button, alignment=AlignCenter)
+        self.third_horizontal_layout.addWidget(self.asks_label, alignment=AlignCenter)
+        self.fourth_horizontal_layout.addWidget(
+            self.buy_regardless_of_price_label, alignment=AlignCenter
+        )
+        self.fifth_horizontal_layout.addWidget(
+            self.buy_regardless_of_price_radio_button, alignment=AlignCenter
+        )
+        self.fifth_horizontal_layout.addWidget(
+            self.dont_buy_regardless_or_price_radio_button, alignment=AlignCenter
+        )
+        self.sixth_horizontal_layout.addWidget(
+            self.fail_if_full_amount_isnt_met_label, alignment=AlignCenter
+        )
+        self.seventh_horizontal_layout.addWidget(
+            self.fail_if_full_amount_cant_be_bought_radio_button, alignment=AlignCenter
+        )
+        self.seventh_horizontal_layout.addWidget(
+            self.succeed_even_when_full_amount_cant_be_bought_radio_button,
+            alignment=AlignCenter,
+        )
+
+        # Grid with all the asks made by other users
         self.grid_layout.addWidget(self.amount_col_label, 0, 0)
         self.grid_layout.addWidget(self.price_col_label, 0, 1)
-        self.tenth_horizontal_layout.addWidget(
+        self.eight_horizontal_layout.addWidget(
             self.queued_buys_label, alignment=AlignCenter
         )
+        # Grid with all the queued buys for the current user
         self.second_grid_layout.addWidget(self.amount_col_label, 0, 0)
         self.second_grid_layout.addWidget(self.price_col_label, 0, 1)
         self.second_grid_layout.addWidget(self.amount_bought_col_label, 0, 2)
-        self.eleventh_horizontal_layout.addWidget(
+        self.second_grid_layout.addWidget(self.cancel_buy_col_label, 0, 3)
+
+        self.ninth_horizontal_layout.addWidget(
             self.back_button, alignment=(AlignLeft | AlignBottom)
         )
-        self.eleventh_horizontal_layout.addWidget(
+        self.ninth_horizontal_layout.addWidget(
             self.remote_wallet_screen_push_button, alignment=AlignCenter
         )
-        self.eleventh_horizontal_layout.addWidget(
+        self.ninth_horizontal_layout.addWidget(
             self.sell_screen_push_button, alignment=AlignCenter
         )
-        self.eleventh_horizontal_layout.addWidget(
-            self.credit_card__info_screen_push_button, alignment=AlignCenter
+        self.ninth_horizontal_layout.addWidget(
+            self.credit_card_info_screen_push_button, alignment=AlignCenter
         )
-
-        self.keep_refreshing_prices = True
-        self.keep_refreshing_settled_transactions = True
+        self.ninth_horizontal_layout.addWidget(
+            self.user_settings_screen_push_button, alignment=AlignCenter
+        )
+        self.ninth_horizontal_layout.addWidget(
+            self.verification_screen_push_button, alignment=AlignCenter
+        )
 
         self.asks_refresh_thread.start()
         self.settled_transactions_thread.start()
@@ -333,64 +385,101 @@ class BuyDenariiScreen(Screen):
     def teardown(self):
         super().teardown()
 
-        self.keep_refreshing_prices = False
-        self.keep_refreshing_settled_transactions = False
+        self.asks_refresh_thread.stop()
+        self.settled_transactions_thread.stop()
+
+        if self.asks_refresh_thread.is_alive():
+            self.asks_refresh_thread.join()
+        if self.settled_transactions_thread.is_alive():
+            self.settled_transactions_thread.join()
 
     def on_submit_clicked(self):
         """
         Attempt to buy some denarii asks and set them in queued_buys. Then get money from the buyer (i.e. schedule it to be transferred). Then have the denarii be transferred over.
         """
 
-        try: 
+        try:
             self.current_asks_lock.acquire()
             self.queued_buys_lock.acquire()
 
-            success, first_res = self.denarii_mobile_client.has_credit_card_info(self.gui_user.user_id)
+            success, first_res = self.denarii_mobile_client.has_credit_card_info(
+                self.gui_user.user_id
+            )
 
-            if success: 
+            if success:
                 has_credit_card_info = first_res[0]["has_credit_card_info"]
 
                 if has_credit_card_info:
-                    
-                    success, second_res = self.denarii_mobile_client.buy_denarii(self.gui_user.user_id, self.amount_line_edit.text(), self.price_line_edit.text(), self.buy_regardless_of_price, self.fail_if_full_amount_isnt_met)
+                    success, second_res = self.denarii_mobile_client.buy_denarii(
+                        self.gui_user.user_id,
+                        self.amount_line_edit.text(),
+                        self.price_line_edit.text(),
+                        self.buy_regardless_of_price,
+                        self.fail_if_full_amount_isnt_met,
+                    )
 
-                    if success: 
-                        
+                    if success:
                         # TODO: change to use other currencies.
-                        success, third_res = self.denarii_mobile_client.get_money_from_buyer(self.gui_user.user_id, self.amount_line_edit.text(), "usd")
-                        
+                        (
+                            success,
+                            third_res,
+                        ) = self.denarii_mobile_client.get_money_from_buyer(
+                            self.gui_user.user_id, self.amount_line_edit.text(), "usd"
+                        )
+
                         if success:
-                            
                             succeeded_asks = []
                             for ask in second_res:
+                                (
+                                    success,
+                                    fourth_res,
+                                ) = self.denarii_mobile_client.transfer_denarii(
+                                    self.gui_user.user_id, ask["ask_id"]
+                                )
 
-                                success, fourth_res = self.denarii_mobile_client.transfer_denarii(self.gui_user.user_id, ask['ask_id'])
-
-                                if success: 
-                                    current_ask = self.get_current_ask(ask['ask_id'])
-                                    self.queued_buys.append({'ask_id': ask['ask_id'], 'amount_bought': fourth_res[0]['amount_bought'], 'amount': current_ask['amount']})
-                                    succeeded_asks.append(ask['ask_id'])
-                                else: 
-                                    self.status_message_box("Failed one of the denarii transfers. Will refund money and transfer denarii back to seller.")
+                                if success:
+                                    current_ask = self.get_current_ask(ask["ask_id"])
+                                    self.queued_buys.append(
+                                        {
+                                            "ask_id": ask["ask_id"],
+                                            "amount_bought": fourth_res[0][
+                                                "amount_bought"
+                                            ],
+                                            "amount": current_ask["amount"],
+                                        }
+                                    )
+                                    succeeded_asks.append(ask)
+                                else:
+                                    self.status_message_box(
+                                        "Failed one of the denarii transfers. Will refund money and transfer denarii back to seller."
+                                    )
                                     self.reverse_transaction(succeeded_asks)
                                     break
 
-                            else: 
-                                self.status_message_box("Failed to get your money to transfer the denarii")
-                    else: 
+                            else:
+                                self.status_message_box(
+                                    "Failed to get your money to transfer the denarii"
+                                )
+                        else:
+                            # TODO (reverse all the buys)
+                            pass
+                    else:
                         self.status_message_box("Failed to buy denarii")
 
-                else: 
-                    self.status_message_box("Failed to buy denarii because there was no credit card info on file")
-            else: 
-                self.status_message_box("Failed to buy denarii because we could not determine if there was credit card info")
-
+                else:
+                    self.status_message_box(
+                        "Failed to buy denarii because there was no credit card info on file"
+                    )
+            else:
+                self.status_message_box(
+                    "Failed to buy denarii because we could not determine if there was credit card info"
+                )
 
         except Exception as e:
             print(e)
             self.status_message_box("Failed: unknown error")
 
-        finally: 
+        finally:
             self.current_asks_lock.release()
             self.queued_buys_lock.release()
 
@@ -450,11 +539,18 @@ class BuyDenariiScreen(Screen):
 
             self.grid_layout.addWidget(amount_bought_label, row, 2)
 
+            cancel_buy_push_button = PushButton("", self.parent)
+            cancel_buy_push_button.clicked.connect(
+                lambda: self.on_cancel_buy_clicked(str(buy["ask_id"]))
+            )
+            cancel_buy_push_button.setVisible(True)
+            cancel_buy_push_button.setStyleSheet("background-image : url(red_x.png);")
+
             row += 1
         self.queued_buys_lock.release()
 
     def refresh_prices(self):
-        while self.keep_refreshing_prices:
+        while not self.asks_refresh_thread.stopped():
             time.sleep(5)
 
             try:
@@ -474,36 +570,34 @@ class BuyDenariiScreen(Screen):
                 self.status_message_box("Failed: unknown error")
 
     def refresh_settled_transactions(self):
-        
-        while self.keep_refreshing_settled_transactions:
+        while not self.settled_transactions_thread.stopped():
             time.sleep(5)
 
-            try: 
+            try:
                 self.queued_buys_lock.acquire()
                 ask_ids_to_remove = []
-                
+
                 # Check to see what buys are settled
                 for buy in self.queued_buys:
-                    success, res = self.denarii_mobile_client.is_transaction_settled(self.gui_user.user_id, buy['ask_id'])
+                    success, res = self.denarii_mobile_client.is_transaction_settled(
+                        self.gui_user.user_id, buy["ask_id"]
+                    )
 
-                    if success: 
-                        was_settled = res[0]['transaction_was_settled']
+                    if success:
+                        was_settled = res[0]["transaction_was_settled"]
 
-                        if was_settled: 
-                            ask_ids_to_remove.append(buy['ask_id'])
-
+                        if was_settled:
+                            ask_ids_to_remove.append(buy["ask_id"])
 
                 # Remove the ones that are settled
                 new_queued_buys = []
-                for buy in self.queued_buys: 
-
-                    if buy['ask_id'] not in ask_ids_to_remove: 
+                for buy in self.queued_buys:
+                    if buy["ask_id"] not in ask_ids_to_remove:
                         new_queued_buys.append(buy)
 
                 self.queued_buys = new_queued_buys
 
-
-            except Exception as e: 
+            except Exception as e:
                 print(e)
                 self.status_message_box("Failed: unknown error")
             finally:
@@ -516,16 +610,62 @@ class BuyDenariiScreen(Screen):
         self.buy_regardless_of_price = buy_regardless_of_price
 
     def get_current_ask(self, ask_id):
-
         for ask in self.current_asks:
-
-            if ask['ask_id'] == ask_id:
+            if ask["ask_id"] == ask_id:
                 return ask
+        try:
+            success, res = self.denarii_mobile_client.get_ask_with_identifier(
+                self.gui_user.user_id, ask_id
+            )
 
-        # If we can't find the current ask with the ask id then just return a -1 amount since we know how much was bought
-        # TODO: change to an API call that grabs the ask with this id
-        return {'amount': -1}
-    
-    def reverse_transaction(self, asks_ids_to_reverse):
-        # TODO: add in two API calls here to first transfer denarii back to affected sellers then refund the buyer.
-        pass
+            if success:
+                return res
+            else:
+                return {"amount": -1, "ask_id": ask_id, "amount_bought": 0}
+        except Exception as e:
+            print(e)
+            self.status_message_box("Failed: unknown error")
+            return {"amount": -1, "ask_id": ask_id, "amount_bought": 0}
+
+    def reverse_transaction(self, asks_to_reverse):
+        for ask in asks_to_reverse:
+            try:
+                success = self.denarii_mobile_client.send_money_back_to_buyer(
+                    self.gui_user.user_id, ask["amount_bought"], "usd"
+                )
+
+                if success:
+                    self.cancel_buys([ask["ask_id"]])
+                else:
+                    self.status_message_box(
+                        f"Failed to send money back to buyer and cancel ask: {ask['ask_id']}. Copy that down and file a support ticket."
+                    )
+
+            except Exception as e:
+                print(e)
+                self.status_message_box("Failed: unknown error")
+
+    def cancel_buys(self, ask_ids_to_cancel):
+        for ask_id in ask_ids_to_cancel:
+            try:
+                success, res = self.denarii_mobile_client.cancel_buy_of_ask(
+                    self.gui_user.user_id, ask_id
+                )
+
+                if success:
+                    self.queued_buys = [
+                        buy for buy in self.queued_buys if ask_id != buy["ask_id"]
+                    ]
+                else:
+                    # TODO use a message box that makes the user accept before continuing
+                    self.status_message_box(
+                        f"Failed to cancel buy of ask: {ask_id}. Copy that down and file a support ticket."
+                    )
+                    time.sleep(3)
+
+            except Exception as e:
+                print(e)
+                self.status_message_box("Failed: unknown error")
+
+    def on_cancel_buy_clicked(self, ask_id_to_cancel):
+        self.cancel_buys([ask_id_to_cancel])
