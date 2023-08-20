@@ -216,6 +216,7 @@ class DenariiAsk:
         self.ask_id = -1
         self.amount_bought = 0
         self.is_settled = False
+        self.has_been_seen_by_seller = False
         self.creation_time = datetime.datetime.now()
         self.updated_time = datetime.datetime.now()
 
@@ -543,6 +544,7 @@ class DenariiMobileClient:
         filtered_asks = []
         for ask in user.asks:
             if ask.is_settled:
+                ask.has_been_seen_by_seller = True
                 filtered_asks.append(
                     {
                         "ask_id": ask.ask_id,
@@ -550,7 +552,7 @@ class DenariiMobileClient:
                         "amount": ask.amount,
                     }
                 )
-
+        store_user(user)
         return True, filtered_asks
 
     def cancel_ask(self, user_id, ask_id):
@@ -623,7 +625,7 @@ class DenariiMobileClient:
 
         ask = self.get_ask_with_id(ask_id)
 
-        if not ask.is_settled:
+        if not ask.is_settled or not ask.has_been_seen_by_seller:
             return True, [{"ask_id": ask_id, "transaction_was_settled": False}]
 
         if ask.amount == 0:
@@ -680,12 +682,10 @@ class DenariiMobileClient:
 
         asking_user.wallet.balance -= ask.amount_bought
 
-        amount_bought = ask.amount_bought
-
-        ask.amount -= ask.amount_bought
+        ask.amount += ask.amount_bought
         ask.amount_bought = 0
         ask.in_escrow = False
-        ask.is_settled = True
+        ask.is_settled = False
 
         store_user(asking_user)
         store_user(user)
@@ -753,7 +753,14 @@ class DenariiMobileClient:
         filtered_asks = []
 
         for ask in user.asks:
-            filtered_asks.append[{"ask_id": ask.ask_id}]
+            filtered_asks.append[
+                {
+                    "ask_id": ask.ask_id,
+                    "amount": ask.amount,
+                    "asking_price": ask.asking_price,
+                    "amount_bought": ask.amount_bought,
+                }
+            ]
 
         return True, filtered_asks
 
@@ -869,3 +876,19 @@ class DenariiMobileClient:
                 "updated_time_body": ticket.updated_time.isoformat(),
             }
         ]
+
+    def poll_for_escrowed_transaction(self, user_id):
+        user = self.check_user_is_current_user_and_get(user_id)
+
+        filtered_asks = []
+        for ask in user.asks:
+            if not ask.is_settled and ask.in_escrow:
+                filtered_asks.append(
+                    {
+                        "ask_id": ask.ask_id,
+                        "asking_price": ask.asking_price,
+                        "amount": ask.amount,
+                        "amount_bought": ask.amount_bought,
+                    }
+                )
+        return True, filtered_asks

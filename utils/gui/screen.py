@@ -43,6 +43,8 @@ class Screen:
     verification_screen_name = "VERIFICATON_SCREEN_NAME"
     user_settings_screen_name = "USER_SETTINGS_SCREEN_NAME"
     support_ticket_screen_name = "SUPPORT_TICKET_SCREEN_NAME"
+    support_ticket_details_screen_name = "SUPPORT_TICKET_DETAILS_SCREEN_NAME"
+    support_ticket_creation_screen_name = "SUPPORT_TICKET_CREATION_SCREEN_NAME"
 
     suffix_of_screen_name = "suffix"
 
@@ -84,6 +86,7 @@ class Screen:
 
         self.grid_layout = GridLayout()
         self.second_grid_layout = GridLayout()
+        self.third_grid_layout = GridLayout()
 
         self.radio_buttons = {}
         self.labels = {}
@@ -109,11 +112,9 @@ class Screen:
 
         if NEXT_BUTTON in self.push_buttons:
             self.next_button = self.push_buttons[NEXT_BUTTON]
-            print("Found next button")
 
         if BACK_BUTTON in self.push_buttons:
             self.back_button = self.push_buttons[BACK_BUTTON]
-            print("Found back button")
 
     def setup(self):
         print(f"Setting up screen: {self.screen_name}")

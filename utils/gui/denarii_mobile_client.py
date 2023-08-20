@@ -568,3 +568,17 @@ class DenariiMobileClient:
             return False, []
         else:
             return True, res
+
+    def poll_for_escrowed_transaction(self, user_id):
+        """
+        @return a list of response objects that have the fields 'ask_id', 'amount', 'asking_price', and 'amount_bought'
+        """
+
+        params = {"user_id": user_id}
+
+        res, ok = self.send_denarii_mobile_request("poll_for_escrowed_transaction", params)
+
+        if not ok: 
+            return False, []
+        else: 
+            return True, res

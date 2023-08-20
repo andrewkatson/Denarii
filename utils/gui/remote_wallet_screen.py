@@ -90,7 +90,7 @@ class RemoteWalletScreen(WalletScreen):
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
 
-        self.credit_card_info_screen_push_button = PushButton(
+        self.credit_card_info_screen_push_buttonq = PushButton(
             "Credit Card", kwargs["parent"]
         )
         self.credit_card_info_screen_push_button.clicked.connect(
