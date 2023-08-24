@@ -60,6 +60,18 @@ class VerificationScreen(Screen):
         self.verification_label = None
         self.status_label = None
 
+        self.first_name_line_edit = None
+        self.middle_initial_line_edit = None
+        self.last_name_line_edit = None
+        self.email_line_edit = None
+        self.date_of_birth_line_edit = None
+        self.social_security_number_line_edit = None
+        self.zipcode_line_edit = None
+        self.phone_number_line_edit = None
+        self.work_location_city_line_edit = None
+        self.work_location_state_line_edit = None
+        self.work_location_country_line_edit = None
+
         self.status = self.lookup_verification_status()
 
         super().__init__(
@@ -238,11 +250,14 @@ class VerificationScreen(Screen):
             if success:
                 self.stautus = res[0]["verification_status"]
 
+                self.status_message_box("Successfully sent verification info")
+
                 if self.status == "is_verified":
                     self.refresh_screen()
 
             else:
                 self.status = "is_not_verified"
+                self.status_message_box("Failed to send verification info")
 
             self.status_label.setText(self.format_status())
 
