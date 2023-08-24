@@ -146,7 +146,7 @@ class BuyDenariiScreen(Screen):
         self.user_settings_screen_push_button.clicked.connect(
             lambda: kwargs["on_user_settings_screen_clicked"]()
         )
-        self.user_settings_screen_push_buttopopulate_threadn.setVisible(False)
+        self.user_settings_screen_push_button.setVisible(False)
         self.user_settings_screen_push_button.setStyleSheet(
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
