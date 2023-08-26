@@ -116,9 +116,15 @@ class SupportTicketScreen(Screen):
         self.main_layout.addLayout(self.vertical_layout)
         self.main_layout.addLayout(self.second_horizontal_layout)
 
-        self.first_horizontal_layout.addWidget(self.support_ticket_label)
+        self.back_button.setVisible(True)
+        self.user_settings_screen_push_button.setVisible(True)
+        self.support_ticket_creation_push_button.setVisible(True)
+
+        self.first_horizontal_layout.addWidget(self.support_ticket_label, alignment=AlignCenter)
         
-        self.second_horizontal_layout.addWidget(self.support_ticket_creation_push_button)       
+        self.second_horizontal_layout.addWidget(self.back_button, alignment=AlignCenter)
+        self.second_horizontal_layout.addWidget(self.user_settings_screen_push_button, alignment=AlignCenter)
+        self.second_horizontal_layout.addWidget(self.support_ticket_creation_push_button, alignment=(AlignRight | AlignBottom))       
 
         self.populate_thread.start()
 
