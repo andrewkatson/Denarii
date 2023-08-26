@@ -240,6 +240,8 @@ class CreditCardInfoScreen(Screen):
         if self.status is True:
             self.main_layout.addLayout(self.fourth_horizontal_layout)
 
+        self.main_layout.addLayout(self.fifth_horizontal_layout)
+
         self.remote_wallet_screen_push_button.setVisible(True)
         self.sell_screen_push_button.setVisible(True)
         self.verification_screen_push_button.setVisible(True)
@@ -275,3 +277,23 @@ class CreditCardInfoScreen(Screen):
             self.fourth_horizontal_layout.addWidget(
                 self.clear_info_push_button, alignment=AlignCenter
             )
+
+
+        self.fifth_horizontal_layout.addWidget(
+            self.back_button, alignment=(AlignLeft | AlignBottom)
+        )
+        self.fifth_horizontal_layout.addWidget(
+            self.remote_wallet_screen_push_button, alignment=AlignCenter
+        )
+        self.fifth_horizontal_layout.addWidget(
+            self.buy_screen_push_button, alignment=AlignCenter
+        )
+        self.fifth_horizontal_layout.addWidget(
+            self.verification_screen_push_button, alignment=AlignCenter
+        )
+        self.fifth_horizontal_layout.addWidget(
+            self.user_settings_screen_push_button, alignment=AlignCenter
+        )
+        self.fifth_horizontal_layout.addWidget(
+            self.sell_screen_push_button, alignment=AlignCenter
+        )

@@ -277,6 +277,8 @@ class VerificationScreen(Screen):
             self.main_layout.addLayout(self.form_layout)
             self.main_layout.addLayout(self.third_horizontal_layout)
 
+        self.main_layout.addLayout(self.fourth_horizontal_layout)
+
         self.remote_wallet_screen_push_button.setVisible(True)
         self.sell_screen_push_button.setVisible(True)
         self.credit_card_info_screen_push_button.setVisible(True)
@@ -310,6 +312,25 @@ class VerificationScreen(Screen):
             self.third_horizontal_layout.addWidget(
                 self.submit_push_button, alignment=AlignCenter
             )
+
+        self.fourth_horizontal_layout.addWidget(
+            self.back_button, alignment=(AlignLeft | AlignBottom)
+        )
+        self.fourth_horizontal_layout.addWidget(
+            self.remote_wallet_screen_push_button, alignment=AlignCenter
+        )
+        self.fourth_horizontal_layout.addWidget(
+            self.buy_screen_push_button, alignment=AlignCenter
+        )
+        self.fourth_horizontal_layout.addWidget(
+            self.credit_card_info_screen_push_button, alignment=AlignCenter
+        )
+        self.fourth_horizontal_layout.addWidget(
+            self.user_settings_screen_push_button, alignment=AlignCenter
+        )
+        self.fourth_horizontal_layout.addWidget(
+            self.sell_screen_push_button, alignment=AlignCenter
+        )
 
     def format_work_location(self):
         return json.dump(

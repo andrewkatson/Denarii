@@ -44,6 +44,8 @@ try:
     from sell_denarii_screen import *
     from set_wallet_screen import *
     from stoppable_thread import StoppableThread
+    from support_ticket_creation_screen import *
+    from support_ticket_details_screen import *
     from support_ticket_screen import *
     from user_settings_screen import *
     from verification_screen import *
@@ -216,7 +218,12 @@ try:
                 "on_register_clicked": self.on_register_pushed,
                 "on_verification_screen_clicked": self.on_verification_screen_pushed,
                 "on_user_settings_screen_clicked": self.on_user_settings_screen_pushed,
-                "on_support_ticket_screen_clicked": self.on_support_ticket_screen_pushed
+                "on_support_ticket_screen_clicked": self.on_support_ticket_screen_pushed,
+                "on_support_ticket_creation_screen_clicked": self.on_support_ticket_creation_screen_pushed,
+                "on_support_ticket_details_screen_clicked": lambda support_ticket_id: self.on_support_ticket_details_screen_pushed(
+                    support_ticket_id
+                ),
+                "get_current_support_ticket_id": self.get_current_support_ticket_id,
             }
 
             if os.path.exists(USER_SETTINGS_PATH):
@@ -466,7 +473,38 @@ try:
                 local_wallet=self.local_wallet,
                 gui_user=gui_user,
                 on_user_settings_screen_clicked=self.on_user_settings_screen_pushed,
+                on_support_ticket_creation_screen_clicked=self.on_support_ticket_creation_screen_pushed,
+                on_support_ticket_details_screen_clicked=lambda support_ticket_id: self.on_support_ticket_details_screen_pushed(
+                    support_ticket_id
+                ),
             )
+            self.SUPPORT_TICKET_CREATION_SCREEN = SupportTicketCreationScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+                on_support_ticket_screen_clicked=self.on_support_ticket_screen_pushed,
+            )
+            self.SUPPORT_TICKET_DETAILS_SCREEN = SupportTicketDetailsScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+                on_support_ticket_screen_clicked=self.on_support_ticket_screen_pushed,
+                get_current_support_ticket_id=self.get_current_support_ticket_id,
+            )
+
+            self.current_support_ticket = None
 
             self.last_widget_stack = []
 
@@ -839,6 +877,24 @@ try:
             Navigate to the support ticket screen
             """
             self.go_to_this_widget(self.SUPPORT_TICKET_SCREEN)
+
+        @pyqtSlot()
+        def on_support_ticket_creation_screen_pushed(self):
+            """
+            Navigate to the support ticket creation screen
+            """
+            self.go_to_this_widget(self.SUPPORT_TICKET_CREATION_SCREEN)
+
+        @pyqtSlot()
+        def on_support_ticket_details_screen_pushed(self, current_support_ticket_id):
+            """
+            Navigate to the support ticket details screen
+            """
+            self.current_support_ticket = current_support_ticket_id
+            self.go_to_this_widget(self.SUPPORT_TICKET_SCREEN)
+
+        def get_current_support_ticket_id(self):
+            return self.current_support_ticket
 
         def setup_current_widget(self):
             if self.get_last_widget() is not None:

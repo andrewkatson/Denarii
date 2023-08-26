@@ -892,3 +892,25 @@ class DenariiMobileClient:
                     }
                 )
         return True, filtered_asks
+
+    def get_support_ticket(self, user_id, support_ticket_id):
+        user = self.check_user_is_current_user_and_get(user_id)
+
+        filtered_support_tickets = []
+
+        for ticket in filtered_support_tickets:
+
+            if ticket.support_ticket_id == support_ticket_id:
+
+                filtered_support_tickets.append(
+                    {
+                        "support_ticket_id": ticket.support_ticket_id,
+                        "author": user.name,
+                        "title": ticket.title,
+                        "description": ticket.description,
+                        "updated_time_body": ticket.updated_time.isoformat(),
+                        "creation_time_body": ticket.creation_time.isoformat(),
+                    }
+                )
+                
+        return True, filtered_support_tickets

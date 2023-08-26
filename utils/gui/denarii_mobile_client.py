@@ -582,3 +582,18 @@ class DenariiMobileClient:
             return False, []
         else: 
             return True, res
+
+    def get_support_ticket(self, user_id, support_ticket_id):
+        """
+        @return a list of response objects that have the fields 'support_ticket_id', 'author', 'title', 'description', 'updated_time_body', 'creation_time_body', 'resolved'
+        """
+
+
+        params = {"user_id": user_id, "support_ticket_id": support_ticket_id}
+
+        res, ok = self.send_denarii_mobile_request("get_support_ticket", params)
+
+        if not ok:
+            return False, []
+        else:
+            return True, res

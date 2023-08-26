@@ -231,10 +231,11 @@ class SellDenariiScreen(Screen):
         self.main_layout.addLayout(self.grid_layout)
         self.main_layout.addLayout(self.form_layout)
         self.main_layout.addLayout(self.fourth_horizontal_layout)
-        self.main_layout.addLayout(self.fifth_horicurrent_asks_lockzontal_layout)
+        self.main_layout.addLayout(self.fifth_horizontal_layout)
         self.main_layout.addLayout(self.second_grid_layout)
         self.main_layout.addLayout(self.sixth_horizontal_layout)
         self.main_layout.addLayout(self.third_grid_layout)
+        self.main_layout.addLayout(self.seventh_horizontal_layout)
 
         self.remote_wallet_screen_push_button.setVisible(True)
         self.buy_screen_push_button.setVisible(True)
@@ -268,6 +269,25 @@ class SellDenariiScreen(Screen):
         self.third_grid_layout.addWidget(self.amount_col_label, 0, 0)
         self.third_grid_layout.addWidget(self.price_col_label, 0, 1)
         self.third_grid_layout.addWidget(self.amount_bought_col_label, 0, 2)
+
+        self.seventh_horizontal_layout.addWidget(
+            self.back_button, alignment=(AlignLeft | AlignBottom)
+        )
+        self.seventh_horizontal_layout.addWidget(
+            self.remote_wallet_screen_push_button, alignment=AlignCenter
+        )
+        self.seventh_horizontal_layout.addWidget(
+            self.buy_screen_push_button, alignment=AlignCenter
+        )
+        self.seventh_horizontal_layout.addWidget(
+            self.credit_card_info_screen_push_button, alignment=AlignCenter
+        )
+        self.seventh_horizontal_layout.addWidget(
+            self.user_settings_screen_push_button, alignment=AlignCenter
+        )
+        self.seventh_horizontal_layout.addWidget(
+            self.verification_screen_push_button, alignment=AlignCenter
+        )        
 
         self.asks_refresh_thread.start()
         self.own_asks_thread.start()
