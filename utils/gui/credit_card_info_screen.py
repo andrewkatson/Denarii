@@ -77,7 +77,6 @@ class CreditCardInfoScreen(Screen):
     def init(self, **kwargs):
         super().init(**kwargs)
         self.next_button.setVisible(False)
-        self.back_button.setVisible(False)
 
         self.credit_card_info_label = Label("Credit Card Info")
         font = Font()

@@ -93,7 +93,6 @@ class VerificationScreen(Screen):
         super().init(**kwargs)
 
         self.next_button.setVisible(False)
-        self.back_button.setVisible(False)
 
         self.verification_label = Label("Verification")
         font = Font()

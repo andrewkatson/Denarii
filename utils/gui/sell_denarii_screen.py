@@ -103,7 +103,6 @@ class SellDenariiScreen(Screen):
         super().init(**kwargs)
 
         self.next_button.setVisible(False)
-        self.back_button.setVisible(False)
 
         self.sell_denarii_label = Label("Buy Denarii")
         font = Font()

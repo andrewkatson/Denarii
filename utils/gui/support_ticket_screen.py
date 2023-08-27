@@ -82,7 +82,6 @@ class SupportTicketScreen(Screen):
         super().init(**kwargs)
 
         self.next_button.setVisible(False)
-        self.back_button.setVisible(False)
 
         self.support_ticket_label = Label("Support Tickets")
         font = Font()
@@ -116,13 +115,12 @@ class SupportTicketScreen(Screen):
         self.main_layout.addLayout(self.vertical_layout)
         self.main_layout.addLayout(self.second_horizontal_layout)
 
-        self.back_button.setVisible(True)
         self.user_settings_screen_push_button.setVisible(True)
         self.support_ticket_creation_push_button.setVisible(True)
 
         self.first_horizontal_layout.addWidget(self.support_ticket_label, alignment=AlignCenter)
         
-        self.second_horizontal_layout.addWidget(self.back_button, alignment=AlignCenter)
+        self.second_horizontal_layout.addWidget(self.back_button, alignment=(AlignLeft | AlignBottom))
         self.second_horizontal_layout.addWidget(self.user_settings_screen_push_button, alignment=AlignCenter)
         self.second_horizontal_layout.addWidget(self.support_ticket_creation_push_button, alignment=(AlignRight | AlignBottom))       
 

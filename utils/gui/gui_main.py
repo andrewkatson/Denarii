@@ -489,6 +489,9 @@ try:
                 local_wallet=self.local_wallet,
                 gui_user=gui_user,
                 on_support_ticket_screen_clicked=self.on_support_ticket_screen_pushed,
+                on_support_ticket_details_screen_clicked=lambda support_ticket_id: self.on_support_ticket_details_screen_pushed(
+                    support_ticket_id
+                ),
             )
             self.SUPPORT_TICKET_DETAILS_SCREEN = SupportTicketDetailsScreen(
                 push_buttons=common_buttons,
