@@ -1,3 +1,10 @@
+from denarii_testing_font import Font
+from denarii_testing_label import Label
+from denarii_testing_qt import (
+    AlignCenter,
+    AlignLeft,
+)
+
 class Widget:
     def __init__(self):
         self.main_layout = None
@@ -58,3 +65,43 @@ class GridLayout:
     def addWidget(self, new_widget, row, col, alignment=None):
         new_widget.setAlignment(alignment)
         self.widgets.append(new_widget)
+
+class ScrollArea: 
+
+    def __init__(self) -> None:
+        self.alignment = None
+        self.widget = None
+
+    def setAlignment(self, alignment):
+        self.alignment = alignment
+
+    def setWidget(self, widget):
+        self.widget = widget
+
+class CommentSection(Widget):
+
+    def __init__(self):
+        super().__init__()
+
+        self.layout = VBoxLayout()
+
+        self.comments = {}
+    
+    def addComment(self, author, body, updated_time):
+        self.comments[f"{author}@{updated_time}"] = {"author": author, "body": body}
+
+        author_label = Label(author)
+        font = Font()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        author_label.setFont(font)
+
+        body_label = Label(body)
+        font = Font()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        body_label.setFont(font)
+        body_label.setWordMap(True)
+
+        self.layout.addWidget(author, alignment=AlignLeft)
+        self.layout.addWidget(body_label, alignment=AlignCenter)

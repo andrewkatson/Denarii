@@ -9,3 +9,6 @@ AlignCenter = Qt.AlignCenter
 AlignRight = Qt.AlignRight
 AlignLeft = Qt.AlignLeft
 AlignBottom = Qt.AlignBottom
+
+ScrollBarAlwaysOn = Qt.ScrollBarAlwaysOn
+ScrollBarAlwaysOff = Qt.ScrollBarAlwaysOff

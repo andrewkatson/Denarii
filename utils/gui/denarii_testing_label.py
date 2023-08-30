@@ -7,6 +7,7 @@ class Label:
         self.is_visible = False
         self.alignment = None
         self.pixmap = None
+        self.word_wrap = None
 
     def setFont(self, font):
         self.font = font
@@ -25,3 +26,6 @@ class Label:
 
     def setPixmap(self, pixmap):
         self.pixmap = pixmap
+
+    def setWordMap(self, set_word_wrap):
+        self.set_word_map = set_word_wrap
