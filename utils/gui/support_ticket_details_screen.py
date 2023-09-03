@@ -64,22 +64,23 @@ class SupportTicketDetailsScreen(Screen):
 
         self.support_ticket_push_button = None
 
+        self.delete_ticket_push_button = None
+
+        self.resolve_ticket_push_button = None
+
         self.scroll_area = None
 
         self.get_current_support_ticket_id = kwargs["get_current_support_ticket_id"]
 
+        self.on_support_ticket_screen_clicked = kwargs['on_support_ticket_screen_clicked']
+
         self.support_ticket_id = self.get_current_support_ticket_id()
 
-        self.support_ticket_details = self.get_support_ticket_details(
-            self.support_ticket_id
-        )
+        self.support_ticket_details = self.get_support_ticket_details()
 
-        self.comment_details = self.get_support_ticket_comment_details(
-            self.support_ticket_id
-        )
+        self.comment_details = self.get_support_ticket_comment_details()
 
         super().__init__(
-            # Define my_name in the base screen.py class and reference it here
             self.support_ticket_details_screen_name,
             main_layout=main_layout,
             deletion_func=deletion_func,
@@ -119,6 +120,29 @@ class SupportTicketDetailsScreen(Screen):
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
 
+        self.support_ticket_push_button = PushButton("Support Ticket", kwargs["parent"])
+        self.support_ticket_push_button.clicked.connect(lambda: self.on_support_ticket_screen_clicked())
+        self.support_ticket_push_button.setVisible(False)
+        self.support_ticket_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
+
+        self.delete_ticket_push_button = PushButton("Delete", kwargs["parent"])
+        self.delete_ticket_push_button.clicked.connect(lambda: self.on_delete_clicked())
+        self.delete_ticket_push_button.setVisible(False)
+        self.delete_ticket_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
+
+        self.resolve_ticket_push_button = PushButton("Resolve", kwargs["parent"])
+        self.resolve_ticket_push_button.clicked.connect(
+            lambda: self.on_resolve_clicked()
+        )
+        self.resolve_ticket_push_button.setVisible(False)
+        self.resolve_ticket_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
+
         self.comment_section = CommentSection()
 
         self.populate_comment_section()
@@ -141,8 +165,13 @@ class SupportTicketDetailsScreen(Screen):
         self.main_layout.addLayout(self.form_layout)
         self.main_layout.addLayout(self.fifth_horizontal_layout)
         self.main_layout.addLayout(self.sixth_horizontal_layout)
+        self.main_layout.addLayout(self.seventh_horizontal_layout)
+        self.main_layout.addLayout(self.eight_horizontal_layout)
 
         self.submit_push_button.setVisible(True)
+        self.support_ticket_push_button.setVisible(True)
+        self.delete_ticket_push_button.setVisible(True)
+        self.resolve_ticket_push_button.setVisible(True)
 
         self.scroll_area.setWidget(self.comment_section)
 
@@ -159,9 +188,17 @@ class SupportTicketDetailsScreen(Screen):
             self.submit_push_button, alignment=AlignCenter
         )
         self.sixth_horizontal_layout.addWidget(
+            self.resolve_ticket_push_button, alignment=AlignCenter
+        )
+        self.seventh_horizontal_layout.addWidget(
+            self.delete_ticket_push_button, alignment=AlignCenter
+        )
+        self.eight_horizontal_layout.addWidget(
             self.back_button, alignment=(AlignLeft | AlignBottom)
         )
-
+        self.eight_horizontal_layout.addWidget(
+            self.support_ticket_push_button, alignment=AlignCenter
+        )
     def teardown(self):
         super().teardown()
 
@@ -174,7 +211,7 @@ class SupportTicketDetailsScreen(Screen):
             )
 
             if success:
-                self.status_message_box("Created comment successfull")
+                self.status_message_box("Created comment successfully")
             else:
                 self.status_message_box("Failed to create a comment")
 
@@ -184,7 +221,38 @@ class SupportTicketDetailsScreen(Screen):
             print(e)
             self.status_message_box("Failed: unknown error")
 
-    def get_support_ticket_details(self, support_ticket_id):
+    def on_delete_clicked(self):
+        try:
+            success, _ = self.denarii_mobile_client.delete_support_ticket(
+                self.gui_user.user_id, self.support_ticket_id
+            )
+
+            if success:
+                self.status_message_box("Deleted ticket successfully")
+                self.on_support_ticket_screen_clicked()
+            else:
+                self.status_message_box("Failed to delete ticket")
+
+        except Exception as e:
+            print(e)
+            self.status_message_box("Failed: unknown error")
+
+    def on_resolve_clicked(self):
+        try:
+            success, _ = self.denarii_mobile_client.resolve_support_ticket(
+                self.gui_user.user_id, self.support_ticket_id
+            )
+
+            if success:
+                self.status_message_box("Resolved ticket successfully")
+            else:
+                self.status_message_box("Failed to resolve the ticket")
+
+        except Exception as e:
+            print(e)
+            self.status_message_box("Failed: unknown error")
+
+    def get_support_ticket_details(self):
         try:
             success, res = self.denarii_mobile_client.get_support_ticket(
                 self.gui_user.user_id, self.support_ticket_id
@@ -201,7 +269,7 @@ class SupportTicketDetailsScreen(Screen):
 
         return {"title": "", "description": ""}
 
-    def get_support_ticket_comment_details(self, support_ticket_id):
+    def get_support_ticket_comment_details(self):
         try:
             success, res = self.denarii_mobile_client.get_comments_on_ticket(
                 self.gui_user.user_id, self.support_ticket_id
