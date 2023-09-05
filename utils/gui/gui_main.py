@@ -224,6 +224,7 @@ try:
                     support_ticket_id
                 ),
                 "get_current_support_ticket_id": self.get_current_support_ticket_id,
+                "on_login_or_register_screen_clicked": self.on_login_or_register_screen_pushed,
             }
 
             if os.path.exists(USER_SETTINGS_PATH):
@@ -445,6 +446,7 @@ try:
                 on_credit_card_info_screen_clicked=self.on_credit_card_info_screen_pushed,
                 on_verification_screen_clicked=self.on_verification_screen_pushed,
                 on_support_ticket_screen_clicked=self.on_support_ticket_screen_pushed,
+                on_login_or_register_screen_clicked=self.on_login_or_register_screen_pushed,
             )
             self.VERIFICATION_SCREEN = VerificationScreen(
                 push_buttons=common_buttons,
@@ -895,6 +897,13 @@ try:
             """
             self.current_support_ticket = current_support_ticket_id
             self.go_to_this_widget(self.SUPPORT_TICKET_SCREEN)
+
+        @pyqtSlot()
+        def on_login_or_register_screen_pushed(self):
+            """
+            Navigate to the loginn or register screen
+            """
+            self.go_to_this_widget(self.LOGIN_OR_REGISTER)
 
         def get_current_support_ticket_id(self):
             return self.current_support_ticket

@@ -120,7 +120,7 @@ class SupportTicketDetailsScreen(Screen):
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
 
-        self.support_ticket_push_button = PushButton("Support Ticket", kwargs["parent"])
+        self.support_ticket_push_button = PushButton("Support Tickets", kwargs["parent"])
         self.support_ticket_push_button.clicked.connect(lambda: self.on_support_ticket_screen_clicked())
         self.support_ticket_push_button.setVisible(False)
         self.support_ticket_push_button.setStyleSheet(

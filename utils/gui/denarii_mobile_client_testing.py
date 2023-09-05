@@ -219,6 +219,7 @@ class DenariiAsk:
         self.has_been_seen_by_seller = False
         self.creation_time = datetime.datetime.now()
         self.updated_time = datetime.datetime.now()
+        self.buyer = None
 
 
 class CreditCard:
@@ -494,6 +495,7 @@ class DenariiMobileClient:
 
         filtered_asks = []
         for ask in asks_met:
+            ask.buyer = user
             filtered_asks.append({"ask_id": ask.ask_id})
 
         return True, filtered_asks
@@ -517,6 +519,7 @@ class DenariiMobileClient:
         ask.amount -= ask.amount_bought
         ask.amount_bought = 0
         ask.in_escrow = False
+        ask.buyer = None
         ask.is_settled = True
 
         store_user(asking_user)
@@ -685,6 +688,7 @@ class DenariiMobileClient:
         ask.amount += ask.amount_bought
         ask.amount_bought = 0
         ask.in_escrow = False
+        ask.buyer = None
         ask.is_settled = False
 
         store_user(asking_user)
@@ -706,6 +710,7 @@ class DenariiMobileClient:
 
         ask.in_escrow = False
         ask.amount_bought = 0
+        ask.buyer = None
 
         store_user(user)
         return True
@@ -761,6 +766,25 @@ class DenariiMobileClient:
                     "amount_bought": ask.amount_bought,
                 }
             ]
+
+        return True, filtered_asks
+    
+    def get_all_buys(self, user_id):
+        user = self.check_user_is_current_user_and_get(user_id)
+
+        filtered_asks = []
+
+        for ask in self.get_asks():
+
+            if ask.in_escrow and user.user_id == ask.buyer.user_id:
+                filtered_asks.append[
+                    {
+                        "ask_id": ask.ask_id,
+                        "amount": ask.amount,
+                        "asking_price": ask.asking_price,
+                        "amount_bought": ask.amount_bought,
+                    }
+                ]
 
         return True, filtered_asks
 

@@ -467,7 +467,7 @@ class DenariiMobileClient:
 
     def get_all_asks(self, user_id):
         """
-        @return a list of response objects that have the field 'ask_id'
+        @return a list of response objects that have the fields 'ask_id', 'amount', 'asking_price', amount_bought'
         """
 
         params = {
@@ -475,6 +475,22 @@ class DenariiMobileClient:
         }
 
         res, ok = self.send_denarii_mobile_request("get_all_asks", params)
+
+        if not ok:
+            return False, []
+        else:
+            return True, res
+        
+    def get_all_buys(self, user_id):
+        """
+        @return a list of response objects that have the fields 'ask_id', 'amount', 'asking_price', amount_bought'
+        """
+
+        params = {
+            "user_id": user_id,
+        }
+
+        res, ok = self.send_denarii_mobile_request("get_all_buys", params)
 
         if not ok:
             return False, []

@@ -48,8 +48,14 @@ class UserSettingsScreen(Screen):
         self.remote_wallet_screen_push_button = None
         self.sell_screen_push_button = None
         self.buy_screen_push_button = None
-        self.credit_card_info_screen_name = None 
+        self.credit_card_info_screen_push_button = None 
         self.verification_screen_push_button = None
+        self.support_ticket_screen_push_button = None 
+        self.delete_account_push_button = None 
+
+        self.user_settings_label = None
+
+        self.on_login_or_register_screen_clicked = kwargs['on_login_or_register_screen_clicked']
         
 
         super().__init__(
@@ -65,8 +71,182 @@ class UserSettingsScreen(Screen):
     def init(self, **kwargs):
         super().init(**kwargs)
 
+        self.next_button.setVisible(False)
+
+        self.user_settings_label = Label("User Settings")
+        font = Font()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.user_settings_label.setFont(font)
+
+        self.remote_wallet_screen_push_button = PushButton("Wallet", kwargs["parent"])
+        self.remote_wallet_screen_push_button.clicked.connect(
+            lambda: kwargs["on_remote_wallet_screen_clicked"]()
+        )
+        self.remote_wallet_screen_push_button.setVisible(False)
+        self.remote_wallet_screen_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
+
+        self.sell_screen_push_button = PushButton("Sell Denarii", kwargs["parent"])
+        self.sell_screen_push_button.clicked.connect(
+            lambda: kwargs["on_sell_screen_clicked"]()
+        )
+        self.sell_screen_push_button.setVisible(False)
+        self.sell_screen_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
+
+        self.credit_card_info_screen_push_button = PushButton(
+            "Credit Card", kwargs["parent"]
+        )
+        self.credit_card_info_screen_push_button.clicked.connect(
+            lambda: kwargs["on_credit_card_info_screen_clicked"]()
+        )
+        self.credit_card_info_screen_push_button.setVisible(False)
+        self.credit_card_info_screen_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
+
+        self.verification_screen_push_button = PushButton(
+            "Verification", kwargs["parent"]
+        )
+        self.verification_screen_push_button.clicked.connect(
+            lambda: kwargs["on_verification_screen_clicked"]()
+        )
+        self.verification_screen_push_button.setVisible(False)
+        self.verification_screen_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
+
+        self.buy_screen_push_button = PushButton("Buy Denarii", kwargs["parent"])
+        self.buy_screen_push_button.clicked.connect(
+            lambda: kwargs["on_buy_screen_clicked"]()
+        )
+        self.buy_screen_push_button.setVisible(False)
+        self.buy_screen_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
+
+        self.support_ticket_screen_push_button = PushButton("Support Tickets", kwargs["parent"])
+        self.support_ticket_screen_push_button.clicked.connect(
+            lambda: kwargs["on_support_ticket_screen_clicked"]()
+        )
+        self.support_ticket_screen_push_button.setVisible(False)
+        self.support_ticket_screen_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
+
+
+        self.delete_account_push_button = PushButton("Delete Account", kwargs["parent"])
+        self.delete_account_push_button.clicked.connect(
+            lambda: self.on_delete_account_clicked()
+        )
+        self.delete_account_push_button.setVisible(False)
+        self.delete_account_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
+
+
+
     def setup(self):
         super().setup()
 
+        self.deletion_func(self.main_layout)
+
+        self.main_layout.addLayout(self.first_horizontal_layout)
+        self.main_layout.addLayout(self.vertical_layout)
+        self.main_layout.addLayout(self.second_horizontal_layout)
+
+        self.remote_wallet_screen_push_button.setVisible(True)
+        self.sell_screen_push_button.setVisible(True)
+        self.credit_card_info_screen_push_button.setVisible(True)
+        self.verification_screen_push_button.setVisible(True)
+        self.buy_screen_push_button.setVisible(True)
+        self.support_ticket_screen_push_button.setVisible(True)
+        self.delete_account_push_button.setVisible(True)
+
+        self.first_horizontal_layout.addWidget(self.user_settings_label,alignment=AlignCenter)
+        self.vertical_layout.addWidget(self.support_ticket_screen_push_button, alignment=AlignCenter)
+        self.vertical_layout.addWidget(self.delete_account_push_button, alignment=AlignCenter)
+
+        self.second_horizontal_layout.addWidget(
+            self.back_button, alignment=(AlignLeft | AlignBottom)
+        )
+        self.second_horizontal_layout.addWidget(
+            self.remote_wallet_screen_push_button, alignment=AlignCenter
+        )
+        self.second_horizontal_layout.addWidget(
+            self.buy_screen_push_button, alignment=AlignCenter
+        )
+        self.second_horizontal_layout.addWidget(
+            self.credit_card_info_screen_push_button, alignment=AlignCenter
+        )
+        self.second_horizontal_layout.addWidget(
+            self.verification_screen_push_button, alignment=AlignCenter
+        )
+        self.second_horizontal_layout.addWidget(
+            self.sell_screen_push_button, alignment=AlignCenter
+        )
+
+
     def teardown(self):
         super().teardown()
+
+    def on_delete_account_clicked(self): 
+        try: 
+
+            success = self.cancel_all_asks()
+
+            if not success:
+                self.status_message_box("Failed to cancel all asks. Cannot delete user")
+                return 
+            
+            success = self.cancel_all_buys()
+
+
+            if not success:
+                self.status_message_box("Failed to cancel all buys. Cannot delete user")
+                return 
+
+            success = self.denarii_mobile_client.delete_user(self.gui_user.user_id)
+
+            if success: 
+                self.status_message_box("Deleted user successfully")
+            else:
+                self.status_message_box("Failed to delete user")
+
+            
+        except Exception as e:
+            print(e)
+            self.status_message_box("Failed: unknown error")
+    
+    def cancel_all_asks(self):
+        
+
+        success, res = self.denarii_mobile_client.get_all_asks(self.gui_user.user_id)
+
+        if not success:
+            return False
+        
+        for ask in res:
+            success, res = self.denarii_mobile_client.cancel_sell(self.gui_user.user_id, ask['ask_id'])
+
+            if not success: 
+                return False
+        
+        return True
+
+    def cancel_all_buys(self):
+        success, res = self.denarii_mobile_client.get_all_buys(self.gui_user.user_id)
+
+        if not success:
+            return False
+        
+        for ask in res:
+            success, res = self.denarii_mobile_client.cancel_buy_of_ask(self.gui_user.user_id, ask['ask_id'])
+
+            if not success: 
+                return False
+        
+        return True
