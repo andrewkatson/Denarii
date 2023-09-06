@@ -243,11 +243,11 @@ class SellDenariiScreen(Screen):
         self.verification_screen_push_button.setVisible(True)
         self.submit_push_button.setVisible(True)
 
-        self.first_horizontal_layout.addWidget(self.sell_denarii_label)
+        self.first_horizontal_layout.addWidget(self.sell_denarii_label, alignment=AlignCenter)
 
-        self.second_horizontal_layout.addWidget(self.going_price_label)
+        self.second_horizontal_layout.addWidget(self.going_price_label, alignment=AlignCenter)
 
-        self.third_horizontal_layout.addWidget(self.all_asks_label)
+        self.third_horizontal_layout.addWidget(self.all_asks_label, alignment=AlignCenter)
 
         self.grid_layout.addWidget(self.amount_col_label, 0, 0)
         self.grid_layout.addWidget(self.price_col_label, 0, 1)
@@ -255,15 +255,15 @@ class SellDenariiScreen(Screen):
         self.form_layout.addRow("Amount", self.amount_line_edit)
         self.form_layout.addRow("Price", self.price_line_edit)
 
-        self.fourth_horizontal_layout.addWidget(self.submit_push_button)
+        self.fourth_horizontal_layout.addWidget(self.submit_push_button, alignment=AlignCenter)
 
-        self.fifth_horizontal_layout.addWidget(self.own_asks_label)
+        self.fifth_horizontal_layout.addWidget(self.own_asks_label, alignment=AlignCenter)
 
         self.second_grid_layout.addWidget(self.amount_col_label, 0, 0)
         self.second_grid_layout.addWidget(self.price_col_label, 0, 1)
         self.second_grid_layout.addWidget(self.cancel_ask_col_label, 0, 2)
 
-        self.sixth_horizontal_layout.addWidget(self.bought_asks_label)
+        self.sixth_horizontal_layout.addWidget(self.bought_asks_label, alignment=AlignCenter)
 
         self.third_grid_layout.addWidget(self.amount_col_label, 0, 0)
         self.third_grid_layout.addWidget(self.price_col_label, 0, 1)

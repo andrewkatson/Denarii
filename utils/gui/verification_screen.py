@@ -72,7 +72,12 @@ class VerificationScreen(Screen):
         self.work_location_state_line_edit = None
         self.work_location_country_line_edit = None
 
-        self.status = self.lookup_verification_status()
+        self.lock = threading.Lock()
+        self.lookup_status_thread = StoppableThread(
+            target=self.lookup_verification_status
+        )
+
+        self.status = self.lookup_verification_status_once()
 
         super().__init__(
             self.verification_screen_name,
@@ -82,11 +87,6 @@ class VerificationScreen(Screen):
             gui_user=gui_user,
             denarii_mobile_client=denarii_mobile_client,
             **kwargs
-        )
-
-        self.lock = threading.Lock()
-        self.lookup_status_thread = StoppableThread(
-            target=self.lookup_verification_status
         )
 
     def init(self, **kwargs):
@@ -200,26 +200,33 @@ class VerificationScreen(Screen):
             return "Status: Not Verified Yet"
         else:
             return "Status: Unknown"
+        
+    def lookup_verification_status_once(self):
+        try:
+            success, res = self.denarii_mobile_client.is_a_verified_person(
+                self.gui_user.user_id
+            )
+
+            if success:
+                self.stautus = res[0]["verification_status"]
+
+                if self.status == "is_verified":
+                    self.refresh_screen()
+
+            else:
+                self.status = "is_not_verified"
+
+            self.status_label.setText(self.format_status())
+        except Exception as e:
+            print(e)
+            self.status_message_box("Failed: unknown error")
 
     def lookup_verification_status(self):
         while not self.lookup_status_thread.stopped():
             try:
                 self.lock.acquire()
 
-                success, res = self.denarii_mobile_client.is_a_verified_person(
-                    self.gui_user.user_id
-                )
-
-                if success:
-                    self.stautus = res[0]["verification_status"]
-
-                    if self.status == "is_verified":
-                        self.refresh_screen()
-
-                else:
-                    self.status = "is_not_verified"
-
-                self.status_label.setText(self.format_status())
+                self.lookup_verification_status_once()
 
             except Exception as e:
                 print(e)

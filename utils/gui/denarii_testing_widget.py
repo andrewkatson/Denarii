@@ -71,12 +71,20 @@ class ScrollArea:
     def __init__(self) -> None:
         self.alignment = None
         self.widget = None
+        self.horizontal_policy = None 
+        self.vertical_policy = None
 
     def setAlignment(self, alignment):
         self.alignment = alignment
 
     def setWidget(self, widget):
         self.widget = widget
+
+    def setVerticalScrollBarPolicy(self, policy):
+        self.vertical_policy = policy
+
+    def setHorizontalScrollBarPolicy(self, policy):
+        self.horizontal_policy = policy
 
 class CommentSection(Widget):
 

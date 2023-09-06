@@ -182,7 +182,7 @@ class SupportTicketDetailsScreen(Screen):
         self.third_horizontal_layout.addWidget(
             self.description_label, alignment=AlignCenter
         )
-        self.fourth_horizontal_layout.addWidget(self.scroll_area)
+        self.fourth_horizontal_layout.addWidget(self.scroll_area, alignment=AlignCenter)
         self.form_layout.addRow("New Comment", self.new_comment_plain_text_edit)
         self.fifth_horizontal_layout.addWidget(
             self.submit_push_button, alignment=AlignCenter
