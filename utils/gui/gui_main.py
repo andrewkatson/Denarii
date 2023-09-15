@@ -217,6 +217,7 @@ try:
                 "on_login_clicked": self.on_login_pushed,
                 "on_register_clicked": self.on_register_pushed,
                 "on_verification_screen_clicked": self.on_verification_screen_pushed,
+                "on_credit_card_info_screen_clicked": self.on_credit_card_info_screen_pushed,
                 "on_user_settings_screen_clicked": self.on_user_settings_screen_pushed,
                 "on_support_ticket_screen_clicked": self.on_support_ticket_screen_pushed,
                 "on_support_ticket_creation_screen_clicked": self.on_support_ticket_creation_screen_pushed,
@@ -229,6 +230,8 @@ try:
 
             if os.path.exists(USER_SETTINGS_PATH):
                 load_user()
+
+            self.current_support_ticket = None
 
             # Widgets
             self.LANG_SELECT = LangSelectScreen(
@@ -287,6 +290,41 @@ try:
                 local_wallet=self.local_wallet,
                 gui_user=gui_user,
                 set_wallet_type_callback=self.set_wallet_type,
+            )
+            self.LOGIN_OR_REGISTER = LoginOrRegisterScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+                on_login_clicked=self.on_login_pushed,
+                on_register_clicked=self.on_register_pushed,
+            )
+            self.LOGIN_SCREEN = LoginScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
+            )
+            self.REGISTER_SCREEN = RegisterScreen(
+                push_buttons=common_buttons,
+                parent=self,
+                denarii_mobile_client=self.denarii_mobile_client,
+                main_layout=self.main_layout,
+                deletion_func=self.remove_all_widgets,
+                denarii_client=self.denarii_client,
+                remote_wallet=self.remote_wallet,
+                local_wallet=self.local_wallet,
+                gui_user=gui_user,
             )
             self.CURRENT_WALLET = None
             self.LOCAL_WALLET_SCREEN = LocalWalletScreen(
@@ -361,41 +399,6 @@ try:
                 on_sell_screen_clicked=self.on_sell_denarii_screen_pushed,
                 on_verification_screen_clicked=self.on_verification_screen_pushed,
                 on_user_settings_screen_clicked=self.on_user_settings_screen_pushed,
-            )
-            self.LOGIN_OR_REGISTER = LoginOrRegisterScreen(
-                push_buttons=common_buttons,
-                parent=self,
-                denarii_mobile_client=self.denarii_mobile_client,
-                main_layout=self.main_layout,
-                deletion_func=self.remove_all_widgets,
-                denarii_client=self.denarii_client,
-                remote_wallet=self.remote_wallet,
-                local_wallet=self.local_wallet,
-                gui_user=gui_user,
-                on_login_clicked=self.on_login_pushed,
-                on_register_clicked=self.on_register_pushed,
-            )
-            self.LOGIN_SCREEN = LoginScreen(
-                push_buttons=common_buttons,
-                parent=self,
-                denarii_mobile_client=self.denarii_mobile_client,
-                main_layout=self.main_layout,
-                deletion_func=self.remove_all_widgets,
-                denarii_client=self.denarii_client,
-                remote_wallet=self.remote_wallet,
-                local_wallet=self.local_wallet,
-                gui_user=gui_user,
-            )
-            self.REGISTER_SCREEN = RegisterScreen(
-                push_buttons=common_buttons,
-                parent=self,
-                denarii_mobile_client=self.denarii_mobile_client,
-                main_layout=self.main_layout,
-                deletion_func=self.remove_all_widgets,
-                denarii_client=self.denarii_client,
-                remote_wallet=self.remote_wallet,
-                local_wallet=self.local_wallet,
-                gui_user=gui_user,
             )
             self.REQUEST_RESET_SCREEN = RequestResetScreen(
                 push_buttons=common_buttons,
@@ -508,8 +511,6 @@ try:
                 on_support_ticket_screen_clicked=self.on_support_ticket_screen_pushed,
                 get_current_support_ticket_id=self.get_current_support_ticket_id,
             )
-
-            self.current_support_ticket = None
 
             self.last_widget_stack = []
 

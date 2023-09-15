@@ -2,9 +2,11 @@ from screen import *
 
 if TESTING:
     from denarii_testing_font import Font
+    from denarii_testing_icon import Icon
     from denarii_testing_label import Label
     from denarii_testing_line_edit import LineEdit
     from denarii_testing_message_box import MessageBox
+    from denarii_testing_pixmap import Pixmap
     from denarii_testing_plain_text_edit import PlainTextEdit
     from denarii_testing_push_button import PushButton
     from denarii_testing_qt import (
@@ -17,9 +19,11 @@ if TESTING:
     from denarii_testing_radio_button import RadioButton
 else:
     from font import *
+    from icon import Icon
     from label import *
     from line_edit import *
     from message_box import MessageBox
+    from pixmap import Pixmap
     from plain_text_edit import PlainTextEdit
     from push_button import *
     from qt import (

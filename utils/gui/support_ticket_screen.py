@@ -6,6 +6,7 @@ from stoppable_thread import StoppableThread
 
 if TESTING:
     from denarii_testing_font import Font
+    from denarii_testing_icon import Icon
     from denarii_testing_label import Label
     from denarii_testing_line_edit import LineEdit
     from denarii_testing_message_box import MessageBox
@@ -20,6 +21,7 @@ if TESTING:
     from denarii_testing_radio_button import RadioButton
 else:
     from font import *
+    from icon import Icon
     from label import *
     from line_edit import *
     from message_box import MessageBox
@@ -104,7 +106,9 @@ class SupportTicketScreen(Screen):
         self.support_ticket_creation_push_button = PushButton("", kwargs["parent"])
         self.support_ticket_creation_push_button.clicked.connect(lambda: kwargs['on_support_ticket_creation_screen_clicked'])
         self.support_ticket_creation_push_button.setVisible(False)
-        self.support_ticket_creation_push_button.setStyleSheet("background-image : url(plus_icon.png);")
+        
+        icon = Icon("plus_icon.png")
+        self.support_ticket_creation_push_button.setIcon(icon)
         
     def setup(self):
         super().setup()

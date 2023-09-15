@@ -132,6 +132,9 @@ class RemoteWalletScreen(WalletScreen):
         self.transfer_push_button.setVisible(True)
         self.buy_screen_push_button.setVisible(True)
         self.sell_screen_push_button.setVisible(True)
+        self.credit_card_info_screen_push_button.setVisible(True)
+        self.user_settings_screen_push_button.setVisible(True)
+        self.verification_screen_push_button.setVisible(True)
         self.back_button.setVisible(True)
 
         self.first_horizontal_layout.addWidget(

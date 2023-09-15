@@ -72,12 +72,19 @@ class VerificationScreen(Screen):
         self.work_location_state_line_edit = None
         self.work_location_country_line_edit = None
 
+        self.status = "Unknown"
+
+        # We need to explicitly set the gui_user since we use it in lookup_verification_status*
+        self.gui_user = gui_user
+
+        # We need to explicitly set the denarii mobile client since we call it in lookup_verification_status*
+        self.denarii_mobile_client = denarii_mobile_client
+
+
         self.lock = threading.Lock()
         self.lookup_status_thread = StoppableThread(
             target=self.lookup_verification_status
         )
-
-        self.status = self.lookup_verification_status_once()
 
         super().__init__(
             self.verification_screen_name,

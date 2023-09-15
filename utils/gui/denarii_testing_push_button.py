@@ -9,6 +9,7 @@ class PushButton:
         self.style_sheet = []
         self.is_visible = False
         self.alignment = None
+        self.icon = None
 
     def click(self):
         self.clicked.click()
@@ -21,3 +22,6 @@ class PushButton:
 
     def setAlignment(self, alignment):
         self.alignment = alignment
+
+    def setIcon(self, icon):
+        self.icon = icon

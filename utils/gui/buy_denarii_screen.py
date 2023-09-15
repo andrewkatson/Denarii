@@ -5,7 +5,9 @@ from screen import *
 from stoppable_thread import StoppableThread
 
 if TESTING:
+    from denarii_testing_button_group import ButtonGroup
     from denarii_testing_font import Font
+    from denarii_testing_icon import Icon
     from denarii_testing_label import Label
     from denarii_testing_line_edit import LineEdit
     from denarii_testing_message_box import MessageBox
@@ -20,7 +22,9 @@ if TESTING:
     )
     from denarii_testing_radio_button import RadioButton
 else:
+    from button_group import ButtonGroup
     from font import *
+    from icon import Icon
     from label import *
     from line_edit import *
     from message_box import MessageBox
@@ -66,8 +70,10 @@ class BuyDenariiScreen(Screen):
         self.queued_buys_label = None
         self.buy_regardless_of_price_radio_button = None
         self.dont_buy_regardless_or_price_radio_button = None
+        self.buy_regardles_of_price_button_group = None
         self.fail_if_full_amount_cant_be_bought_radio_button = None
         self.succeed_even_when_full_amount_cant_be_bought_radio_button = None
+        self.fail_if_full_amount_cant_be_bought_button_group = None
         self.buy_regardless_of_price_label = None
         self.fail_if_full_amount_isnt_met_label = None
         self.cancel_buy_col_label = None
@@ -177,6 +183,18 @@ class BuyDenariiScreen(Screen):
         font.setPixelSize(50)
         self.asks_label.setFont(font)
 
+        self.amount_col_label_one = Label("Amount")
+        font = Font()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.amount_col_label_one.setFont(font)
+
+        self.price_col_label_one = Label("Price")
+        font = Font()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.price_col_label_one.setFont(font)
+
         self.amount_col_label = Label("Amount")
         font = Font()
         font.setFamily("Arial")
@@ -226,10 +244,10 @@ class BuyDenariiScreen(Screen):
             kwargs["parent"],
             buy_regardless_of_price_callback=self.set_buy_regardless_or_price,
         )
+        self.buy_regardless_of_price_radio_button.buy_regardless_of_price_option = True
         self.buy_regardless_of_price_radio_button.toggled.connect(
             self.buy_regardless_of_price_radio_button.on_buy_regardless_of_price_clicked
         )
-        self.buy_regardless_of_price_radio_button.buy_regardless_of_price_option = True
         self.buy_regardless_of_price_radio_button.setVisible(False)
         self.buy_regardless_of_price_radio_button.setStyleSheet(
             "QRadioButton{font: 30pt Helvetica MS;} QRadioButton::indicator { width: 30px; height: 30px;};"
@@ -240,11 +258,11 @@ class BuyDenariiScreen(Screen):
             kwargs["parent"],
             buy_regardless_of_price_callback=self.set_buy_regardless_or_price,
         )
-        self.dont_buy_regardless_or_price_radio_button.toggled.connect(
-            self.dont_buy_regardless_or_price_radio_button.on_wallet_type_clicked
-        )
         self.dont_buy_regardless_or_price_radio_button.buy_regardless_of_price_option = (
             False
+        )
+        self.dont_buy_regardless_or_price_radio_button.toggled.connect(
+            self.dont_buy_regardless_or_price_radio_button.on_buy_regardless_of_price_clicked
         )
         self.dont_buy_regardless_or_price_radio_button.setChecked(True)
         self.dont_buy_regardless_or_price_radio_button.setVisible(False)
@@ -252,16 +270,21 @@ class BuyDenariiScreen(Screen):
             "QRadioButton{font: 30pt Helvetica MS;} QRadioButton::indicator { width: 30px; height: 30px;};"
         )
 
+        self.buy_regardles_of_price_button_group = ButtonGroup()
+        self.buy_regardles_of_price_button_group.addButton(self.buy_regardless_of_price_radio_button)
+        self.buy_regardles_of_price_button_group.addButton(self.dont_buy_regardless_or_price_radio_button)
+
+
         self.fail_if_full_amount_cant_be_bought_radio_button = RadioButton(
             "True",
             kwargs["parent"],
-            wallet_type_callback=self.set_fail_if_full_amount_isnt_met,
-        )
-        self.fail_if_full_amount_cant_be_bought_radio_button.toggled.connect(
-            self.fail_if_full_amount_cant_be_bought_radio_button.on_fail_if_full_amount_isnt_met
+            fail_if_full_amount_isnt_met_callback=self.set_fail_if_full_amount_isnt_met,
         )
         self.fail_if_full_amount_cant_be_bought_radio_button.fail_if_full_amount_isnt_met_option = (
             True
+        )
+        self.fail_if_full_amount_cant_be_bought_radio_button.toggled.connect(
+            self.fail_if_full_amount_cant_be_bought_radio_button.on_fail_if_full_amount_isnt_met
         )
         self.fail_if_full_amount_cant_be_bought_radio_button.setChecked(True)
         self.fail_if_full_amount_cant_be_bought_radio_button.setVisible(False)
@@ -272,18 +295,22 @@ class BuyDenariiScreen(Screen):
         self.succeed_even_when_full_amount_cant_be_bought_radio_button = RadioButton(
             "False",
             kwargs["parent"],
-            wallet_type_callback=self.set_fail_if_full_amount_isnt_met,
-        )
-        self.succeed_even_when_full_amount_cant_be_bought_radio_button.toggled.connect(
-            self.succeed_even_when_full_amount_cant_be_bought_radio_button.on_fail_if_full_amount_isnt_met
+            fail_if_full_amount_isnt_met_callback=self.set_fail_if_full_amount_isnt_met,
         )
         self.succeed_even_when_full_amount_cant_be_bought_radio_button.fail_if_full_amount_isnt_met_option = (
             False
+        )
+        self.succeed_even_when_full_amount_cant_be_bought_radio_button.toggled.connect(
+            self.succeed_even_when_full_amount_cant_be_bought_radio_button.on_fail_if_full_amount_isnt_met
         )
         self.succeed_even_when_full_amount_cant_be_bought_radio_button.setVisible(False)
         self.succeed_even_when_full_amount_cant_be_bought_radio_button.setStyleSheet(
             "QRadioButton{font: 30pt Helvetica MS;} QRadioButton::indicator { width: 30px; height: 30px;};"
         )
+
+        self.fail_if_full_amount_cant_be_bought_button_group = ButtonGroup()
+        self.fail_if_full_amount_cant_be_bought_button_group.addButton(self.fail_if_full_amount_cant_be_bought_radio_button)
+        self.fail_if_full_amount_cant_be_bought_button_group.addButton(self.succeed_even_when_full_amount_cant_be_bought_radio_button)
 
     def setup(self):
         super().setup()
@@ -298,12 +325,10 @@ class BuyDenariiScreen(Screen):
         self.main_layout.addLayout(self.fifth_horizontal_layout)
         self.main_layout.addLayout(self.sixth_horizontal_layout)
         self.main_layout.addLayout(self.seventh_horizontal_layout)
-        self.main_layout.addLayout(self.eight_horizontal_layout)
-        self.main_layout.addLayout(self.ninth_horizontal_layout)
         self.main_layout.addLayout(self.grid_layout)
-        self.main_layout.addLayout(self.tenth_horizontal_layout)
+        self.main_layout.addLayout(self.eight_horizontal_layout)
         self.main_layout.addLayout(self.second_grid_layout)
-        self.main_layout.addLayout(self.eleventh_horizontal_layout)
+        self.main_layout.addLayout(self.ninth_horizontal_layout)
 
         self.remote_wallet_screen_push_button.setVisible(True)
         self.sell_screen_push_button.setVisible(True)
@@ -348,8 +373,8 @@ class BuyDenariiScreen(Screen):
 
         self.seventh_horizontal_layout.addWidget(self.asks_label, alignment=AlignCenter)
         # Grid with all the asks made by other users
-        self.grid_layout.addWidget(self.amount_col_label, 0, 0)
-        self.grid_layout.addWidget(self.price_col_label, 0, 1)
+        self.grid_layout.addWidget(self.amount_col_label_one, 0, 0)
+        self.grid_layout.addWidget(self.price_col_label_one, 0, 1)
 
         self.eight_horizontal_layout.addWidget(
             self.queued_buys_label, alignment=AlignCenter
@@ -540,9 +565,9 @@ class BuyDenariiScreen(Screen):
                         lambda: self.on_cancel_buy_clicked(str(buy["ask_id"]))
                     )
                     cancel_buy_push_button.setVisible(True)
-                    cancel_buy_push_button.setStyleSheet(
-                        "background-image : url(red_x.png);"
-                    )
+
+                    icon = Icon("red_x.png")
+                    cancel_buy_push_button.setIcon(icon)
 
                     self.second_grid_layout.addWidget(cancel_buy_push_button, row, 3)
                     row += 1

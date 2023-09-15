@@ -124,6 +124,7 @@ def load_all_things():
     if TESTING:
         things = load_all_test_things()
     else:
+        users = {}
         for path in os.listdir(TEST_STORE_PATH):
             full_path = os.path.join(TEST_STORE_PATH, path)
 
@@ -131,8 +132,9 @@ def load_all_things():
                 if ".user" in path:
                     split = path.split(".user")
                     user_name = split[0]
-                    things["user"] = {user_name: load(full_path)}
+                    users[user_name] = load(full_path)
 
+    things["user"] = users
     return things
 
 
@@ -313,12 +315,14 @@ class DenariiMobileClient:
 
     def check_user_is_current_user_and_get(self, user_id):
         if self.user is None:
-            raise ValueError("Need to set a user before doing the current action")
+            print("Need to set a user before doing the current action")
+            return None
 
         user = self.get_user_with_id(user_id)
 
         if user.user_id != self.user.user_id:
-            raise ValueError("That user is not the current user")
+            print("That user is not the current user")
+            return None
 
         return user
 
@@ -340,7 +344,9 @@ class DenariiMobileClient:
                 and value.password != password
             ):
                 return False, []
-
+                # If they are a known user but their email doesnt match fail
+            elif value.name == username and value.email != email:
+                return False, []
         # If all else fails create the user (register)
         self.user = User(username, email, password)
         self.user.user_id = create_identifier()
@@ -402,6 +408,9 @@ class DenariiMobileClient:
     def create_wallet(self, user_id, wallet_name, password):
         user = self.check_user_is_current_user_and_get(user_id)
 
+        if user is None:
+            return False, []
+
         if user.wallet is not None:
             print("Tried to create a user wallet and it was not None")
             return False, []
@@ -416,6 +425,12 @@ class DenariiMobileClient:
     def restore_wallet(self, user_id, wallet_name, password, seed):
         user = self.check_user_is_current_user_and_get(user_id)
 
+        if user is None:
+            return False, []
+
+        if user.wallet is None:
+            return False, []
+
         if (
             user.wallet.name == wallet_name
             and user.wallet.password == password
@@ -428,6 +443,12 @@ class DenariiMobileClient:
     def open_wallet(self, user_id, wallet_name, password):
         user = self.check_user_is_current_user_and_get(user_id)
 
+        if user is None:
+            return False, []
+
+        if user.wallet is None:
+            return False, []
+
         if user.wallet.name == wallet_name and user.wallet.password == password:
             return True, [
                 {"wallet_address": user.wallet.address, "seed": user.wallet.seed}
@@ -437,12 +458,19 @@ class DenariiMobileClient:
 
     def get_balance(self, user_id, wallet_name):
         user = self.check_user_is_current_user_and_get(user_id)
+
+        if user is None:
+            return False, []
+
         if user.wallet is None:
             return False, []
         return True, [{"balance": user.wallet.balance}]
 
     def send_denarii(self, user_id, wallet_name, address, amount):
         user = self.check_user_is_current_user_and_get(user_id)
+
+        if user is None:
+            return False, []
 
         if user.wallet.name == wallet_name:
             if user.wallet.balance >= amount:
@@ -454,6 +482,9 @@ class DenariiMobileClient:
 
     def get_prices(self, user_id):
         user = self.check_user_is_current_user_and_get(user_id)
+
+        if user is None:
+            return False, []
 
         asks = self.get_asks(user)
 
@@ -480,6 +511,9 @@ class DenariiMobileClient:
     ):
         user = self.check_user_is_current_user_and_get(user_id)
 
+        if user is None:
+            return False, []
+
         asks = self.get_asks(user)
 
         _, error_message, asks_met = try_to_buy_denarii(
@@ -502,6 +536,9 @@ class DenariiMobileClient:
 
     def transfer_denarii(self, user_id, ask_id):
         user = self.check_user_is_current_user_and_get(user_id)
+
+        if user is None:
+            return False, []
 
         asking_user = self.get_user_with_ask(ask_id)
 
@@ -530,6 +567,9 @@ class DenariiMobileClient:
     def make_denarii_ask(self, user_id, amount, asking_price):
         user = self.check_user_is_current_user_and_get(user_id)
 
+        if user is None:
+            return False, []
+
         ask = DenariiAsk(asking_price, amount)
         ask.ask_id = create_identifier()
 
@@ -543,6 +583,9 @@ class DenariiMobileClient:
 
     def poll_for_completed_transaction(self, user_id):
         user = self.check_user_is_current_user_and_get(user_id)
+
+        if user is None:
+            return False, []
 
         filtered_asks = []
         for ask in user.asks:
@@ -561,12 +604,18 @@ class DenariiMobileClient:
     def cancel_ask(self, user_id, ask_id):
         user = self.check_user_is_current_user_and_get(user_id)
 
+        if user is None:
+            return False, []
+
         user.asks = self.get_remaining_asks(user.asks, ask_id)
 
         return True, [{"ask_id": ask_id}]
 
     def has_credit_card_info(self, user_id):
         user = self.check_user_is_current_user_and_get(user_id)
+
+        if user is None:
+            return False, []
 
         return True, [{"has_credit_card_info": user.credit_card is not None}]
 
@@ -579,6 +628,9 @@ class DenariiMobileClient:
         security_code,
     ):
         user = self.check_user_is_current_user_and_get(user_id)
+
+        if user is None:
+            return False
 
         if user.credit_card is not None:
             return False
@@ -594,6 +646,9 @@ class DenariiMobileClient:
     def clear_credit_card_info(self, user_id):
         user = self.check_user_is_current_user_and_get(user_id)
 
+        if user is None:
+            return False
+
         if user.credit_card is None:
             return False
 
@@ -606,6 +661,9 @@ class DenariiMobileClient:
     def get_money_from_buyer(self, user_id, amount, currency):
         user = self.check_user_is_current_user_and_get(user_id)
 
+        if user is None:
+            return False
+
         if user.credit_card.balance < amount:
             return False
 
@@ -616,13 +674,19 @@ class DenariiMobileClient:
     def send_money_to_seller(self, user_id, amount, currency):
         user = self.check_user_is_current_user_and_get(user_id)
 
+        if user is None:
+            return False
+
         user.credit_card.balance += amount
         store_user(user)
 
         return True
 
     def is_transaction_settled(self, user_id, ask_id):
-        _ = self.check_user_is_current_user_and_get(user_id)
+        user = self.check_user_is_current_user_and_get(user_id)
+
+        if user is None:
+            return False, []
 
         asking_user = self.get_user_with_ask(ask_id)
 
@@ -640,7 +704,10 @@ class DenariiMobileClient:
         return True, [{"ask_id": ask_id, "transaction_was_settled": True}]
 
     def delete_user(self, user_id):
-        _ = self.check_user_is_current_user_and_get(user_id)
+        user = self.check_user_is_current_user_and_get(user_id)
+
+        if user is None:
+            return False, []
 
         users = self.get_users
 
@@ -659,7 +726,10 @@ class DenariiMobileClient:
         return deleted_something
 
     def get_ask_with_identifier(self, user_id, ask_id):
-        _ = self.check_user_is_current_user_and_get(user_id)
+        user = self.check_user_is_current_user_and_get(user_id)
+
+        if user is None:
+            return False, []
 
         ask = self.get_ask_with_id(ask_id)
 
@@ -673,6 +743,9 @@ class DenariiMobileClient:
 
     def transfer_denarii_back_to_seller(self, user_id, ask_id):
         user = self.check_user_is_current_user_and_get(user_id)
+
+        if user is None:
+            return False, []
 
         asking_user = self.get_user_with_ask(ask_id)
 
@@ -699,12 +772,18 @@ class DenariiMobileClient:
     def send_money_back_to_buyer(self, user_id, amount, currency):
         user = self.check_user_is_current_user_and_get(user_id)
 
+        if user is None:
+            return False
+
         user.credit_card.balance += amount
         store_user(user)
         return True
 
     def cancel_buy_of_ask(self, user_id, ask_id):
         user = self.check_user_is_current_user_and_get(user_id)
+
+        if user is None:
+            return False
 
         ask = self.get_ask_with_id(ask_id)
 
@@ -730,6 +809,9 @@ class DenariiMobileClient:
     ):
         user = self.check_user_is_current_user_and_get(user_id)
 
+        if user is None:
+            return False, []
+
         user.identity_is_verified = True
         user.verification_report_status = "complete"
 
@@ -739,6 +821,9 @@ class DenariiMobileClient:
 
     def is_a_verified_person(self, user_id):
         user = self.check_user_is_current_user_and_get(user_id)
+
+        if user is None:
+            return False, []
 
         if user.identity_is_verified:
             return True, [{"verification_status": "is_verified"}]
@@ -755,6 +840,9 @@ class DenariiMobileClient:
     def get_all_asks(self, user_id):
         user = self.check_user_is_current_user_and_get(user_id)
 
+        if user is None:
+            return False, []
+
         filtered_asks = []
 
         for ask in user.asks:
@@ -768,14 +856,16 @@ class DenariiMobileClient:
             ]
 
         return True, filtered_asks
-    
+
     def get_all_buys(self, user_id):
         user = self.check_user_is_current_user_and_get(user_id)
+
+        if user is None:
+            return False, []
 
         filtered_asks = []
 
         for ask in self.get_asks():
-
             if ask.in_escrow and user.user_id == ask.buyer.user_id:
                 filtered_asks.append[
                     {
@@ -791,6 +881,9 @@ class DenariiMobileClient:
     def create_support_ticket(self, user_id, title, description):
         user = self.check_user_is_current_user_and_get(user_id)
 
+        if user is None:
+            return False, []
+
         support_ticket = SupportTicket(description, title, False)
 
         user.support_tickets.append(support_ticket)
@@ -804,6 +897,9 @@ class DenariiMobileClient:
 
     def update_support_ticket(self, user_id, support_ticket_id, comment):
         user = self.check_user_is_current_user_and_get(user_id)
+
+        if user is None:
+            return False, []
 
         comment = SupportTicketComment(user.name, comment)
 
@@ -821,6 +917,9 @@ class DenariiMobileClient:
     def delete_support_ticket(self, user_id, support_ticket_id):
         user = self.check_user_is_current_user_and_get(user_id)
 
+        if user is None:
+            return False, []
+
         remaining_tickets = []
 
         for ticket in user.support_tickets:
@@ -835,6 +934,9 @@ class DenariiMobileClient:
 
     def get_support_tickets(self, user_id, can_be_resolved):
         user = self.check_user_is_current_user_and_get(user_id)
+
+        if user is None:
+            return False, []
 
         filtered_support_tickets = []
 
@@ -869,6 +971,9 @@ class DenariiMobileClient:
     def get_comments_on_ticket(self, user_id, support_ticket_id):
         user = self.check_user_is_current_user_and_get(user_id)
 
+        if user is None:
+            return False, []
+
         ticket = self.get_support_ticket_with_id(user, support_ticket_id)
 
         filtered_comments = []
@@ -888,6 +993,9 @@ class DenariiMobileClient:
     def resolve_support_ticket(self, user_id, support_ticket_id):
         user = self.check_user_is_current_user_and_get(user_id)
 
+        if user is None:
+            return False, []
+
         ticket = self.get_support_ticket_with_id(user, support_ticket_id)
 
         ticket.resolved = True
@@ -903,6 +1011,9 @@ class DenariiMobileClient:
 
     def poll_for_escrowed_transaction(self, user_id):
         user = self.check_user_is_current_user_and_get(user_id)
+
+        if user is None:
+            return False, []
 
         filtered_asks = []
         for ask in user.asks:
@@ -920,12 +1031,13 @@ class DenariiMobileClient:
     def get_support_ticket(self, user_id, support_ticket_id):
         user = self.check_user_is_current_user_and_get(user_id)
 
+        if user is None:
+            return False, []
+
         filtered_support_tickets = []
 
         for ticket in filtered_support_tickets:
-
             if ticket.support_ticket_id == support_ticket_id:
-
                 filtered_support_tickets.append(
                     {
                         "support_ticket_id": ticket.support_ticket_id,
@@ -936,5 +1048,5 @@ class DenariiMobileClient:
                         "creation_time_body": ticket.creation_time.isoformat(),
                     }
                 )
-                
+
         return True, filtered_support_tickets

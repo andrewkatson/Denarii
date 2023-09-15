@@ -6,9 +6,11 @@ from stoppable_thread import StoppableThread
 
 if TESTING:
     from denarii_testing_font import Font
+    from denarii_testing_icon import Icon
     from denarii_testing_label import Label
     from denarii_testing_line_edit import LineEdit
     from denarii_testing_message_box import MessageBox
+    from denarii_testing_pixmap import Pixmap
     from denarii_testing_push_button import PushButton
     from denarii_testing_qt import (
         TextSelectableByMouse,
@@ -20,9 +22,11 @@ if TESTING:
     from denarii_testing_radio_button import RadioButton
 else:
     from font import *
+    from icon import Icon
     from label import *
     from line_edit import *
     from message_box import MessageBox
+    from pixmap import Pixmap
     from push_button import *
     from qt import (
         TextSelectableByMouse,
@@ -104,7 +108,7 @@ class SellDenariiScreen(Screen):
 
         self.next_button.setVisible(False)
 
-        self.sell_denarii_label = Label("Buy Denarii")
+        self.sell_denarii_label = Label("Sell Denarii")
         font = Font()
         font.setFamily("Arial")
         font.setPixelSize(50)
@@ -177,23 +181,36 @@ class SellDenariiScreen(Screen):
         font.setPixelSize(50)
         self.all_asks_label.setFont(font)
 
+
+        self.amount_col_label_one = Label("Amount")
+        font = Font()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.amount_col_label_one.setFont(font)
+
+        self.price_col_label_one = Label("Price")
+        font = Font()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.price_col_label_one.setFont(font)
+
         self.own_asks_label = Label("Own Asks")
         font = Font()
         font.setFamily("Arial")
         font.setPixelSize(50)
         self.own_asks_label.setFont(font)
 
-        self.amount_col_label = Label("Amount")
+        self.amount_col_label_two = Label("Amount")
         font = Font()
         font.setFamily("Arial")
         font.setPixelSize(50)
-        self.amount_col_label.setFont(font)
+        self.amount_col_label_two.setFont(font)
 
-        self.price_col_label = Label("Price")
+        self.price_col_label_two = Label("Price")
         font = Font()
         font.setFamily("Arial")
         font.setPixelSize(50)
-        self.price_col_label.setFont(font)
+        self.price_col_label_two.setFont(font)
 
         self.amount_bought_col_label = Label("Amount Bought")
         font = Font()
@@ -212,6 +229,19 @@ class SellDenariiScreen(Screen):
         font.setFamily("Arial")
         font.setPixelSize(50)
         self.bought_asks_label.setFont(font)
+
+
+        self.amount_col_label = Label("Amount")
+        font = Font()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.amount_col_label.setFont(font)
+
+        self.price_col_label = Label("Price")
+        font = Font()
+        font.setFamily("Arial")
+        font.setPixelSize(50)
+        self.price_col_label.setFont(font)
 
         self.going_price_label = Label("Going Price: ")
         font = Font()
@@ -249,8 +279,8 @@ class SellDenariiScreen(Screen):
 
         self.third_horizontal_layout.addWidget(self.all_asks_label, alignment=AlignCenter)
 
-        self.grid_layout.addWidget(self.amount_col_label, 0, 0)
-        self.grid_layout.addWidget(self.price_col_label, 0, 1)
+        self.grid_layout.addWidget(self.amount_col_label_one, 0, 0)
+        self.grid_layout.addWidget(self.price_col_label_one, 0, 1)
 
         self.form_layout.addRow("Amount", self.amount_line_edit)
         self.form_layout.addRow("Price", self.price_line_edit)
@@ -259,8 +289,8 @@ class SellDenariiScreen(Screen):
 
         self.fifth_horizontal_layout.addWidget(self.own_asks_label, alignment=AlignCenter)
 
-        self.second_grid_layout.addWidget(self.amount_col_label, 0, 0)
-        self.second_grid_layout.addWidget(self.price_col_label, 0, 1)
+        self.second_grid_layout.addWidget(self.amount_col_label_two, 0, 0)
+        self.second_grid_layout.addWidget(self.price_col_label_two, 0, 1)
         self.second_grid_layout.addWidget(self.cancel_ask_col_label, 0, 2)
 
         self.sixth_horizontal_layout.addWidget(self.bought_asks_label, alignment=AlignCenter)
@@ -359,9 +389,9 @@ class SellDenariiScreen(Screen):
                         lambda: self.on_cancel_ask_clicked(str(ask["ask_id"]))
                     )
                     cancel_buy_push_button.setVisible(True)
-                    cancel_buy_push_button.setStyleSheet(
-                        "background-image : url(red_x.png);"
-                    )
+
+                    icon = Icon("red_x.png")
+                    cancel_buy_push_button.setIcon(icon)
 
                     self.second_grid_layout.addWidget(cancel_buy_push_button, row, 2)
 

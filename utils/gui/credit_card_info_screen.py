@@ -55,6 +55,12 @@ class CreditCardInfoScreen(Screen):
 
         self.credit_card_info_label = None
 
+        # We need to explicitly set the gui_user since we use it in check_credit_card_info
+        self.gui_user = gui_user
+
+        # We need to explicitly set the denarii mobile client since we call it in check_credit_card_info
+        self.denarii_mobile_client = denarii_mobile_client
+
         self.status = self.check_credit_card_info()
 
         self.status_label = None

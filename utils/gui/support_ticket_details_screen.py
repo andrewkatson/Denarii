@@ -76,6 +76,13 @@ class SupportTicketDetailsScreen(Screen):
 
         self.support_ticket_id = self.get_current_support_ticket_id()
 
+        # We need to explicitly set the gui_user since we use it in get_support_ticket*
+        self.gui_user = gui_user
+
+        # We need to explicitly set the denarii mobile client since we call it in get_support_ticket*
+        self.denarii_mobile_client = denarii_mobile_client
+
+
         self.support_ticket_details = self.get_support_ticket_details()
 
         self.comment_details = self.get_support_ticket_comment_details()

@@ -5,7 +5,7 @@ package(default_visibility = ["//visibility:public"])
 
 filegroup(
   name = "images", 
-  srcs = ["red_x.png"]
+  srcs = ["red_x.png", "plus_icon.png"]
 )
 
 py_library(

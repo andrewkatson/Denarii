@@ -48,7 +48,7 @@ class RadioButton(QRadioButton):
         """
         Sets whether we want to be buying an ask regardless of its price
         """
-        button = self.sender
+        button = self.sender()
 
         self.buy_regardless_of_price_callback(button.buy_regardless_of_price_option)
 
@@ -57,6 +57,6 @@ class RadioButton(QRadioButton):
         """
         Sets whether we want to be failing a buy if we cant buy the full amount
         """
-        button = self.sender
+        button = self.sender()
 
         self.fail_if_full_amount_isnt_met_callback(button.fail_if_full_amount_isnt_met_option)
