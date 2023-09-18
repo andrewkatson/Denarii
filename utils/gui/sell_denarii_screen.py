@@ -391,6 +391,9 @@ class SellDenariiScreen(Screen):
                         lambda: self.on_cancel_ask_clicked(str(ask["ask_id"]))
                     )
                     cancel_ask_push_button.setVisible(True)
+                    cancel_ask_push_button.setStyleSheet(
+                        "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+                    )
 
                     self.second_grid_layout.addWidget(cancel_ask_push_button, row, 2)
 
