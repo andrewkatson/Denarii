@@ -19,6 +19,7 @@ if TESTING:
         AlignLeft,
     )
     from denarii_testing_radio_button import RadioButton
+    from denarii_testing_size import Size
 else:
     from font import *
     from icon import Icon
@@ -34,6 +35,7 @@ else:
         AlignLeft,
     )
     from radio_button import *
+    from size import Size
 
 
 
@@ -93,7 +95,7 @@ class SupportTicketScreen(Screen):
 
 
         self.user_settings_screen_push_button = PushButton(
-            "Identity Verification", kwargs["parent"]
+            "User Settings", kwargs["parent"]
         )
         self.user_settings_screen_push_button.clicked.connect(
             lambda: kwargs["on_user_settings_screen_clicked"]()
@@ -103,12 +105,13 @@ class SupportTicketScreen(Screen):
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
 
-        self.support_ticket_creation_push_button = PushButton("", kwargs["parent"])
+        self.support_ticket_creation_push_button = PushButton("Create Support Ticket", kwargs["parent"])
         self.support_ticket_creation_push_button.clicked.connect(lambda: kwargs['on_support_ticket_creation_screen_clicked'])
         self.support_ticket_creation_push_button.setVisible(False)
+        self.support_ticket_creation_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
         
-        icon = Icon("plus_icon.png")
-        self.support_ticket_creation_push_button.setIcon(icon)
         
     def setup(self):
         super().setup()

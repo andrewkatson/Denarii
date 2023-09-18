@@ -8,6 +8,11 @@ filegroup(
   srcs = ["red_x.png", "plus_icon.png"]
 )
 
+filegroup(
+  name = "binaries",
+  srcs = ["denarii_wallet_rpc_server", "denariid"]
+)
+
 py_library(
   name = "constants",
   srcs = ["constants.py"],
@@ -54,7 +59,7 @@ py_library(
     ]),
     deps = [":testing_clients", ":clients"],
     imports = [":testing_clients", ":clients"], 
-    data = [":images"],
+    data = [":images", ":binaries"],
 )
 
 py_binary(

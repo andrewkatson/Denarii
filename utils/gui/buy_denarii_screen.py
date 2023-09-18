@@ -21,6 +21,8 @@ if TESTING:
         AlignLeft,
     )
     from denarii_testing_radio_button import RadioButton
+    from denarii_testing_size import Size
+
 else:
     from button_group import ButtonGroup
     from font import *
@@ -38,6 +40,7 @@ else:
         AlignLeft,
     )
     from radio_button import *
+    from size import Size
 
 
 class BuyDenariiScreen(Screen):
@@ -560,14 +563,11 @@ class BuyDenariiScreen(Screen):
 
                     self.second_grid_layout.addWidget(amount_bought_label, row, 2)
 
-                    cancel_buy_push_button = PushButton("", self.parent)
+                    cancel_buy_push_button = PushButton("Cancel Buy", self.parent)
                     cancel_buy_push_button.clicked.connect(
                         lambda: self.on_cancel_buy_clicked(str(buy["ask_id"]))
                     )
                     cancel_buy_push_button.setVisible(True)
-
-                    icon = Icon("red_x.png")
-                    cancel_buy_push_button.setIcon(icon)
 
                     self.second_grid_layout.addWidget(cancel_buy_push_button, row, 3)
                     row += 1

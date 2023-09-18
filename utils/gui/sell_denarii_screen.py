@@ -20,6 +20,7 @@ if TESTING:
         AlignLeft,
     )
     from denarii_testing_radio_button import RadioButton
+    from denarii_testing_size import Size
 else:
     from font import *
     from icon import Icon
@@ -36,6 +37,7 @@ else:
         AlignLeft,
     )
     from radio_button import *
+    from size import Size
 
 
 class SellDenariiScreen(Screen):
@@ -384,16 +386,13 @@ class SellDenariiScreen(Screen):
 
                     self.second_grid_layout.addWidget(ask_price_label, row, 1)
 
-                    cancel_buy_push_button = PushButton("", self.parent)
-                    cancel_buy_push_button.clicked.connect(
+                    cancel_ask_push_button = PushButton("Cancel Ask", self.parent)
+                    cancel_ask_push_button.clicked.connect(
                         lambda: self.on_cancel_ask_clicked(str(ask["ask_id"]))
                     )
-                    cancel_buy_push_button.setVisible(True)
+                    cancel_ask_push_button.setVisible(True)
 
-                    icon = Icon("red_x.png")
-                    cancel_buy_push_button.setIcon(icon)
-
-                    self.second_grid_layout.addWidget(cancel_buy_push_button, row, 2)
+                    self.second_grid_layout.addWidget(cancel_ask_push_button, row, 2)
 
                     row += 1
 
@@ -454,7 +453,7 @@ class SellDenariiScreen(Screen):
             time.sleep(5)
 
     def refresh_completed_transactions(self):
-        while not self.refresh_completed_transactions.stopped():
+        while not self.completed_transactions_thread.stopped():
             try:
                 self.lock.acquire()
 
