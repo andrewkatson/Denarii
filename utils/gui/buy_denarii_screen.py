@@ -452,14 +452,14 @@ class BuyDenariiScreen(Screen):
                     if success:
                         # TODO: change to use other currencies.
                         (
-                            success,
-                            third_res,
+                            success
                         ) = self.denarii_mobile_client.get_money_from_buyer(
                             self.gui_user.user_id, self.amount_line_edit.text(), "usd"
                         )
 
                         if success:
                             succeeded_asks = []
+                            any_ask_failed = false
                             for ask in second_res:
                                 (
                                     success,
@@ -477,22 +477,24 @@ class BuyDenariiScreen(Screen):
                                                 "amount_bought"
                                             ],
                                             "amount": current_ask["amount"],
+                                            "asking_price": current_ask["asking_price"]
                                         }
                                     )
                                     succeeded_asks.append(ask)
-                                else:
-                                    self.status_message_box(
-                                        "Failed one of the denarii transfers. Will refund money and transfer denarii back to seller."
-                                    )
-                                    self.reverse_transactions(succeeded_asks)
+                                else: 
+                                    any_ask_failed = True
                                     break
-
-                            else:
+                            if any_ask_failed:
                                 self.status_message_box(
-                                    "Failed to get your money to transfer the denarii"
+                                    "Failed one of the denarii transfers. Will refund money and transfer denarii back to seller."
                                 )
+                                self.reverse_transactions(succeeded_asks)
+                                break
                         else:
-                            self.cancel_buys(list(second_res.values()))
+                            ask_ids_to_cancel = []
+                            for ask in second_res:
+                                ask_ids_to_cancel.append(ask['ask_id'])
+                            self.cancel_buys(ask_ids_to_cancel)
                     else:
                         self.status_message_box("Failed to buy denarii")
 
@@ -706,7 +708,7 @@ class BuyDenariiScreen(Screen):
     def cancel_buys(self, ask_ids_to_cancel):
         for ask_id in ask_ids_to_cancel:
             try:
-                success, res = self.denarii_mobile_client.cancel_buy_of_ask(
+                success = self.denarii_mobile_client.cancel_buy_of_ask(
                     self.gui_user.user_id, ask_id
                 )
 
