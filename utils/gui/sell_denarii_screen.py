@@ -1,3 +1,4 @@
+import sys
 import threading
 import time
 
@@ -90,6 +91,7 @@ class SellDenariiScreen(Screen):
         self.refresh_asks_in_escrow_thread = StoppableThread(
             target=self.refresh_asks_in_escrow
         )
+        self.refresh_going_price_thread = StoppableThread(target=self.refresh_going_price)
 
         self.lock = threading.Lock()
 
@@ -447,12 +449,9 @@ class SellDenariiScreen(Screen):
                     finally:
                         self.lock.release()
                     # No status message when things go well on purpose so the user doesn't get annoyed.
-                else:
-                    self.status_message_box("Failed to get denarii asks")
             except Exception as e:
                 print(e)
-                self.status_message_box("Failed: unknown error")
-
+                
             time.sleep(5)
 
     def refresh_completed_transactions(self):
@@ -481,14 +480,9 @@ class SellDenariiScreen(Screen):
 
                     self.bought_asks = new_bought_asks
 
-                else:
-                    self.status_message_box("Failed to refresh completed transactions")
-
             except Exception as e:
                 print(e)
-
-                self.status_message_box("Failed: unknown error")
-
+                
             finally:
                 self.lock.release()
             time.sleep(5)
@@ -502,12 +496,9 @@ class SellDenariiScreen(Screen):
 
                 if success: 
                     self.bought_asks = res
-                else: 
-                    self.status_message_box("Failed to refresh for escrowed transactions")
-
+                    
             except Exception as e:
                 print(e)
-                self.status_message_box("Failed: unknown error")
             finally:
                 self.lock.release()
 
@@ -522,12 +513,29 @@ class SellDenariiScreen(Screen):
 
                 if success: 
                     self.own_asks = res
-                else: 
-                    self.status_message_box("Failed to refresh own asks")
 
             except Exception as e:
                 print(e)
-                self.status_message_box("Failed: unknown error")
+            finally:
+                self.lock.release()
+
+            time.sleep(5)
+            
+    def refresh_going_price(self): 
+        while not self.refresh_going_price_thread.stopped():
+            try:
+                self.lock.acquire()
+                
+                # Just a big number since python doesnt really have a max int
+                going_price = 99999999999999999
+                for ask in self.current_asks: 
+                    if going_price > ask["asking_price"]: 
+                        going_price = ask["asking_price"] 
+
+                self.going_price_label(f"Going Price: {going_price}")
+
+            except Exception as e:
+                print(e)
             finally:
                 self.lock.release()
 
@@ -577,7 +585,6 @@ class SellDenariiScreen(Screen):
 
         except Exception as e:
             print(e)
-            self.status_message_box("Failed: unknown error")
 
     def completely_reverse_transaction(self, ask_to_reverse):
         """

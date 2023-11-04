@@ -595,11 +595,8 @@ class BuyDenariiScreen(Screen):
                     finally:
                         self.lock.release()
                     # No status message when things go well on purpose so the user doesn't get annoyed.
-                else:
-                    self.status_message_box("Failed to get denarii asks")
             except Exception as e:
                 print(e)
-                self.status_message_box("Failed: unknown error")
 
             time.sleep(5)
 
@@ -633,7 +630,6 @@ class BuyDenariiScreen(Screen):
 
             except Exception as e:
                 print(e)
-                self.status_message_box("Failed: unknown error")
             finally:
                 self.lock.release()
 
