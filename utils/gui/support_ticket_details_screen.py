@@ -86,6 +86,8 @@ class SupportTicketDetailsScreen(Screen):
         self.support_ticket_details = self.get_support_ticket_details()
 
         self.comment_details = self.get_support_ticket_comment_details()
+        
+        self.comment_details_artifacts = []
 
         super().__init__(
             self.support_ticket_details_screen_name,
@@ -292,7 +294,12 @@ class SupportTicketDetailsScreen(Screen):
         return []
 
     def populate_comment_section(self):
+        
+        self.depopulate_comment_section()
         for comment in self.comment_details:
             self.comment_section.addComment(
                 comment["author"], comment["content"], comment["updated_time_body"]
             )
+            
+    def depopulate_comment_section(self):
+        self.comment_section.ClearComments()

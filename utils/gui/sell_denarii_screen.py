@@ -80,6 +80,10 @@ class SellDenariiScreen(Screen):
         self.current_asks = []
         self.own_asks = []
         self.bought_asks = []
+        
+        self.current_asks_artifacts = []
+        self.own_asks_artifacts = []
+        self.bought_asks_artifacts = []
 
         self.asks_refresh_thread = StoppableThread(target=self.refresh_all_prices)
 
@@ -344,19 +348,38 @@ class SellDenariiScreen(Screen):
         if self.completed_transactions_thread.is_alive():
             self.completed_transactions_thread.join()
 
+    def depopulate_sell_denarii_screen(self): 
+        try: 
+            self.lock.acquire()
+            
+            for artifact in self.current_asks_artifacts: 
+                artifact.setVisible(False)
+                
+            for artifact in self.own_asks_artifacts: 
+                artifact.setVisible(False)
+                
+            for artifact in self.bought_asks_artifacts: 
+                artifact.setVisible(False)
+            
+        finally: 
+            self.lock.release()
+
     def populate_sell_denarii_screen(self):
         while not self.populate_thread.stopped():
             try:
+                self.depopulate_sell_denarii_screen()
                 self.lock.acquire()
 
                 # First we populate the all asks grid
                 row = 1
+                new_current_asks_artifacts = []
                 for ask in self.current_asks:
                     ask_amount_label = Label(str(ask["amount"]))
                     font = Font()
                     font.setFamily("Arial")
                     font.setPixelSize(50)
                     ask_amount_label.setFont(font)
+                    new_current_asks_artifacts.append(ask_amount_label)
 
                     self.grid_layout.addWidget(ask_amount_label, row, 0)
 
@@ -365,18 +388,23 @@ class SellDenariiScreen(Screen):
                     font.setFamily("Arial")
                     font.setPixelSize(50)
                     ask_price_label.setFont(font)
+                    new_current_asks_artifacts.append(ask_price_label)
 
                     self.grid_layout.addWidget(ask_price_label, row, 1)
                     row += 1
+                
+                self.current_asks_artifacts = new_current_asks_artifacts
 
                 # Then we populate the own asks grid
                 row = 1
+                new_own_asks_artifacts = []
                 for ask in self.own_asks:
                     ask_amount_label = Label(str(ask["amount"]))
                     font = Font()
                     font.setFamily("Arial")
                     font.setPixelSize(50)
                     ask_amount_label.setFont(font)
+                    new_own_asks_artifacts.append(ask_amount_label)
 
                     self.second_grid_layout.addWidget(ask_amount_label, row, 0)
 
@@ -385,6 +413,7 @@ class SellDenariiScreen(Screen):
                     font.setFamily("Arial")
                     font.setPixelSize(50)
                     ask_price_label.setFont(font)
+                    new_own_asks_artifacts.append(ask_price_label)
 
                     self.second_grid_layout.addWidget(ask_price_label, row, 1)
 
@@ -396,19 +425,24 @@ class SellDenariiScreen(Screen):
                     cancel_ask_push_button.setStyleSheet(
                         "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
                     )
+                    new_own_asks_artifacts.append(cancel_ask_push_button)
 
                     self.second_grid_layout.addWidget(cancel_ask_push_button, row, 2)
 
                     row += 1
+                
+                self.own_asks_artifacts = new_own_asks_artifacts
 
                 # Lastly we populate the bought asks grid
                 row = 1
+                new_bought_asks_artifacts = []
                 for ask in self.bought_asks:
                     ask_amount_label = Label(str(ask["amount"]))
                     font = Font()
                     font.setFamily("Arial")
                     font.setPixelSize(50)
                     ask_amount_label.setFont(font)
+                    new_bought_asks_artifacts.append(ask_amount_label)
 
                     self.third_grid_layout.addWidget(ask_amount_label, row, 0)
 
@@ -417,6 +451,7 @@ class SellDenariiScreen(Screen):
                     font.setFamily("Arial")
                     font.setPixelSize(50)
                     ask_price_label.setFont(font)
+                    new_bought_asks_artifacts.append(ask_price_label)
 
                     self.third_grid_layout.addWidget(ask_price_label, row, 1)
 
@@ -425,10 +460,12 @@ class SellDenariiScreen(Screen):
                     font.setFamily("Arial")
                     font.setPixelSize(50)
                     amount_bought_label.setFont(font)
+                    new_bought_asks_artifacts.append(amount_bought_label)
 
                     self.third_grid_layout.addWidget(amount_bought_label, row, 2)
 
                     row += 1
+                self.bought_asks_artifacts = new_bought_asks_artifacts
 
             finally:
                 self.lock.release()

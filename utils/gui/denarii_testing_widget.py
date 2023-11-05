@@ -96,7 +96,6 @@ class CommentSection(Widget):
         self.comments = {}
     
     def addComment(self, author, body, updated_time):
-        self.comments[f"{author}@{updated_time}"] = {"author": author, "body": body}
 
         author_label = Label(author)
         font = Font()
@@ -110,6 +109,16 @@ class CommentSection(Widget):
         font.setPixelSize(50)
         body_label.setFont(font)
         body_label.setWordMap(True)
+        
+        self.comments[f"{author}@{updated_time}"] = {"author": author, "body": body, "author_label": author_label, "body_label": body_label}
 
         self.layout.addWidget(author, alignment=AlignLeft)
         self.layout.addWidget(body_label, alignment=AlignCenter)
+        
+    def clearComments(self):
+        for _, comment in self.comments.items():
+            for key, artifact in comment.items():
+                if "label" in key: 
+                    artifact.setVisible(False)
+
+        self.comments = {}

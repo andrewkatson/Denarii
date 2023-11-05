@@ -86,6 +86,9 @@ class BuyDenariiScreen(Screen):
 
         self.current_asks = []
         self.queued_buys = []
+        
+        self.current_asks_artifacts = []
+        self.queued_buys_artifacts = []
 
         self.asks_refresh_thread = StoppableThread(target=self.refresh_prices)
 
@@ -513,13 +516,31 @@ class BuyDenariiScreen(Screen):
 
         finally:
             self.lock.release()
+            
+    def depopulate_buy_denarii_screen(self): 
+        try:
+            # First we de-populate the asks grid
+            self.lock.acquire()
+            
+            for artifact in self.current_asks_artifacts: 
+                artifact.setVisible(False)
+                
+            # Then we de-populate the queued buys grid
+            for artifact in self.queued_buys_artifacts: 
+                artifact.setVisible(False)
+            
+        finally:
+            self.lock.release()
+
 
     def populate_buy_denarii_screen(self):
         while not self.populate_thread.stopped():
             try:
                 # First we populate the asks grid
                 row = 1
+                self.depopulate_buy_denarii_screen()
                 self.lock.acquire()
+                new_current_asks_artifacts = []
                 for ask in self.current_asks:
                     ask_amount_label = Label(str(ask["amount"]))
                     font = Font()
@@ -528,24 +549,32 @@ class BuyDenariiScreen(Screen):
                     ask_amount_label.setFont(font)
 
                     self.grid_layout.addWidget(ask_amount_label, row, 0)
+                    new_current_asks_artifacts.append(ask_amount_label)
 
                     ask_price_label = Label(str(ask["asking_price"]))
                     font = Font()
                     font.setFamily("Arial")
                     font.setPixelSize(50)
                     ask_price_label.setFont(font)
+                    new_current_asks_artifacts.append(ask_price_label)
 
                     self.grid_layout.addWidget(ask_price_label, row, 1)
 
                     row += 1
+                
+                self.current_asks_artifacts = new_current_asks_artifacts
+                
                 # Then we populate the queued asks grid (which are just asks that we are buying)
                 row = 1
+                new_queued_buys_artifacts = []
+                
                 for buy in self.queued_buys:
                     ask_amount_label = Label(str(buy["amount"]))
                     font = Font()
                     font.setFamily("Arial")
                     font.setPixelSize(50)
                     ask_amount_label.setFont(font)
+                    new_queued_buys_artifacts.append(ask_amount_label)
 
                     self.second_grid_layout.addWidget(ask_amount_label, row, 0)
 
@@ -554,6 +583,7 @@ class BuyDenariiScreen(Screen):
                     font.setFamily("Arial")
                     font.setPixelSize(50)
                     ask_price_label.setFont(font)
+                    new_queued_buys_artifacts.append(ask_price_label)
 
                     self.second_grid_layout.addWidget(ask_price_label, row, 1)
 
@@ -562,6 +592,7 @@ class BuyDenariiScreen(Screen):
                     font.setFamily("Arial")
                     font.setPixelSize(50)
                     amount_bought_label.setFont(font)
+                    new_queued_buys_artifacts.append(amount_bought_label)
 
                     self.second_grid_layout.addWidget(amount_bought_label, row, 2)
 
@@ -573,9 +604,12 @@ class BuyDenariiScreen(Screen):
                     cancel_buy_push_button.setStyleSheet(
                         "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
                     )
+                    new_queued_buys_artifacts.append(cancel_buy_push_button)
 
                     self.second_grid_layout.addWidget(cancel_buy_push_button, row, 3)
                     row += 1
+                    
+                self.queued_buys_artifacts = new_queued_buys_artifacts
             finally:
                 self.lock.release()
 

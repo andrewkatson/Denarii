@@ -61,6 +61,7 @@ class SupportTicketScreen(Screen):
         self.support_ticket_label = None
 
         self.support_tickets = []
+        self.support_tickets_artifacts = []
 
         self.parent = kwargs["parent"]
 
@@ -147,13 +148,25 @@ class SupportTicketScreen(Screen):
 
         if self.get_support_tickets_thread.is_alive():
             self.get_support_tickets_thread.join()
+            
+    def depopulate_screen(self): 
+        try: 
+            self.lock.acquire()
+            
+            for artifact in self.support_tickets_artifacts: 
+                artifact.setVisible(False)
+            
+        finally: 
+            self.lock.release()
 
     def populate_screen(self):
         
         while not self.populate_thread.stopped():
             try: 
+                self.depopulate_screen()
                 self.lock.acquire()
 
+                new_support_tickets_artifacts = []
                 for support_ticket in self.support_tickets:
                     support_ticket_details_push_button = PushButton(
                         f"{support_ticket['title']}", self.parent
@@ -165,6 +178,9 @@ class SupportTicketScreen(Screen):
                     support_ticket_details_push_button.setStyleSheet(
                         "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
                     )
+                    new_support_tickets_artifacts.append(support_ticket_details_push_button)
+                    
+                self.support_tickets_artifacts = new_support_tickets_artifacts
 
             except Exception as e:
                 print(e)
