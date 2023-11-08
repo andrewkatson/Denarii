@@ -613,3 +613,14 @@ class DenariiMobileClient:
             return False, []
         else:
             return True, res
+
+    def logout(self, user_id):
+        """
+        @return a list of empty response objects and whether the request succeeded or not. 
+        """
+        
+        params = {"user_id": user_id}
+        
+        res, ok = self.send_denarii_mobile_request("logout", params)
+        
+        return res, ok

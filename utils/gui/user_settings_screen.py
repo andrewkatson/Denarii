@@ -52,6 +52,7 @@ class UserSettingsScreen(Screen):
         self.verification_screen_push_button = None
         self.support_ticket_screen_push_button = None 
         self.delete_account_push_button = None 
+        self.logout_push_button = None
 
         self.user_settings_label = None
 
@@ -146,6 +147,15 @@ class UserSettingsScreen(Screen):
         self.delete_account_push_button.setStyleSheet(
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
+        
+        self.logout_push_button = PushButton("Logout", kwargs["parent"])
+        self.logout_push_button.clicked.connect(
+            lambda: self.on_logout_clicked()
+        )
+        self.logout_push_button.setVisible(False)
+        self.logout_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
 
 
 
@@ -168,6 +178,7 @@ class UserSettingsScreen(Screen):
 
         self.first_horizontal_layout.addWidget(self.user_settings_label,alignment=AlignCenter)
         self.vertical_layout.addWidget(self.support_ticket_screen_push_button, alignment=AlignCenter)
+        self.vertical_layout.addWidget(self.logout_push_button, alignment=AlignCenter)
         self.vertical_layout.addWidget(self.delete_account_push_button, alignment=AlignCenter)
 
         self.second_horizontal_layout.addWidget(
@@ -192,6 +203,21 @@ class UserSettingsScreen(Screen):
 
     def teardown(self):
         super().teardown()
+        
+    def on_logout_clicked(self): 
+        try: 
+            
+            success, res = self.denarii_mobile_client.logout(self.gui_user.user_id)
+            
+            if success: 
+                self.status_message_box("Successfully Logged Out")
+                self.on_login_or_register_screen_clicked()
+            else: 
+                self.status_message_box("Failed to logoout.")
+            
+        except Exception as e:
+            print(e)
+            self.status_message_box("Failed: unknown error")
 
     def on_delete_account_clicked(self): 
         try: 
@@ -213,6 +239,7 @@ class UserSettingsScreen(Screen):
 
             if success: 
                 self.status_message_box("Deleted user successfully")
+                self.on_login_or_register_screen_clicked()
             else:
                 self.status_message_box("Failed to delete user")
 

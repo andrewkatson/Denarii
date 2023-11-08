@@ -1050,3 +1050,11 @@ class DenariiMobileClient:
                 )
 
         return True, filtered_support_tickets
+
+    def logout(self, user_id): 
+        user = self.check_user_is_current_user_and_get(user_id)
+        if user is None: 
+            return False, []
+        else: 
+            self.user = None 
+            return True, []
