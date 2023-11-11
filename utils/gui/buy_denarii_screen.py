@@ -439,11 +439,14 @@ class BuyDenariiScreen(Screen):
             success, first_res = self.denarii_mobile_client.has_credit_card_info(
                 self.gui_user.user_id
             )
+            
+            other_success, other_res = self.denarii_mobile_client.is_a_verified_person(self.gui_user.user_id)
 
-            if success:
+            if success and other_success:
                 has_credit_card_info = first_res[0]["has_credit_card_info"]
+                is_verified = other_res[0]["verification_status"] == "is_verified"
 
-                if has_credit_card_info:
+                if has_credit_card_info and is_verified:
                     success, second_res = self.denarii_mobile_client.buy_denarii(
                         self.gui_user.user_id,
                         self.amount_line_edit.text(),
@@ -503,11 +506,11 @@ class BuyDenariiScreen(Screen):
 
                 else:
                     self.status_message_box(
-                        "Failed to buy denarii because there was no credit card info on file"
+                        "Failed to buy denarii because there was no credit card info on file or the user was not verified"
                     )
             else:
                 self.status_message_box(
-                    "Failed to buy denarii because we could not determine if there was credit card info"
+                    "Failed to buy denarii because we could not determine if there was credit card info or we could not determine if the user was verified"
                 )
 
         except Exception as e:

@@ -581,14 +581,30 @@ class SellDenariiScreen(Screen):
     def on_submit_clicked(self):
         try:
             self.lock.acquire()
+            
+            success, first_res = self.denarii_mobile_client.has_credit_card_info(
+                self.gui_user.user_id
+            )
+            
+            other_success, other_res = self.denarii_mobile_client.is_a_verified_person(self.gui_user.user_id)
 
+            if success and other_success:
+                has_credit_card_info = first_res[0]["has_credit_card_info"]
+                is_verified = other_res[0]["verification_status"] == "is_verified"
 
-            success, _ = self.denarii_mobile_client.make_denarii_ask(self.gui_user.user_id, self.amount_line_edit.text(), self.price_line_edit.text())
+                if has_credit_card_info and is_verified:
+                    make_success, _ = self.denarii_mobile_client.make_denarii_ask(self.gui_user.user_id, self.amount_line_edit.text(), self.price_line_edit.text())
 
-            if success: 
-                self.status_message_box("Created denarii ask!")
+                    if make_success: 
+                        self.status_message_box("Created denarii ask!")
+                    else: 
+                        self.status_message_box("Failed to create denarii ask")
+                else: 
+                    self.status_message_box("Failed to create denarii ask because the user either didn't have credit card info or wasnt verified")
+            
             else: 
-                self.status_message_box("Failed to create denarii ask")
+                self.status_message_box("Failed to create denarii ask because we couldn't determine if the user had credit card info or was verified")
+
 
         except Exception as e:
             print(e)
