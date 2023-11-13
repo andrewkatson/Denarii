@@ -654,8 +654,6 @@ class BuyDenariiScreen(Screen):
 
                         if was_settled:
                             ask_ids_to_remove.append(buy["ask_id"])
-                    else:
-                        self.completely_reverse_transaction(buy)
 
                 # Remove the ones that are settled
                 new_queued_buys = []
