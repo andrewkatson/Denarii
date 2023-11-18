@@ -49,8 +49,8 @@ def find_workspace_path():
 
 
 def get_home():
-    linux_home = ""
-    windows_home = ""
+    linux_home = pathlib.Path()
+    windows_home = pathlib.Path()
 
     try:
         linux_home = pathlib.Path(os.environ["HOME"])

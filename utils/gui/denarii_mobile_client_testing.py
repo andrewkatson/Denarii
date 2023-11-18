@@ -134,7 +134,7 @@ def load_all_things():
                     user_name = split[0]
                     users[user_name] = load(full_path)
 
-    things["user"] = users
+        things["user"] = users
     return things
 
 

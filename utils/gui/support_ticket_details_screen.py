@@ -302,4 +302,4 @@ class SupportTicketDetailsScreen(Screen):
             )
             
     def depopulate_comment_section(self):
-        self.comment_section.ClearComments()
+        self.comment_section.clearComments()
