@@ -203,7 +203,7 @@ try:
                 "parent": self,
                 "main_layout": self.main_layout,
                 "deletion_func": self.remove_all_widgets,
-                "denarii_client": denarii_client,
+                "denarii_client": self.denarii_client,
                 "on_create_wallet_clicked": self.on_create_wallet_clicked,
                 "on_restore_wallet_clicked": self.on_restore_wallet_pushed,
                 "on_set_wallet_clicked": self.on_set_wallet_pushed,
@@ -530,8 +530,6 @@ try:
             self.setup_current_widget()
 
             self.parent = parent
-
-            self.success = False
 
         def get_last_widget(self):
             if len(self.last_widget_stack) == 0:
@@ -940,8 +938,8 @@ try:
                 return self.LOCAL_WALLET_SCREEN
             return self.LOCAL_WALLET_SCREEN
 
-        def set_wallet_type(self, type):
-            if type == REMOTE_WALLET:
+        def set_wallet_type(self, wallet_type):
+            if wallet_type == REMOTE_WALLET:
                 self.which_wallet = REMOTE_WALLET
             else:
                 self.which_wallet = LOCAL_WALLET

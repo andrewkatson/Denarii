@@ -79,6 +79,26 @@ py_test(
   size = "small",
 )
 
+py_test(
+  name = "denarii_gui_integration_tests",
+  srcs = ["denarii_gui_integration_tests.py"],
+  deps = [":other_gui", ":testing_gui_elements"],
+  imports = [":other_gui", ":testing_gui_elements"],
+  args = ["--denarii_testing=True"],
+  size = "medium",
+)
+
+
+py_test(
+  name = "denarii_gui_e2e_tests",
+  srcs = ["denarii_gui_e2e_tests.py"],
+  deps = [":other_gui", ":testing_gui_elements"],
+  imports = [":other_gui", ":testing_gui_elements"],
+  args = ["--denarii_testing=True"],
+  size = "enormous",
+)
+
+
 
 proto_library(
     name = "identifier_proto",

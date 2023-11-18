@@ -5,10 +5,21 @@ from denarii_testing_qt import (
     AlignLeft,
 )
 
+class Item:
+    def __init(self, widget):
+        self._widget = widget
+
+    def widget(self): 
+        return self._widget
+
+    def layout(self):
+        return self._widget.main_layout
+
 class Widget:
     def __init__(self):
         self.main_layout = None
         self.child_layouts = []
+        self.widgets = []
         self.alignment = None
 
     def setMainLayout(self, layout):
@@ -20,11 +31,29 @@ class Widget:
     def setAlignment(self, alignment):
         self.alignment = alignment
 
+    def setLayout(self, layout): 
+        self.main_layout = layout
 
-class HBoxLayout:
+    def addWidget(self, new_widget):
+        self.widgets.append(new_widget)
+
+    def takeAt(self, index): 
+        if index >= len(self.widgets):
+            return Item(None)
+        
+        return Item(self.widgets.pop())
+
+    @property
+    def count(self):
+        return len(self.widgets)
+
+    @property
+    def parent(self):
+        return self.main_layout
+
+class HBoxLayout(Widget):
     def __init__(self) -> None:
-        self.widgets = []
-        self.child_layouts = []
+        super().__init__()
 
     def addWidget(self, new_widget, alignment):
         new_widget.setAlignment(alignment)
@@ -34,10 +63,9 @@ class HBoxLayout:
         self.child_layouts.append(layout)
 
 
-class VBoxLayout:
+class VBoxLayout(Widget):
     def __init__(self) -> None:
-        self.widgets = []
-        self.child_layouts = []
+        super().__init__()
 
     def addWidget(self, new_widget, alignment):
         new_widget.setAlignment(alignment)
@@ -47,28 +75,68 @@ class VBoxLayout:
         self.child_layouts.append(layout)
 
 
-class FormLayout:
-    def __init__(self) -> None:
-        self.text = ""
-        self.line_edit = None
-        self.child_layouts = []
-
-    def addRow(self, text, line_edit):
-        self.text = text
+class FormRow(Widget):
+    def __init__(self, text, line_edit):
+        super().__init__()
+        self.text = text 
         self.line_edit = line_edit
 
-class GridLayout:
+
+class FormLayout(Widget):
+    def __init__(self) -> None:
+        super().__init__()
+        self.rows = []
+
+    def addRow(self, text, line_edit):
+        self.rows.append(FormRow(text, line_edit))
+
+class GridBox:
+    def __init__(self):
+        self.widget = None
+
+    def setWidget(self, widget):
+        self.widget = widget
+
+class GridRow(Widget):
+    def __init__(self) -> None:
+        super().__init__()
+        self.cols = []
+
+    def addBox(self, col, new_widget):
+        grid_col_box = None
+        if len(self.cols) <= col:
+            grid_col_box = GridBox()
+            self.cols.append(grid_col_box)
+        else: 
+            grid_col_box = self.cols[col]
+
+        grid_col_box.setWidget(new_widget) 
+
+
+class GridLayout(Widget):
 
     def __init__(self) -> None:
-        self.widgets = []
+        super().__init__()
+        self.rows = []
 
     def addWidget(self, new_widget, row, col, alignment=None):
         new_widget.setAlignment(alignment)
         self.widgets.append(new_widget)
 
-class ScrollArea: 
+        grid_row = None
+        if len(self.rows) <= row:
+            grid_row = GridRow()
+            self.rows.append(grid_row)
+        else: 
+            grid_row = self.rows[row]
+
+        grid_row.addBox(col, new_widget)
+
+
+class ScrollArea(Widget): 
 
     def __init__(self) -> None:
+        super().__init__()
         self.alignment = None
         self.widget = None
         self.horizontal_policy = None 
