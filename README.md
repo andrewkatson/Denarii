@@ -90,10 +90,10 @@ build the library binary manually. This can be done with the following command `
 
 Install all dependencies at once on Debian/Ubuntu:
 
-``` sudo apt update && sudo apt install build-essential cmake pkg-config libboost-all-dev libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev doxygen graphviz libpgm-dev qttools5-dev-tools libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev libnorm-dev qt5-default && sudo apt install python-pip && sudo apt-get install python3-pyqt5 ```
+```sudo apt update && sudo apt install build-essential cmake pkg-config libboost-all-dev libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev doxygen graphviz libpgm-dev qttools5-dev-tools libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev libnorm-dev  qtbase5-dev qt5-qmake python-pip && sudo apt-get install python3-pyqt5```
 
 Install all dependencies at once on macOS with the provided Brewfile:
-``` brew update && brew bundle --file=contrib/brew/Brewfile && pip3 install PyQt5 ```
+```brew update && brew bundle --file=contrib/brew/Brewfile && pip3 install PyQt5 ```
 
 FreeBSD 12.1 one-liner required to build dependencies:
 ```pkg install git gmake cmake pkgconf boost-libs libzmq4 libsodium```
