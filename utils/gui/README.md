@@ -2,9 +2,9 @@
 
 ## Building 
 
-The below assumes you have all the necessary files in one folder. The configuration script should do that for you. 
+The below assumes you have all the necessary files in one folder. The configuration script should do that for you. You'll also need to get pip for this to work: https://pypi.org/project/pip/.
 
-`pip3 install pyinstaller stripe pytest`
+`pip3 install pyinstaller stripe pytest psutil`
 
 ### Linux and Windows
 
