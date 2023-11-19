@@ -150,5 +150,6 @@ class RegisterScreen(Screen):
                 self.gui_user.email = self.email_line_edit.text()
                 self.gui_user.password = self.password_line_edit.text()
                 self.next_button.setVisible(True)
+                
     def on_submit_clicked(self):
         self.store_user_info()

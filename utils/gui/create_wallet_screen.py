@@ -128,7 +128,7 @@ class CreateWalletScreen(Screen):
         self.remote_wallet_radio_button.toggled.connect(
             self.remote_wallet_radio_button.on_wallet_type_clicked
         )
-        self.remote_wallet_radio_button.wallet_type_option = "Remote"
+        self.remote_wallet_radio_button.wallet_type_option = REMOTE_WALLET
         self.remote_wallet_radio_button.setVisible(False)
         self.remote_wallet_radio_button.setStyleSheet(
             "QRadioButton{font: 30pt Helvetica MS;} QRadioButton::indicator { width: 30px; height: 30px;};"
@@ -140,7 +140,7 @@ class CreateWalletScreen(Screen):
         self.local_wallet_radio_button.toggled.connect(
             self.local_wallet_radio_button.on_wallet_type_clicked
         )
-        self.local_wallet_radio_button.wallet_type_option = "Local"
+        self.local_wallet_radio_button.wallet_type_option = LOCAL_WALLET
         self.local_wallet_radio_button.setVisible(False)
         self.local_wallet_radio_button.setStyleSheet(
             "QRadioButton{font: 30pt Helvetica MS;} QRadioButton::indicator { width: 30px; height: 30px;};"

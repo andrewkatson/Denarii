@@ -47,12 +47,20 @@ class DenariiIntegrationTests(unittest.TestCase):
         super().setUp()
         self.start_time = time.time()
 
-        print(f"Running {self.id()}-{self._testMethodName}")
+        self.test_name = f"{self.id()}-{self._testMethodName}"
+
+        print(f"Running {self.test_name}")
 
         self.window = Window()
         self.main_widget = TestingMain()
         self.main_widget.setMainLayout(HBoxLayout())
         self.window.setCentralWidget(self.main_widget)
+
+        self.name = f"{self.test_name}_user"
+        self.email = f"{self.test_name}_email@email.com"
+        self.password = f"{self.test_name}_password"
+        self.wallet_name = f"{self.test_name}_wallet"
+        self.wallet_password = f"{self.test_name}_wallet_password"
 
     def tearDown(self):
         super().tearDown()
@@ -63,14 +71,152 @@ class DenariiIntegrationTests(unittest.TestCase):
         t = time.time() - self.start_time
         print("%s: %.3f" % (self.id(), t))
 
+    def navigate_to_login_or_register(self):
+
+        lang_select_screen = self.main_widget.LANG_SELECT
+
+        lang_select_screen.english_radio_button.on_lang_select_clicked()
+
+        self.assertEqual(lang_select_screen.gui_user.language, "English")
+
+        lang_select_screen.on_submit_clicked()
+
+        self.main_widget.next_clicked()
+
+        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.LOGIN_OR_REGISTER.screen_name)
+
+    def navigate_to_login(self):
+
+        self.navigate_to_login_or_register()
+
+        login_or_register_screen = self.main_widget.LOGIN_OR_REGISTER
+
+        on_login_clicked = login_or_register_screen.kwargs_passed["on_login_clicked"]
+
+        on_login_clicked()
+
+        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.LOGIN_SCREEN.screen_name)
+
+    def navigate_to_reset_password(self):
+
+        self.navigate_to_login()
+
+        login_screen = self.main_widget.LOGIN_SCREEN
+
+        login_screen.kwargs_passed["on_forgot_password_clicked"]()
+
+        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.REQUEST_RESET_SCREEN.screen_name)
+
+    def register_with_denarii(self):
+
+        self.navigate_to_login_or_register()
+        
+        login_or_register_screen = self.main_widget.LOGIN_OR_REGISTER
+
+        on_register_clicked = login_or_register_screen.kwargs_passed["on_register_clicked"]
+
+        on_register_clicked()
+
+        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.REGISTER_SCREEN.screen_name)
+
+        register_screen = self.main_widget.REGISTER_SCREEN
+
+        name_line_edit = register_screen.name_line_edit
+        name_line_edit.typeText(self.name)
+
+        email_line_edit = register_screen.email_line_edit
+        email_line_edit.typeText(self.email)
+        
+        password_line_edit = register_screen.password_line_edit
+        password_line_edit.typeText(self.password)
+
+        confirm_password_line_edit = register_screen.confirm_password_line_edit
+        confirm_password_line_edit.typeText(self.password)
+
+        register_screen.on_submit_clicked()
+
+        self.main_widget.next_clicked()
+
+        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.LOGIN_SCREEN.screen_name)
+
+
+    def login_with_denarii(self):
+        self.register_with_denarii()
+
+        login_screen = self.main_widget.LOGIN_SCREEN
+
+        name_line_edit = login_screen.name_line_edit
+        name_line_edit.typeText(self.name)
+
+        email_line_edit = login_screen.email_line_edit
+        email_line_edit.typeText(self.email)
+        
+        password_line_edit = login_screen.password_line_edit
+        password_line_edit.typeText(self.password)
+
+        login_screen.on_submit_clicked()
+
+        self.main_widget.next_clicked()
+
+        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.WALLET_INFO.screen_name)
+
+
+    def create_wallet(self, wallet_type):
+        self.login_with_denarii()
+
+        wallet_decision_screen = self.main_widget.WALLET_INFO
+
+        create_wallet_button = wallet_decision_screen.kwargs_passed["on_create_wallet_clicked"]
+
+        create_wallet_button()
+
+        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.CREATE_WALLET.screen_name)
+
+        create_wallet_screen = self.main_widget.CREATE_WALLET
+
+        name_line_edit = create_wallet_screen.name_line_edit
+        name_line_edit.typeText(self.wallet_name)
+
+        password_line_edit = create_wallet_screen.password_line_edit
+        password_line_edit.typeText(self.wallet_password)
+
+        if wallet_type == LOCAL_WALLET: 
+            create_wallet_screen.local_wallet_radio_button.on_wallet_type_clicked()
+        elif wallet_type == REMOTE_WALLET:
+            create_wallet_screen.remote_wallet_radio_button.on_wallet_type_clicked()
+
+        create_wallet_screen.on_create_wallet_submit_clicked()
+
+        self.main_widget.next_clicked()
+
+
+    def navigate_to_local_wallet_screen(self):
+        self.create_wallet(LOCAL_WALLET)
+
+    def navigate_to_remote_wallet_screen(self):
+        self.create_wallet(REMOTE_WALLET)
+
+########################## TESTS ##########################
+
     def test_navigate_to_login_or_register(self):
-        pass
+        self.navigate_to_login_or_register()
+
+    def test_navigate_to_reset_password(self):
+        self.navigate_to_reset_password()
 
     def test_navigate_to_local_wallet_screen(self):
-        pass
+        self.navigate_to_local_wallet_screen()
+
+        self.assertEqual(self.main_widget.current_wallet_widget.screen_name, self.main_widget.LOCAL_WALLET_SCREEN.screen_name)
+
+        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.LOCAL_WALLET_SCREEN.screen_name)
 
     def test_navigate_to_remote_wallet_screen(self):
-        pass
+        self.navigate_to_remote_wallet_screen()
+
+        self.assertEqual(self.main_widget.current_wallet_widget.screen_name, self.main_widget.REMOTE_WALLET_SCREEN.screen_name)
+
+        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.REMOTE_WALLET_SCREEN.screen_name)
 
 
 if __name__ == "__main__":

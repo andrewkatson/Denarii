@@ -11,3 +11,6 @@ class LineEdit:
 
     def text(self):
         return self.text_inner
+    
+    def typeText(self, text):
+        self.text_inner = text

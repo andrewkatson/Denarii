@@ -50,6 +50,7 @@ class LoginScreen(Screen):
         self.email_line_edit = None
         self.password_line_edit = None
         self.submit_button = None
+        self.forgot_password_button = None
 
         super().__init__(
             self.login_screen_name,
@@ -85,6 +86,13 @@ class LoginScreen(Screen):
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
 
+        self.forgot_password_button = PushButton("Forgot Password", kwargs["parent"])
+        self.forgot_password_button.clicked.connect(lambda: kwargs["on_forgot_password_clicked"])
+        self.forgot_password_button.setVisible(False)
+        self.forgot_password_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
+
     def setup(self):
         super().setup()
 
@@ -95,8 +103,10 @@ class LoginScreen(Screen):
         self.main_layout.addLayout(self.form_layout)
         self.main_layout.addLayout(self.second_horizontal_layout)
         self.main_layout.addLayout(self.third_horizontal_layout)
+        self.main_layout.addLayout(self.fourth_horizontal_layout)
 
         self.submit_button.setVisible(True)
+        self.forgot_password_button.setVisible(True)
 
         self.first_horizontal_layout.addWidget(
             self.user_info_label, alignment=AlignCenter
@@ -107,10 +117,11 @@ class LoginScreen(Screen):
         self.second_horizontal_layout.addWidget(
             self.submit_button, alignment=AlignCenter
         )
-        self.third_horizontal_layout.addWidget(
+        self.third_horizontal_layout.addWidget(self.forgot_password_button, alignment=AlignCenter)
+        self.fourth_horizontal_layout.addWidget(
             self.back_button, alignment=(AlignLeft | AlignBottom)
         )
-        self.third_horizontal_layout.addWidget(
+        self.fourth_horizontal_layout.addWidget(
             self.next_button, alignment=(AlignRight | AlignBottom)
         )
 

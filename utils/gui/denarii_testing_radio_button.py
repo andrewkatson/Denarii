@@ -38,7 +38,6 @@ class RadioButton:
         self.user.language = "English"
 
     def on_wallet_type_clicked(self):
-        self.wallet_type_option = REMOTE_WALLET
         self.wallet_type_callback(self.wallet_type_option)
 
     def on_buy_regardless_of_price_clicked(self):

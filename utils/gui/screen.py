@@ -107,6 +107,8 @@ class Screen:
 
         self.init(**kwargs)
 
+        self.kwargs_passed = kwargs
+
     def init(self, **kwargs):
         print(f"Initializing screen: {self.screen_name}")
 

@@ -108,6 +108,7 @@ class RequestResetScreen(Screen):
                 self.status_message_box("Success")
                 self.next_button.setVisible(True)
 
+                # TODO do some actual validation here to see if the thing is an email
                 if "@" in self.name_or_email_line_edit.text():
                     self.gui_user.email = self.name_or_email_line_edit.text()
                 else: 

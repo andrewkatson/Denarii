@@ -63,6 +63,27 @@ class DenariiE2ETests(unittest.TestCase):
         t = time.time() - self.start_time
         print("%s: %.3f" % (self.id(), t))
 
+    def test_reset_password(self):
+        pass
+
+    def test_create_wallet_local_wallet(self):
+        pass
+    
+    def test_restore_wallet_local_wallet(self):
+        pass
+
+    def test_open_wallet_local_wallet(self):
+        pass
+
+    def test_create_wallet_remote_wallet(self):
+        pass
+    
+    def test_restore_wallet_remote_wallet(self):
+        pass
+
+    def test_open_wallet_remote_wallet(self):
+        pass
+
     def test_send_denarii_local_wallet(self):
         pass
 
@@ -72,13 +93,13 @@ class DenariiE2ETests(unittest.TestCase):
     def test_mine_denarii_local_wallet(self):
         pass
 
-    def test_buy_then_cancel_buy_of_denarii(self):
+    def test_buy_then_cancel_buy_of_denarii_remote_wallet(self):
         pass
 
-    def test_create_support_ticket_then_comment_on_it_then_resolve_then_delete(self):
+    def test_create_support_ticket_then_comment_on_it_then_resolve_then_delete_remote_wallet(self):
         pass
 
-    def test_delete_account(self):
+    def test_delete_account_remote_wallet(self):
         pass
 
 

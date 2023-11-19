@@ -38,7 +38,7 @@ class RadioButton(QRadioButton):
         """
         button = self.sender()
 
-        if button.wallet_type_option == "Remote":
+        if button.wallet_type_option == REMOTE_WALLET:
             self.wallet_type_callback(REMOTE_WALLET)
         else:
             self.wallet_type_callback(LOCAL_WALLET)

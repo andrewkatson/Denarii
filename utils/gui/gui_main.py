@@ -226,6 +226,7 @@ try:
                 ),
                 "get_current_support_ticket_id": self.get_current_support_ticket_id,
                 "on_login_or_register_screen_clicked": self.on_login_or_register_screen_pushed,
+                "on_forgot_password_clicked": self.on_forgot_password_pushed
             }
 
             if os.path.exists(USER_SETTINGS_PATH):
@@ -314,6 +315,7 @@ try:
                 remote_wallet=self.remote_wallet,
                 local_wallet=self.local_wallet,
                 gui_user=gui_user,
+                on_forgot_password_clicked=self.on_forgot_password_pushed
             )
             self.REGISTER_SCREEN = RegisterScreen(
                 push_buttons=common_buttons,
@@ -769,6 +771,7 @@ try:
             elif self.current_widget == self.RESET_PASSWORD_SCREEN:
                 self.current_widget = self.LOGIN_SCREEN
             elif self.current_widget == self.WALLET_INFO:
+                # TODO why does wallet info have a next button?
                 # The next button on the wallet info screen should do nothing
                 self.current_widget = self.WALLET_INFO
             elif self.current_widget == self.CREATE_WALLET:
@@ -900,9 +903,16 @@ try:
         @pyqtSlot()
         def on_login_or_register_screen_pushed(self):
             """
-            Navigate to the loginn or register screen
+            Navigate to the login or register screen
             """
             self.go_to_this_widget(self.LOGIN_OR_REGISTER)
+
+        @pyqtSlot()
+        def on_forgot_password_pushed(self):
+            """
+            Navigate to the request reset screen
+            """
+            self.go_to_this_widget(self.REQUEST_RESET_SCREEN)
 
         def get_current_support_ticket_id(self):
             return self.current_support_ticket
