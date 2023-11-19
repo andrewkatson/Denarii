@@ -81,6 +81,8 @@ class DenariiIntegrationTests(unittest.TestCase):
 
         lang_select_screen.on_submit_clicked()
 
+        self.assertEqual(lang_select_screen.status_msg.text, "Success")
+
         self.main_widget.next_clicked()
 
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.LOGIN_OR_REGISTER.screen_name)
@@ -135,6 +137,8 @@ class DenariiIntegrationTests(unittest.TestCase):
 
         register_screen.on_submit_clicked()
 
+        self.assertEqual(register_screen.status_msg.text, "Success")
+
         self.main_widget.next_clicked()
 
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.LOGIN_SCREEN.screen_name)
@@ -155,6 +159,8 @@ class DenariiIntegrationTests(unittest.TestCase):
         password_line_edit.typeText(self.password)
 
         login_screen.on_submit_clicked()
+
+        self.assertEqual(login_screen.status_msg.text, "Success")
 
         self.main_widget.next_clicked()
 
@@ -186,6 +192,8 @@ class DenariiIntegrationTests(unittest.TestCase):
             create_wallet_screen.remote_wallet_radio_button.on_wallet_type_clicked()
 
         create_wallet_screen.on_create_wallet_submit_clicked()
+        
+        self.assertRegex(create_wallet_screen.status_msg.text, "Success. *")
 
         self.main_widget.next_clicked()
 

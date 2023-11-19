@@ -202,10 +202,7 @@ class CreateWalletScreen(Screen):
         Create the wallet based on the user's input information
         """
         if self.which_wallet is None:
-            msg = MessageBox()
-            msg.setWindowTitle("Status")
-            msg.setText("Failure: need to set the wallet type")
-            msg.exec_()
+            self.status_message_box("Failure: need to set the wallet type")
             return
 
         self.create_wallet()

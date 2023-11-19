@@ -26,6 +26,7 @@ class RadioButton:
             fail_if_full_amount_isnt_met_callback
         )
         self.is_checked = False
+        self.language = "None"
 
 
     def setStyleSheet(self, add_to_sheet):
@@ -35,7 +36,7 @@ class RadioButton:
         self.is_visible = visible
 
     def on_lang_select_clicked(self):
-        self.user.language = "English"
+        self.user.language = self.language
 
     def on_wallet_type_clicked(self):
         self.wallet_type_callback(self.wallet_type_option)
