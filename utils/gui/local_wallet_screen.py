@@ -55,6 +55,9 @@ class LocalWalletScreen(WalletScreen):
         self.create_sub_address_push_button = None
         self.start_mining_push_button = None
         self.stop_mining_push_button = None
+        self.user_settings_push_button = None 
+
+        self.on_user_settings_clicked = kwargs["on_user_settings_screen_clicked"]
 
         super().__init__(
             main_layout=main_layout,
@@ -107,6 +110,15 @@ class LocalWalletScreen(WalletScreen):
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
 
+        self.user_settings_push_button = PushButton("User Settings", kwargs["parent"])
+        self.user_settings_push_button.clicked.connect(
+            lambda: self.on_user_settings_clicked()
+        )
+        self.user_settings_push_button.setVisible(False)
+        self.user_settings_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
+
     def setup(self):
         super().setup()
 
@@ -119,6 +131,7 @@ class LocalWalletScreen(WalletScreen):
         self.main_layout.addLayout(self.form_layout)
         self.main_layout.addLayout(self.sixth_horizontal_layout)
         self.main_layout.addLayout(self.seventh_horizontal_layout)
+        self.main_layout.addLayout(self.eight_horizontal_layout)
 
         self.transfer_push_button.setVisible(True)
         self.create_sub_address_push_button.setVisible(True)
@@ -159,6 +172,9 @@ class LocalWalletScreen(WalletScreen):
             self.stop_mining_push_button, alignment=AlignCenter
         )
         self.seventh_horizontal_layout.addWidget(
+            self.user_settings_push_button, alignment=AlignCenter
+        )
+        self.eight_horizontal_layout.addWidget(
             self.back_button, alignment=(AlignLeft | AlignBottom)
         )
 

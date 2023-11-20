@@ -46,6 +46,14 @@ def load_wallet(wallet_path):
 
     return wallet
 
+def delete_wallet(wallet):
+    if TESTING:
+        print(f"Not deleting {wallet.name} file since this is a test")
+    else:
+        path = pathlib.Path(f"{TEST_STORE_PATH}/{wallet.name}.wallet")
+        if os.path.exists(path):
+            os.remove(path)
+
 
 def load_all_test_wallets():
     wallets = {}
@@ -106,6 +114,12 @@ class DenariiClient:
 
         self.opened_wallet = None
         self.mining_thread = None
+
+    def get_address_for_name(self, name): 
+        for username, wallet in self.wallets.items(): 
+            if username == name:
+                return wallet.address
+        return ""
 
     def create_wallet(self, wallet):
         if wallet.name in self.wallets:
@@ -211,3 +225,20 @@ class DenariiClient:
             self.opened_wallet.balance += random.uniform(1.0, 100.0) / 0.000000000001
 
             store_wallet(self.opened_wallet)
+
+    def logout(self): 
+        """
+        Just used by the testing application to log the user out.
+        @return True
+        """
+        self.opened_wallet = None
+        return True
+
+    def delete_user(self):
+        """
+        Just used by the testing application to delete the user
+        @return True
+        """
+        delete_wallet(self.opened_wallet)
+        self.opened_wallet = None
+        return True

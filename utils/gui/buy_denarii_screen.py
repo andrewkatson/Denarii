@@ -465,7 +465,7 @@ class BuyDenariiScreen(Screen):
 
                         if success:
                             succeeded_asks = []
-                            any_ask_failed = false
+                            any_ask_failed = False
                             for ask in second_res:
                                 (
                                     success,

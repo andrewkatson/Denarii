@@ -43,8 +43,8 @@ def delete(thing, suffix):
         print(f"Testing so we are not going to delete anything for suffix {suffix}")
     else:
         path = pathlib.Path(f"{TEST_STORE_PATH}/{thing.name}.{suffix}")
-        os.remove(path)
-
+        if os.path.exists(path):
+            os.remove(path)
 
 def delete_user(user):
     delete(user, "user")
@@ -69,7 +69,7 @@ def generate_random_asks(num_asks):
 
 
 def generate_balance():
-    return random.uniform(0, 1000)
+    return random.uniform(2, 1000)
 
 
 def load_all_test_things():
@@ -325,6 +325,13 @@ class DenariiMobileClient:
             return None
 
         return user
+    
+    def get_address_for_name(self, name): 
+        for username, user in self.get_users().items():
+            if username == name: 
+                return user.wallet.address
+        return ""
+
 
     def get_user_id(self, username, email, password):
         users = self.get_users()
@@ -384,7 +391,6 @@ class DenariiMobileClient:
                     value.reset_id = 4
                 else:
                     value.reset_id = create_identifier()
-                    print(f"Reset Id: {value.reset_id}")
                 store_user(value)
                 return True
         return False

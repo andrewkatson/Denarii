@@ -88,6 +88,15 @@ class UserSettingsScreen(Screen):
         self.remote_wallet_screen_push_button.setStyleSheet(
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
+        
+        self.local_wallet_screen_push_button = PushButton("Wallet", kwargs["parent"])
+        self.local_wallet_screen_push_button.clicked.connect(
+            lambda: kwargs["on_local_wallet_screen_clicked"]()
+        )
+        self.local_wallet_screen_push_button.setVisible(False)
+        self.local_wallet_screen_push_button.setStyleSheet(
+            "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
+        )
 
         self.sell_screen_push_button = PushButton("Sell Denarii", kwargs["parent"])
         self.sell_screen_push_button.clicked.connect(
@@ -168,13 +177,21 @@ class UserSettingsScreen(Screen):
         self.main_layout.addLayout(self.vertical_layout)
         self.main_layout.addLayout(self.second_horizontal_layout)
 
-        self.remote_wallet_screen_push_button.setVisible(True)
-        self.sell_screen_push_button.setVisible(True)
-        self.credit_card_info_screen_push_button.setVisible(True)
-        self.verification_screen_push_button.setVisible(True)
-        self.buy_screen_push_button.setVisible(True)
-        self.support_ticket_screen_push_button.setVisible(True)
-        self.delete_account_push_button.setVisible(True)
+        parent = self.kwargs_passed["parent"]
+
+        if parent.wallet == REMOTE_WALLET: 
+            self.remote_wallet_screen_push_button.setVisible(True)
+            self.sell_screen_push_button.setVisible(True)
+            self.credit_card_info_screen_push_button.setVisible(True)
+            self.verification_screen_push_button.setVisible(True)
+            self.buy_screen_push_button.setVisible(True)
+            self.support_ticket_screen_push_button.setVisible(True)
+            self.logout_push_button.setVisible(True)
+            self.delete_account_push_button.setVisible(True)
+        elif parent.wallet == LOCAL_WALLET:
+            self.local_wallet_screen_push_button.setVisible(True)
+            self.logout_push_button.setVisible(True)
+            self.delete_account_push_button.setVisible(True)
 
         self.first_horizontal_layout.addWidget(self.user_settings_label,alignment=AlignCenter)
         self.vertical_layout.addWidget(self.support_ticket_screen_push_button, alignment=AlignCenter)
@@ -186,6 +203,9 @@ class UserSettingsScreen(Screen):
         )
         self.second_horizontal_layout.addWidget(
             self.remote_wallet_screen_push_button, alignment=AlignCenter
+        )
+        self.second_horizontal_layout.addWidget(
+            self.local_wallet_screen_push_button, alignment=AlignCenter
         )
         self.second_horizontal_layout.addWidget(
             self.buy_screen_push_button, alignment=AlignCenter
@@ -208,8 +228,14 @@ class UserSettingsScreen(Screen):
         try: 
             
             success, res = self.denarii_mobile_client.logout(self.gui_user.user_id)
+
+            parent = self.kwargs_passed["parent"]
             
-            if success: 
+            local_success = True
+            if parent.wallet == LOCAL_WALLET: 
+                local_success, res = self.denarii_client.logout()
+            
+            if success and local_success: 
                 self.status_message_box("Successfully Logged Out")
                 self.on_login_or_register_screen_clicked()
             else: 
@@ -237,7 +263,13 @@ class UserSettingsScreen(Screen):
 
             success = self.denarii_mobile_client.delete_user(self.gui_user.user_id)
 
-            if success: 
+            parent = self.kwargs_passed["parent"]
+            
+            local_success = True
+            if parent.wallet == LOCAL_WALLET: 
+                local_success, res = self.denarii_client.delete_user()
+            
+            if success and local_success: 
                 self.status_message_box("Deleted user successfully")
                 self.on_login_or_register_screen_clicked()
             else:

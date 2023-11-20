@@ -123,6 +123,9 @@ def on_support_ticket_creation_clicked():
 def on_login_or_register_screen_clicked():
     pass
 
+def on_local_wallet_screen_clicked():
+    pass
+
 def create_remote_user(user, denarii_mobile_client):
     success, create_user_res = denarii_mobile_client.get_user_id(
         user.name, user.email, user.password
@@ -410,6 +413,7 @@ class DenariiDesktopGUILocalWalletScreenTestCase(unittest.TestCase):
             denarii_client=self.denarii_client,
             local_wallet=self.local_wallet,
             gui_user=self.gui_user,
+            on_user_settings_screen_clicked=on_user_settings_screen_clicked
         )
 
     def tearDown(self):
@@ -1937,6 +1941,7 @@ class DenariiDesktopGUIUserSettingsScreenTestCase(unittest.TestCase):
             local_wallet=self.local_wallet,
             gui_user=self.gui_user,
             on_remote_wallet_screen_clicked=on_remote_wallet_screen_clicked,
+            on_local_wallet_screen_clicked=on_local_wallet_screen_clicked,
             on_buy_screen_clicked=on_buy_screen_clicked,
             on_credit_card_info_screen_clicked=on_credit_card_info_screen_clicked,
             on_verification_screen_clicked=on_verification_screen_clicked,

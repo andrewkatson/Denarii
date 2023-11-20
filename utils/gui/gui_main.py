@@ -226,7 +226,9 @@ try:
                 ),
                 "get_current_support_ticket_id": self.get_current_support_ticket_id,
                 "on_login_or_register_screen_clicked": self.on_login_or_register_screen_pushed,
-                "on_forgot_password_clicked": self.on_forgot_password_pushed
+                "on_forgot_password_clicked": self.on_forgot_password_pushed,
+                "on_local_wallet_screen_clicked": self.on_local_wallet_screen_pushed, 
+                
             }
 
             if os.path.exists(USER_SETTINGS_PATH):
@@ -338,6 +340,7 @@ try:
                 denarii_client=self.denarii_client,
                 local_wallet=self.local_wallet,
                 gui_user=gui_user,
+                on_user_settings_screen_clicked=self.on_user_settings_screen_pushed
             )
             self.REMOTE_WALLET_SCREEN = RemoteWalletScreen(
                 push_buttons=common_buttons,
@@ -446,6 +449,7 @@ try:
                 local_wallet=self.local_wallet,
                 gui_user=gui_user,
                 on_remote_wallet_screen_clicked=self.on_remote_wallet_screen_pushed,
+                on_local_wallet_screen_clicked=self.on_local_wallet_screen_pushed,
                 on_buy_screen_clicked=self.on_buy_denarii_screen_pushed,
                 on_sell_screen_clicked=self.on_sell_denarii_screen_pushed,
                 on_credit_card_info_screen_clicked=self.on_credit_card_info_screen_pushed,
@@ -913,6 +917,13 @@ try:
             Navigate to the request reset screen
             """
             self.go_to_this_widget(self.REQUEST_RESET_SCREEN)
+
+        @pyqtSlot()
+        def on_local_wallet_screen_pushed(self):
+            """
+            Navigate to the local wallet screen
+            """
+            self.go_to_this_widget(self.LOCAL_WALLET_SCREEN)    
 
         def get_current_support_ticket_id(self):
             return self.current_support_ticket
