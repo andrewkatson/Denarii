@@ -430,13 +430,91 @@ class DenariiE2ETests(unittest.TestCase):
         wallet_screen.stop_mining()       
 
         self.assertGreaterEqual(wallet_screen.balance, "3")
+
+    def strictly_set_credit_card_info(self, name, email, password):
+        credit_card_screen = self.main_widget.CREDIT_CARD_INFO_SCREEN
+
+        card_number_line_edit = credit_card_screen.card_number_line_edit
+        card_number_line_edit.typeText("123")
+
+        expiration_date_month_line_edit = credit_card_screen.expiration_date_month_line_edit
+        expiration_date_month_line_edit.typeText("01")
+
+        expiration_date_year_line_edit = credit_card_screen.expiration_date_year_line_edit
+        expiration_date_year_line_edit.typeText("2023")
+
+        security_code_line_edit = credit_card_screen.security_code_line_edit
+        security_code_line_edit.typeText("001")
+
+        credit_card_screen.on_submit_clicked()
+
+        self.assertEqual(credit_card_screen.status_msg.text, "Set credit card info")
+
+    def strictly_verify_identity(self, name, email, password):
+
+        verification_screen = self.main_widget.VERIFICATION_SCREEN
+
+        first_name_line_edit = verification_screen.first_name_line_edit
+        first_name_line_edit.typeText("andrew")
+
+        middle_initial_line_edit = verification_screen.middle_initial_line_edit
+        middle_initial_line_edit.typeText("v")
+
+        last_name_line_edit = verification_screen.last_name_line_edit
+        last_name_line_edit.typeText("poppy")
+
+        email_line_edit = verification_screen.email_line_edit
+        email_line_edit.typeText(self.email)
+
+        date_of_birth_line_edit = verification_screen.date_of_birth_line_edit
+        date_of_birth_line_edit.typeText("01/22/1991")
+
+        social_security_number_line_edit = verification_screen.social_security_number_line_edit
+        social_security_number_line_edit.typeText("1111111111")
+
+        zipcode_line_edit = verification_screen.zipcode_line_edit
+        zipcode_line_edit.typeText("002213")
+
+        phone_number_line_edit = verification_screen.phone_number_line_edit
+        phone_number_line_edit.typeText("3357728834")
+
+        work_location_city_line_edit = verification_screen.work_location_city_line_edit
+        work_location_city_line_edit.typeText("San Jose")
+
+        work_location_state_line_edit = verification_screen.work_location_state_line_edit
+        work_location_state_line_edit.typeText("California")
+
+        work_location_country_line_edit = verification_screen.work_location_country_line_edit
+        work_location_country_line_edit.typeText("United States")
+
+        verification_screen.on_submit_clicked()
+
+        self.assertEqual(verification_screen.status_msg.text, "Successfully sent verification info")
+
+
                 
     def sell_denarii(self, name, email, password):
         self.create_wallet(REMOTE_WALLET, name, email, password)
 
         wallet_screen = self.main_widget.REMOTE_WALLET_SCREEN
 
-        wallet_screen.kwargs_passed["on_sell_screen_clicked"]()
+        wallet_screen.kwargs_passed["on_credit_card_info_screen_clicked"]()
+
+        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.CREDIT_CARD_INFO_SCREEN.screen_name)
+
+        self.strictly_set_credit_card_info(name, email, password)
+
+        credit_card_screen = self.main_widget.CREDIT_CARD_INFO_SCREEN
+
+        credit_card_screen.kwargs_passed["on_verification_screen_clicked"]()
+    
+        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.VERIFICATION_SCREEN.screen_name)
+
+        self.strictly_verify_identity(name, email, password)
+
+        verify_identity_screen = self.main_widget.VERIFICATION_SCREEN
+
+        verify_identity_screen.kwargs_passed["on_sell_screen_clicked"]()
 
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.SELL_DENARII.screen_name)
 
@@ -462,7 +540,23 @@ class DenariiE2ETests(unittest.TestCase):
 
         wallet_screen = self.main_widget.REMOTE_WALLET_SCREEN
 
-        wallet_screen.kwargs_passed["on_buy_screen_clicked"]()
+        wallet_screen.kwargs_passed["on_credit_card_info_screen_clicked"]()
+
+        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.CREDIT_CARD_INFO_SCREEN.screen_name)
+
+        self.strictly_set_credit_card_info(name, email, password)
+
+        credit_card_screen = self.main_widget.CREDIT_CARD_INFO_SCREEN
+
+        credit_card_screen.kwargs_passed["on_verification_screen_clicked"]()
+    
+        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.VERIFICATION_SCREEN.screen_name)
+
+        self.strictly_verify_identity(name, email, password)
+
+        verify_identity_screen = self.main_widget.VERIFICATION_SCREEN
+
+        verify_identity_screen.kwargs_passed["on_buy_screen_clicked"]()
 
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.BUY_DENARII.screen_name)
 

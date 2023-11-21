@@ -343,3 +343,19 @@ class DenariiClient:
         res = self.send_command_to_wallet_rpc("stop_mining", params)
 
         return "result" in res
+
+    def logout(self): 
+        """
+        Just used by the testing application to log the user out.
+        @return True
+        """
+
+        return True
+
+    def delete_user(self):
+        """
+        Just used by the testing application to delete the account
+        @return True
+        """
+
+        return True
