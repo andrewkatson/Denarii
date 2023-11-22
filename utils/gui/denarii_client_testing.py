@@ -204,7 +204,7 @@ class DenariiClient:
         return False
 
     def start_mining(self, do_background_mining, ignore_battery, threads):
-        self.mining_thread = StoppableThread(target=self.mine)
+        self.mining_thread = StoppableThread(target=self.mine, name="start_mining")
         self.mining_thread.start()
         return True
 

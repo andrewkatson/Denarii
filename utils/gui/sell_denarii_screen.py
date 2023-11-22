@@ -85,17 +85,17 @@ class SellDenariiScreen(Screen):
         self.own_asks_artifacts = []
         self.bought_asks_artifacts = []
 
-        self.asks_refresh_thread = StoppableThread(target=self.refresh_all_prices)
+        self.asks_refresh_thread = StoppableThread(target=self.refresh_all_prices, name="sell_denarii_asks_refresh_thread")
 
         self.completed_transactions_thread = StoppableThread(
             target=self.refresh_completed_transactions
         )
-        self.own_asks_thread = StoppableThread(target=self.refresh_own_asks)
-        self.populate_thread = StoppableThread(target=self.populate_sell_denarii_screen)
+        self.own_asks_thread = StoppableThread(target=self.refresh_own_asks, name="own_asks_thread")
+        self.populate_thread = StoppableThread(target=self.populate_sell_denarii_screen, name="populate_thread")
         self.refresh_asks_in_escrow_thread = StoppableThread(
-            target=self.refresh_asks_in_escrow
+            target=self.refresh_asks_in_escrow, name="refresh_asks_in_escrow"
         )
-        self.refresh_going_price_thread = StoppableThread(target=self.refresh_going_price)
+        self.refresh_going_price_thread = StoppableThread(target=self.refresh_going_price, name="refresh_going_price")
 
         self.lock = threading.Lock()
 
@@ -487,7 +487,7 @@ class SellDenariiScreen(Screen):
                         self.lock.release()
                     # No status message when things go well on purpose so the user doesn't get annoyed.
             except Exception as e:
-                print(e)
+                print(f"Refresh all prices {e}")
                 
             time.sleep(5)
 
@@ -518,7 +518,7 @@ class SellDenariiScreen(Screen):
                     self.bought_asks = new_bought_asks
 
             except Exception as e:
-                print(e)
+                print(f"Refresh completed transactins {e}")
                 
             finally:
                 self.lock.release()
@@ -535,7 +535,7 @@ class SellDenariiScreen(Screen):
                     self.bought_asks = res
                     
             except Exception as e:
-                print(e)
+                print(f"Refresh asks in escrow {e}")
             finally:
                 self.lock.release()
 
@@ -552,7 +552,7 @@ class SellDenariiScreen(Screen):
                     self.own_asks = res
 
             except Exception as e:
-                print(e)
+                print(f"Refresh own asks {e}")
             finally:
                 self.lock.release()
 
@@ -572,7 +572,7 @@ class SellDenariiScreen(Screen):
                 self.going_price_label(f"Going Price: {going_price}")
 
             except Exception as e:
-                print(e)
+                print(f"Refresh going price {e}")
             finally:
                 self.lock.release()
 
@@ -607,7 +607,7 @@ class SellDenariiScreen(Screen):
 
 
         except Exception as e:
-            print(e)
+            print(f"On submit clicked {e}")
             self.status_message_box("Failed: unknown error")
 
         finally:
@@ -622,7 +622,7 @@ class SellDenariiScreen(Screen):
             else: 
                 self.status_message_box("Failed to cancel ask")
         except Exception as e:
-            print(e)
+            print(f"On cancel ask clicked {e}")
             self.status_message_box("Failed: unknown error")
 
     def send_money_to_seller(self, ask):
@@ -637,7 +637,7 @@ class SellDenariiScreen(Screen):
                 self.completely_reverse_transaction([ask])
 
         except Exception as e:
-            print(e)
+            print(f"Send money to seller {e}")
 
     def completely_reverse_transaction(self, ask_to_reverse):
         """
@@ -657,7 +657,7 @@ class SellDenariiScreen(Screen):
                 )
 
         except Exception as e:
-            print(e)
+            print(f"Completely reverse transaction {e}")
             self.status_message_box("Failed: unknown error")
 
     def reverse_transactions(self, asks_to_reverse):
@@ -678,5 +678,5 @@ class SellDenariiScreen(Screen):
                     )
 
             except Exception as e:
-                print(e)
+                print(f"Reverse transactions {e}")
                 self.status_message_box("Failed: unknown error")

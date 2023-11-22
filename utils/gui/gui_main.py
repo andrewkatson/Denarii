@@ -674,10 +674,10 @@ try:
             return None
 
         def setup_server_thread(self):
-            return StoppableThread(target=self.monitor_server_thread)
+            return StoppableThread(target=self.monitor_server_thread, name="monitor_server_thread")
 
         def setup_wallet_thread(self):
-            return StoppableThread(target=self.monitor_wallet_thread)
+            return StoppableThread(target=self.monitor_wallet_thread, name="monitor_wallet_thread")
 
         def monitor_server_thread(self):
             """
@@ -902,7 +902,7 @@ try:
             Navigate to the support ticket details screen
             """
             self.current_support_ticket = current_support_ticket_id
-            self.go_to_this_widget(self.SUPPORT_TICKET_SCREEN)
+            self.go_to_this_widget(self.SUPPORT_TICKET_DETAILS_SCREEN)
 
         @pyqtSlot()
         def on_login_or_register_screen_pushed(self):

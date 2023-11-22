@@ -259,13 +259,13 @@ class CreateWalletScreen(Screen):
     @property
     def wallet(self):
         if self.which_wallet is None:
-            return self.local_wallet
+            return None 
 
         if self.which_wallet == REMOTE_WALLET:
             return self.remote_wallet
         elif self.which_wallet == LOCAL_WALLET:
             return self.local_wallet
-        return self.local_wallet
+        return None
 
     def set_which_wallet(self, which_wallet):
         self.which_wallet = which_wallet

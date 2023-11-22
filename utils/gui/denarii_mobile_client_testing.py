@@ -77,7 +77,10 @@ def load_all_test_things():
 
     dict_of_users = {}
 
-    dict_of_users["FIRST_USER"] = User("FIRST_USER", "firstuser@email.com", "password")
+    first_user = User("FIRST_USER", "firstuser@email.com", "password")
+    first_user.user_id = create_identifier()
+
+    dict_of_users["FIRST_USER"] = first_user
 
     user_with_wallet = User(
         "USER_WITH_WALLET", "userwithwallet@email.com", "other_password"
@@ -89,6 +92,7 @@ def load_all_test_things():
         generate_address(15),
         100,
     )
+    user_with_wallet.user_id = create_identifier()
     dict_of_users["USER_WITH_WALLET"] = user_with_wallet
 
     user_with_an_ask = User("USER_WITH_AN_ASK", "user@email.com", "ahhhh")
@@ -99,6 +103,7 @@ def load_all_test_things():
     user_with_an_ask.asks = generate_random_asks(1)
     # If a user is going to be part of the ask flow they need a credit card
     user_with_an_ask.credit_card = CreditCard("123", "2", "1992", "234")
+    user_with_an_ask.user_id = create_identifier()
     dict_of_users["USER_WITH_AN_ASK"] = user_with_an_ask
 
     user_with_multiple_asks = User(
@@ -108,6 +113,7 @@ def load_all_test_things():
     user_with_multiple_asks.wallet = Wallet(
         "THIS_WALLET", "party", generate_phrase(4), generate_address(15)
     )
+    user_with_multiple_asks.user_id = create_identifier()
     user_with_multiple_asks.asks = generate_random_asks(10)
     # If a user is going to be part of the ask flow they need a credit card
     user_with_multiple_asks.credit_card = CreditCard("424", "1", "1902", "777")
@@ -155,8 +161,8 @@ def try_to_buy_denarii(
     for ask in ordered_asks:
         current_ask_price = ask.asking_price
 
-        if buy_regardless_of_price == "False" and current_ask_price > bid_price:
-            if fail_if_full_amount_isnt_met == "True":
+        if not buy_regardless_of_price and current_ask_price > bid_price:
+            if fail_if_full_amount_isnt_met:
                 for reprocessed_ask in ordered_asks:
                     reprocessed_ask.in_escrow = False
                     reprocessed_ask.amount_bought = 0
@@ -264,12 +270,17 @@ class DenariiMobileClient:
 
     def get_users(self):
         return self.things.get("user", {})
+    
+    def dump_users(self):
+        for name, user in self.get_users().items():
+            print(f"USER HERE {name} {user.user_id} {len(user.asks)}")
 
     def get_asks(self, user):
         asks = []
-
+        print(f"Dont find: {user.name} {user.user_id}")
         for _, value in self.get_users().items():
             if value.user_id != user.user_id:
+                print(f"User: {value.name} {value.user_id} with {len(user.asks)}")
                 for ask in user.asks:
                     asks.append(ask)
 
@@ -294,7 +305,7 @@ class DenariiMobileClient:
             if ticket.support_ticket_id == support_ticket_id:
                 return ticket
         raise ValueError(
-            "That support ticket id correspond to no ticket for the given user"
+            f"That support ticket id correspond to no ticket for the given user {support_ticket_id}"
         )
 
     def get_remaining_asks(self, asks, ask_id):
@@ -522,6 +533,9 @@ class DenariiMobileClient:
 
         asks = self.get_asks(user)
 
+        if len(asks) == 0:
+            print("no other user asks")
+
         _, error_message, asks_met = try_to_buy_denarii(
             asks,
             amount,
@@ -531,6 +545,7 @@ class DenariiMobileClient:
         )
 
         if len(asks_met) == 0:
+            print("no asks")
             return False, []
 
         filtered_asks = []
@@ -615,6 +630,8 @@ class DenariiMobileClient:
 
         user.asks = self.get_remaining_asks(user.asks, ask_id)
 
+        print("cancel ask")
+
         return True, [{"ask_id": ask_id}]
 
     def has_credit_card_info(self, user_id):
@@ -694,6 +711,7 @@ class DenariiMobileClient:
         if user is None:
             return False, []
 
+        print("checking transaction is settled")
         asking_user = self.get_user_with_ask(ask_id)
 
         ask = self.get_ask_with_id(ask_id)
@@ -705,6 +723,7 @@ class DenariiMobileClient:
             asking_user.asks = self.get_remaining_asks(asking_user.asks, ask_id)
         else:
             ask.is_settled = False
+            ask.has_been_seen_by_seller = False
 
         store_user(asking_user)
         return True, [{"ask_id": ask_id, "transaction_was_settled": True}]
@@ -852,14 +871,14 @@ class DenariiMobileClient:
         filtered_asks = []
 
         for ask in user.asks:
-            filtered_asks.append[
+            filtered_asks.append(
                 {
                     "ask_id": ask.ask_id,
                     "amount": ask.amount,
                     "asking_price": ask.asking_price,
                     "amount_bought": ask.amount_bought,
                 }
-            ]
+            )
 
         return True, filtered_asks
 
@@ -871,16 +890,16 @@ class DenariiMobileClient:
 
         filtered_asks = []
 
-        for ask in self.get_asks():
+        for ask in self.get_asks(user):
             if ask.in_escrow and user.user_id == ask.buyer.user_id:
-                filtered_asks.append[
+                filtered_asks.append(
                     {
                         "ask_id": ask.ask_id,
                         "amount": ask.amount,
                         "asking_price": ask.asking_price,
                         "amount_bought": ask.amount_bought,
                     }
-                ]
+                )
 
         return True, filtered_asks
 

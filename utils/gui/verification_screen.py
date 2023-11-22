@@ -83,7 +83,7 @@ class VerificationScreen(Screen):
 
         self.lock = threading.Lock()
         self.lookup_status_thread = StoppableThread(
-            target=self.lookup_verification_status
+            target=self.lookup_verification_status, name="lookup_status_thread"
         )
 
         super().__init__(
@@ -346,7 +346,7 @@ class VerificationScreen(Screen):
         )
 
     def format_work_location(self):
-        return json.dump(
+        return json.dumps(
             [
                 {
                     "country": self.work_location_country_line_edit.text(),

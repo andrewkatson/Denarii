@@ -67,9 +67,9 @@ class SupportTicketScreen(Screen):
 
         self.on_support_ticket_details_screen_clicked = kwargs['on_support_ticket_details_screen_clicked']
 
-        self.get_support_tickets_thread = StoppableThread(target=self.get_support_tickets)
+        self.get_support_tickets_thread = StoppableThread(target=self.get_support_tickets, name="get_support_tickets")
 
-        self.populate_thread = StoppableThread(target=self.populate_screen)
+        self.populate_thread = StoppableThread(target=self.populate_screen, name="popualte_thread")
 
         self.lock = threading.Lock()
 

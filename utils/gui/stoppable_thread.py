@@ -8,13 +8,17 @@ class StoppableThread(threading.Thread):
     def __init__(self, *args, **kwargs):
         super(StoppableThread, self).__init__(*args, **kwargs)
         self._stop_event = threading.Event()
+        self._start_event = threading.Event()
 
     def start(self) -> None:
-        if not self.is_alive():
+        if not self.is_alive() and not self._start_event.is_set():
+            self._start_event.set()
             super().start()
 
     def stop(self):
         self._stop_event.set()
 
     def stopped(self):
+        if self._stop_event.is_set():
+            self._start_event.set()
         return self._stop_event.is_set()

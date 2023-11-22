@@ -215,6 +215,8 @@ class DenariiE2ETests(unittest.TestCase):
             create_wallet_screen.local_wallet_radio_button.on_wallet_type_clicked()
         elif wallet_type == REMOTE_WALLET:
             create_wallet_screen.remote_wallet_radio_button.on_wallet_type_clicked()
+        else: 
+            raise ValueError(f"Unrecognized wallet_type {wallet_type}")
 
         create_wallet_screen.on_create_wallet_submit_clicked()
         
@@ -242,6 +244,10 @@ class DenariiE2ETests(unittest.TestCase):
     def restore_wallet(self, wallet_type, name, email, password):
         seed = self.create_wallet(wallet_type, name, email, password)
 
+        self.logout()
+
+        self.login_with_denarii(name, email, password)
+
         wallet_decision_screen = self.main_widget.WALLET_INFO
 
         restore_wallet_button = wallet_decision_screen.kwargs_passed["on_restore_wallet_clicked"]
@@ -265,6 +271,8 @@ class DenariiE2ETests(unittest.TestCase):
             restore_wallet_screen.local_wallet_radio_button.on_wallet_type_clicked()
         elif wallet_type == REMOTE_WALLET:
             restore_wallet_screen.remote_wallet_radio_button.on_wallet_type_clicked()
+        else: 
+            raise ValueError(f"Unrecognized wallet_type {wallet_type}")
 
         restore_wallet_screen.on_restore_wallet_submit_clicked()
         
@@ -300,6 +308,8 @@ class DenariiE2ETests(unittest.TestCase):
             open_wallet_screen.local_wallet_radio_button.on_wallet_type_clicked()
         elif wallet_type == REMOTE_WALLET:
             open_wallet_screen.remote_wallet_radio_button.on_wallet_type_clicked()
+        else: 
+            raise ValueError(f"Unrecognized wallet_type {wallet_type}")
 
         open_wallet_screen.on_set_wallet_submit_clicked()
         
@@ -316,6 +326,10 @@ class DenariiE2ETests(unittest.TestCase):
     def open_wallet(self, wallet_type, name, email, password):
         _ = self.create_wallet(wallet_type, name, email, password)
 
+        self.logout()
+
+        self.login_with_denarii(name, email, password)
+
         self.strictly_open_wallet(wallet_type)
 
     def reset_password(self, name, email, password, new_password):
@@ -331,7 +345,7 @@ class DenariiE2ETests(unittest.TestCase):
         request_reset_screen = self.main_widget.REQUEST_RESET_SCREEN
 
         name_or_email_line_edit = request_reset_screen.name_or_email_line_edit
-        name_or_email_line_edit.typeText(self.name)
+        name_or_email_line_edit.typeText(name)
 
         request_reset_screen.on_submit_clicked()
 
@@ -429,9 +443,9 @@ class DenariiE2ETests(unittest.TestCase):
 
         wallet_screen.stop_mining()       
 
-        self.assertGreaterEqual(wallet_screen.balance, "3")
+        self.assertGreaterEqual(wallet_screen.balance, 3.0)
 
-    def strictly_set_credit_card_info(self, name, email, password):
+    def strictly_set_credit_card_info(self):
         credit_card_screen = self.main_widget.CREDIT_CARD_INFO_SCREEN
 
         card_number_line_edit = credit_card_screen.card_number_line_edit
@@ -450,7 +464,7 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.assertEqual(credit_card_screen.status_msg.text, "Set credit card info")
 
-    def strictly_verify_identity(self, name, email, password):
+    def strictly_verify_identity(self, email):
 
         verification_screen = self.main_widget.VERIFICATION_SCREEN
 
@@ -464,7 +478,7 @@ class DenariiE2ETests(unittest.TestCase):
         last_name_line_edit.typeText("poppy")
 
         email_line_edit = verification_screen.email_line_edit
-        email_line_edit.typeText(self.email)
+        email_line_edit.typeText(email)
 
         date_of_birth_line_edit = verification_screen.date_of_birth_line_edit
         date_of_birth_line_edit.typeText("01/22/1991")
@@ -502,7 +516,7 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.CREDIT_CARD_INFO_SCREEN.screen_name)
 
-        self.strictly_set_credit_card_info(name, email, password)
+        self.strictly_set_credit_card_info()
 
         credit_card_screen = self.main_widget.CREDIT_CARD_INFO_SCREEN
 
@@ -510,7 +524,7 @@ class DenariiE2ETests(unittest.TestCase):
     
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.VERIFICATION_SCREEN.screen_name)
 
-        self.strictly_verify_identity(name, email, password)
+        self.strictly_verify_identity(email)
 
         verify_identity_screen = self.main_widget.VERIFICATION_SCREEN
 
@@ -530,7 +544,7 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.assertEqual(sell_denarii_screen.status_msg.text, "Created denarii ask!")
 
-        time.sleep(6)
+        time.sleep(10)
 
         self.assertEqual(len(sell_denarii_screen.own_asks), 1)
 
@@ -544,7 +558,7 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.CREDIT_CARD_INFO_SCREEN.screen_name)
 
-        self.strictly_set_credit_card_info(name, email, password)
+        self.strictly_set_credit_card_info()
 
         credit_card_screen = self.main_widget.CREDIT_CARD_INFO_SCREEN
 
@@ -552,7 +566,7 @@ class DenariiE2ETests(unittest.TestCase):
     
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.VERIFICATION_SCREEN.screen_name)
 
-        self.strictly_verify_identity(name, email, password)
+        self.strictly_verify_identity(email)
 
         verify_identity_screen = self.main_widget.VERIFICATION_SCREEN
 
@@ -611,7 +625,7 @@ class DenariiE2ETests(unittest.TestCase):
 
         user_settings_screen = self.main_widget.USER_SETTINGS_SCREEN
 
-        user_settings_screen.kwargs_passed["support_ticket_screen_push_button"]()
+        user_settings_screen.kwargs_passed["on_support_ticket_screen_clicked"]()
 
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.SUPPORT_TICKET_SCREEN.screen_name)
 
@@ -630,6 +644,8 @@ class DenariiE2ETests(unittest.TestCase):
         description_line_edit.typeText("description")
 
         support_ticket_creation_screen.on_submit_clicked()
+
+        self.assertEqual(support_ticket_creation_screen.status_msg.text, "Created support ticket")
 
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.SUPPORT_TICKET_DETAILS_SCREEN.screen_name)
 
@@ -692,6 +708,8 @@ class DenariiE2ETests(unittest.TestCase):
 
         user_settings_screen.on_delete_account_clicked()
 
+        self.assertEqual(user_settings_screen.status_msg.text, "Deleted user successfully")
+
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.LOGIN_OR_REGISTER.screen_name)
 
 
@@ -724,7 +742,7 @@ class DenariiE2ETests(unittest.TestCase):
         self.logout()
 
     def test_open_wallet_local_wallet(self):
-        self.open_wallet(LOCAL_WALLET)
+        self.open_wallet(LOCAL_WALLET, self.name, self.email, self.password)
 
         self.logout()
 

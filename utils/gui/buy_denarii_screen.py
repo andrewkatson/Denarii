@@ -90,12 +90,12 @@ class BuyDenariiScreen(Screen):
         self.current_asks_artifacts = []
         self.queued_buys_artifacts = []
 
-        self.asks_refresh_thread = StoppableThread(target=self.refresh_prices)
+        self.asks_refresh_thread = StoppableThread(target=self.refresh_prices, name="buy_denarii_asks_refresh_thread")
 
         self.settled_transactions_thread = StoppableThread(
-            target=self.refresh_settled_transactions
+            target=self.refresh_settled_transactions, name="buy_denarii_settled_transactions_thread"
         )
-        self.populate_thread = StoppableThread(target=self.populate_buy_denarii_screen)
+        self.populate_thread = StoppableThread(target=self.populate_buy_denarii_screen, name="buy_denarii_populate_thread")
 
         self.lock = threading.Lock()
 

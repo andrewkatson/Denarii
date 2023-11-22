@@ -63,7 +63,7 @@ class WalletScreen(Screen):
         self.transfer_push_button = None
         # Wallet is set in the specific wallet screen
         self.wallet = None
-        self.balance_refresh_thread = StoppableThread(target=self.refresh_balance)
+        self.balance_refresh_thread = StoppableThread(target=self.refresh_balance, name="balance_refresh_thread")
 
         self.balance = 0
 

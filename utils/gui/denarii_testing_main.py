@@ -407,7 +407,7 @@ class TestingMain(Widget):
     def get_last_widget(self):
         if len(self.last_widget_stack) == 0:
             return None
-        return self.last_widget_stack[len(self.last_widget_stack) - 1]
+        return self.last_widget_stack[-1]
 
     def pop_last_widget(self):
         if len(self.last_widget_stack) == 0:
@@ -444,6 +444,7 @@ class TestingMain(Widget):
         elif self.current_widget == self.RESET_PASSWORD_SCREEN:
             self.current_widget = self.LOGIN_SCREEN
         elif self.current_widget == self.WALLET_INFO:
+            # TODO remove the next button from this screen
             # The next button on the wallet info screen should do nothing
             self.current_widget = self.WALLET_INFO
         elif self.current_widget == self.CREATE_WALLET:
@@ -551,7 +552,7 @@ class TestingMain(Widget):
         Navigate to the support ticket details screen
         """
         self.current_support_ticket = current_support_ticket_id
-        self.go_to_this_widget(self.SUPPORT_TICKET_SCREEN)
+        self.go_to_this_widget(self.SUPPORT_TICKET_DETAILS_SCREEN)
 
     def on_login_or_register_screen_pushed(self):
         """
@@ -578,6 +579,9 @@ class TestingMain(Widget):
     def setup_current_widget(self):
         if self.get_last_widget() is not None:
             self.get_last_widget().teardown()
+
+        if self.get_last_widget() is not None and self.current_widget is not None: 
+            assert self.get_last_widget().screen_name != self.current_widget.screen_name
 
         if self.current_widget is not None:
             self.current_widget.init(**self.kwargs)

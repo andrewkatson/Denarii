@@ -112,6 +112,8 @@ class Screen:
     def init(self, **kwargs):
         print(f"Initializing screen: {self.screen_name}")
 
+        self.denarii_mobile_client.dump_users()
+
         if NEXT_BUTTON in self.push_buttons:
             self.next_button = self.push_buttons[NEXT_BUTTON]
 
@@ -121,8 +123,12 @@ class Screen:
     def setup(self):
         print(f"Setting up screen: {self.screen_name}")
 
+        self.denarii_mobile_client.dump_users()
+
     def teardown(self):
         print(f"Tearing down screen: {self.screen_name}")
+
+        self.denarii_mobile_client.dump_users()
 
         self.deletion_func(self.main_layout)
 
