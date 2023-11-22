@@ -680,3 +680,7 @@ class SellDenariiScreen(Screen):
             except Exception as e:
                 print(f"Reverse transactions {e}")
                 self.status_message_box("Failed: unknown error")
+
+    def print_status(self, func):
+        print(func)
+        self.denarii_mobile_client.dump_users()

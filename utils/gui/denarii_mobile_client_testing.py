@@ -273,15 +273,13 @@ class DenariiMobileClient:
     
     def dump_users(self):
         for name, user in self.get_users().items():
-            print(f"USER HERE {name} {user.user_id} {len(user.asks)}")
+            print(f"USER DUMP {name} {user.user_id} {len(user.asks)}")
 
     def get_asks(self, user):
         asks = []
-        print(f"Dont find: {user.name} {user.user_id}")
         for _, value in self.get_users().items():
             if value.user_id != user.user_id:
-                print(f"User: {value.name} {value.user_id} with {len(user.asks)}")
-                for ask in user.asks:
+                for ask in value.asks:
                     asks.append(ask)
 
         return asks
@@ -533,9 +531,6 @@ class DenariiMobileClient:
 
         asks = self.get_asks(user)
 
-        if len(asks) == 0:
-            print("no other user asks")
-
         _, error_message, asks_met = try_to_buy_denarii(
             asks,
             amount,
@@ -545,7 +540,6 @@ class DenariiMobileClient:
         )
 
         if len(asks_met) == 0:
-            print("no asks")
             return False, []
 
         filtered_asks = []
@@ -630,8 +624,6 @@ class DenariiMobileClient:
 
         user.asks = self.get_remaining_asks(user.asks, ask_id)
 
-        print("cancel ask")
-
         return True, [{"ask_id": ask_id}]
 
     def has_credit_card_info(self, user_id):
@@ -711,7 +703,6 @@ class DenariiMobileClient:
         if user is None:
             return False, []
 
-        print("checking transaction is settled")
         asking_user = self.get_user_with_ask(ask_id)
 
         ask = self.get_ask_with_id(ask_id)
