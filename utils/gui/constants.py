@@ -11,14 +11,16 @@ optional_grp.add_argument(
     "--denarii_debug",
     default=True,
     type=bool,
-    help="Whether you want to run in debug mode. Debug mode won't start up denariid or denarii_wallet_rpc_server and will use a testing denarii client and denarii mobile client that mock out all the calls.",
+    help="Whether you want to run in debug mode. Debug mode won't start up denariid or denarii_wallet_rpc_server and "
+         "will use a testing denarii client and denarii mobile client that mock out all the calls.",
     required=False,
 )
 optional_grp.add_argument(
     "--denarii_testing",
-    default=False,
+    default=True,
     type=bool,
-    help="Whether you want to run in test mode. Test mode does not apply to the main gui program and instead applies to the sub classes. The main thing it does is swap out the buttons and widgets for fake ones.",
+    help="Whether you want to run in test mode. Test mode does not apply to the main gui program and instead applies "
+         "to the sub classes. The main thing it does is swap out the buttons and widgets for fake ones.",
     required=False,
 )
 

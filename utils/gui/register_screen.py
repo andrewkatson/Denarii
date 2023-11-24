@@ -36,13 +36,13 @@ class RegisterScreen(Screen):
     """
 
     def __init__(
-        self,
-        main_layout,
-        deletion_func,
-        denarii_client,
-        gui_user,
-        denarii_mobile_client,
-        **kwargs
+            self,
+            main_layout,
+            deletion_func,
+            denarii_client,
+            gui_user,
+            denarii_mobile_client,
+            **kwargs
     ):
 
         self.user_info_label = None
@@ -126,15 +126,17 @@ class RegisterScreen(Screen):
         Store the user's input information in the user proto
         """
         if (
-            self.password_line_edit.text() != ""
-            and self.confirm_password_line_edit.text() != ""
-            and self.password_line_edit.text() != self.confirm_password_line_edit.text()
+                self.password_line_edit.text() != ""
+                and self.confirm_password_line_edit.text() != ""
+                and self.password_line_edit.text() != self.confirm_password_line_edit.text()
         ):
-           self.status_message_box("Failure: passwords did not match")
+            self.status_message_box("Failure: passwords did not match")
         else:
             success = False
-            try: 
-                success, res  = self.denarii_mobile_client.get_user_id(self.gui_user.name, self.gui_user.email, self.gui_user.password)
+            try:
+                success, res = self.denarii_mobile_client.get_user_id(self.name_line_edit.text(),
+                                                                      self.email_line_edit.text(),
+                                                                      self.password_line_edit.text())
                 if success:
                     self.gui_user.user_id = res[0]['user_id']
                 else:
@@ -150,6 +152,6 @@ class RegisterScreen(Screen):
                 self.gui_user.email = self.email_line_edit.text()
                 self.gui_user.password = self.password_line_edit.text()
                 self.next_button.setVisible(True)
-                
+
     def on_submit_clicked(self):
         self.store_user_info()

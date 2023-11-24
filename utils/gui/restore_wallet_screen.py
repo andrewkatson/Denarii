@@ -30,8 +30,6 @@ else:
     from radio_button import *
 
 
-
-
 class RestoreWalletScreen(Screen):
     """
     A screen that allows a user to choose to restore a wallet that exists on another computer.
@@ -179,18 +177,21 @@ class RestoreWalletScreen(Screen):
 
         self.wallet.name = self.name_line_edit.text()
         self.wallet.password = self.password_line_edit.text()
-        self.wallet.phrase = self.seed_line_edit.text()
+        # We need to remove newlines from seed
+        seed_without_new_lines = self.seed_line_edit.text().replace("\n", " ")
+        self.wallet.phrase = seed_without_new_lines
 
         success = False
         if self.which_wallet == REMOTE_WALLET:
-            try: 
-                success, res = self.denarii_mobile_client.restore_wallet(self.gui_user.user_id, self.wallet.name, self.wallet.password, self.wallet.phrase)
-                if success: 
+            try:
+                success, res = self.denarii_mobile_client.restore_wallet(self.gui_user.user_id, self.wallet.name,
+                                                                         self.wallet.password, self.wallet.phrase)
+                if success:
                     only_res = res[0]
                     self.wallet.address = only_res['wallet_address']
                     self.status_message_box("Success")
                     self.next_button.setVisible(True)
-                else: 
+                else:
                     self.status_message_box("Failed: could not restore remote wallet")
                     self.next_button.setVisible(False)
             except Exception as create_remote_wallet_e:
@@ -212,12 +213,11 @@ class RestoreWalletScreen(Screen):
                 self.wallet_save_file_text_box.setText("Wallet saved to: \n " + DENARIID_WALLET_PATH)
                 self.status_message_box("Success")
             else:
-                self.wallet_save_file_text_box.setText("Wallet already at (or does not exist): \n " + DENARIID_WALLET_PATH)
+                self.wallet_save_file_text_box.setText(
+                    "Wallet already at (or does not exist): \n " + DENARIID_WALLET_PATH)
                 self.status_message_box("Failure")
-        else: 
+        else:
             self.status_message_box("Failure: need to set the wallet type")
-
-
 
     def on_restore_wallet_submit_clicked(self):
         """
@@ -232,7 +232,7 @@ class RestoreWalletScreen(Screen):
     @property
     def wallet(self):
         if self.which_wallet is None:
-            return None 
+            return None
 
         if self.which_wallet == REMOTE_WALLET:
             return self.remote_wallet

@@ -46,6 +46,7 @@ def delete(thing, suffix):
         if os.path.exists(path):
             os.remove(path)
 
+
 def delete_user(user):
     delete(user, "user")
 
@@ -90,7 +91,7 @@ def load_all_test_things():
         "not_creative",
         generate_phrase(4),
         generate_address(15),
-        100,
+        float(100),
     )
     user_with_wallet.user_id = create_identifier()
     dict_of_users["USER_WITH_WALLET"] = user_with_wallet
@@ -98,7 +99,7 @@ def load_all_test_things():
     user_with_an_ask = User("USER_WITH_AN_ASK", "user@email.com", "ahhhh")
     # If a user is going to be part of the ask flow they need a wallet
     user_with_an_ask.wallet = Wallet(
-        "MY_WALLET", "something", generate_phrase(4), generate_address(15)
+        "MY_WALLET", "something", generate_phrase(4), generate_address(15), generate_balance()
     )
     user_with_an_ask.asks = generate_random_asks(1)
     # If a user is going to be part of the ask flow they need a credit card
@@ -111,7 +112,7 @@ def load_all_test_things():
     )
     # If a user is going to be part of the ask flow they need a wallet
     user_with_multiple_asks.wallet = Wallet(
-        "THIS_WALLET", "party", generate_phrase(4), generate_address(15)
+        "THIS_WALLET", "party", generate_phrase(4), generate_address(15), generate_balance()
     )
     user_with_multiple_asks.user_id = create_identifier()
     user_with_multiple_asks.asks = generate_random_asks(10)
@@ -149,21 +150,27 @@ def create_identifier():
 
 
 def try_to_buy_denarii(
-    ordered_asks,
-    to_buy_amount,
-    bid_price,
-    buy_regardless_of_price,
-    fail_if_full_amount_isnt_met,
+        asks,
+        to_buy_amount,
+        bid_price,
+        buy_regardless_of_price,
+        fail_if_full_amount_isnt_met,
 ):
+    assert type(to_buy_amount) == float
+    assert type(bid_price) == float
+
+    asks.sort(key=lambda x: x.asking_price)
+
     current_bought_amount = 0
     current_ask_price = bid_price
     asks_met = []
-    for ask in ordered_asks:
+    for ask in asks:
+
         current_ask_price = ask.asking_price
 
         if not buy_regardless_of_price and current_ask_price > bid_price:
             if fail_if_full_amount_isnt_met:
-                for reprocessed_ask in ordered_asks:
+                for reprocessed_ask in asks:
                     reprocessed_ask.in_escrow = False
                     reprocessed_ask.amount_bought = 0
 
@@ -175,7 +182,7 @@ def try_to_buy_denarii(
             ask.amount_bought = to_buy_amount
         else:
             ask.amount_bought = ask.amount
-            
+
         current_bought_amount += ask.amount_bought
 
         asks_met.append(ask)
@@ -188,6 +195,9 @@ def try_to_buy_denarii(
 
 class User:
     def __init__(self, name, email, password):
+        assert name is not None
+        assert email is not None
+        assert password is not None
         self.name = name
         self.email = email
         self.password = password
@@ -204,9 +214,13 @@ class User:
         self.creation_time = datetime.datetime.now()
         self.updated_time = datetime.datetime.now()
 
+    def __str__(self) -> str:
+        return f"{self.user_id} {self.name} {self.email} {self.wallet} {self.credit_card} {self.asks}"
+
 
 class Wallet:
-    def __init__(self, name, password, seed=None, address=None, balance=None):
+    def __init__(self, name, password, seed=None, address=None, balance=0):
+        assert type(balance) == float
         self.name = name
         self.password = password
         self.seed = seed
@@ -215,10 +229,14 @@ class Wallet:
         self.creation_time = datetime.datetime.now()
         self.updated_time = datetime.datetime.now()
 
+    def __str__(self) -> str:
+        return f"{self.name} {self.seed} {self.address} {self.balance}"
+
 
 class DenariiAsk:
     def __init__(self, asking_price, amount):
         self.asking_price = asking_price
+        assert type(self.asking_price) == float
         self.amount = amount
         self.in_escrow = False
         self.ask_id = -1
@@ -229,18 +247,25 @@ class DenariiAsk:
         self.updated_time = datetime.datetime.now()
         self.buyer = None
 
+    def __str__(self) -> str:
+        return f"{self.ask_id}: {self.amount} {self.asking_price} {self.amount_bought}"
+
 
 class CreditCard:
     def __init__(
-        self, card_number, expiration_date_month, expiration_date_year, security_code
+            self, card_number, expiration_date_month, expiration_date_year, security_code
     ):
         self.card_number = card_number
         self.expiration_date_month = expiration_date_month
         self.expiration_date_year = expiration_date_year
         self.security_code = security_code
-        self.balance = round(random.uniform(1, 100))
+        self.balance = random.uniform(1, 100)
+        assert type(self.balance) == float
         self.creation_time = datetime.datetime.now()
         self.updated_time = datetime.datetime.now()
+
+    def __str__(self) -> str:
+        return f"{self.card_number}"
 
 
 class SupportTicket:
@@ -270,10 +295,10 @@ class DenariiMobileClient:
 
     def get_users(self):
         return self.things.get("user", {})
-    
+
     def dump_users(self):
-        for name, user in self.get_users().items():
-            print(f"USER DUMP {name} {user.user_id} {len(user.asks)}")
+        for _, user in self.get_users().items():
+            print(f"USER DUMP {user}")
 
     def get_asks(self, user):
         asks = []
@@ -297,6 +322,13 @@ class DenariiMobileClient:
             if ask.ask_id == ask_id:
                 return ask
         raise ValueError("There is no ask with that id for the given user")
+
+    def get_ask_with_just_id(self, ask_id):
+        for _, user in self.get_users().items():
+            for ask in user.asks:
+                if ask.ask_id == ask_id:
+                    return ask
+        raise ValueError("There is no ask with that id for any user")
 
     def get_support_ticket_with_id(self, user, support_ticket_id):
         for ticket in user.support_tickets:
@@ -334,30 +366,45 @@ class DenariiMobileClient:
             return None
 
         return user
-    
-    def get_address_for_name(self, name): 
-        for username, user in self.get_users().items():
-            if username == name: 
+
+    def get_address_for_name(self, name):
+        for _, user in self.get_users().items():
+            if user.wallet is None:
+                continue
+            if user.wallet.name == name:
                 return user.wallet.address
         return ""
 
+    def get_user_with_address(self, address):
+        for _, user in self.get_users().items():
+
+            if user.wallet is None:
+                continue
+
+            if type(address) == bytes and user.wallet.address == address.decode('utf-8'):
+                return user
+            elif type(address) == str and user.wallet.address == address:
+                return user
+            elif str(address) == user.wallet.address:
+                return user
+        raise ValueError("No user with wallet address")
 
     def get_user_id(self, username, email, password):
         users = self.get_users()
         for _, value in users.items():
             # Login if they exist
             if (
-                value.name == username
-                and value.password == password
-                and value.email == email
+                    value.name == username
+                    and value.password == password
+                    and value.email == email
             ):
                 self.user = value
                 return True, [{"user_id": self.user.user_id}]
             # If they are a known user but their password doesnt match fail
             elif (
-                value.name == username
-                and value.email == email
-                and value.password != password
+                    value.name == username
+                    and value.email == email
+                    and value.password != password
             ):
                 return False, []
                 # If they are a known user but their email doesnt match fail
@@ -413,7 +460,7 @@ class DenariiMobileClient:
 
         for _, value in users.items():
             if value.name == username_or_email or value.email == username_or_email:
-                if value.reset_requested and value.reset_id == reset_id:
+                if value.reset_requested and value.reset_id == int(reset_id):
                     value.reset_requested = False
                     value.reset_id = -1
                     store_user(value)
@@ -447,9 +494,9 @@ class DenariiMobileClient:
             return False, []
 
         if (
-            user.wallet.name == wallet_name
-            and user.wallet.password == password
-            and user.wallet.seed == seed
+                user.wallet.name == wallet_name
+                and user.wallet.password == password
+                and user.wallet.seed == seed
         ):
             return True, [{"wallet_address": user.wallet.address}]
 
@@ -488,8 +535,11 @@ class DenariiMobileClient:
             return False, []
 
         if user.wallet.name == wallet_name:
-            if user.wallet.balance >= amount:
-                user.wallet.balance -= amount
+            if user.wallet.balance >= float(amount):
+                user.wallet.balance -= float(amount)
+                receiving_user = self.get_user_with_address(address)
+                receiving_user.wallet.balance += float(amount)
+                store_user(receiving_user)
                 store_user(user)
                 return True
 
@@ -517,12 +567,12 @@ class DenariiMobileClient:
         return True, filtered_asks
 
     def buy_denarii(
-        self,
-        user_id,
-        amount,
-        bid_price,
-        buy_regardless_of_price,
-        fail_if_full_amount_isnt_met,
+            self,
+            user_id,
+            amount,
+            bid_price,
+            buy_regardless_of_price,
+            fail_if_full_amount_isnt_met,
     ):
         user = self.check_user_is_current_user_and_get(user_id)
 
@@ -533,8 +583,8 @@ class DenariiMobileClient:
 
         _, error_message, asks_met = try_to_buy_denarii(
             asks,
-            amount,
-            bid_price,
+            float(amount),
+            float(bid_price),
             buy_regardless_of_price,
             fail_if_full_amount_isnt_met,
         )
@@ -559,16 +609,19 @@ class DenariiMobileClient:
 
         ask = self.get_ask_with_id(asking_user, ask_id)
 
-        if user.wallet.balance < ask.amount_bought:
+        user.wallet.balance = float(user.wallet.balance)
+        asking_user.wallet.balance = float(asking_user.wallet.balance)
+
+        if float(user.wallet.balance) < float(ask.amount_bought):
             return False, []
 
-        asking_user.wallet.balance += ask.amount_bought
+        asking_user.wallet.balance += float(ask.amount_bought)
 
-        user.wallet.balance -= ask.amount_bought
+        user.wallet.balance -= float(ask.amount_bought)
 
-        amount_bought = ask.amount_bought
+        amount_bought = float(ask.amount_bought)
 
-        ask.amount -= ask.amount_bought
+        ask.amount -= float(ask.amount_bought)
         ask.amount_bought = 0
         ask.in_escrow = False
         ask.buyer = None
@@ -585,7 +638,7 @@ class DenariiMobileClient:
         if user is None:
             return False, []
 
-        ask = DenariiAsk(asking_price, amount)
+        ask = DenariiAsk(float(asking_price), float(amount))
         ask.ask_id = create_identifier()
 
         user.asks.append(ask)
@@ -635,12 +688,12 @@ class DenariiMobileClient:
         return True, [{"has_credit_card_info": user.credit_card is not None}]
 
     def set_credit_card_info(
-        self,
-        user_id,
-        card_number,
-        expiration_date_month,
-        expiration_date_year,
-        security_code,
+            self,
+            user_id,
+            card_number,
+            expiration_date_month,
+            expiration_date_year,
+            security_code,
     ):
         user = self.check_user_is_current_user_and_get(user_id)
 
@@ -679,10 +732,12 @@ class DenariiMobileClient:
         if user is None:
             return False
 
-        if user.credit_card.balance < amount:
+        user.credit_card.balance = float(user.credit_card.balance)
+
+        if float(user.credit_card.balance) < float(amount):
             return False
 
-        user.credit_card.balance -= amount
+        user.credit_card.balance -= float(amount)
         store_user(user)
         return True
 
@@ -705,7 +760,7 @@ class DenariiMobileClient:
 
         asking_user = self.get_user_with_ask(ask_id)
 
-        ask = self.get_ask_with_id(ask_id)
+        ask = self.get_ask_with_id(asking_user, ask_id)
 
         if not ask.is_settled or not ask.has_been_seen_by_seller:
             return True, [{"ask_id": ask_id, "transaction_was_settled": False}]
@@ -725,7 +780,7 @@ class DenariiMobileClient:
         if user is None:
             return False, []
 
-        users = self.get_users
+        users = self.get_users()
 
         final_users = {}
 
@@ -747,7 +802,7 @@ class DenariiMobileClient:
         if user is None:
             return False, []
 
-        ask = self.get_ask_with_id(ask_id)
+        ask = self.get_ask_with_just_id(ask_id)
 
         return True, [
             {
@@ -767,14 +822,17 @@ class DenariiMobileClient:
 
         ask = self.get_ask_with_id(asking_user, ask_id)
 
-        if asking_user.wallet.balance < ask.amount_bought:
+        user.wallet.balance = float(user.wallet.balance)
+        asking_user.wallet.balance = float(asking_user.wallet.balance)
+
+        if float(asking_user.wallet.balance) < float(ask.amount_bought):
             return False, []
 
-        user.wallet.balance += ask.amount_bought
+        user.wallet.balance += float(ask.amount_bought)
 
-        asking_user.wallet.balance -= ask.amount_bought
+        asking_user.wallet.balance -= float(ask.amount_bought)
 
-        ask.amount += ask.amount_bought
+        ask.amount += float(ask.amount_bought)
         ask.amount_bought = 0
         ask.in_escrow = False
         ask.buyer = None
@@ -801,7 +859,7 @@ class DenariiMobileClient:
         if user is None:
             return False
 
-        ask = self.get_ask_with_id(ask_id)
+        ask = self.get_ask_with_just_id(ask_id)
 
         ask.in_escrow = False
         ask.amount_bought = 0
@@ -811,17 +869,17 @@ class DenariiMobileClient:
         return True
 
     def verify_identity(
-        self,
-        user_id,
-        first_name,
-        middle_name,
-        last_name,
-        email,
-        dob,
-        ssn,
-        zipcode,
-        phone,
-        work_locations,
+            self,
+            user_id,
+            first_name,
+            middle_name,
+            last_name,
+            email,
+            dob,
+            ssn,
+            zipcode,
+            phone,
+            work_locations,
     ):
         user = self.check_user_is_current_user_and_get(user_id)
 
@@ -844,8 +902,8 @@ class DenariiMobileClient:
         if user.identity_is_verified:
             return True, [{"verification_status": "is_verified"}]
         elif (
-            not user.identity_is_verified
-            and user.verification_report_status == "complete"
+                not user.identity_is_verified
+                and user.verification_report_status == "complete"
         ):
             return True, [{"verification_status": "failed_verification"}]
         elif user.verification_report_status == "pending":
@@ -998,7 +1056,7 @@ class DenariiMobileClient:
             filtered_comments.append(
                 {
                     "author": comment.author,
-                    "conent": comment.content,
+                    "content": comment.content,
                     "updated_time_body": comment.updated_time.isoformat(),
                     "creation_time_body": comment.creation_time.isoformat(),
                 }
@@ -1067,10 +1125,10 @@ class DenariiMobileClient:
 
         return True, filtered_support_tickets
 
-    def logout(self, user_id): 
+    def logout(self, user_id):
         user = self.check_user_is_current_user_and_get(user_id)
-        if user is None: 
+        if user is None:
             return False, []
-        else: 
-            self.user = None 
+        else:
+            self.user = None
             return True, []

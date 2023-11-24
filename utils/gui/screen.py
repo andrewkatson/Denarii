@@ -1,3 +1,5 @@
+import traceback
+
 from constants import *
 
 if TESTING:

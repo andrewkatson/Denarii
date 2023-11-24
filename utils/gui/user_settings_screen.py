@@ -1,3 +1,4 @@
+from gui_user import GuiUser
 from screen import *
 
 if TESTING:
@@ -30,34 +31,32 @@ else:
     from radio_button import *
 
 
-
 class UserSettingsScreen(Screen):
     """
     A screen that allows a user to delete their account and set settings
     """
 
     def __init__(
-        self,
-        main_layout,
-        deletion_func,
-        denarii_client,
-        gui_user,
-        denarii_mobile_client,
-        **kwargs
+            self,
+            main_layout,
+            deletion_func,
+            denarii_client,
+            gui_user,
+            denarii_mobile_client,
+            **kwargs
     ):
         self.remote_wallet_screen_push_button = None
         self.sell_screen_push_button = None
         self.buy_screen_push_button = None
-        self.credit_card_info_screen_push_button = None 
+        self.credit_card_info_screen_push_button = None
         self.verification_screen_push_button = None
-        self.support_ticket_screen_push_button = None 
-        self.delete_account_push_button = None 
+        self.support_ticket_screen_push_button = None
+        self.delete_account_push_button = None
         self.logout_push_button = None
 
         self.user_settings_label = None
 
         self.on_login_or_register_screen_clicked = kwargs['on_login_or_register_screen_clicked']
-        
 
         super().__init__(
             self.user_settings_screen_name,
@@ -88,7 +87,7 @@ class UserSettingsScreen(Screen):
         self.remote_wallet_screen_push_button.setStyleSheet(
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
-        
+
         self.local_wallet_screen_push_button = PushButton("Wallet", kwargs["parent"])
         self.local_wallet_screen_push_button.clicked.connect(
             lambda: kwargs["on_local_wallet_screen_clicked"]()
@@ -147,7 +146,6 @@ class UserSettingsScreen(Screen):
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
 
-
         self.delete_account_push_button = PushButton("Delete Account", kwargs["parent"])
         self.delete_account_push_button.clicked.connect(
             lambda: self.on_delete_account_clicked()
@@ -156,7 +154,7 @@ class UserSettingsScreen(Screen):
         self.delete_account_push_button.setStyleSheet(
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
-        
+
         self.logout_push_button = PushButton("Logout", kwargs["parent"])
         self.logout_push_button.clicked.connect(
             lambda: self.on_logout_clicked()
@@ -165,8 +163,6 @@ class UserSettingsScreen(Screen):
         self.logout_push_button.setStyleSheet(
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
-
-
 
     def setup(self):
         super().setup()
@@ -179,7 +175,7 @@ class UserSettingsScreen(Screen):
 
         parent = self.kwargs_passed["parent"]
 
-        if parent.wallet == REMOTE_WALLET: 
+        if parent.wallet == REMOTE_WALLET:
             self.remote_wallet_screen_push_button.setVisible(True)
             self.sell_screen_push_button.setVisible(True)
             self.credit_card_info_screen_push_button.setVisible(True)
@@ -193,7 +189,7 @@ class UserSettingsScreen(Screen):
             self.logout_push_button.setVisible(True)
             self.delete_account_push_button.setVisible(True)
 
-        self.first_horizontal_layout.addWidget(self.user_settings_label,alignment=AlignCenter)
+        self.first_horizontal_layout.addWidget(self.user_settings_label, alignment=AlignCenter)
         self.vertical_layout.addWidget(self.support_ticket_screen_push_button, alignment=AlignCenter)
         self.vertical_layout.addWidget(self.logout_push_button, alignment=AlignCenter)
         self.vertical_layout.addWidget(self.delete_account_push_button, alignment=AlignCenter)
@@ -220,80 +216,79 @@ class UserSettingsScreen(Screen):
             self.sell_screen_push_button, alignment=AlignCenter
         )
 
-
     def teardown(self):
         super().teardown()
-        
-    def on_logout_clicked(self): 
-        try: 
-            
+
+    def on_logout_clicked(self):
+        try:
+
             success, res = self.denarii_mobile_client.logout(self.gui_user.user_id)
 
             parent = self.kwargs_passed["parent"]
-            
+
             local_success = True
-            if parent.wallet == LOCAL_WALLET: 
+            if parent.wallet == LOCAL_WALLET:
                 local_success, res = self.denarii_client.logout()
-            
-            if success and local_success: 
+
+            if success and local_success:
                 self.status_message_box("Successfully Logged Out")
+                self.clear_user()
                 self.on_login_or_register_screen_clicked()
-            else: 
+            else:
                 self.status_message_box("Failed to logoout.")
-            
+
         except Exception as e:
             print(e)
             self.status_message_box("Failed: unknown error")
 
-    def on_delete_account_clicked(self): 
-        try: 
+    def on_delete_account_clicked(self):
+        try:
 
             success = self.cancel_all_asks()
 
             if not success:
                 self.status_message_box("Failed to cancel all asks. Cannot delete user")
-                return 
-            
-            success = self.cancel_all_buys()
+                return
 
+            success = self.cancel_all_buys()
 
             if not success:
                 self.status_message_box("Failed to cancel all buys. Cannot delete user")
-                return 
+                return
 
             success = self.denarii_mobile_client.delete_user(self.gui_user.user_id)
 
             parent = self.kwargs_passed["parent"]
-            
+
             local_success = True
-            if parent.wallet == LOCAL_WALLET: 
+            if parent.wallet == LOCAL_WALLET:
                 local_success, res = self.denarii_client.delete_user()
-            
-            if success and local_success: 
+
+            if success and local_success:
                 self.status_message_box("Deleted user successfully")
+                self.clear_user()
                 self.on_login_or_register_screen_clicked()
             else:
                 self.status_message_box("Failed to delete user")
 
-            
+
         except Exception as e:
             print(e)
             self.status_message_box("Failed: unknown error")
-    
+
     def cancel_all_asks(self):
-        
 
         success, res = self.denarii_mobile_client.get_all_asks(self.gui_user.user_id)
 
         if not success:
             return False
-        
+
         for ask in res:
             success, res = self.denarii_mobile_client.cancel_sell(self.gui_user.user_id, ask['ask_id'])
 
-            if not success: 
+            if not success:
                 return False
-        
+
         return True
 
     def cancel_all_buys(self):
@@ -301,11 +296,19 @@ class UserSettingsScreen(Screen):
 
         if not success:
             return False
-        
+
         for ask in res:
             success, res = self.denarii_mobile_client.cancel_buy_of_ask(self.gui_user.user_id, ask['ask_id'])
 
-            if not success: 
+            if not success:
                 return False
-        
+
         return True
+
+    def clear_user(self):
+        self.gui_user.name = ""
+        self.gui_user.user_id = ""
+        self.gui_user.password = ""
+        self.gui_user.email = ""
+        self.gui_user.local_wallet = None
+        self.gui_user.remote_wallet = None

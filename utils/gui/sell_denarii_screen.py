@@ -47,13 +47,13 @@ class SellDenariiScreen(Screen):
     """
 
     def __init__(
-        self,
-        main_layout,
-        deletion_func,
-        denarii_client,
-        gui_user,
-        denarii_mobile_client,
-        **kwargs,
+            self,
+            main_layout,
+            deletion_func,
+            denarii_client,
+            gui_user,
+            denarii_mobile_client,
+            **kwargs,
     ):
         self.sell_denarii_label = None
 
@@ -80,12 +80,13 @@ class SellDenariiScreen(Screen):
         self.current_asks = []
         self.own_asks = []
         self.bought_asks = []
-        
+
         self.current_asks_artifacts = []
         self.own_asks_artifacts = []
         self.bought_asks_artifacts = []
 
-        self.asks_refresh_thread = StoppableThread(target=self.refresh_all_prices, name="sell_denarii_asks_refresh_thread")
+        self.asks_refresh_thread = StoppableThread(target=self.refresh_all_prices,
+                                                   name="sell_denarii_asks_refresh_thread")
 
         self.completed_transactions_thread = StoppableThread(
             target=self.refresh_completed_transactions
@@ -189,7 +190,6 @@ class SellDenariiScreen(Screen):
         font.setPixelSize(50)
         self.all_asks_label.setFont(font)
 
-
         self.amount_col_label_one = Label("Amount")
         font = Font()
         font.setFamily("Arial")
@@ -237,7 +237,6 @@ class SellDenariiScreen(Screen):
         font.setFamily("Arial")
         font.setPixelSize(50)
         self.bought_asks_label.setFont(font)
-
 
         self.amount_col_label = Label("Amount")
         font = Font()
@@ -324,7 +323,7 @@ class SellDenariiScreen(Screen):
         )
         self.seventh_horizontal_layout.addWidget(
             self.verification_screen_push_button, alignment=AlignCenter
-        )        
+        )
 
         self.asks_refresh_thread.start()
         self.own_asks_thread.start()
@@ -348,20 +347,20 @@ class SellDenariiScreen(Screen):
         if self.completed_transactions_thread.is_alive():
             self.completed_transactions_thread.join()
 
-    def depopulate_sell_denarii_screen(self): 
-        try: 
+    def depopulate_sell_denarii_screen(self):
+        try:
             self.lock.acquire()
-            
-            for artifact in self.current_asks_artifacts: 
+
+            for artifact in self.current_asks_artifacts:
                 artifact.setVisible(False)
-                
-            for artifact in self.own_asks_artifacts: 
+
+            for artifact in self.own_asks_artifacts:
                 artifact.setVisible(False)
-                
-            for artifact in self.bought_asks_artifacts: 
+
+            for artifact in self.bought_asks_artifacts:
                 artifact.setVisible(False)
-            
-        finally: 
+
+        finally:
             self.lock.release()
 
     def populate_sell_denarii_screen(self):
@@ -392,7 +391,7 @@ class SellDenariiScreen(Screen):
 
                     self.grid_layout.addWidget(ask_price_label, row, 1)
                     row += 1
-                
+
                 self.current_asks_artifacts = new_current_asks_artifacts
 
                 # Then we populate the own asks grid
@@ -430,7 +429,7 @@ class SellDenariiScreen(Screen):
                     self.second_grid_layout.addWidget(cancel_ask_push_button, row, 2)
 
                     row += 1
-                
+
                 self.own_asks_artifacts = new_own_asks_artifacts
 
                 # Lastly we populate the bought asks grid
@@ -488,7 +487,7 @@ class SellDenariiScreen(Screen):
                     # No status message when things go well on purpose so the user doesn't get annoyed.
             except Exception as e:
                 print(f"Refresh all prices {e}")
-                
+
             time.sleep(5)
 
     def refresh_completed_transactions(self):
@@ -519,7 +518,7 @@ class SellDenariiScreen(Screen):
 
             except Exception as e:
                 print(f"Refresh completed transactins {e}")
-                
+
             finally:
                 self.lock.release()
             time.sleep(5)
@@ -531,9 +530,9 @@ class SellDenariiScreen(Screen):
 
                 success, res = self.denarii_mobile_client.poll_for_escrowed_transaction(self.gui_user.user_id)
 
-                if success: 
+                if success:
                     self.bought_asks = res
-                    
+
             except Exception as e:
                 print(f"Refresh asks in escrow {e}")
             finally:
@@ -548,7 +547,7 @@ class SellDenariiScreen(Screen):
 
                 success, res = self.denarii_mobile_client.get_all_asks(self.gui_user.user_id)
 
-                if success: 
+                if success:
                     self.own_asks = res
 
             except Exception as e:
@@ -557,17 +556,17 @@ class SellDenariiScreen(Screen):
                 self.lock.release()
 
             time.sleep(5)
-            
-    def refresh_going_price(self): 
+
+    def refresh_going_price(self):
         while not self.refresh_going_price_thread.stopped():
             try:
                 self.lock.acquire()
-                
+
                 # Just a big number since python doesnt really have a max int
                 going_price = 99999999999999999
-                for ask in self.current_asks: 
-                    if going_price > ask["asking_price"]: 
-                        going_price = ask["asking_price"] 
+                for ask in self.current_asks:
+                    if going_price > ask["asking_price"]:
+                        going_price = ask["asking_price"]
 
                 self.going_price_label(f"Going Price: {going_price}")
 
@@ -581,11 +580,11 @@ class SellDenariiScreen(Screen):
     def on_submit_clicked(self):
         try:
             self.lock.acquire()
-            
+
             success, first_res = self.denarii_mobile_client.has_credit_card_info(
                 self.gui_user.user_id
             )
-            
+
             other_success, other_res = self.denarii_mobile_client.is_a_verified_person(self.gui_user.user_id)
 
             if success and other_success:
@@ -593,47 +592,53 @@ class SellDenariiScreen(Screen):
                 is_verified = other_res[0]["verification_status"] == "is_verified"
 
                 if has_credit_card_info and is_verified:
-                    make_success, _ = self.denarii_mobile_client.make_denarii_ask(self.gui_user.user_id, self.amount_line_edit.text(), self.price_line_edit.text())
+                    make_success, _ = self.denarii_mobile_client.make_denarii_ask(self.gui_user.user_id,
+                                                                                  self.amount_line_edit.text(),
+                                                                                  self.price_line_edit.text())
 
-                    if make_success: 
+                    if make_success:
                         self.status_message_box("Created denarii ask!")
-                    else: 
+                    else:
                         self.status_message_box("Failed to create denarii ask")
-                else: 
-                    self.status_message_box("Failed to create denarii ask because the user either didn't have credit card info or wasnt verified")
-            
-            else: 
-                self.status_message_box("Failed to create denarii ask because we couldn't determine if the user had credit card info or was verified")
+                else:
+                    self.status_message_box("Failed to create denarii ask because the user either didn't have credit "
+                                            "card info or wasnt verified")
+
+            else:
+                self.status_message_box(
+                    "Failed to create denarii ask because we couldn't determine if the user had credit card info or was verified")
 
 
         except Exception as e:
-            print(f"On submit clicked {e}")
+            print(e)
+            traceback.print_exc()
             self.status_message_box("Failed: unknown error")
 
         finally:
             self.lock.release()
 
     def on_cancel_ask_clicked(self, ask_id_to_cancel):
-        try: 
+        try:
             success, _ = self.denarii_mobile_client.cancel_ask(self.gui_user.user_id, ask_id_to_cancel)
 
-            if success: 
+            if success:
                 self.status_message_box("Cancelled ask!")
-            else: 
+            else:
                 self.status_message_box("Failed to cancel ask")
         except Exception as e:
             print(f"On cancel ask clicked {e}")
             self.status_message_box("Failed: unknown error")
 
     def send_money_to_seller(self, ask):
-        try: 
+        try:
             # TODO use a different currency when applicable
-            success, _ = self.denarii_mobile_client.send_money_to_seller(self.gui_user.user_id, ask['amount_bought'], "usd")
+            success, _ = self.denarii_mobile_client.send_money_to_seller(self.gui_user.user_id, ask['amount_bought'],
+                                                                         "usd")
 
-            if success: 
+            if success:
                 # Do nothing so we don't bother the user
                 pass
-            else: 
+            else:
                 self.completely_reverse_transaction([ask])
 
         except Exception as e:

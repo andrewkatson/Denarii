@@ -213,6 +213,7 @@ class CreateWalletScreen(Screen):
         """
         self.wallet.name = self.name_line_edit.text()
         self.wallet.password = self.password_line_edit.text()
+        self.wallet.phrase = ""
 
         success = False
 
@@ -225,7 +226,8 @@ class CreateWalletScreen(Screen):
                     self.wallet.phrase = only_res['seed']
                     self.wallet.address = only_res['wallet_address']
                     self.display_seed(self.wallet.phrase)
-                    self.status_message_box("Success. Make sure to write down your information. \n It will not be saved on this device.")
+                    self.status_message_box("Success. Make sure to write down your information. \n It will not be "
+                                            "saved on this device.")
                     self.next_button.setVisible(True)
                 else: 
                     self.status_message_box("Failed: could not create remote wallet")
@@ -272,12 +274,11 @@ class CreateWalletScreen(Screen):
 
         self.set_wallet_type_callback(self.which_wallet)
 
-    def display_seed(self, seed): 
-
+    def display_seed(self, seed):
         split = seed.split()
         thirds = int(len(split) / 3)
         first = " ".join(split[:thirds])
         second = " ".join(split[thirds : thirds * 2])
-        third = "".join(split[thirds * 2 :])
+        third = " ".join(split[thirds * 2 :])
 
         self.wallet_info_text_box.setText(f"{first}\n{second}\n{third}")

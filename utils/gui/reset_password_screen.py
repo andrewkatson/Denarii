@@ -128,6 +128,7 @@ class ResetPasswordScreen(Screen):
 
                 if success:
                     self.status_message_box("Success")
+                    self.gui_user.password = self.password_line_edit.text()
                     self.next_button.setVisible(True)
                 else:
                     self.status_message_box("Failure: could not reset password")

@@ -49,13 +49,13 @@ class BuyDenariiScreen(Screen):
     """
 
     def __init__(
-        self,
-        main_layout,
-        deletion_func,
-        denarii_client,
-        gui_user,
-        denarii_mobile_client,
-        **kwargs,
+            self,
+            main_layout,
+            deletion_func,
+            denarii_client,
+            gui_user,
+            denarii_mobile_client,
+            **kwargs,
     ):
         self.remote_wallet_screen_push_button = None
         self.sell_screen_push_button = None
@@ -86,7 +86,7 @@ class BuyDenariiScreen(Screen):
 
         self.current_asks = []
         self.queued_buys = []
-        
+
         self.current_asks_artifacts = []
         self.queued_buys_artifacts = []
 
@@ -95,7 +95,8 @@ class BuyDenariiScreen(Screen):
         self.settled_transactions_thread = StoppableThread(
             target=self.refresh_settled_transactions, name="buy_denarii_settled_transactions_thread"
         )
-        self.populate_thread = StoppableThread(target=self.populate_buy_denarii_screen, name="buy_denarii_populate_thread")
+        self.populate_thread = StoppableThread(target=self.populate_buy_denarii_screen,
+                                               name="buy_denarii_populate_thread")
 
         self.lock = threading.Lock()
 
@@ -280,7 +281,6 @@ class BuyDenariiScreen(Screen):
         self.buy_regardles_of_price_button_group.addButton(self.buy_regardless_of_price_radio_button)
         self.buy_regardles_of_price_button_group.addButton(self.dont_buy_regardless_or_price_radio_button)
 
-
         self.fail_if_full_amount_cant_be_bought_radio_button = RadioButton(
             "True",
             kwargs["parent"],
@@ -315,8 +315,10 @@ class BuyDenariiScreen(Screen):
         )
 
         self.fail_if_full_amount_cant_be_bought_button_group = ButtonGroup()
-        self.fail_if_full_amount_cant_be_bought_button_group.addButton(self.fail_if_full_amount_cant_be_bought_radio_button)
-        self.fail_if_full_amount_cant_be_bought_button_group.addButton(self.succeed_even_when_full_amount_cant_be_bought_radio_button)
+        self.fail_if_full_amount_cant_be_bought_button_group.addButton(
+            self.fail_if_full_amount_cant_be_bought_radio_button)
+        self.fail_if_full_amount_cant_be_bought_button_group.addButton(
+            self.succeed_even_when_full_amount_cant_be_bought_radio_button)
 
     def setup(self):
         super().setup()
@@ -439,7 +441,7 @@ class BuyDenariiScreen(Screen):
             success, first_res = self.denarii_mobile_client.has_credit_card_info(
                 self.gui_user.user_id
             )
-            
+
             other_success, other_res = self.denarii_mobile_client.is_a_verified_person(self.gui_user.user_id)
 
             if success and other_success:
@@ -487,12 +489,12 @@ class BuyDenariiScreen(Screen):
                                         }
                                     )
                                     succeeded_asks.append(ask)
-                                else: 
+                                else:
                                     any_ask_failed = True
                                     break
                             if any_ask_failed:
                                 self.status_message_box(
-                                    "Failed one of the denarii transfers. Will refund money and transfer denarii back to seller."
+                                    "Failed one of the denarii transfers. Will refund money and transfer denarii back ""to seller."
                                 )
                                 self.reverse_transactions(succeeded_asks)
                         else:
@@ -514,26 +516,26 @@ class BuyDenariiScreen(Screen):
 
         except Exception as e:
             print(e)
+            traceback.print_exc()
             self.status_message_box("Failed: unknown error")
 
         finally:
             self.lock.release()
-            
-    def depopulate_buy_denarii_screen(self): 
+
+    def depopulate_buy_denarii_screen(self):
         try:
             # First we de-populate the asks grid
             self.lock.acquire()
-            
-            for artifact in self.current_asks_artifacts: 
+
+            for artifact in self.current_asks_artifacts:
                 artifact.setVisible(False)
-                
+
             # Then we de-populate the queued buys grid
-            for artifact in self.queued_buys_artifacts: 
+            for artifact in self.queued_buys_artifacts:
                 artifact.setVisible(False)
-            
+
         finally:
             self.lock.release()
-
 
     def populate_buy_denarii_screen(self):
         while not self.populate_thread.stopped():
@@ -563,13 +565,13 @@ class BuyDenariiScreen(Screen):
                     self.grid_layout.addWidget(ask_price_label, row, 1)
 
                     row += 1
-                
+
                 self.current_asks_artifacts = new_current_asks_artifacts
-                
+
                 # Then we populate the queued asks grid (which are just asks that we are buying)
                 row = 1
                 new_queued_buys_artifacts = []
-                
+
                 for buy in self.queued_buys:
                     ask_amount_label = Label(str(buy["amount"]))
                     font = Font()
@@ -610,7 +612,7 @@ class BuyDenariiScreen(Screen):
 
                     self.second_grid_layout.addWidget(cancel_buy_push_button, row, 3)
                     row += 1
-                    
+
                 self.queued_buys_artifacts = new_queued_buys_artifacts
             finally:
                 self.lock.release()
@@ -633,6 +635,7 @@ class BuyDenariiScreen(Screen):
                     # No status message when things go well on purpose so the user doesn't get annoyed.
             except Exception as e:
                 print(e)
+                traceback.print_exc()
 
             time.sleep(5)
 
@@ -664,6 +667,7 @@ class BuyDenariiScreen(Screen):
 
             except Exception as e:
                 print(e)
+                traceback.print_exc()
             finally:
                 self.lock.release()
 
@@ -690,6 +694,7 @@ class BuyDenariiScreen(Screen):
                 return {"amount": -1, "ask_id": ask_id, "amount_bought": 0}
         except Exception as e:
             print(e)
+            traceback.print_exc()
             self.status_message_box("Failed: unknown error")
             return {"amount": -1, "ask_id": ask_id, "amount_bought": 0}
 
@@ -712,6 +717,7 @@ class BuyDenariiScreen(Screen):
 
         except Exception as e:
             print(e)
+            traceback.print_exc()
             self.status_message_box("Failed: unknown error")
 
     def reverse_transactions(self, asks_to_reverse):
@@ -733,6 +739,7 @@ class BuyDenariiScreen(Screen):
 
             except Exception as e:
                 print(e)
+                traceback.print_exc()
                 self.status_message_box("Failed: unknown error")
 
     def cancel_buys(self, ask_ids_to_cancel):
@@ -755,6 +762,7 @@ class BuyDenariiScreen(Screen):
 
             except Exception as e:
                 print(e)
+                traceback.print_exc()
                 self.status_message_box("Failed: unknown error")
 
     def on_cancel_buy_clicked(self, ask_id_to_cancel):

@@ -20,4 +20,4 @@ class GuiUser:
         self.user_id = None
 
     def __str__(self):
-        return f"{self.name}:{self.email}:{self.language}"
+        return f"{self.name} {self.email} {self.language}"

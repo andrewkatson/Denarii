@@ -1,45 +1,9 @@
-import sys
-import time
-import unittest
-
-from constants import *
-
 # Testing stuff
-from denarii_client_testing import DenariiClient
-from denarii_mobile_client_testing import DenariiMobileClient
-from denarii_testing_font import *
-from denarii_testing_label import *
-from denarii_testing_line_edit import *
 from denarii_testing_main import *
 from denarii_testing_radio_button import *
-from denarii_testing_push_button import *
 from denarii_testing_widget import *
 from denarii_testing_window import *
-from gui_user import GuiUser
-from wallet import Wallet
 
-# Classes to test
-from buy_denarii_screen import BuyDenariiScreen
-from create_wallet_screen import CreateWalletScreen
-from credit_card_info_screen import CreditCardInfoScreen
-from lang_select_screen import LangSelectScreen
-from local_wallet_screen import LocalWalletScreen
-from login_or_register_screen import LoginOrRegisterScreen
-from login_screen import LoginScreen
-from register_screen import RegisterScreen
-from remote_wallet_screen import RemoteWalletScreen
-from request_reset_screen import RequestResetScreen
-from reset_password_screen import ResetPasswordScreen
-from restore_wallet_screen import RestoreWalletScreen
-from sell_denarii_screen import SellDenariiScreen
-from set_wallet_screen import SetWalletScreen
-from support_ticket_creation_screen import SupportTicketCreationScreen
-from support_ticket_details_screen import SupportTicketDetailsScreen
-from support_ticket_screen import SupportTicketScreen
-from user_settings_screen import UserSettingsScreen
-from verification_screen import VerificationScreen
-from verify_reset_screen import VerifyResetScreen
-from wallet_info_screen import WalletInfoScreen
 
 class DenariiE2ETests(unittest.TestCase):
     def setUp(self) -> None:
@@ -58,17 +22,16 @@ class DenariiE2ETests(unittest.TestCase):
         self.name = f"{self.test_name}_user"
         self.email = f"{self.test_name}_email@email.com"
         self.password = f"{self.test_name}_password"
-        self.wallet_name = f"{self.test_name}_wallet"
-        self.wallet_password = f"{self.test_name}_wallet_password"
-        self.new_password = f"{self.test_name}_new_password"
+        self.wallet_name = f"{self.name}_wallet"
+        self.wallet_password = f"{self.name}_wallet_password"
+        self.new_password = f"{self.name}_new_password"
 
         self.other_name = f"other_{self.test_name}_user"
         self.other_email = f"other_{self.test_name}_email@email.com"
         self.other_password = f"other_{self.test_name}_password"
-        self.other_wallet_name = f"other_{self.test_name}_wallet"
-        self.other_wallet_password = f"other_{self.test_name}_wallet_password"
-        self.other_new_password = f"other_{self.test_name}_new_password"
-
+        self.other_wallet_name = f"other_{self.name}_wallet"
+        self.other_wallet_password = f"other_{self.name}_wallet_password"
+        self.other_new_password = f"other_{self.name}_new_password"
 
     def tearDown(self):
         super().tearDown()
@@ -93,9 +56,9 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.LOGIN_OR_REGISTER.screen_name)
 
-    def get_address(self, wallet_type, name): 
+    def get_address(self, wallet_type, name):
 
-        if wallet_type == LOCAL_WALLET: 
+        if wallet_type == LOCAL_WALLET:
             return self.main_widget.denarii_client.get_address_for_name(name)
         elif wallet_type == REMOTE_WALLET:
             return self.main_widget.denarii_mobile_client.get_address_for_name(name)
@@ -103,7 +66,7 @@ class DenariiE2ETests(unittest.TestCase):
     def navigate_to_login_or_register(self):
 
         # Some tests reuse the register function but start on the login or register screen so just return in those cases
-        if self.main_widget.current_widget.screen_name == self.main_widget.LOGIN_OR_REGISTER.screen_name: 
+        if self.main_widget.current_widget.screen_name == self.main_widget.LOGIN_OR_REGISTER.screen_name:
             return
 
         lang_select_screen = self.main_widget.LANG_SELECT
@@ -120,10 +83,7 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.LOGIN_OR_REGISTER.screen_name)
 
-    def navigate_to_login(self):
-
-        self.navigate_to_login_or_register()
-
+    def strictly_navigate_to_login(self):
         login_or_register_screen = self.main_widget.LOGIN_OR_REGISTER
 
         on_login_clicked = login_or_register_screen.kwargs_passed["on_login_clicked"]
@@ -132,10 +92,16 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.LOGIN_SCREEN.screen_name)
 
+    def navigate_to_login(self):
+
+        self.navigate_to_login_or_register()
+
+        self.strictly_navigate_to_login()
+
     def register_with_denarii(self, name, email, password):
 
         self.navigate_to_login_or_register()
-        
+
         login_or_register_screen = self.main_widget.LOGIN_OR_REGISTER
 
         on_register_clicked = login_or_register_screen.kwargs_passed["on_register_clicked"]
@@ -151,7 +117,7 @@ class DenariiE2ETests(unittest.TestCase):
 
         email_line_edit = register_screen.email_line_edit
         email_line_edit.typeText(email)
-        
+
         password_line_edit = register_screen.password_line_edit
         password_line_edit.typeText(password)
 
@@ -166,7 +132,7 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.LOGIN_SCREEN.screen_name)
 
-    def strictly_login_with_denarii(self, name, email, password): 
+    def strictly_login_with_denarii(self, name, email, password):
 
         login_screen = self.main_widget.LOGIN_SCREEN
 
@@ -175,7 +141,7 @@ class DenariiE2ETests(unittest.TestCase):
 
         email_line_edit = login_screen.email_line_edit
         email_line_edit.typeText(email)
-        
+
         password_line_edit = login_screen.password_line_edit
         password_line_edit.typeText(password)
 
@@ -187,13 +153,12 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.WALLET_INFO.screen_name)
 
-
     def login_with_denarii(self, name, email, password):
         self.register_with_denarii(name, email, password)
 
         self.strictly_login_with_denarii(name, email, password)
 
-    def strictly_create_wallet(self, wallet_type):
+    def strictly_create_wallet(self, wallet_type, wallet_name, wallet_password):
 
         wallet_decision_screen = self.main_widget.WALLET_INFO
 
@@ -206,43 +171,43 @@ class DenariiE2ETests(unittest.TestCase):
         create_wallet_screen = self.main_widget.CREATE_WALLET
 
         name_line_edit = create_wallet_screen.name_line_edit
-        name_line_edit.typeText(self.wallet_name)
+        name_line_edit.typeText(wallet_name)
 
         password_line_edit = create_wallet_screen.password_line_edit
-        password_line_edit.typeText(self.wallet_password)
+        password_line_edit.typeText(wallet_password)
 
-        if wallet_type == LOCAL_WALLET: 
+        if wallet_type == LOCAL_WALLET:
             create_wallet_screen.local_wallet_radio_button.on_wallet_type_clicked()
         elif wallet_type == REMOTE_WALLET:
             create_wallet_screen.remote_wallet_radio_button.on_wallet_type_clicked()
-        else: 
+        else:
             raise ValueError(f"Unrecognized wallet_type {wallet_type}")
 
         create_wallet_screen.on_create_wallet_submit_clicked()
-        
+
         self.assertRegex(create_wallet_screen.status_msg.text, "Success. *")
 
         seed = create_wallet_screen.wallet_info_text_box.text
 
         self.main_widget.next_clicked()
-        
-        if wallet_type == LOCAL_WALLET: 
-            self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.LOCAL_WALLET_SCREEN.screen_name)
+
+        if wallet_type == LOCAL_WALLET:
+            self.assertEqual(self.main_widget.current_widget.screen_name,
+                             self.main_widget.LOCAL_WALLET_SCREEN.screen_name)
 
         elif wallet_type == REMOTE_WALLET:
-            self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.REMOTE_WALLET_SCREEN.screen_name)
+            self.assertEqual(self.main_widget.current_widget.screen_name,
+                             self.main_widget.REMOTE_WALLET_SCREEN.screen_name)
 
         return seed
 
-
-    def create_wallet(self, wallet_type, name, email, password):
+    def create_wallet(self, wallet_type, name, email, password, wallet_name, wallet_password):
         self.login_with_denarii(name, email, password)
 
-        return self.strictly_create_wallet(wallet_type)
+        return self.strictly_create_wallet(wallet_type, wallet_name, wallet_password)
 
-
-    def restore_wallet(self, wallet_type, name, email, password):
-        seed = self.create_wallet(wallet_type, name, email, password)
+    def restore_wallet(self, wallet_type, name, email, password, wallet_name, wallet_password):
+        seed = self.create_wallet(wallet_type, name, email, password, wallet_name, wallet_password)
 
         self.logout()
 
@@ -259,34 +224,36 @@ class DenariiE2ETests(unittest.TestCase):
         restore_wallet_screen = self.main_widget.RESTORE_WALLET
 
         name_line_edit = restore_wallet_screen.name_line_edit
-        name_line_edit.typeText(self.wallet_name)
+        name_line_edit.typeText(wallet_name)
 
         password_line_edit = restore_wallet_screen.password_line_edit
-        password_line_edit.typeText(self.wallet_password)
+        password_line_edit.typeText(wallet_password)
 
         seed_line_edit = restore_wallet_screen.seed_line_edit
         seed_line_edit.typeText(seed)
 
-        if wallet_type == LOCAL_WALLET: 
+        if wallet_type == LOCAL_WALLET:
             restore_wallet_screen.local_wallet_radio_button.on_wallet_type_clicked()
         elif wallet_type == REMOTE_WALLET:
             restore_wallet_screen.remote_wallet_radio_button.on_wallet_type_clicked()
-        else: 
+        else:
             raise ValueError(f"Unrecognized wallet_type {wallet_type}")
 
         restore_wallet_screen.on_restore_wallet_submit_clicked()
-        
-        self.assertRegex(restore_wallet_screen.status_msg.text, "Success. *")
+
+        self.assertEqual(restore_wallet_screen.status_msg.text, "Success")
 
         self.main_widget.next_clicked()
 
-        if wallet_type == LOCAL_WALLET: 
-            self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.LOCAL_WALLET_SCREEN.screen_name)
+        if wallet_type == LOCAL_WALLET:
+            self.assertEqual(self.main_widget.current_widget.screen_name,
+                             self.main_widget.LOCAL_WALLET_SCREEN.screen_name)
 
         elif wallet_type == REMOTE_WALLET:
-            self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.REMOTE_WALLET_SCREEN.screen_name)
+            self.assertEqual(self.main_widget.current_widget.screen_name,
+                             self.main_widget.REMOTE_WALLET_SCREEN.screen_name)
 
-    def strictly_open_wallet(self, wallet_type):
+    def strictly_open_wallet(self, wallet_type, wallet_name, wallet_password):
 
         wallet_decision_screen = self.main_widget.WALLET_INFO
 
@@ -299,38 +266,40 @@ class DenariiE2ETests(unittest.TestCase):
         open_wallet_screen = self.main_widget.SET_WALLET
 
         name_line_edit = open_wallet_screen.name_line_edit
-        name_line_edit.typeText(self.wallet_name)
+        name_line_edit.typeText(wallet_name)
 
         password_line_edit = open_wallet_screen.password_line_edit
-        password_line_edit.typeText(self.wallet_password)
+        password_line_edit.typeText(wallet_password)
 
-        if wallet_type == LOCAL_WALLET: 
+        if wallet_type == LOCAL_WALLET:
             open_wallet_screen.local_wallet_radio_button.on_wallet_type_clicked()
         elif wallet_type == REMOTE_WALLET:
             open_wallet_screen.remote_wallet_radio_button.on_wallet_type_clicked()
-        else: 
+        else:
             raise ValueError(f"Unrecognized wallet_type {wallet_type}")
 
         open_wallet_screen.on_set_wallet_submit_clicked()
-        
-        self.assertRegex(open_wallet_screen.status_msg.text, "Success. *")
+
+        self.assertEqual(open_wallet_screen.status_msg.text, "Success")
 
         self.main_widget.next_clicked()
 
-        if wallet_type == LOCAL_WALLET: 
-            self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.LOCAL_WALLET_SCREEN.screen_name)
+        if wallet_type == LOCAL_WALLET:
+            self.assertEqual(self.main_widget.current_widget.screen_name,
+                             self.main_widget.LOCAL_WALLET_SCREEN.screen_name)
 
         elif wallet_type == REMOTE_WALLET:
-            self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.REMOTE_WALLET_SCREEN.screen_name)
+            self.assertEqual(self.main_widget.current_widget.screen_name,
+                             self.main_widget.REMOTE_WALLET_SCREEN.screen_name)
 
-    def open_wallet(self, wallet_type, name, email, password):
-        _ = self.create_wallet(wallet_type, name, email, password)
+    def open_wallet(self, wallet_type, name, email, password, wallet_name, wallet_password):
+        _ = self.create_wallet(wallet_type, name, email, password, wallet_name, wallet_password)
 
         self.logout()
 
         self.login_with_denarii(name, email, password)
 
-        self.strictly_open_wallet(wallet_type)
+        self.strictly_open_wallet(wallet_type, wallet_name, wallet_password)
 
     def reset_password(self, name, email, password, new_password):
 
@@ -367,7 +336,8 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.main_widget.next_clicked()
 
-        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.RESET_PASSWORD_SCREEN.screen_name)
+        self.assertEqual(self.main_widget.current_widget.screen_name,
+                         self.main_widget.RESET_PASSWORD_SCREEN.screen_name)
 
         reset_password_screen = self.main_widget.RESET_PASSWORD_SCREEN
 
@@ -393,24 +363,24 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.strictly_login_with_denarii(name, email, new_password)
 
-    def send_denarii(self, wallet_type, name, email, password, other_name, other_email, other_password):
-        self.create_wallet(wallet_type, other_name, other_email, other_password)
+    def send_denarii(self, wallet_type, name, email, password, wallet_name, wallet_password, other_name, other_email, other_password, other_wallet_name, other_wallet_password):
+        self.create_wallet(wallet_type, other_name, other_email, other_password, other_wallet_name, other_wallet_password)
 
         self.logout()
 
-        self.create_wallet(wallet_type, name, email, password)
-        
-        wallet_screen = None 
-        if wallet_type == LOCAL_WALLET: 
+        self.create_wallet(wallet_type, name, email, password, wallet_name, wallet_password)
+
+        wallet_screen = None
+        if wallet_type == LOCAL_WALLET:
             wallet_screen = self.main_widget.LOCAL_WALLET_SCREEN
         elif wallet_type == REMOTE_WALLET:
             wallet_screen = self.main_widget.REMOTE_WALLET_SCREEN
 
-        address = self.get_address(wallet_type, other_name)
+        address = self.get_address(wallet_type, other_wallet_name)
 
         address_line_edit = wallet_screen.address_line_edit
         address_line_edit.typeText(address)
-        
+
         amount_line_edit = wallet_screen.amount_line_edit
         amount_line_edit.typeText("2")
 
@@ -420,28 +390,30 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.logout()
 
+        self.strictly_navigate_to_login()
+
         self.strictly_login_with_denarii(other_name, other_email, other_password)
 
-        self.strictly_open_wallet(wallet_type)
+        self.strictly_open_wallet(wallet_type, other_wallet_name, other_wallet_password)
 
-        wallet_screen = None 
-        if wallet_type == LOCAL_WALLET: 
+        wallet_screen = None
+        if wallet_type == LOCAL_WALLET:
             wallet_screen = self.main_widget.LOCAL_WALLET_SCREEN
         elif wallet_type == REMOTE_WALLET:
             wallet_screen = self.main_widget.REMOTE_WALLET_SCREEN
 
-        self.assertGreaterEqual(wallet_screen.balance, "3")
+        self.assertGreaterEqual(wallet_screen.balance, 3)
 
-    def mine_denarii(self, name, email, password):
-        self.create_wallet(LOCAL_WALLET, name, email, password)
-        
+    def mine_denarii(self, name, email, password, wallet_name, wallet_password):
+        self.create_wallet(LOCAL_WALLET, name, email, password, wallet_name, wallet_password)
+
         wallet_screen = self.main_widget.LOCAL_WALLET_SCREEN
 
         wallet_screen.start_mining()
 
         time.sleep(3)
 
-        wallet_screen.stop_mining()       
+        wallet_screen.stop_mining()
 
         self.assertGreaterEqual(wallet_screen.balance, 3.0)
 
@@ -505,28 +477,30 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.assertEqual(verification_screen.status_msg.text, "Successfully sent verification info")
 
-
-                
-    def sell_denarii(self, name, email, password):
-        self.create_wallet(REMOTE_WALLET, name, email, password)
+    def setup_to_sell_or_buy(self, name, email, password, wallet_name, wallet_password):
+        self.create_wallet(REMOTE_WALLET, name, email, password, wallet_name, wallet_password)
 
         wallet_screen = self.main_widget.REMOTE_WALLET_SCREEN
 
         wallet_screen.kwargs_passed["on_credit_card_info_screen_clicked"]()
 
-        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.CREDIT_CARD_INFO_SCREEN.screen_name)
+        self.assertEqual(self.main_widget.current_widget.screen_name,
+                         self.main_widget.CREDIT_CARD_INFO_SCREEN.screen_name)
 
         self.strictly_set_credit_card_info()
 
         credit_card_screen = self.main_widget.CREDIT_CARD_INFO_SCREEN
 
         credit_card_screen.kwargs_passed["on_verification_screen_clicked"]()
-    
+
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.VERIFICATION_SCREEN.screen_name)
 
         self.strictly_verify_identity(email)
 
-        verify_identity_screen = self.main_widget.VERIFICATION_SCREEN
+        return self.main_widget.VERIFICATION_SCREEN
+
+    def sell_denarii(self, name, email, password, wallet_name, wallet_password):
+        verify_identity_screen = self.setup_to_sell_or_buy(name, email, password, wallet_name, wallet_password)
 
         verify_identity_screen.kwargs_passed["on_sell_screen_clicked"]()
 
@@ -548,27 +522,9 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.assertEqual(len(sell_denarii_screen.own_asks), 1)
 
+    def buy_denarii(self, name, email, password, wallet_name, wallet_password):
 
-    def buy_denarii(self, name, email, password):
-        self.create_wallet(REMOTE_WALLET, name, email, password)
-
-        wallet_screen = self.main_widget.REMOTE_WALLET_SCREEN
-
-        wallet_screen.kwargs_passed["on_credit_card_info_screen_clicked"]()
-
-        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.CREDIT_CARD_INFO_SCREEN.screen_name)
-
-        self.strictly_set_credit_card_info()
-
-        credit_card_screen = self.main_widget.CREDIT_CARD_INFO_SCREEN
-
-        credit_card_screen.kwargs_passed["on_verification_screen_clicked"]()
-    
-        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.VERIFICATION_SCREEN.screen_name)
-
-        self.strictly_verify_identity(email)
-
-        verify_identity_screen = self.main_widget.VERIFICATION_SCREEN
+        verify_identity_screen = self.setup_to_sell_or_buy(name, email, password, wallet_name, wallet_password)
 
         verify_identity_screen.kwargs_passed["on_buy_screen_clicked"]()
 
@@ -584,15 +540,15 @@ class DenariiE2ETests(unittest.TestCase):
 
         buy_denarii_screen.on_submit_clicked()
 
-        self.assertNotRegex(buy_denarii_screen.status_msg.text, "Failed *")
+        # We dont check the status text box here because we don't set anything in it so on success it will be None
+        # instead wait and then check the queued buys
 
         time.sleep(6)
 
         self.assertEqual(len(buy_denarii_screen.queued_buys), 1)
 
-
-    def cancel_buy_denarii(self, name, email, password):
-        self.buy_denarii(name, email, password)
+    def cancel_buy_denarii(self, name, email, password, wallet_name, wallet_password):
+        self.buy_denarii(name, email, password, wallet_name, wallet_password)
 
         buy_denarii_screen = self.main_widget.BUY_DENARII
 
@@ -600,22 +556,22 @@ class DenariiE2ETests(unittest.TestCase):
 
         buy_denarii_screen.on_cancel_buy_clicked(ask_id)
 
-        self.assertNotRegex(buy_denarii_screen.status_msg.text, "Failed *")
+        # We dont check the status text box here because we don't set anything in it so on success it will be None
+        # instead wait and then check the queued buys
 
         time.sleep(6)
 
         self.assertEqual(len(buy_denarii_screen.queued_buys), 0)
 
-
-    def cancel_buy(self, name, email, password, other_name, other_email, other_password):
-        self.sell_denarii(other_name, other_email, other_password)
+    def cancel_buy(self, name, email, password, wallet_name, wallet_password, other_name, other_email, other_password, other_wallet_name, other_wallet_password):
+        self.sell_denarii(other_name, other_email, other_password, other_wallet_name, other_wallet_password)
 
         self.logout()
 
-        self.cancel_buy_denarii(name, email, password)
+        self.cancel_buy_denarii(name, email, password, wallet_name, wallet_password)
 
-    def create_support_ticket(self, name, email, password):
-        self.create_wallet(REMOTE_WALLET, name, email, password)
+    def create_support_ticket(self, name, email, password, wallet_name, wallet_password):
+        self.create_wallet(REMOTE_WALLET, name, email, password, wallet_name, wallet_password)
 
         wallet_screen = self.main_widget.REMOTE_WALLET_SCREEN
 
@@ -627,13 +583,15 @@ class DenariiE2ETests(unittest.TestCase):
 
         user_settings_screen.kwargs_passed["on_support_ticket_screen_clicked"]()
 
-        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.SUPPORT_TICKET_SCREEN.screen_name)
+        self.assertEqual(self.main_widget.current_widget.screen_name,
+                         self.main_widget.SUPPORT_TICKET_SCREEN.screen_name)
 
         support_ticket_screen = self.main_widget.SUPPORT_TICKET_SCREEN
 
         support_ticket_screen.kwargs_passed["on_support_ticket_creation_screen_clicked"]()
 
-        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.SUPPORT_TICKET_CREATION_SCREEN.screen_name)
+        self.assertEqual(self.main_widget.current_widget.screen_name,
+                         self.main_widget.SUPPORT_TICKET_CREATION_SCREEN.screen_name)
 
         support_ticket_creation_screen = self.main_widget.SUPPORT_TICKET_CREATION_SCREEN
 
@@ -647,11 +605,11 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.assertEqual(support_ticket_creation_screen.status_msg.text, "Created support ticket")
 
-        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.SUPPORT_TICKET_DETAILS_SCREEN.screen_name)
+        self.assertEqual(self.main_widget.current_widget.screen_name,
+                         self.main_widget.SUPPORT_TICKET_DETAILS_SCREEN.screen_name)
 
-    
     def comment_on_support_ticket(self):
-        
+
         support_ticket_details_screen = self.main_widget.SUPPORT_TICKET_DETAILS_SCREEN
 
         comment_line_edit = support_ticket_details_screen.new_comment_plain_text_edit
@@ -665,17 +623,18 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.assertEqual(len(support_ticket_details_screen.comment_section.comments), 1)
 
-
     def resolve_support_ticket(self):
         support_ticket_details_screen = self.main_widget.SUPPORT_TICKET_DETAILS_SCREEN
 
         support_ticket_details_screen.on_resolve_clicked()
 
-        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.SUPPORT_TICKET_SCREEN.screen_name)
+        self.assertEqual(support_ticket_details_screen.status_msg.text, "Resolved ticket successfully")
 
+        self.assertEqual(self.main_widget.current_widget.screen_name,
+                         self.main_widget.SUPPORT_TICKET_SCREEN.screen_name)
 
-    def comment_on_resolve_support_ticket(self, name, email, password):
-        self.create_support_ticket(name, email, password)
+    def comment_on_resolve_support_ticket(self, name, email, password, wallet_name, wallet_password):
+        self.create_support_ticket(name, email, password, wallet_name, wallet_password)
 
         self.comment_on_support_ticket()
 
@@ -686,17 +645,18 @@ class DenariiE2ETests(unittest.TestCase):
 
         support_ticket_details_screen.on_delete_clicked()
 
-        self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.SUPPORT_TICKET_SCREEN.screen_name)
+        self.assertEqual(self.main_widget.current_widget.screen_name,
+                         self.main_widget.SUPPORT_TICKET_SCREEN.screen_name)
 
-    def comment_on_delete_support_ticket(self, name, email, password):
-        self.create_support_ticket(name, email, password)
+    def comment_on_delete_support_ticket(self, name, email, password, wallet_name, wallet_password):
+        self.create_support_ticket(name, email, password, wallet_name, wallet_password)
 
         self.comment_on_support_ticket()
 
         self.delete_support_ticket()
 
-    def delete_account(self, name, email, password):
-        self.create_wallet(REMOTE_WALLET, name, email, password)
+    def delete_account(self, name, email, password, wallet_name, wallet_password):
+        self.create_wallet(REMOTE_WALLET, name, email, password, wallet_name, wallet_password)
 
         wallet_screen = self.main_widget.REMOTE_WALLET_SCREEN
 
@@ -712,14 +672,13 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.LOGIN_OR_REGISTER.screen_name)
 
-
-########################## TESTS ##########################
+    ########################## TESTS ##########################
 
     def test_reset_password_local_wallet(self):
         self.reset_password(self.name, self.email, self.password, self.new_password)
 
         # We are left on wallet info screen so we need to make a wallet then logout 
-        self.strictly_create_wallet(LOCAL_WALLET)
+        self.strictly_create_wallet(LOCAL_WALLET, self.wallet_name, self.wallet_password)
 
         self.logout()
 
@@ -727,73 +686,74 @@ class DenariiE2ETests(unittest.TestCase):
         self.reset_password(self.name, self.email, self.password, self.new_password)
 
         # We are left on wallet info screen so we need to make a wallet then logout 
-        self.strictly_create_wallet(REMOTE_WALLET)
+        self.strictly_create_wallet(REMOTE_WALLET, self.wallet_name, self.wallet_password)
 
         self.logout()
 
     def test_create_wallet_local_wallet(self):
-        self.create_wallet(LOCAL_WALLET, self.name, self.email, self.password)
+        self.create_wallet(LOCAL_WALLET, self.name, self.email, self.password, self.wallet_name, self.wallet_password)
 
         self.logout()
-    
+
     def test_restore_wallet_local_wallet(self):
-        self.restore_wallet(LOCAL_WALLET, self.name, self.email, self.password)
+        self.restore_wallet(LOCAL_WALLET, self.name, self.email, self.password, self.wallet_name, self.wallet_password)
 
         self.logout()
 
     def test_open_wallet_local_wallet(self):
-        self.open_wallet(LOCAL_WALLET, self.name, self.email, self.password)
+        self.open_wallet(LOCAL_WALLET, self.name, self.email, self.password, self.wallet_name, self.wallet_password)
 
         self.logout()
 
     def test_create_wallet_remote_wallet(self):
-        self.create_wallet(REMOTE_WALLET, self.name, self.email, self.password)
+        self.create_wallet(REMOTE_WALLET, self.name, self.email, self.password, self.wallet_name, self.wallet_password)
 
         self.logout()
-    
+
     def test_restore_wallet_remote_wallet(self):
-        self.restore_wallet(REMOTE_WALLET, self.name, self.email, self.password)
+        self.restore_wallet(REMOTE_WALLET, self.name, self.email, self.password, self.wallet_name, self.wallet_password)
 
         self.logout()
 
     def test_open_wallet_remote_wallet(self):
-        self.open_wallet(REMOTE_WALLET, self.name, self.email, self.password)
+        self.open_wallet(REMOTE_WALLET, self.name, self.email, self.password, self.wallet_name, self.wallet_password)
 
         self.logout()
 
     def test_send_denarii_local_wallet(self):
-        self.send_denarii(LOCAL_WALLET, self.name, self.email, self.password, self.other_name, self.other_email, self.other_password)
+        self.send_denarii(LOCAL_WALLET, self.name, self.email, self.password, self.wallet_name, self.wallet_password, self.other_name, self.other_email,
+                          self.other_password, self.other_wallet_name, self.other_wallet_password)
 
         self.logout()
 
     def test_send_denarii_remote_wallet(self):
-        self.send_denarii(REMOTE_WALLET, self.name, self.email, self.password, self.other_name, self.other_email, self.other_password)
+        self.send_denarii(REMOTE_WALLET, self.name, self.email, self.password, self.wallet_name, self.wallet_password, self.other_name, self.other_email,
+                          self.other_password, self.other_wallet_name, self.other_wallet_password)
 
         self.logout()
 
     def test_mine_denarii_local_wallet(self):
-        self.mine_denarii(self.name, self.email, self.password)
+        self.mine_denarii(self.name, self.email, self.password, self.wallet_name, self.wallet_password)
 
         self.logout()
 
     def test_cancel_buy_remote_wallet(self):
-        self.cancel_buy(self.name, self.email, self.password, self.other_name, self.other_email, self.other_password)
+        self.cancel_buy(self.name, self.email, self.password, self.wallet_name, self.wallet_password, self.other_name, self.other_email, self.other_password, self.other_wallet_name, self.other_wallet_password)
 
         self.logout()
 
     def test_create_support_ticket_then_comment_on_it_then_resolve_it_remote_wallet(self):
-        self.comment_on_resolve_support_ticket(self.name, self.email, self.password)
+        self.comment_on_resolve_support_ticket(self.name, self.email, self.password, self.wallet_name, self.wallet_password)
 
         self.logout()
 
     def test_create_support_ticket_then_comment_on_it_then_delete_it_remote_wallet(self):
-        self.comment_on_delete_support_ticket(self.name, self.email, self.password)
+        self.comment_on_delete_support_ticket(self.name, self.email, self.password, self.wallet_name, self.wallet_password)
 
         self.logout()
 
-
     def test_delete_account_remote_wallet(self):
-        self.delete_account(self.name, self.email, self.password)
+        self.delete_account(self.name, self.email, self.password, self.wallet_name, self.wallet_password)
 
 
 if __name__ == "__main__":

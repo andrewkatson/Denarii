@@ -251,12 +251,11 @@ class SetWalletScreen(Screen):
 
         self.set_wallet_type_callback(self.which_wallet)
 
-    def display_seed(self, prefix, seed): 
-
+    def display_seed(self, prefix, seed):
         split = seed.split()
         thirds = int(len(split) / 3)
         first = " ".join(split[:thirds])
         second = " ".join(split[thirds : thirds * 2])
-        third = "".join(split[thirds * 2 :])
+        third = " ".join(split[thirds * 2 :])
 
         self.set_wallet_text_box.setText(f"{prefix}{first}\n{second}\n{third}")

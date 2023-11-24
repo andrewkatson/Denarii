@@ -4,10 +4,8 @@
 
 import pickle as pkl
 import psutil
-import os
 import subprocess
-import sys
-import threading
+import traceback
 import time
 
 import workspace_path_finder
@@ -1021,4 +1019,5 @@ try:
 
 except Exception as e:
     print(e)
+    traceback.print_exc()
     time.sleep(10)

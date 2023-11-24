@@ -32,8 +32,6 @@ else:
     from radio_button import *
 
 
-
-
 class LocalWalletScreen(WalletScreen):
     """
     A screen that lets the user interact with a purely local wallet. Aka one that allows mining, and creating
@@ -41,13 +39,13 @@ class LocalWalletScreen(WalletScreen):
     """
 
     def __init__(
-        self,
-        main_layout,
-        deletion_func,
-        denarii_client,
-        gui_user,
-        denarii_mobile_client,
-        **kwargs
+            self,
+            main_layout,
+            deletion_func,
+            denarii_client,
+            gui_user,
+            denarii_mobile_client,
+            **kwargs
     ):
 
         self.your_sub_address_label = None
@@ -55,7 +53,7 @@ class LocalWalletScreen(WalletScreen):
         self.create_sub_address_push_button = None
         self.start_mining_push_button = None
         self.stop_mining_push_button = None
-        self.user_settings_push_button = None 
+        self.user_settings_push_button = None
 
         self.on_user_settings_clicked = kwargs["on_user_settings_screen_clicked"]
 

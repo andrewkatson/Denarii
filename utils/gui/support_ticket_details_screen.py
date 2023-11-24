@@ -44,13 +44,13 @@ class SupportTicketDetailsScreen(Screen):
     """
 
     def __init__(
-        self,
-        main_layout,
-        deletion_func,
-        denarii_client,
-        gui_user,
-        denarii_mobile_client,
-        **kwargs
+            self,
+            main_layout,
+            deletion_func,
+            denarii_client,
+            gui_user,
+            denarii_mobile_client,
+            **kwargs
     ):
         self.support_ticket_details_label = None
         self.title_label = None
@@ -74,7 +74,7 @@ class SupportTicketDetailsScreen(Screen):
 
         self.on_support_ticket_screen_clicked = kwargs['on_support_ticket_screen_clicked']
 
-        self.support_ticket_id = self.get_current_support_ticket_id()
+        self.support_ticket_id = None
 
         # We need to explicitly set the gui_user since we use it in get_support_ticket*
         self.gui_user = gui_user
@@ -82,11 +82,10 @@ class SupportTicketDetailsScreen(Screen):
         # We need to explicitly set the denarii mobile client since we call it in get_support_ticket*
         self.denarii_mobile_client = denarii_mobile_client
 
-
         self.support_ticket_details = self.get_support_ticket_details()
 
         self.comment_details = self.get_support_ticket_comment_details()
-        
+
         self.comment_details_artifacts = []
 
         super().__init__(
@@ -152,6 +151,8 @@ class SupportTicketDetailsScreen(Screen):
             "QPushButton{font: 30pt Helvetica MS;} QPushButton::indicator { width: 30px; height: 30px;};"
         )
 
+        self.support_ticket_id = self.get_current_support_ticket_id()
+
         self.comment_section = CommentSection()
 
         self.populate_comment_section()
@@ -208,6 +209,7 @@ class SupportTicketDetailsScreen(Screen):
         self.eight_horizontal_layout.addWidget(
             self.support_ticket_push_button, alignment=AlignCenter
         )
+
     def teardown(self):
         super().teardown()
 
@@ -254,6 +256,7 @@ class SupportTicketDetailsScreen(Screen):
 
             if success:
                 self.status_message_box("Resolved ticket successfully")
+                self.on_support_ticket_screen_clicked()
             else:
                 self.status_message_box("Failed to resolve the ticket")
 
@@ -294,12 +297,12 @@ class SupportTicketDetailsScreen(Screen):
         return []
 
     def populate_comment_section(self):
-        
+
         self.depopulate_comment_section()
         for comment in self.comment_details:
             self.comment_section.addComment(
                 comment["author"], comment["content"], comment["updated_time_body"]
             )
-            
+
     def depopulate_comment_section(self):
         self.comment_section.clearComments()

@@ -46,6 +46,7 @@ def load_wallet(wallet_path):
 
     return wallet
 
+
 def delete_wallet(wallet):
     if TESTING:
         print(f"Not deleting {wallet.name} file since this is a test")
@@ -115,16 +116,26 @@ class DenariiClient:
         self.opened_wallet = None
         self.mining_thread = None
 
-    def get_address_for_name(self, name): 
-        for username, wallet in self.wallets.items(): 
+    def get_address_for_name(self, name):
+        for username, wallet in self.wallets.items():
             if username == name:
                 return wallet.address
         return ""
 
+    def get_wallet_with_address(self, address):
+
+        for _, wallet in self.wallets.items():
+            if type(address) == bytes and wallet.address == address.decode("utf-8"):
+                return wallet
+            elif type(address) == str and wallet.address == address:
+                return wallet
+            elif str(address) == wallet.address:
+                return wallet
+        raise ValueError(f"No wallet with that  {address}")
+
     def create_wallet(self, wallet):
         if wallet.name in self.wallets:
             return False
-
 
         seed = generate_phrase(4)
         self.wallets[wallet.name] = TestingWallet(
@@ -160,11 +171,14 @@ class DenariiClient:
         return True
 
     def transfer_money(self, amount, sender, receiver):
-        if sender.name in self.wallets:
+        receiver_wallet = self.get_wallet_with_address(receiver.address)
+        if sender.name in self.wallets and receiver_wallet is not None:
             existing_wallet = self.wallets.get(sender.name)
-            if existing_wallet.balance >= amount:
-                existing_wallet.balance -= amount
+            if existing_wallet.balance >= float(amount):
+                existing_wallet.balance -= float(amount)
+                receiver_wallet.balance += float(amount)
                 store_wallet(existing_wallet)
+                store_wallet(receiver_wallet)
                 return True
             return False
         return False
@@ -226,7 +240,7 @@ class DenariiClient:
 
             store_wallet(self.opened_wallet)
 
-    def logout(self): 
+    def logout(self):
         """
         Just used by the testing application to log the user out.
         @return True

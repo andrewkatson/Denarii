@@ -36,13 +36,13 @@ class LoginScreen(Screen):
     """
 
     def __init__(
-        self,
-        main_layout,
-        deletion_func,
-        denarii_client,
-        gui_user,
-        denarii_mobile_client,
-        **kwargs
+            self,
+            main_layout,
+            deletion_func,
+            denarii_client,
+            gui_user,
+            denarii_mobile_client,
+            **kwargs
     ):
 
         self.user_info_label = None
@@ -132,32 +132,25 @@ class LoginScreen(Screen):
         """
         Store the user's input information in the user proto
         """
-        if (
-            self.password_line_edit.text() != ""
-            and self.password_line_edit.text() != self.gui_user.password
-        ):
-           self.status_message_box("Failure: passwords did not match")
-        else:
-            success = False
-            try: 
-                success, res  = self.denarii_mobile_client.get_user_id(self.gui_user.name, self.gui_user.email, self.gui_user.password)
-                if success:
-                    self.gui_user.user_id = res[0]['user_id']
-                else:
-                    self.status_message_box("Failed: could not login user")
-                    self.next_button.setVisible(False)
-            except Exception as create_remote_wallet_e:
-                print(create_remote_wallet_e)
-                self.status_message_box("Failed: unknown error")
-                self.next_button.setVisible(False)
+        success = False
+        try:
+            success, res = self.denarii_mobile_client.get_user_id(self.name_line_edit.text(), self.email_line_edit.text(),
+                                                                  self.password_line_edit.text())
             if success:
-                self.status_message_box("Success")
-                self.gui_user.name = self.name_line_edit.text()
-                self.gui_user.email = self.email_line_edit.text()
-                self.gui_user.password = self.password_line_edit.text()
-                self.next_button.setVisible(True)
-
+                self.gui_user.user_id = res[0]['user_id']
+            else:
+                self.status_message_box("Failed: could not login user")
+                self.next_button.setVisible(False)
+        except Exception as create_remote_wallet_e:
+            print(create_remote_wallet_e)
+            self.status_message_box("Failed: unknown error")
+            self.next_button.setVisible(False)
+        if success:
+            self.status_message_box("Success")
+            self.gui_user.name = self.name_line_edit.text()
+            self.gui_user.email = self.email_line_edit.text()
+            self.gui_user.password = self.password_line_edit.text()
+            self.next_button.setVisible(True)
 
     def on_submit_clicked(self):
         self.store_user_info()
-

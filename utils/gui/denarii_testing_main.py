@@ -43,9 +43,11 @@ from wallet_info_screen import WalletInfoScreen
 
 gui_user = GuiUser()
 
+
 class TestingMain(Widget):
 
     def __init__(self):
+        super().__init__()
         self.denarii_client = DenariiClient()
         self.denarii_mobile_client = DenariiMobileClient()
 
@@ -92,12 +94,13 @@ class TestingMain(Widget):
             "on_user_settings_screen_clicked": self.on_user_settings_screen_pushed,
             "on_support_ticket_screen_clicked": self.on_support_ticket_screen_pushed,
             "on_support_ticket_creation_screen_clicked": self.on_support_ticket_creation_screen_pushed,
-            "on_support_ticket_details_screen_clicked": lambda support_ticket_id: self.on_support_ticket_details_screen_pushed(
+            "on_support_ticket_details_screen_clicked": lambda
+                support_ticket_id: self.on_support_ticket_details_screen_pushed(
                 support_ticket_id
             ),
             "get_current_support_ticket_id": self.get_current_support_ticket_id,
             "on_login_or_register_screen_clicked": self.on_login_or_register_screen_pushed,
-            "on_forgot_password_clicked": self.on_forgot_password_pushed, 
+            "on_forgot_password_clicked": self.on_forgot_password_pushed,
             "on_local_wallet_screen_clicked": self.on_local_wallet_screen_pushed,
         }
 
@@ -352,7 +355,8 @@ class TestingMain(Widget):
             gui_user=gui_user,
             on_user_settings_screen_clicked=self.on_user_settings_screen_pushed,
             on_support_ticket_creation_screen_clicked=self.on_support_ticket_creation_screen_pushed,
-            on_support_ticket_details_screen_clicked=lambda support_ticket_id: self.on_support_ticket_details_screen_pushed(
+            on_support_ticket_details_screen_clicked=lambda
+                support_ticket_id: self.on_support_ticket_details_screen_pushed(
                 support_ticket_id
             ),
         )
@@ -367,7 +371,8 @@ class TestingMain(Widget):
             local_wallet=self.local_wallet,
             gui_user=gui_user,
             on_support_ticket_screen_clicked=self.on_support_ticket_screen_pushed,
-            on_support_ticket_details_screen_clicked=lambda support_ticket_id: self.on_support_ticket_details_screen_pushed(
+            on_support_ticket_details_screen_clicked=lambda
+                support_ticket_id: self.on_support_ticket_details_screen_pushed(
                 support_ticket_id
             ),
         )
@@ -390,13 +395,13 @@ class TestingMain(Widget):
         self.current_widget = self.LANG_SELECT
         # Determine what scene we are on based on what info the stored user has
         if (gui_user.language is None or gui_user.language == "") and (
-            gui_user.name is None or gui_user.name == ""
+                gui_user.name is None or gui_user.name == ""
         ):
             self.current_widget = self.LANG_SELECT
         elif (
-            gui_user.language is not None
-            and gui_user.language != ""
-            and (gui_user.name is None or gui_user.name == "")
+                gui_user.language is not None
+                and gui_user.language != ""
+                and (gui_user.name is None or gui_user.name == "")
         ):
             self.current_widget = self.LOGIN_OR_REGISTER
 
@@ -571,7 +576,6 @@ class TestingMain(Widget):
         Navigate to the local wallet screen
         """
         self.go_to_this_widget(self.LOCAL_WALLET_SCREEN)
- 
 
     def get_current_support_ticket_id(self):
         return self.current_support_ticket
@@ -579,9 +583,6 @@ class TestingMain(Widget):
     def setup_current_widget(self):
         if self.get_last_widget() is not None:
             self.get_last_widget().teardown()
-
-        if self.get_last_widget() is not None and self.current_widget is not None: 
-            assert self.get_last_widget().screen_name != self.current_widget.screen_name
 
         if self.current_widget is not None:
             self.current_widget.init(**self.kwargs)

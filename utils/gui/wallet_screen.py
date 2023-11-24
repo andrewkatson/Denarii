@@ -34,7 +34,6 @@ else:
     from radio_button import *
 
 
-
 class WalletScreen(Screen):
     """
     A class that allows a user to interact with the common features of a wallet e.g. checking balance and transferring
@@ -45,13 +44,13 @@ class WalletScreen(Screen):
     local_wallet_suffix = "LOCAL_WALLET_SUFFIX"
 
     def __init__(
-        self,
-        main_layout,
-        deletion_func,
-        denarii_client,
-        gui_user,
-        denarii_mobile_client,
-        **kwargs
+            self,
+            main_layout,
+            deletion_func,
+            denarii_client,
+            gui_user,
+            denarii_mobile_client,
+            **kwargs
     ):
         self.wallet_header_label = None
         self.your_address_label = None
@@ -76,7 +75,6 @@ class WalletScreen(Screen):
             denarii_mobile_client=denarii_mobile_client,
             **kwargs
         )
-
 
     def init(self, **kwargs):
         super().init(**kwargs)
@@ -109,7 +107,7 @@ class WalletScreen(Screen):
 
         self.address_text_box = Label("")
         font = Font()
-        font.setFamily("Arial")        
+        font.setFamily("Arial")
         font.setPixelSize(50)
         self.address_text_box.setFont(font)
         self.address_text_box.setTextInteractionFlags(TextSelectableByMouse)
@@ -128,7 +126,7 @@ class WalletScreen(Screen):
         super().setup()
 
         self.deletion_func(self.main_layout)
-        
+
         self.balance_refresh_thread.start()
 
     def teardown(self):
@@ -152,12 +150,20 @@ class WalletScreen(Screen):
         other_wallet.address = bytes(self.address_line_edit.text(), "utf-8")
 
         try:
-            success = self.denarii_client.transfer_money(
-                int(self.amount_line_edit.text()), self.wallet, other_wallet
-            )
-            print_status("Transfer money ", success)
+            success = False
+            if self.remote_wallet_suffix in self.screen_name:
+                success = self.denarii_mobile_client.send_denarii(self.gui_user.user_id, self.wallet.name,
+                                                                       self.address_line_edit.text(),
+                                                                       self.amount_line_edit.text())
+            elif self.local_wallet_suffix in self.screen_name:
+                success = self.denarii_client.transfer_money(
+                    int(self.amount_line_edit.text()), self.wallet, other_wallet
+                )
+            else:
+                raise ValueError("No known wallet screen type being used")
         except Exception as e:
             print(e)
+            traceback.print_exc()
 
         if success:
             self.status_message_box("Success transferring money")
@@ -177,16 +183,17 @@ class WalletScreen(Screen):
                     self.balance = 0
 
                     if self.gui_user.user_id is None:
-                        success, res = self.denarii_mobile_client.get_user_id(self.gui_user.name, self.gui_user.email, self.gui_user.password)
-                        if success: 
+                        success, res = self.denarii_mobile_client.get_user_id(self.gui_user.name, self.gui_user.email,
+                                                                              self.gui_user.password)
+                        if success:
                             self.gui_user.user_id = res[0]['user_id']
-                            success, res= self.try_to_get_balance_of_remote_wallet()
-                            if success: 
+                            success, res = self.try_to_get_balance_of_remote_wallet()
+                            if success:
                                 self.balance = res[0]['balance']
-                    else: 
+                    else:
                         success, res = self.try_to_get_balance_of_remote_wallet()
 
-                        if success: 
+                        if success:
                             self.balance = res[0]['balance']
 
                 else:
@@ -208,4 +215,3 @@ class WalletScreen(Screen):
 
     def try_to_get_balance_of_remote_wallet(self):
         return self.denarii_mobile_client.get_balance(self.gui_user.user_id, self.wallet.name)
-
