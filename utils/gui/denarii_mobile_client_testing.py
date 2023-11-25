@@ -162,6 +162,7 @@ def try_to_buy_denarii(
     asks.sort(key=lambda x: x.asking_price)
 
     current_bought_amount = 0
+    amount_to_buy_left = to_buy_amount
     current_ask_price = bid_price
     asks_met = []
     for ask in asks:
@@ -178,16 +179,17 @@ def try_to_buy_denarii(
 
         ask.in_escrow = True
 
-        if current_bought_amount > to_buy_amount:
-            ask.amount_bought = to_buy_amount
+        if ask.amount > amount_to_buy_left:
+            ask.amount_bought = amount_to_buy_left
         else:
             ask.amount_bought = ask.amount
 
         current_bought_amount += ask.amount_bought
+        amount_to_buy_left -= ask.amount_bought
 
         asks_met.append(ask)
 
-        if current_bought_amount > to_buy_amount:
+        if current_bought_amount >= to_buy_amount:
             return True, None, asks_met
 
     return False, "Reached end of asks so not enough was bought", asks_met
