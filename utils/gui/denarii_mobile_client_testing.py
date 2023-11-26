@@ -287,6 +287,7 @@ class SupportTicketComment:
         self.content = content
         self.creation_time = datetime.datetime.now()
         self.updated_time = datetime.datetime.now()
+        self.comment_id = str(random.uniform(1, 100))
 
 
 class DenariiMobileClient:
@@ -294,6 +295,23 @@ class DenariiMobileClient:
         self.things = load_all_things()
 
         self.user = None
+
+    def has_remaining_asks(self, user_id):
+
+        for _, user in self.get_users().items():
+            if user.user_id == user_id:
+                for ask in user.asks:
+                    if ask.is_settled or ask.in_escrow:
+                        return True
+        return False
+
+    def has_remaining_buys(self, user_id):
+        for _, user in self.get_users().items():
+            if user.user_id != user_id:
+                for ask in user.asks:
+                    if ask.buyer.user_id == user_id:
+                        return True
+        return False
 
     def get_users(self):
         return self.things.get("user", {})
@@ -782,6 +800,9 @@ class DenariiMobileClient:
         if user is None:
             return False, []
 
+        if self.has_remaining_asks(user_id) or self.has_remaining_buys(user_id):
+            return False, []
+
         users = self.get_users()
 
         final_users = {}
@@ -987,6 +1008,7 @@ class DenariiMobileClient:
             {
                 "support_ticket_id": support_ticket_id,
                 "updated_time_body": comment.updated_time.isoformat(),
+                "comment_id": comment.comment_id
             }
         ]
 
@@ -1112,7 +1134,7 @@ class DenariiMobileClient:
 
         filtered_support_tickets = []
 
-        for ticket in filtered_support_tickets:
+        for ticket in user.support_tickets:
             if ticket.support_ticket_id == support_ticket_id:
                 filtered_support_tickets.append(
                     {
