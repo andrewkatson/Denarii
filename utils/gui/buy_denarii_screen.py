@@ -488,6 +488,8 @@ class BuyDenariiScreen(Screen):
                                     "Failed one of the denarii transfers. Will refund money and transfer denarii back to seller."
                                 )
                                 self.reverse_transactions(succeeded_asks)
+                            else:
+                                self.status_message_box("Successfully bought denarii")
                         else:
                             ask_ids_to_cancel = []
                             for ask in second_res:
