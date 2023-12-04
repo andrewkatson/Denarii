@@ -432,7 +432,8 @@ class BuyDenariiScreen(Screen):
 
     def on_submit_clicked(self):
         """
-        Attempt to buy some denarii asks and set them in queued_buys. Then get money from the buyer (i.e. schedule it to be transferred). Then have the denarii be transferred over.
+        Attempt to buy some denarii asks and set them in queued_buys. Then get money from the buyer (i.e. schedule it
+        to be transferred). Then have the denarii be transferred over.
         """
 
         try:
