@@ -7,40 +7,30 @@ from stoppable_thread import StoppableThread
 if TESTING:
     from denarii_testing_button_group import ButtonGroup
     from denarii_testing_font import Font
-    from denarii_testing_icon import Icon
     from denarii_testing_label import Label
     from denarii_testing_line_edit import LineEdit
     from denarii_testing_message_box import MessageBox
-    from denarii_testing_pixmap import Pixmap
     from denarii_testing_push_button import PushButton
     from denarii_testing_qt import (
-        TextSelectableByMouse,
-        AlignRight,
         AlignBottom,
         AlignCenter,
         AlignLeft,
     )
     from denarii_testing_radio_button import RadioButton
-    from denarii_testing_size import Size
 
 else:
     from button_group import ButtonGroup
     from font import *
-    from icon import Icon
     from label import *
     from line_edit import *
     from message_box import MessageBox
-    from pixmap import Pixmap
     from push_button import *
     from qt import (
-        TextSelectableByMouse,
-        AlignRight,
         AlignBottom,
         AlignCenter,
         AlignLeft,
     )
     from radio_button import *
-    from size import Size
 
 
 class BuyDenariiScreen(Screen):
@@ -495,7 +485,7 @@ class BuyDenariiScreen(Screen):
                                     break
                             if any_ask_failed:
                                 self.status_message_box(
-                                    "Failed one of the denarii transfers. Will refund money and transfer denarii back ""to seller."
+                                    "Failed one of the denarii transfers. Will refund money and transfer denarii back to seller."
                                 )
                                 self.reverse_transactions(succeeded_asks)
                         else:
