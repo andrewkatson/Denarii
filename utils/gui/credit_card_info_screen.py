@@ -7,13 +7,10 @@ if TESTING:
     from denarii_testing_message_box import MessageBox
     from denarii_testing_push_button import PushButton
     from denarii_testing_qt import (
-        TextSelectableByMouse,
-        AlignRight,
         AlignBottom,
         AlignCenter,
         AlignLeft,
     )
-    from denarii_testing_radio_button import RadioButton
 else:
     from font import *
     from label import *
@@ -21,8 +18,6 @@ else:
     from message_box import MessageBox
     from push_button import *
     from qt import (
-        TextSelectableByMouse,
-        AlignRight,
         AlignBottom,
         AlignCenter,
         AlignLeft,
@@ -36,13 +31,13 @@ class CreditCardInfoScreen(Screen):
     """
 
     def __init__(
-        self,
-        main_layout,
-        deletion_func,
-        denarii_client,
-        gui_user,
-        denarii_mobile_client,
-        **kwargs
+            self,
+            main_layout,
+            deletion_func,
+            denarii_client,
+            gui_user,
+            denarii_mobile_client,
+            **kwargs
     ):
         self.remote_wallet_screen_push_button = None
         self.sell_screen_push_button = None
@@ -200,7 +195,7 @@ class CreditCardInfoScreen(Screen):
             self.refresh_screen()
         except Exception as e:
             print(e)
-            self.status_message_box("Failed: unknwon error")
+            self.status_message_box("Failed: unknown error")
 
     def on_clear_info_clicked(self):
         try:
@@ -218,7 +213,7 @@ class CreditCardInfoScreen(Screen):
             self.refresh_screen()
         except Exception as e:
             print(e)
-            self.status_message_box("Failed: unknwon error")
+            self.status_message_box("Failed: unknown error")
 
     def check_credit_card_info(self):
         try:
@@ -231,7 +226,7 @@ class CreditCardInfoScreen(Screen):
                 return False
         except Exception as e:
             print(e)
-            self.status_message_box("Failed: unknwon error")
+            self.status_message_box("Failed: unknown error")
 
     def refresh_screen(self):
         self.deletion_func(self.main_layout)
@@ -282,7 +277,6 @@ class CreditCardInfoScreen(Screen):
             self.fourth_horizontal_layout.addWidget(
                 self.clear_info_push_button, alignment=AlignCenter
             )
-
 
         self.fifth_horizontal_layout.addWidget(
             self.back_button, alignment=(AlignLeft | AlignBottom)
