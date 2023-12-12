@@ -211,7 +211,7 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.logout()
 
-        self.login_with_denarii(name, email, password)
+        self.strictly_login_with_denarii(name, email, password)
 
         wallet_decision_screen = self.main_widget.WALLET_INFO
 
@@ -297,7 +297,7 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.logout()
 
-        self.login_with_denarii(name, email, password)
+        self.strictly_login_with_denarii(name, email, password)
 
         self.strictly_open_wallet(wallet_type, wallet_name, wallet_password)
 
@@ -363,8 +363,10 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.strictly_login_with_denarii(name, email, new_password)
 
-    def send_denarii(self, wallet_type, name, email, password, wallet_name, wallet_password, other_name, other_email, other_password, other_wallet_name, other_wallet_password):
-        self.create_wallet(wallet_type, other_name, other_email, other_password, other_wallet_name, other_wallet_password)
+    def send_denarii(self, wallet_type, name, email, password, wallet_name, wallet_password, other_name, other_email,
+                     other_password, other_wallet_name, other_wallet_password):
+        self.create_wallet(wallet_type, other_name, other_email, other_password, other_wallet_name,
+                           other_wallet_password)
 
         self.logout()
 
@@ -563,7 +565,8 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.assertEqual(len(buy_denarii_screen.queued_buys), 0)
 
-    def cancel_buy(self, name, email, password, wallet_name, wallet_password, other_name, other_email, other_password, other_wallet_name, other_wallet_password):
+    def cancel_buy(self, name, email, password, wallet_name, wallet_password, other_name, other_email, other_password,
+                   other_wallet_name, other_wallet_password):
         self.sell_denarii(other_name, other_email, other_password, other_wallet_name, other_wallet_password)
 
         self.logout()
@@ -721,13 +724,15 @@ class DenariiE2ETests(unittest.TestCase):
         self.logout()
 
     def test_send_denarii_local_wallet(self):
-        self.send_denarii(LOCAL_WALLET, self.name, self.email, self.password, self.wallet_name, self.wallet_password, self.other_name, self.other_email,
+        self.send_denarii(LOCAL_WALLET, self.name, self.email, self.password, self.wallet_name, self.wallet_password,
+                          self.other_name, self.other_email,
                           self.other_password, self.other_wallet_name, self.other_wallet_password)
 
         self.logout()
 
     def test_send_denarii_remote_wallet(self):
-        self.send_denarii(REMOTE_WALLET, self.name, self.email, self.password, self.wallet_name, self.wallet_password, self.other_name, self.other_email,
+        self.send_denarii(REMOTE_WALLET, self.name, self.email, self.password, self.wallet_name, self.wallet_password,
+                          self.other_name, self.other_email,
                           self.other_password, self.other_wallet_name, self.other_wallet_password)
 
         self.logout()
@@ -738,17 +743,20 @@ class DenariiE2ETests(unittest.TestCase):
         self.logout()
 
     def test_cancel_buy_remote_wallet(self):
-        self.cancel_buy(self.name, self.email, self.password, self.wallet_name, self.wallet_password, self.other_name, self.other_email, self.other_password, self.other_wallet_name, self.other_wallet_password)
+        self.cancel_buy(self.name, self.email, self.password, self.wallet_name, self.wallet_password, self.other_name,
+                        self.other_email, self.other_password, self.other_wallet_name, self.other_wallet_password)
 
         self.logout()
 
     def test_create_support_ticket_then_comment_on_it_then_resolve_it_remote_wallet(self):
-        self.comment_on_resolve_support_ticket(self.name, self.email, self.password, self.wallet_name, self.wallet_password)
+        self.comment_on_resolve_support_ticket(self.name, self.email, self.password, self.wallet_name,
+                                               self.wallet_password)
 
         self.logout()
 
     def test_create_support_ticket_then_comment_on_it_then_delete_it_remote_wallet(self):
-        self.comment_on_delete_support_ticket(self.name, self.email, self.password, self.wallet_name, self.wallet_password)
+        self.comment_on_delete_support_ticket(self.name, self.email, self.password, self.wallet_name,
+                                              self.wallet_password)
 
         self.logout()
 
