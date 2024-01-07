@@ -186,6 +186,9 @@ class DenariiIntegrationTests(unittest.TestCase):
         password_line_edit = create_wallet_screen.password_line_edit
         password_line_edit.typeText(self.wallet_password)
 
+        confirm_password_line_edit = create_wallet_screen.confirm_password_line_edit
+        confirm_password_line_edit.typeText(self.wallet_password)
+
         if wallet_type == LOCAL_WALLET: 
             create_wallet_screen.local_wallet_radio_button.on_wallet_type_clicked()
         elif wallet_type == REMOTE_WALLET:

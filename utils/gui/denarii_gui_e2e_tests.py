@@ -176,6 +176,9 @@ class DenariiE2ETests(unittest.TestCase):
         password_line_edit = create_wallet_screen.password_line_edit
         password_line_edit.typeText(wallet_password)
 
+        confirm_password_line_edit = create_wallet_screen.confirm_password_line_edit
+        confirm_password_line_edit.typeText(wallet_password)
+
         if wallet_type == LOCAL_WALLET:
             create_wallet_screen.local_wallet_radio_button.on_wallet_type_clicked()
         elif wallet_type == REMOTE_WALLET:
@@ -210,6 +213,8 @@ class DenariiE2ETests(unittest.TestCase):
         seed = self.create_wallet(wallet_type, name, email, password, wallet_name, wallet_password)
 
         self.logout()
+
+        self.strictly_navigate_to_login()
 
         self.strictly_login_with_denarii(name, email, password)
 
@@ -296,6 +301,8 @@ class DenariiE2ETests(unittest.TestCase):
         _ = self.create_wallet(wallet_type, name, email, password, wallet_name, wallet_password)
 
         self.logout()
+
+        self.strictly_navigate_to_login()
 
         self.strictly_login_with_denarii(name, email, password)
 
@@ -658,10 +665,14 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.delete_support_ticket()
 
-    def delete_account(self, name, email, password, wallet_name, wallet_password):
-        self.create_wallet(REMOTE_WALLET, name, email, password, wallet_name, wallet_password)
+    def delete_account(self, wallet_type, name, email, password, wallet_name, wallet_password):
+        self.create_wallet(wallet_type, name, email, password, wallet_name, wallet_password)
 
-        wallet_screen = self.main_widget.REMOTE_WALLET_SCREEN
+        wallet_screen = None
+        if wallet_type == REMOTE_WALLET: 
+            wallet_screen = self.main_widget.REMOTE_WALLET_SCREEN
+        else: 
+            wallet_screen = self.main_widget.LOCAL_WALLET_SCREEN
 
         wallet_screen.kwargs_passed["on_user_settings_screen_clicked"]()
 
@@ -761,8 +772,10 @@ class DenariiE2ETests(unittest.TestCase):
         self.logout()
 
     def test_delete_account_remote_wallet(self):
-        self.delete_account(self.name, self.email, self.password, self.wallet_name, self.wallet_password)
-
+        self.delete_account(REMOTE_WALLET, self.name, self.email, self.password, self.wallet_name, self.wallet_password)
+    
+    def test_delete_account_local_wallet(self):
+        self.delete_account(LOCAL_WALLET, self.name, self.email, self.password, self.wallet_name, self.wallet_password)
 
 if __name__ == "__main__":
     # We need to remove all denarii specific test arguments for this to not fail.

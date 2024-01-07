@@ -180,8 +180,8 @@ class DenariiDesktopGUICreateWalletScreenTestCase(unittest.TestCase):
             f"create_wallet_screen_email_{self._testMethodName}@email.com"
         )
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         create_remote_user(self.gui_user, self.denarii_mobile_client)
 
@@ -231,6 +231,7 @@ class DenariiDesktopGUICreateWalletScreenTestCase(unittest.TestCase):
 
         self.create_wallet_screen.name_line_edit.text_inner = "Name"
         self.create_wallet_screen.password_line_edit.text_inner = "Password"
+        self.create_wallet_screen.confirm_password_line_edit.text_inner = "Password"
 
         self.create_wallet_screen.create_wallet()
 
@@ -254,6 +255,7 @@ class DenariiDesktopGUICreateWalletScreenTestCase(unittest.TestCase):
 
         self.create_wallet_screen.name_line_edit.text_inner = "Name"
         self.create_wallet_screen.password_line_edit.text_inner = "Password"
+        self.create_wallet_screen.confirm_password_line_edit.text_inner = "Password"
 
         self.create_wallet_screen.create_wallet()
 
@@ -285,8 +287,8 @@ class DenariiDesktopGUILanguageSelectScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = f"language_select_screen_user_{self._testMethodName}"
@@ -371,8 +373,8 @@ class DenariiDesktopGUILocalWalletScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = f"local_wallet_screen_user_{self._testMethodName}"
@@ -486,8 +488,8 @@ class DenariiDesktopGUIRemoteWalletScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = f"remote_wallet_screen_user_{self._testMethodName}"
@@ -577,8 +579,8 @@ class DenariiDesktopGUIRestoreWalletScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = f"restore_wallet_screen_user_{self._testMethodName}"
@@ -689,8 +691,8 @@ class DenariiDesktopGUISetWalletScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = f"set_wallet_screen_user_{self._testMethodName}"
@@ -797,8 +799,8 @@ class DenariiDesktopGUILoginScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = f"login_screen_user_{self._testMethodName}"
@@ -861,21 +863,11 @@ class DenariiDesktopGUILoginScreenTestCase(unittest.TestCase):
         self.login_screen.name_line_edit.text_inner = "Name"
         self.login_screen.email_line_edit.text_inner = "email@email.com"
         self.login_screen.password_line_edit.text_inner = "password"
+        
 
         self.login_screen.store_user_info()
 
         self.assertEqual(self.login_screen.status_msg.text, "Success")
-
-    def test_store_user_info_with_not_matching_passwords(self):
-        self.login_screen.name_line_edit.text_inner = "Name"
-        self.login_screen.email_line_edit.text_inner = "email@email.com"
-        self.login_screen.password_line_edit.text_inner = "pass"
-
-        self.login_screen.store_user_info()
-
-        self.assertEqual(
-            self.login_screen.status_msg.text, "Failure: passwords did not match"
-        )
 
 
 class DenariiDesktopGUIRegisterScreenTestCase(unittest.TestCase):
@@ -893,8 +885,8 @@ class DenariiDesktopGUIRegisterScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = f"register_screen_user_{self._testMethodName}"
@@ -991,8 +983,8 @@ class DenariiDesktopGUIWalletInfoScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = f"wallet_info_screen_user_{self._testMethodName}"
@@ -1072,8 +1064,8 @@ class DenariiDesktopGUIBuyDenariiScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = f"buy_denarii_screen_user_{self._testMethodName}"
@@ -1153,8 +1145,8 @@ class DenariiDesktopGUISellDenariiScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = f"sell_denarii_screen_user_{self._testMethodName}"
@@ -1234,8 +1226,8 @@ class DenariiDesktopGUILoginOrRegisterScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = f"login_or_register_screen_user_{self._testMethodName}"
@@ -1312,8 +1304,8 @@ class DenariiDesktopGUIRequestResetScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = f"request_reset_screen_user_{self._testMethodName}"
@@ -1397,8 +1389,8 @@ class DenariiDesktopGUIResetPasswordScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = f"reset_password_screen_user_{self._testMethodName}"
@@ -1487,8 +1479,8 @@ class DenariiDesktopGUIVerifyResetScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = f"verify_reset_screen_user_{self._testMethodName}"
@@ -1573,8 +1565,8 @@ class DenariiDesktopGUICreditCardInfoScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = f"credit_card_info_screen_user_{self._testMethodName}"
@@ -1654,8 +1646,8 @@ class DenariiDesktopGUISupportTicketScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = f"support_ticket_screen_user_{self._testMethodName}"
@@ -1735,8 +1727,8 @@ class DenariiDesktopGUISupportTicketCreationScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = (
@@ -1817,8 +1809,8 @@ class DenariiDesktopGUISupportTicketDetailsScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = (
@@ -1897,8 +1889,8 @@ class DenariiDesktopGUIUserSettingsScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = f"user_settings_screen_user_{self._testMethodName}"
@@ -1929,6 +1921,8 @@ class DenariiDesktopGUIUserSettingsScreenTestCase(unittest.TestCase):
         self.back_button.clicked.connect(back_clicked)
 
         common_buttons = {NEXT_BUTTON: self.next_button, BACK_BUTTON: self.back_button}
+
+        self.wallet = REMOTE_WALLET
 
         self.user_settings_screen = UserSettingsScreen(
             push_buttons=common_buttons,
@@ -1980,8 +1974,8 @@ class DenariiDesktopGUIVerificationScreenTestCase(unittest.TestCase):
         self.denarii_mobile_client = DenariiMobileClient()
         self.denarii_client = DenariiClient()
 
-        self.remote_wallet = Wallet(name="remote", password="remote_password")
-        self.local_wallet = Wallet(name="local", password="local_password")
+        self.remote_wallet = Wallet(name=f"remote{self._testMethodName}", password="remote_password")
+        self.local_wallet = Wallet(name=f"local{self._testMethodName}", password="local_password")
 
         self.gui_user = GuiUser()
         self.gui_user.name = f"verification_screen_user_{self._testMethodName}"

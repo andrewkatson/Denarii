@@ -51,6 +51,7 @@ class CreateWalletScreen(Screen):
         self.create_wallet_submit_push_button = None
         self.name_line_edit = None
         self.password_line_edit = None
+        self.confirm_password_line_edit = None
         self.wallet_info_text_box = None
         self.remote_wallet = kwargs["remote_wallet"]
         self.local_wallet = kwargs["local_wallet"]
@@ -115,6 +116,8 @@ class CreateWalletScreen(Screen):
         self.name_line_edit = LineEdit()
         self.password_line_edit = LineEdit()
         self.password_line_edit.setEchoMode(LineEdit.Password)
+        self.confirm_password_line_edit = LineEdit()
+        self.confirm_password_line_edit.setEchoMode(LineEdit.Password)
 
         self.pick_wallet_type = Label("Pick a Wallet Type")
         font = Font()
@@ -169,6 +172,7 @@ class CreateWalletScreen(Screen):
         )
         self.form_layout.addRow("Name", self.name_line_edit)
         self.form_layout.addRow("Password", self.password_line_edit)
+        self.form_layout.addRow("Confirm Password", self.confirm_password_line_edit)
         self.second_horizontal_layout.addWidget(
             self.wallet_info_text_box, alignment=AlignCenter
         )
@@ -211,6 +215,14 @@ class CreateWalletScreen(Screen):
         """
         Try to create a denarii wallet
         """
+
+        password = self.password_line_edit.text()
+        confirm_password = self.confirm_password_line_edit.text()
+
+        if password != confirm_password: 
+            self.status_message_box("Failed: passwords need to match")
+            return
+
         self.wallet.name = self.name_line_edit.text()
         self.wallet.password = self.password_line_edit.text()
         self.wallet.phrase = ""

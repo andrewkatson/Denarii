@@ -244,21 +244,25 @@ class UserSettingsScreen(Screen):
     def on_delete_account_clicked(self):
         try:
 
-            success = self.cancel_all_asks()
+            parent = self.kwargs_passed["parent"]
+            
+            success = True
 
-            if not success:
-                self.status_message_box("Failed to cancel all asks. Cannot delete user")
-                return
+            if parent.wallet == REMOTE_WALLET: 
 
-            success = self.cancel_all_buys()
+                success = self.cancel_all_asks()
 
-            if not success:
-                self.status_message_box("Failed to cancel all buys. Cannot delete user")
-                return
+                if not success:
+                    self.status_message_box("Failed to cancel all asks. Cannot delete user")
+                    return
+
+                success = self.cancel_all_buys()
+
+                if not success:
+                    self.status_message_box("Failed to cancel all buys. Cannot delete user")
+                    return
 
             success = self.denarii_mobile_client.delete_user(self.gui_user.user_id)
-
-            parent = self.kwargs_passed["parent"]
 
             local_success = True
             if parent.wallet == LOCAL_WALLET:
@@ -273,7 +277,7 @@ class UserSettingsScreen(Screen):
 
 
         except Exception as e:
-            print(e)
+            traceback.print_exception()
             self.status_message_box("Failed: unknown error")
 
     def cancel_all_asks(self):
@@ -292,6 +296,7 @@ class UserSettingsScreen(Screen):
         return True
 
     def cancel_all_buys(self):
+
         success, res = self.denarii_mobile_client.get_all_buys(self.gui_user.user_id)
 
         if not success:

@@ -13,6 +13,8 @@ word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
 response = requests.get(word_site)
 WORDS = response.content.splitlines()
 
+used_identifiers = []
+
 
 def generate_phrase(num_words):
     list_of_words = random.choices(WORDS, k=num_words)
@@ -146,7 +148,14 @@ def load_all_things():
 
 
 def create_identifier():
-    return round(random.uniform(0, 100))
+    new_identifier = 1
+
+    while new_identifier in used_identifiers:
+
+        new_identifier = round(random.uniform(0, 1000))
+
+    used_identifiers.append(new_identifier)
+    return new_identifier
 
 
 def try_to_buy_denarii(
@@ -309,7 +318,7 @@ class DenariiMobileClient:
         for _, user in self.get_users().items():
             if user.user_id != user_id:
                 for ask in user.asks:
-                    if ask.buyer.user_id == user_id:
+                    if ask.buyer is not None and ask.buyer.user_id == user_id:
                         return True
         return False
 
@@ -475,7 +484,6 @@ class DenariiMobileClient:
         users = self.get_users()
 
         if len(users) == 0:
-            print("There are no users to verify the reset of")
             return False
 
         for _, value in users.items():
@@ -494,7 +502,7 @@ class DenariiMobileClient:
             return False, []
 
         if user.wallet is not None:
-            print("Tried to create a user wallet and it was not None")
+            print(f"Tried to create a user wallet and it was not None {user.name} {user.wallet.name}")
             return False, []
 
         user.wallet = Wallet(wallet_name, password, balance=generate_balance())
