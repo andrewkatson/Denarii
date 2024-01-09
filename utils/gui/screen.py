@@ -122,7 +122,7 @@ class Screen:
 
     def setup(self):
         print(f"Setting up screen: {self.screen_name}")
-    
+
     def teardown(self):
         print(f"Tearing down screen: {self.screen_name}")
 
