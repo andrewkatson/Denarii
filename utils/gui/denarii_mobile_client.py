@@ -1,23 +1,27 @@
 import json
+
 import requests
+
+import constants
 
 
 class DenariiMobileClient:
     def __init__(self):
         self.denarii_mobile_users_endpoint = "https://denariimobilebackend.com"
 
-    def send_denarii_mobile_request(self, method, params):
+    def send_denarii_mobile_request(self, method, params, request_type):
         return self.send_request(
-            self.denarii_mobile_users_endpoint, "10003", method, params
+            self.denarii_mobile_users_endpoint, "10003", method, params, request_type
         )
 
-    def send_request(self, ip, port, method, params):
+    def send_request(self, ip, port, method, params, request_type):
         """
         Send a command to the specified ip address and port
         @param ip The ip to send to
         @param port The port to use
         @param method The rpc method to call
         @param params The params to pass the rpc method
+        @param request_type one of put, post, get, patch, delete
         @return The json representing the response
         """
         # Empty json if there is no result
@@ -25,16 +29,49 @@ class DenariiMobileClient:
         ok = False
         try:
             inputs = {
-                "params": params,
                 "jsonrpc": "2.0",
                 "id": 0,
             }
             print("Sending " + str(inputs))
-            res = requests.post(
-                f"{ip}:{port}/users/{method}/",
-                data=json.dumps(inputs),
-                headers={"content-type": "application/json"},
-            )
+
+            if request_type == constants.HTTP.POST:
+                res = requests.post(
+                    f"{ip}:{port}/users/{method}/",
+                    data=json.dumps(inputs),
+                    params=json.dumps(params),
+                    headers={"content-type": "application/json"},
+                )
+            elif request_type == constants.HTTP.PUT:
+                res = requests.put(
+                    f"{ip}:{port}/users/{method}/",
+                    data=json.dumps(inputs),
+                    params=json.dumps(params),
+                    headers={"content-type": "application/json"},
+                )
+            elif request_type == constants.HTTP.PATCH:
+                res = requests.patch(
+                    f"{ip}:{port}/users/{method}/",
+                    data=json.dumps(inputs),
+                    params=json.dumps(params),
+                    headers={"content-type": "application/json"},
+                )
+            elif request_type == constants.HTTP.GET:
+                res = requests.get(
+                    f"{ip}:{port}/users/{method}/",
+                    data=json.dumps(inputs),
+                    params=json.dumps(params),
+                    headers={"content-type": "application/json"},
+                )
+            elif request_type == constants.HTTP.DELETE:
+                res = requests.delete(
+                    f"{ip}:{port}/users/{method}/",
+                    data=json.dumps(inputs),
+                    params=json.dumps(params),
+                    headers={"content-type": "application/json"},
+                )
+            else:
+                print("No request_type was specified")
+
             ok = res.ok
         except Exception as e:
             print("Ran into problem sending request " + str(e))
@@ -55,7 +92,7 @@ class DenariiMobileClient:
         """
         params = {"username": username, "email": email, "password": password}
 
-        res, ok = self.send_denarii_mobile_request("get_user_id", params)
+        res, ok = self.send_denarii_mobile_request("get_user_id", params, constants.HTTP.GET)
 
         if not ok:
             return False, []
@@ -68,7 +105,7 @@ class DenariiMobileClient:
         """
         params = {"username": username, "email": email, "password": password}
 
-        _, ok = self.send_denarii_mobile_request("reset_password", params)
+        _, ok = self.send_denarii_mobile_request("reset_password", params, constants.HTTP.PATCH)
 
         return ok
 
@@ -78,7 +115,7 @@ class DenariiMobileClient:
         """
         params = {"username_or_email": username_or_email}
 
-        _, ok = self.send_denarii_mobile_request("request_reset", params)
+        _, ok = self.send_denarii_mobile_request("request_reset", params, constants.HTTP.GET)
 
         return ok
 
@@ -88,7 +125,7 @@ class DenariiMobileClient:
         """
         params = {"username_or_email": username_or_email, "reset_id": reset_id}
 
-        _, ok = self.send_denarii_mobile_request("verify_reset", params)
+        _, ok = self.send_denarii_mobile_request("verify_reset", params, constants.HTTP.PATCH)
 
         return ok
 
@@ -98,7 +135,7 @@ class DenariiMobileClient:
         """
         params = {"user_id": user_id, "wallet_name": wallet_name, "password": password}
 
-        res, ok = self.send_denarii_mobile_request("create_wallet", params)
+        res, ok = self.send_denarii_mobile_request("create_wallet", params, constants.HTTP.PATCH)
 
         if not ok:
             return False, []
@@ -116,7 +153,7 @@ class DenariiMobileClient:
             "seed": seed,
         }
 
-        res, ok = self.send_denarii_mobile_request("restore_wallet", params)
+        res, ok = self.send_denarii_mobile_request("restore_wallet", params, constants.HTTP.PATCH)
 
         if not ok:
             return False, []
@@ -129,7 +166,7 @@ class DenariiMobileClient:
         """
         params = {"user_id": user_id, "wallet_name": wallet_name, "password": password}
 
-        res, ok = self.send_denarii_mobile_request("open_wallet", params)
+        res, ok = self.send_denarii_mobile_request("open_wallet", params, constants.HTTP.GET)
 
         if not ok:
             return False, []
@@ -142,7 +179,7 @@ class DenariiMobileClient:
         """
         params = {"user_id": user_id, "wallet_name": wallet_name}
 
-        res, ok = self.send_denarii_mobile_request("get_balance", params)
+        res, ok = self.send_denarii_mobile_request("get_balance", params, constants.HTTP.GET)
 
         if not ok:
             return False, []
@@ -160,7 +197,7 @@ class DenariiMobileClient:
             "amount": amount,
         }
 
-        _, ok = self.send_denarii_mobile_request("send_denarii", params)
+        _, ok = self.send_denarii_mobile_request("send_denarii", params, constants.HTTP.PATCH)
 
         if not ok:
             return False
@@ -173,7 +210,7 @@ class DenariiMobileClient:
         """
         params = {"user_id": user_id}
 
-        res, ok = self.send_denarii_mobile_request("get_prices", params)
+        res, ok = self.send_denarii_mobile_request("get_prices", params, constants.HTTP.GET)
 
         if not ok:
             return False, []
@@ -181,12 +218,12 @@ class DenariiMobileClient:
             return True, res
 
     def buy_denarii(
-        self,
-        user_id,
-        amount,
-        bid_price,
-        buy_regardless_of_price,
-        fail_if_full_amount_isnt_met,
+            self,
+            user_id,
+            amount,
+            bid_price,
+            buy_regardless_of_price,
+            fail_if_full_amount_isnt_met,
     ):
         """
         @return a list of special response objects that have a single field 'ask_id'
@@ -200,7 +237,7 @@ class DenariiMobileClient:
             "fail_if_full_amount_isnt_met": fail_if_full_amount_isnt_met,
         }
 
-        res, ok = self.send_denarii_mobile_request("buy_denarii", params)
+        res, ok = self.send_denarii_mobile_request("buy_denarii", params, constants.HTTP.PATCH)
 
         if not ok:
             return False, []
@@ -214,7 +251,7 @@ class DenariiMobileClient:
 
         params = {"user_id": user_id, "ask_id": ask_id}
 
-        res, ok = self.send_denarii_mobile_request("transfer_denarii", params)
+        res, ok = self.send_denarii_mobile_request("transfer_denarii", params, constants.HTTP.PATCH)
 
         if not ok:
             return False, []
@@ -228,7 +265,7 @@ class DenariiMobileClient:
 
         params = {"user_id": user_id, "amount": amount, "asking_price": asking_price}
 
-        res, ok = self.send_denarii_mobile_request("make_denarii_ask", params)
+        res, ok = self.send_denarii_mobile_request("make_denarii_ask", params, constants.HTTP.PATCH)
 
         if not ok:
             return False, []
@@ -243,7 +280,7 @@ class DenariiMobileClient:
         params = {"user_id": user_id}
 
         res, ok = self.send_denarii_mobile_request(
-            "poll_for_completed_transaction", params
+            "poll_for_completed_transaction", params, constants.HTTP.GET
         )
 
         if not ok:
@@ -258,7 +295,7 @@ class DenariiMobileClient:
 
         params = {"user_id": user_id, "ask_id": ask_id}
 
-        res, ok = self.send_denarii_mobile_request("cancel_ask", params)
+        res, ok = self.send_denarii_mobile_request("cancel_ask", params, constants.HTTP.DELETE)
 
         if not ok:
             return False, []
@@ -274,7 +311,7 @@ class DenariiMobileClient:
             "user_id": user_id,
         }
 
-        res, ok = self.send_denarii_mobile_request("has_credit_card_info", params)
+        res, ok = self.send_denarii_mobile_request("has_credit_card_info", params, constants.HTTP.GET)
 
         if not ok:
             return False, []
@@ -282,12 +319,12 @@ class DenariiMobileClient:
             return True, res
 
     def set_credit_card_info(
-        self,
-        user_id,
-        card_number,
-        expiration_date_month,
-        expiration_date_year,
-        security_code,
+            self,
+            user_id,
+            card_number,
+            expiration_date_month,
+            expiration_date_year,
+            security_code,
     ):
         """
         @return whether the request succeeded or not
@@ -301,7 +338,7 @@ class DenariiMobileClient:
             "security_code": security_code,
         }
 
-        _, ok = self.send_denarii_mobile_request("set_credit_card_info", params)
+        _, ok = self.send_denarii_mobile_request("set_credit_card_info", params, constants.HTTP.PATCH)
 
         return ok
 
@@ -312,7 +349,7 @@ class DenariiMobileClient:
 
         params = {"user_id": user_id}
 
-        _, ok = self.send_denarii_mobile_request("clear_credit_card_info", params)
+        _, ok = self.send_denarii_mobile_request("clear_credit_card_info", params, constants.HTTP.DELETE)
 
         return ok
 
@@ -323,7 +360,7 @@ class DenariiMobileClient:
 
         params = {"user_id": user_id, "amount": amount, "currency": currency}
 
-        _, ok = self.send_denarii_mobile_request("get_money_from_buyer", params)
+        _, ok = self.send_denarii_mobile_request("get_money_from_buyer", params, constants.HTTP.PATCH)
 
         return ok
 
@@ -333,7 +370,7 @@ class DenariiMobileClient:
         """
         params = {"user_id": user_id, "amount": amount, "currency": currency}
 
-        _, ok = self.send_denarii_mobile_request("send_money_to_seller", params)
+        _, ok = self.send_denarii_mobile_request("send_money_to_seller", params, constants.HTTP.PATCH)
 
         return ok
 
@@ -344,7 +381,7 @@ class DenariiMobileClient:
 
         params = {"user_id": user_id, "ask_id": ask_id}
 
-        res, ok = self.send_denarii_mobile_request("is_transaction_settled", params)
+        res, ok = self.send_denarii_mobile_request("is_transaction_settled", params, constants.HTTP.PATCH)
 
         if not ok:
             return False, []
@@ -358,7 +395,7 @@ class DenariiMobileClient:
 
         params = {"user_id": user_id}
 
-        _, ok = self.send_denarii_mobile_request("delete_user", params)
+        _, ok = self.send_denarii_mobile_request("delete_user", params, constants.HTTP.DELETE)
 
         return ok
 
@@ -369,7 +406,7 @@ class DenariiMobileClient:
 
         params = {"user_id": user_id, "ask_id": ask_id}
 
-        res, ok = self.send_denarii_mobile_request("get_ask_with_identifier", params)
+        res, ok = self.send_denarii_mobile_request("get_ask_with_identifier", params, constants.HTTP.GET)
 
         if not ok:
             return False, []
@@ -384,7 +421,7 @@ class DenariiMobileClient:
         params = {"user_id": user_id, "ask_id": ask_id}
 
         res, ok = self.send_denarii_mobile_request(
-            "transfer_denarii_back_to_seller", params
+            "transfer_denarii_back_to_seller", params, constants.HTTP.PATCH
         )
 
         if not ok:
@@ -399,7 +436,7 @@ class DenariiMobileClient:
 
         params = {"user_id": user_id, "amount": amount, "currency": currency}
 
-        _, ok = self.send_denarii_mobile_request("send_money_back_to_buyer", params)
+        _, ok = self.send_denarii_mobile_request("send_money_back_to_buyer", params, constants.HTTP.PATCH)
 
         return ok
 
@@ -410,22 +447,22 @@ class DenariiMobileClient:
 
         params = {"user_id": user_id, "ask_id": ask_id}
 
-        _, ok = self.send_denarii_mobile_request("cancel_buy_of_ask", params)
+        _, ok = self.send_denarii_mobile_request("cancel_buy_of_ask", params, constants.HTTP.DELETE)
 
         return ok
 
     def verify_identity(
-        self,
-        user_id,
-        first_name,
-        middle_name,
-        last_name,
-        email,
-        dob,
-        ssn,
-        zipcode,
-        phone,
-        work_locations,
+            self,
+            user_id,
+            first_name,
+            middle_name,
+            last_name,
+            email,
+            dob,
+            ssn,
+            zipcode,
+            phone,
+            work_locations,
     ):
         """
         @return a list of response objects that have the field 'verification_status'
@@ -444,7 +481,7 @@ class DenariiMobileClient:
             "work_locations": work_locations,
         }
 
-        res, ok = self.send_denarii_mobile_request("verify_identity", params)
+        res, ok = self.send_denarii_mobile_request("verify_identity", params, constants.HTTP.PATCH)
 
         if not ok:
             return False, []
@@ -458,7 +495,7 @@ class DenariiMobileClient:
 
         params = {"user_id": user_id}
 
-        res, ok = self.send_denarii_mobile_request("is_a_verified_person", params)
+        res, ok = self.send_denarii_mobile_request("is_a_verified_person", params, constants.HTTP.GET)
 
         if not ok:
             return False, []
@@ -474,13 +511,13 @@ class DenariiMobileClient:
             "user_id": user_id,
         }
 
-        res, ok = self.send_denarii_mobile_request("get_all_asks", params)
+        res, ok = self.send_denarii_mobile_request("get_all_asks", params, constants.HTTP.GET)
 
         if not ok:
             return False, []
         else:
             return True, res
-        
+
     def get_all_buys(self, user_id):
         """
         @return a list of response objects that have the fields 'ask_id', 'amount', 'asking_price', amount_bought'
@@ -490,7 +527,7 @@ class DenariiMobileClient:
             "user_id": user_id,
         }
 
-        res, ok = self.send_denarii_mobile_request("get_all_buys", params)
+        res, ok = self.send_denarii_mobile_request("get_all_buys", params, constants.HTTP.GET)
 
         if not ok:
             return False, []
@@ -504,7 +541,7 @@ class DenariiMobileClient:
 
         params = {"user_id": user_id}
 
-        res, ok = self.send_denarii_mobile_request("create_support_ticket", params)
+        res, ok = self.send_denarii_mobile_request("create_support_ticket", params, constants.HTTP.POST)
 
         if not ok:
             return False, []
@@ -522,7 +559,7 @@ class DenariiMobileClient:
             "comment": comment,
         }
 
-        res, ok = self.send_denarii_mobile_request("update_support_ticket", params)
+        res, ok = self.send_denarii_mobile_request("update_support_ticket", params, constants.HTTP.PATCH)
 
         if not ok:
             return False, []
@@ -536,7 +573,7 @@ class DenariiMobileClient:
 
         params = {"user_id": user_id, "support_ticket_id": support_ticket_id}
 
-        res, ok = self.send_denarii_mobile_request("delete_support_ticket", params)
+        res, ok = self.send_denarii_mobile_request("delete_support_ticket", params, constants.HTTP.DELETE)
 
         if not ok:
             return False, []
@@ -550,7 +587,7 @@ class DenariiMobileClient:
 
         params = {"user_id": user_id, "can_be_resolved": can_be_resolved}
 
-        res, ok = self.send_denarii_mobile_request("get_support_tickets", params)
+        res, ok = self.send_denarii_mobile_request("get_support_tickets", params, constants.HTTP.GET)
 
         if not ok:
             return False, []
@@ -564,7 +601,7 @@ class DenariiMobileClient:
 
         params = {"user_id": user_id, "support_ticket_id": support_ticket_id}
 
-        res, ok = self.send_denarii_mobile_request("get_comments_on_ticket", params)
+        res, ok = self.send_denarii_mobile_request("get_comments_on_ticket", params, constants.HTTP.GET)
 
         if not ok:
             return False, []
@@ -578,7 +615,7 @@ class DenariiMobileClient:
 
         params = {"user_id": user_id, "support_ticket_id": support_ticket_id}
 
-        res, ok = self.send_denarii_mobile_request("resolve_support_ticket", params)
+        res, ok = self.send_denarii_mobile_request("resolve_support_ticket", params, constants.HTTP.PATCH)
 
         if not ok:
             return False, []
@@ -592,11 +629,11 @@ class DenariiMobileClient:
 
         params = {"user_id": user_id}
 
-        res, ok = self.send_denarii_mobile_request("poll_for_escrowed_transaction", params)
+        res, ok = self.send_denarii_mobile_request("poll_for_escrowed_transaction", params, constants.HTTP.GET)
 
-        if not ok: 
+        if not ok:
             return False, []
-        else: 
+        else:
             return True, res
 
     def get_support_ticket(self, user_id, support_ticket_id):
@@ -604,10 +641,9 @@ class DenariiMobileClient:
         @return a list of response objects that have the fields 'support_ticket_id', 'author', 'title', 'description', 'updated_time_body', 'creation_time_body', 'resolved'
         """
 
-
         params = {"user_id": user_id, "support_ticket_id": support_ticket_id}
 
-        res, ok = self.send_denarii_mobile_request("get_support_ticket", params)
+        res, ok = self.send_denarii_mobile_request("get_support_ticket", params, constants.HTTP.GET)
 
         if not ok:
             return False, []
@@ -618,9 +654,9 @@ class DenariiMobileClient:
         """
         @return a list of empty response objects and whether the request succeeded or not. 
         """
-        
+
         params = {"user_id": user_id}
-        
-        res, ok = self.send_denarii_mobile_request("logout", params)
-        
+
+        res, ok = self.send_denarii_mobile_request("logout", params, constants.HTTP.PATCH)
+
         return res, ok

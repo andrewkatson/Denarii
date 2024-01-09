@@ -1,5 +1,6 @@
 import argparse
 import os
+
 import workspace_path_finder
 
 parser = argparse.ArgumentParser(
@@ -56,3 +57,11 @@ def print_status(text, success):
         print(text + " succeeded")
     else:
         print(text + " failed")
+
+
+class HTTP:
+    GET = "GET"
+    PATCH = "PATCH"
+    POST = "POST"
+    PUT = "PUT"
+    DELETE = "DELETE"
