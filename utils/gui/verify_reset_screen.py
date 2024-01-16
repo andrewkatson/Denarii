@@ -100,6 +100,15 @@ class VerifyResetScreen(Screen):
 
     
     def on_submit_clicked(self):
+        
+        invalid_fields = []
+        
+        if not is_valid_pattern(self.reset_id_line_edit.text(), Patterns.reset_id):
+            invalid_fields.append(Params.reset_id)
+            
+        if len(invalid_fields) > 0:
+            self.status_message_box(f"Failed: Invalid Fields {invalid_fields}")
+            return  
 
         try: 
             name_or_email = ""

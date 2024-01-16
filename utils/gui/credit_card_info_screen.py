@@ -176,6 +176,25 @@ class CreditCardInfoScreen(Screen):
             return "Status: No Info Set"
 
     def on_submit_clicked(self):
+        
+        invalid_fields = []
+        
+        if not is_valid_pattern(self.card_number_line_edit.text(), Patterns.digits_and_dashes):
+            invalid_fields.append(Params.card_number)
+        
+        if not is_valid_pattern(self.expiration_date_month_line_edit.text(), Patterns.digits_only): 
+            invalid_fields.append(Params.expiration_date_month)
+            
+        if not is_valid_pattern(self.expiration_date_year_line_edit.text(), Patterns.digits_only): 
+            invalid_fields.append(Params.expiration_date_year)
+            
+        if not is_valid_pattern(self.security_code_line_edit.text(), Patterns.digits_only): 
+            invalid_fields.append(Params.security_code)
+            
+        if not len(invalid_fields) > 0:
+            self.status_message_box(f"Failed: Invalid Fields {invalid_fields}")
+            return
+        
         try:
             success = self.denarii_mobile_client.set_credit_card_info(
                 self.gui_user.user_id,

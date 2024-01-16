@@ -145,6 +145,18 @@ class WalletScreen(Screen):
         Transfer money between two wallets.
         """
         success = False
+        
+        invalid_fields = []
+        
+        if not is_valid_pattern(self.address_line_edit.text(), Patterns.alphanumeric):
+            invalid_fields.append(Params.address)
+            
+        if not is_valid_pattern(self.amount_line_edit.text(), Patterns.double):
+            invalid_fields.append(Params.amount)
+            
+        if len(invalid_fields) > 0:
+            self.status_message_box(f"Failed: Invalid Fields {invalid_fields}")
+            return
 
         other_wallet = Wallet()
         other_wallet.address = bytes(self.address_line_edit.text(), "utf-8")

@@ -19,6 +19,13 @@ py_library(
 )
 
 py_library(
+  name = "input_pattern_validator", 
+  srcs = ["input_pattern_validator.py"],
+  deps = [":constants"],
+  imports = [":constants"]
+)
+
+py_library(
   name = "workspace_path_finder",
   srcs = ["workspace_path_finder.py"],
   deps = [],
@@ -52,11 +59,11 @@ py_library(
       [
       "*.py"
       ], exclude = [
-        "gui_main.py", "*_pb2.py", "*test*.py", "constants.py",
+        "gui_main.py", "*_pb2.py", "*test*.py", "constants.py", "input_pattern_validator.py"
         "workspace_path_finder.py", "denarii_client.py", "denarii_mobile_client.py"
     ]),
-    deps = [":testing_clients", ":clients"],
-    imports = [":testing_clients", ":clients"], 
+    deps = [":testing_clients", ":clients", ":input_pattern_validator"],
+    imports = [":testing_clients", ":clients", ":input_pattern_validator"], 
     data = [":images", ":binaries"],
 )
 

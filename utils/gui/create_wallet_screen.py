@@ -222,6 +222,21 @@ class CreateWalletScreen(Screen):
         if password != confirm_password: 
             self.status_message_box("Failed: passwords need to match")
             return
+        
+        invalid_fields = []
+        
+        if not is_valid_pattern(self.name_line_edit.text(), Patterns.alphanumeric):
+            invalid_fields.append(Params.username)
+        
+        if not is_valid_pattern(self.password_line_edit.text(), Patterns.password): 
+            invalid_fields.append(Params.password)
+            
+        if not is_valid_pattern(self.confirm_password_line_edit.text(), Patterns.password): 
+            invalid_fields.append(Params.confirm_password)
+            
+        if not len(invalid_fields) > 0:
+            self.status_message_box(f"Failed: Invalid Fields {invalid_fields}")
+            return
 
         self.wallet.name = self.name_line_edit.text()
         self.wallet.password = self.password_line_edit.text()

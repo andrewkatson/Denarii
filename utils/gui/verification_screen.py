@@ -244,6 +244,39 @@ class VerificationScreen(Screen):
             time.sleep(5)
 
     def on_submit_clicked(self):
+        invalid_fields = []
+        
+        if not is_valid_pattern(self.first_name_line_edit.text(), Patterns.name):
+            invalid_fields.append(Params.first_name)
+            
+        if not is_valid_pattern(self.middle_initial_line_edit.text(), Patterns.single_letter):
+            invalid_fields.append(Params.middle_name)
+            
+        if not is_valid_pattern(self.last_name_line_edit.text(), Patterns.name):
+            invalid_fields.append(Params.last_name)
+            
+        if not is_valid_pattern(self.email_line_edit.text(), Patterns.email):
+            invalid_fields.append(Params.email)
+            
+        if not is_valid_pattern(self.date_of_birth_line_edit_text.text(), Patterns.slash_date):
+            invalid_fields.append(Params.dob)
+            
+        if not is_valid_pattern(self.social_security_number_line_edit.text(), Patterns.digits_and_dashes):
+            invalid_fields.append(Params.ssn)
+            
+        if not is_valid_pattern(self.zipcode_line_edit.text(), Patterns.digits_and_dashes):
+            invalid_fields.append(Params.zipcode)
+            
+        if not is_valid_pattern(self.phone_number_line_edit.text(), Patterns.phone_number):
+            invalid_fields.append(Params.phone_number)
+            
+        if not is_valid_pattern(self.format_work_locations(), Patterns.json_dict_of_upper_and_lower_case_chars):
+            invalid_fields.append(Params.work_locations)
+            
+        if len(invalid_fields) > 0:
+            self.status_message_box(f"Failed: Invalid Fields {invalid_fields}")
+            return
+        
         try:
             self.lock.acquire()
 

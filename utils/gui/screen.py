@@ -1,6 +1,7 @@
 import traceback
 
 from constants import *
+from input_pattern_validator import *
 
 if TESTING:
     from denarii_testing_message_box import MessageBox

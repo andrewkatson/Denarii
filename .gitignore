@@ -201,6 +201,7 @@ tests/benchmark.h
 translations/translation_files.h
 translations/translation_files.h
 wallet/
+MODULE*
 
 # Clion 
 .clwb/

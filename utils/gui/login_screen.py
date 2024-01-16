@@ -133,6 +133,22 @@ class LoginScreen(Screen):
         Store the user's input information in the user proto
         """
         success = False
+        
+        invalid_fields = []
+        
+        if not is_valid_pattern(self.name_line_edit.text(), Patterns.alphanumeric):
+            invalid_fields.append(Params.username)
+        
+        if not is_valid_pattern(self.email_line_edit.text(), Patterns.email): 
+            invalid_fields.append(Params.email)
+            
+        if not is_valid_pattern(self.password_line_edit.text(), Patterns.password): 
+            invalid_fields.append(Params.password)
+            
+        if len(invalid_fields) > 0:
+            self.status_message_box(f"Failed: Invalid Fields {invalid_fields}")
+            return
+        
         try:
             success, res = self.denarii_mobile_client.get_user_id(self.name_line_edit.text(), self.email_line_edit.text(),
                                                                   self.password_line_edit.text())

@@ -214,6 +214,16 @@ class SupportTicketDetailsScreen(Screen):
         super().teardown()
 
     def on_submit_clicked(self):
+        
+        invalid_fields = []
+        
+        if not is_valid_pattern(self.new_comment_plain_text_edit.toPlainText(), Patterns.paragraph_of_chars):
+            invalid_fields.append(Params.comment)
+            
+        if len(invalid_fields) > 0:
+            self.status_message_box(f"Failed: Invalid Fields {invalid_fields}")
+            return
+        
         try:
             success, _ = self.denarii_mobile_client.update_support_ticket(
                 self.gui_user.user_id,

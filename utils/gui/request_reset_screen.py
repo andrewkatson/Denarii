@@ -100,6 +100,15 @@ class RequestResetScreen(Screen):
         super().teardown()
 
     def on_submit_clicked(self):
+        
+        invalid_fields = []
+        
+        if not is_valid_pattern(self.name_or_email_line_edit.text(), Patterns.alphanumeric) and not is_valid_pattern(self.name_or_email_line_edit.text(), Params.email):
+            invalid_fields.append(Params.username_or_email)
+            
+        if len(invalid_fields) > 0:
+            self.status_message_box(f"Failed: Invalid Fields {invalid_fields}")
+            return
 
         try: 
             success = self.denarii_mobile_client.request_reset(self.name_or_email_line_edit.text())

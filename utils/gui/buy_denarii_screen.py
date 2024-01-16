@@ -440,6 +440,19 @@ class BuyDenariiScreen(Screen):
                 is_verified = other_res[0]["verification_status"] == "is_verified"
 
                 if has_credit_card_info and is_verified:
+                    
+                    invalid_fields = []
+                    
+                    if not is_valid_pattern(self.amount_line_edit.text(), Patterns.double):
+                        invalid_fields.append(Params.amount)
+                    
+                    if not is_valid_pattern(self.price_line_edit.text(), Patterns.double): 
+                        invalid_fields.append(Params.bid_price)
+                        
+                    if len(invalid_fields) > 0:
+                        self.status_message_box(f"Failed: Invalid Fields {invalid_fields}")
+                        return
+                    
                     success, second_res = self.denarii_mobile_client.buy_denarii(
                         self.gui_user.user_id,
                         self.amount_line_edit.text(),

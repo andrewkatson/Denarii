@@ -174,6 +174,21 @@ class RestoreWalletScreen(Screen):
         """
         Try to restore a denarii wallet
         """
+        
+        invalid_fields = []
+        
+        if not is_valid_pattern(self.name_line_edit.text(), Patterns.alphanumeric):
+            invalid_fields.append(Params.username)
+        
+        if not is_valid_pattern(self.seed_line_edit.text(), Patterns.seed): 
+            invalid_fields.append(Params.seed)
+            
+        if not is_valid_pattern(self.password_line_edit.text(), Patterns.password): 
+            invalid_fields.append(Params.password)
+            
+        if len(invalid_fields) > 0:
+            self.status_message_box(f"Failed: Invalid Fields {invalid_fields}")
+            return
 
         self.wallet.name = self.name_line_edit.text()
         self.wallet.password = self.password_line_edit.text()

@@ -182,6 +182,18 @@ class SetWalletScreen(Screen):
         """
         Open the wallet based on the user's information
         """
+        
+        invalid_fields = []
+        
+        if not is_valid_pattern(self.name_line_edit.text(), Patterns.alphanumeric):
+            invalid_fields.append(Params.username)
+            
+        if not is_valid_pattern(self.password_line_edit.text(), Patterns.password): 
+            invalid_fields.append(Params.password)
+            
+        if len(invalid_fields) > 0:
+            self.status_message_box(f"Failed: Invalid Fields {invalid_fields}")
+            return
 
         self.wallet.name = self.name_line_edit.text()
         self.wallet.password = self.password_line_edit.text()
