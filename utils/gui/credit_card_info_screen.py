@@ -191,7 +191,7 @@ class CreditCardInfoScreen(Screen):
         if not is_valid_pattern(self.security_code_line_edit.text(), Patterns.digits_only): 
             invalid_fields.append(Params.security_code)
             
-        if not len(invalid_fields) > 0:
+        if len(invalid_fields) > 0:
             self.status_message_box(f"Failed: Invalid Fields {invalid_fields}")
             return
         

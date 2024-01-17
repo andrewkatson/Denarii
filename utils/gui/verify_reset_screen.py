@@ -103,7 +103,7 @@ class VerifyResetScreen(Screen):
         
         invalid_fields = []
         
-        if not is_valid_pattern(self.reset_id_line_edit.text(), Patterns.reset_id):
+        if not is_valid_pattern(self.reset_id_line_edit.text(), Patterns.digits_only):
             invalid_fields.append(Params.reset_id)
             
         if len(invalid_fields) > 0:

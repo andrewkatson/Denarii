@@ -47,7 +47,8 @@ class DenariiIntegrationTests(unittest.TestCase):
         super().setUp()
         self.start_time = time.time()
 
-        self.test_name = f"{self.id()}-{self._testMethodName}"
+        self.test_name = f"{self.id()}_{self._testMethodName}"
+        self.test_name = self.test_name.replace(".", "_")
 
         print(f"Running {self.test_name}")
 
@@ -58,9 +59,9 @@ class DenariiIntegrationTests(unittest.TestCase):
 
         self.name = f"{self.test_name}_user"
         self.email = f"{self.test_name}_email@email.com"
-        self.password = f"{self.test_name}_password"
+        self.password = f"{self.test_name}_password1#A"
         self.wallet_name = f"{self.test_name}_wallet"
-        self.wallet_password = f"{self.test_name}_wallet_password"
+        self.wallet_password = f"{self.test_name}_wallet_password2$B"
 
     def tearDown(self):
         super().tearDown()
@@ -230,7 +231,7 @@ class DenariiIntegrationTests(unittest.TestCase):
         self.assertEqual(self.main_widget.current_widget.screen_name, self.main_widget.REMOTE_WALLET_SCREEN.screen_name)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":#
     # We need to remove all denarii specific test arguments for this to not fail.
     unittest.main(
         argv=list((arg for arg in sys.argv if not arg.startswith("--denarii")))

@@ -10,7 +10,8 @@ class DenariiE2ETests(unittest.TestCase):
         super().setUp()
         self.start_time = time.time()
 
-        self.test_name = f"{self.id()}-{self._testMethodName}"
+        self.test_name = f"{self.id()}_{self._testMethodName}"
+        self.test_name = self.test_name.replace(".", "_")
 
         print(f"Running {self.test_name}")
 
@@ -21,17 +22,17 @@ class DenariiE2ETests(unittest.TestCase):
 
         self.name = f"{self.test_name}_user"
         self.email = f"{self.test_name}_email@email.com"
-        self.password = f"{self.test_name}_password"
+        self.password = f"{self.test_name}_password3%P"
         self.wallet_name = f"{self.name}_wallet"
-        self.wallet_password = f"{self.name}_wallet_password"
-        self.new_password = f"{self.name}_new_password"
+        self.wallet_password = f"{self.name}_wallet_password4@M"
+        self.new_password = f"{self.name}_new_password0$S"
 
         self.other_name = f"other_{self.test_name}_user"
         self.other_email = f"other_{self.test_name}_email@email.com"
-        self.other_password = f"other_{self.test_name}_password"
+        self.other_password = f"other_{self.test_name}_password2%E"
         self.other_wallet_name = f"other_{self.name}_wallet"
-        self.other_wallet_password = f"other_{self.name}_wallet_password"
-        self.other_new_password = f"other_{self.name}_new_password"
+        self.other_wallet_password = f"other_{self.name}_wallet_password9@K"
+        self.other_new_password = f"other_{self.name}_new_password7$H"
 
     def tearDown(self):
         super().tearDown()
@@ -191,6 +192,10 @@ class DenariiE2ETests(unittest.TestCase):
         self.assertRegex(create_wallet_screen.status_msg.text, "Success. *")
 
         seed = create_wallet_screen.wallet_info_text_box.text
+        
+        # The seed in the ui will have new lines and we don't want this in the 
+        # one used when validating in restore wallet.
+        seed = seed.replace("\n", " ")
 
         self.main_widget.next_clicked()
 
