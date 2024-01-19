@@ -568,6 +568,8 @@ class SellDenariiScreen(Screen):
                     if going_price > ask["asking_price"]:
                         going_price = ask["asking_price"]
 
+                if going_price == 99999999999999999:
+                    going_price = 1
                 self.going_price_label(f"Going Price: {going_price}")
 
             except Exception as e:
