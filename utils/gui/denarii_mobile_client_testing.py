@@ -418,28 +418,35 @@ class DenariiMobileClient:
                 return user
         raise ValueError("No user with wallet address")
 
-    def get_user_id(self, username, email, password):
+    def login(self, username_or_email, password):
         users = self.get_users()
         for _, value in users.items():
             # Login if they exist
             if (
-                    value.name == username
+                    (value.name == username_or_email or value.email == username_or_email)
                     and value.password == password
-                    and value.email == email
             ):
                 self.user = value
                 return True, [{"user_id": self.user.user_id}]
             # If they are a known user but their password doesnt match fail
             elif (
-                    value.name == username
-                    and value.email == email
+                    (value.name == username_or_email or value.email == username_or_email)
                     and value.password != password
             ):
                 return False, []
-                # If they are a known user but their email doesnt match fail
-            elif value.name == username and value.email != email:
+        # Fail otherwise
+        return False, []
+    
+    def register(self, username, email, password):
+        users = self.get_users()
+        for _, value in users.items():
+            # If the username is already taken fail 
+            if value.name == username: 
                 return False, []
-        # If all else fails create the user (register)
+            # If the email is already taken fail 
+            elif value.email == email: 
+                return False, []
+        # Register them
         self.user = User(username, email, password)
         self.user.user_id = create_identifier()
         users[username] = self.user

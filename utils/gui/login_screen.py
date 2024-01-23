@@ -46,8 +46,7 @@ class LoginScreen(Screen):
     ):
 
         self.user_info_label = None
-        self.name_line_edit = None
-        self.email_line_edit = None
+        self.username_or_email_line_edit = None
         self.password_line_edit = None
         self.submit_button = None
         self.forgot_password_button = None
@@ -74,8 +73,7 @@ class LoginScreen(Screen):
         font.setPixelSize(50)
         self.user_info_label.setFont(font)
 
-        self.name_line_edit = LineEdit()
-        self.email_line_edit = LineEdit()
+        self.username_or_email_line_edit = LineEdit()
         self.password_line_edit = LineEdit()
         self.password_line_edit.setEchoMode(LineEdit.Password)
 
@@ -111,8 +109,7 @@ class LoginScreen(Screen):
         self.first_horizontal_layout.addWidget(
             self.user_info_label, alignment=AlignCenter
         )
-        self.form_layout.addRow("Name", self.name_line_edit)
-        self.form_layout.addRow("Email", self.email_line_edit)
+        self.form_layout.addRow("Name or Email", self.username_or_email_line_edit)
         self.form_layout.addRow("Password", self.password_line_edit)
         self.second_horizontal_layout.addWidget(
             self.submit_button, alignment=AlignCenter
@@ -136,11 +133,8 @@ class LoginScreen(Screen):
         
         invalid_fields = []
         
-        if not is_valid_pattern(self.name_line_edit.text(), Patterns.alphanumeric):
-            invalid_fields.append(Params.username)
-        
-        if not is_valid_pattern(self.email_line_edit.text(), Patterns.email): 
-            invalid_fields.append(Params.email)
+        if not is_valid_pattern(self.username_or_email_line_edit.text(), Patterns.alphanumeric) and not is_valid_pattern(self.username_or_email.text(), Patterns.email):
+            invalid_fields.append(Params.username_or_email)
             
         if not is_valid_pattern(self.password_line_edit.text(), Patterns.password): 
             invalid_fields.append(Params.password)
@@ -150,7 +144,7 @@ class LoginScreen(Screen):
             return
         
         try:
-            success, res = self.denarii_mobile_client.get_user_id(self.name_line_edit.text(), self.email_line_edit.text(),
+            success, res = self.denarii_mobile_client.login(self.username_or_email_line_edit.text(),
                                                                   self.password_line_edit.text())
             if success:
                 self.gui_user.user_id = res[0]['user_id']
@@ -163,8 +157,10 @@ class LoginScreen(Screen):
             self.next_button.setVisible(False)
         if success:
             self.status_message_box("Success")
-            self.gui_user.name = self.name_line_edit.text()
-            self.gui_user.email = self.email_line_edit.text()
+            if is_valid_pattern(self.username_or_email_line_edit.text(), Patterns.alphanumeric):
+                self.gui_user.name = self.username_or_email_line_edit.text()
+            if is_valid_pattern(self.username_or_email_line_edit.text(), Patterns.email):
+                self.gui_user.email = self.username_or_email_line_edit.text()
             self.gui_user.password = self.password_line_edit.text()
             self.next_button.setVisible(True)
 
