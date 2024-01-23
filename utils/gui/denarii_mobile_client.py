@@ -84,15 +84,29 @@ class DenariiMobileClient:
             print("Ran into problem with the response " + str(e))
 
         return res, ok
+        
+    def login(self, username_or_email, password):
+        """
+        @return a list of special response objects that have a single field
+        'user_identifier' and whether the request succeeded
+        """
+        params = {"username_or_email": username_or_email, "password": password}
 
-    def get_user_id(self, username, email, password):
+        res, ok = self.send_denarii_mobile_request("login", params, constants.HTTP.GET)
+
+        if not ok:
+            return False, []
+        else:
+            return True, res
+        
+    def register(self, username, email, password):
         """
         @return a list of special response objects that have a single field
         'user_identifier' and whether the request succeeded
         """
         params = {"username": username, "email": email, "password": password}
 
-        res, ok = self.send_denarii_mobile_request("get_user_id", params, constants.HTTP.GET)
+        res, ok = self.send_denarii_mobile_request("register", params, constants.HTTP.GET)
 
         if not ok:
             return False, []

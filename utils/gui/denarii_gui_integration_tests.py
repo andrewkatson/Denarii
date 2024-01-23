@@ -150,11 +150,8 @@ class DenariiIntegrationTests(unittest.TestCase):
 
         login_screen = self.main_widget.LOGIN_SCREEN
 
-        name_line_edit = login_screen.name_line_edit
-        name_line_edit.typeText(self.name)
-
-        email_line_edit = login_screen.email_line_edit
-        email_line_edit.typeText(self.email)
+        username_or_email_line_edit = login_screen.username_or_email_line_edit
+        username_or_email_line_edit.typeText(self.name)
         
         password_line_edit = login_screen.password_line_edit
         password_line_edit.typeText(self.password)

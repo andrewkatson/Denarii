@@ -153,7 +153,7 @@ class RegisterScreen(Screen):
             
             success = False
             try:
-                success, res = self.denarii_mobile_client.get_user_id(self.name_line_edit.text(),
+                success, res = self.denarii_mobile_client.register(self.name_line_edit.text(),
                                                                       self.email_line_edit.text(),
                                                                       self.password_line_edit.text())
                 if success:

@@ -127,12 +127,19 @@ def on_local_wallet_screen_clicked():
     pass
 
 def create_remote_user(user, denarii_mobile_client):
-    success, create_user_res = denarii_mobile_client.get_user_id(
+    success, create_user_res = denarii_mobile_client.register(
         user.name, user.email, user.password
     )
 
     assert success
     assert len(create_user_res) > 0
+
+    other_success, login_user_res = denarii_mobile_client.login(
+        user.name, user.password
+    )
+
+    assert other_success
+    assert len(login_user_res) > 0
 
     user_id = create_user_res[0]["user_id"]
 
@@ -860,8 +867,7 @@ class DenariiDesktopGUILoginScreenTestCase(unittest.TestCase):
         self.login_screen.teardown()
 
     def test_store_user_info_with_matching_passwords(self):
-        self.login_screen.name_line_edit.text_inner = "Name_of_person"
-        self.login_screen.email_line_edit.text_inner = "email@email.com"
+        self.login_screen.username_or_email_line_edit.text_inner = f"login_screen_user_{self._testMethodName}"
         self.login_screen.password_line_edit.text_inner = "password#1A"
         
 
