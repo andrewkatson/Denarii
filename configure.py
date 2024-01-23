@@ -1353,176 +1353,6 @@ def generate_files_mac():
     translations_generate_mac()
     trezor_common()
 
-def download_protobuf():
-    protobuf_path = workspace_path / "external" / "protobuf"
-
-    if common.check_exists(protobuf_path, False):
-        common.print_something(f"{protobuf_path} already exists")
-        return
-
-    common.print_something("Downloading Google Protobuf")
-    path = workspace_path / "external"
-    common.chdir(path)
-
-    clone_command = "git clone git@github.com:protocolbuffers/protobuf.git"
-    common.system(clone_command)
-
-    common.check_exists(protobuf_path)
-
-
-def download_dependencies_for_ui():
-    common.print_something("Downloading dependencies for ui")
-    download_protobuf()
-
-
-def build_google_protobuf_protos():
-    common.print_something("Building Google Protobuf protos")
-
-    google_protobuf_path = workspace_path / "external" / "protobuf"
-    common.chdir(google_protobuf_path)
-
-    build_command = "bazel build :well_known_types_py_pb2"
-    common.system(build_command)
-
-    base_path = google_protobuf_path / "bazel-bin" / "python" / "google" / "protobuf"
-    for file in py_pb_files_to_check:
-        path = base_path / file
-
-        if common.check_exists(path, False):
-            common.print_something(f"{path} already exists")
-            continue
-        common.check_exists(path)
-
-
-def build_own_protos():
-    gui_user_path = workspace_path / "bazel-bin" / "utils" / \
-        "gui" / "gui_user_pb2.py"
-
-    
-    wallet_py_proto_path = workspace_path /  "bazel-bin" / "utils" / \
-        "gui" / "wallet_pb2.py"
-
-    identifier_py_proto_path = workspace_path / \
-        "bazel-bin" / "utils" / "gui" / "identifier_pb2.py"
-
-    if common.check_exists(gui_user_path, False) and common.check_exists(wallet_py_proto_path, False) and common.check_exists(identifier_py_proto_path, False):
-        common.print_something(f"{gui_user_path} or {wallet_py_proto_path} or {identifier_py_proto_path} already exists")
-        return
-
-    common.print_something("Building own protos")
-
-    common.chdir(workspace_path)
-
-    build_command = "bazel build utils/gui:all"
-    common.system(build_command)
-
-    common.check_exists(wallet_py_proto_path)
-    common.check_exists(identifier_py_proto_path)
-    common.check_exists(gui_user_path)
-
-
-def build_protos():
-    common.print_something("Building protos")
-
-    build_google_protobuf_protos()
-
-    build_own_protos()
-
-
-def move_google_protobuf_protos():
-    common.print_something("Moving Google Protobuf protos")
-
-    common.chdir(workspace_path)
-
-    google_protobuf_path = workspace_path / "external" / "protobuf"
-
-    common_src_path = google_protobuf_path / \
-        "bazel-bin" / "python" / "google" / "protobuf"
-    common_dest_path = workspace_path / "utils" / "gui" / "google" / "protobuf"
-
-    os.makedirs(common_dest_path)
-
-    for file in py_pb_files_to_check:
-        src_path = common_src_path / file
-        dest_path = common_dest_path / file
-
-        if common.check_exists(dest_path, False):
-            common.print_something(f"{dest_path} already exists")
-            continue
-
-        shutil.copyfile(src_path, dest_path)
-
-        common.check_exists(dest_path)
-
-
-def move_own_protos():
-    wallet_dest_path = workspace_path / "utils" / "gui" / "wallet_pb2.py"
-
-    identifier_dest_path = workspace_path / "utils" / "gui" / "identifier_pb2.py"
-
-    gui_user_dest_path = workspace_path / "utils" / \
-        "gui" / "gui_user_pb2.py"
-
-    if common.check_exists(gui_user_dest_path, False) and common.check_exists(wallet_dest_path, False) and common.check_exists(identifier_dest_path, False):
-        common.print_something(f"{gui_user_dest_path} or {wallet_dest_path} or {identifier_dest_path} already exists")
-        return
-
-    common.print_something("Moving own protos")
-
-    common.chdir(workspace_path)
-
-    gui_user_path = workspace_path / "bazel-bin" / \
-        "utils" / "gui" / "gui_user_pb2.py"
-
-    wallet_path = workspace_path / "bazel-bin" / "utils" / "gui" / "wallet_pb2.py"
-
-    identifier_path = workspace_path / "bazel-bin" / "utils" / "gui" / "identifier_pb2.py"
-
-    shutil.copyfile(gui_user_path, gui_user_dest_path)
-
-    common.check_exists(gui_user_dest_path)
-
-
-    shutil.copyfile(wallet_path, wallet_dest_path)
-
-    common.check_exists(wallet_dest_path)
-
-
-    shutil.copyfile(identifier_path, identifier_dest_path)
-
-    common.check_exists(identifier_dest_path)
-
-
-def move_protos():
-    common.print_something("Moving protos")
-
-    move_google_protobuf_protos()
-
-    move_own_protos()
-
-
-def move_google_protobuf_py_files():
-    common.print_something("Moving google protobuf py files")
-
-    common.chdir(workspace_path)
-
-    common_src_path = workspace_path / "external" / \
-        "protobuf" / "python" / "google" / "protobuf"
-    common_dest_path = workspace_path / "utils" / "gui" / "google" / "protobuf"
-
-    for file in py_files_to_check:
-        src_path = common_src_path / file
-        dest_path = common_dest_path / file
-
-        if common.check_exists(dest_path, False):
-            common.print_something(f"{dest_path} already exists")
-            continue
-
-        shutil.copyfile(src_path, dest_path)
-
-        common.check_exists(dest_path)
-
-
 def move_own_py_files():
     workspace_path_finder_dest_path = workspace_path / \
         "utils" / "gui" / "workspace_path_finder.py"
@@ -1559,8 +1389,6 @@ def move_own_py_files():
 
 def move_misc():
     common.print_something("Moving miscellaneous")
-
-    move_google_protobuf_py_files()
 
     move_own_py_files()
 
@@ -1831,10 +1659,6 @@ def setup_ui():
     common.print_something("Setting up the UI")
     download_dependencies_for_ui()
 
-    build_protos()
-
-    move_protos()
-
     move_misc()
 
     build_binaries()
@@ -1846,10 +1670,6 @@ def setup_ui_win():
     common.print_something("Setting up the UI for Windows")
     download_dependencies_for_ui()
 
-    build_protos()
-
-    move_protos()
-
     move_misc()
 
     build_binaries_win()
@@ -1859,11 +1679,6 @@ def setup_ui_win():
 
 def setup_ui_mac():
     common.print_something("Setting up the UI for Mac")
-    download_dependencies_for_ui()
-
-    build_protos()
-
-    move_protos()
 
     move_misc()
 
