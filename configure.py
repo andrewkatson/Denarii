@@ -1170,7 +1170,7 @@ def run_translation_generation(translation_files):
     translation_file_path = translation_file_dir / "translation_files.h"
 
     if common.check_exists_with_existing_artifact_check(translation_file_path, delete_single_file=True, fail_on_existence=False):
-        continue
+        return
 
     common.print_something("Running translation generation")
     # create the file first
@@ -1203,7 +1203,7 @@ def run_translation_generation_win(translation_files):
     translation_file_path = translation_file_dir / "translation_files.h"
 
     if common.check_exists_with_existing_artifact_check(translation_file_path, delete_single_file=True, fail_on_existence=False):
-        continue
+        return
 
     common.print_something("Running translation generation for Windows")
 
@@ -1237,7 +1237,7 @@ def run_translation_generation_mac(translation_files):
     translation_file_path = translation_file_dir / "translation_files.h"
 
     if common.check_exists_with_existing_artifact_check(translation_file_path, delete_single_file=True, fail_on_existence=False):
-        continue
+        return
 
     common.print_something("Running translation generation for Mac")
 
@@ -1317,9 +1317,7 @@ def move_own_py_files():
     workspace_path_finder_dest_path = workspace_path / \
         "utils" / "gui" / "workspace_path_finder.py"
 
-    if common.check_exists(workspace_path_finder_dest_path, False):
-        common.print_something(
-            f"{workspace_path_finder_dest_path} already exists")
+    if common.check_exists_with_existing_artifact_check(workspace_path_finder_dest_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Moving own py files")
@@ -1336,8 +1334,8 @@ def move_own_py_files():
     dest_denarii_client_path = workspace_path / \
         "utils" / "gui" / "denarii_client.py"
 
-    if common.check_exists(dest_denarii_client_path, False):
-        common.print_something(f"{dest_denarii_client_path} already exists")
+
+    if common.check_exists_with_existing_artifact_check(dest_denarii_client_path, delete_single_file=True, fail_on_existence=False):
         return
 
     src_denarii_client_path = workspace_path / "client" / "Denarii" / "denarii_client.py"
@@ -1356,8 +1354,8 @@ def move_misc():
 def build_denariid():
     denariid_path = workspace_path / "bazel-bin" / "src" / "denariid"
 
-    if common.check_exists(denariid_path, False):
-        common.print_something(f"{denariid_path} already exists")
+
+    if common.check_exists_with_existing_artifact_check(denariid_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Building denariid")
@@ -1374,9 +1372,8 @@ def build_denarii_wallet_rpc_server():
     denarii_wallet_rpc_server_path = workspace_path / \
         "bazel-bin" / "src" / "denarii_wallet_rpc_server"
 
-    if common.check_exists(denarii_wallet_rpc_server_path, False):
-        common.print_something(
-            f"{denarii_wallet_rpc_server_path} already exists")
+
+    if common.check_exists_with_existing_artifact_check(denarii_wallet_rpc_server_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Building denarii_wallet_rpc_server")
@@ -1401,8 +1398,7 @@ def build_denariid_win():
 
     denariid_win_path = workspace_path / "bazel-bin" / "src" / "denariid.exe"
 
-    if common.check_exists(denariid_win_path, False):
-        common.print_something(f"{denariid_win_path} already exists")
+    if common.check_exists_with_existing_artifact_check(denariid_win_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Building denariid.exe")
@@ -1420,9 +1416,7 @@ def build_denarii_wallet_rpc_server_win():
     denarii_wallet_rpc_server_win_path = workspace_path / \
         "bazel-bin" / "src" / "denarii_wallet_rpc_server.exe"
 
-    if common.check_exists(denarii_wallet_rpc_server_win_path, False):
-        common.print_something(
-            f"{denarii_wallet_rpc_server_win_path} already exists")
+    if common.check_exists_with_existing_artifact_check(denarii_wallet_rpc_server_win_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Building denarii_wallet_rpc_server.exe")
@@ -1446,8 +1440,7 @@ def build_binaries_win():
 def build_denariid_mac():
     denariid_path = workspace_path / "bazel-bin" / "src" / "denariid"
 
-    if common.check_exists(denariid_path, False):
-        common.print_something(f"{denariid_path} already exists")
+    if common.check_exists_with_existing_artifact_check(denariid_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Building denariid for Mac")
@@ -1465,9 +1458,7 @@ def build_denarii_wallet_rpc_server_mac():
     denarii_wallet_rpc_server_path = workspace_path / \
         "bazel-bin" / "src" / "denarii_wallet_rpc_server"
 
-    if common.check_exists(denarii_wallet_rpc_server_path, False):
-        common.print_something(
-            f"{denarii_wallet_rpc_server_path} already exists")
+    if common.check_exists_with_existing_artifact_check(denarii_wallet_rpc_server_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Building denarii_wallet_rpc_server for Mac")
@@ -1491,8 +1482,7 @@ def build_binaries_mac():
 def move_denariid():
     dest_path = workspace_path / "utils" / "gui" / "denariid"
 
-    if common.check_exists(dest_path, False):
-        common.print_something(f"{dest_path} already exists")
+    if common.check_exists_with_existing_artifact_check(dest_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Moving denariid")
@@ -1508,8 +1498,7 @@ def move_denariid():
 def move_denarii_wallet_rpc_server():
     dest_path = workspace_path / "utils" / "gui" / "denarii_wallet_rpc_server"
 
-    if common.check_exists(dest_path, False):
-        common.print_something(f"{dest_path} already exists")
+    if common.check_exists_with_existing_artifact_check(dest_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Moving denarii_wallet_rpc_server")
@@ -1533,8 +1522,7 @@ def move_binaries():
 def move_denariid_win():
     dest_path = workspace_path / "utils" / "gui" / "denariid.exe"
 
-    if common.check_exists(dest_path, False):
-        common.print_something(f"{dest_path} already exists")
+    if common.check_exists_with_existing_artifact_check(dest_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Moving denariid.exe")
@@ -1550,8 +1538,7 @@ def move_denariid_win():
 def move_denarii_wallet_rpc_server_win():
     dest_path = workspace_path / "utils" / "gui" / "denarii_wallet_rpc_server.exe"
 
-    if common.check_exists(dest_path, False):
-        common.print_something(f"{dest_path} already exists")
+    if common.check_exists_with_existing_artifact_check(dest_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Moving denarii_wallet_rpc_server.exe")
@@ -1576,8 +1563,7 @@ def move_binaries_win():
 def move_denariid_mac():
     dest_path = workspace_path / "utils" / "gui" / "denariid"
 
-    if common.check_exists(dest_path, False):
-        common.print_something(f"{dest_path} already exists")
+    if common.check_exists_with_existing_artifact_check(dest_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Moving denariid for Mac")
@@ -1593,8 +1579,7 @@ def move_denariid_mac():
 def move_denarii_wallet_rpc_server_mac():
     dest_path = workspace_path / "utils" / "gui" / "denarii_wallet_rpc_server"
 
-    if common.check_exists(dest_path, False):
-        common.print_something(f"{dest_path} already exists")
+    if common.check_exists_with_existing_artifact_check(dest_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Moving denarii_wallet_rpc_server for Mac")

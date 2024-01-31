@@ -37,9 +37,8 @@ workspace_path = workspace_path_finder.find_workspace_path()
 
 def get_libunwind():
     libunwind_path = workspace_path / "external" / "libunwind"
-
-    if common.check_exists(libunwind_path, False):
-        common.print_something("Libunwind already downloaded")
+    
+    if common.check_exists_with_existing_artifact_check(libunwind_path, delete_tree=True, fail_on_existence=False):
         return
 
     common.print_something("Getting libunwind")
@@ -82,8 +81,7 @@ def get_libunwind():
 def get_zlib():
     zlib_path = workspace_path / "external" / "zlib"
 
-    if common.check_exists(zlib_path, False):
-        common.print_something("Zlib already downloaded")
+    if common.check_exists_with_existing_artifact_check(zlib_path, delete_tree=True, fail_on_existence=False):
         return
 
     common.print_something("Getting Zlib")
@@ -195,8 +193,7 @@ def find_src_files_win(libraries):
                         common.print_something(
                             "weird this shouldnt happen but is ok")
 
-                    if common.check_exists(new_path, False):
-                        common.print_something(f"{new_path} already exists")
+                    if common.check_exists_with_existing_artifact_check(new_path, delete_single_file=True, fail_on_existence=False):
                         continue
 
                     shutil.copyfile(path, new_path)
@@ -240,8 +237,7 @@ def copy_file(path, library):
             except Exception as e:
                 common.print_something(e)
 
-            if common.check_exists(new_path, False):
-                common.print_something(f"{new_path} already exists")
+            if common.check_exists_with_existing_artifact_check(new_path, delete_single_file=True, fail_on_existence=False):
                 return
 
             shutil.copyfile(path, new_path)
@@ -283,8 +279,7 @@ def randomx_win(external_dir_path):
 
     randomx_library_path = build_path / "librandomx.a"
 
-    if common.check_exists(randomx_library_path, False):
-        common.print_something("Randomx library already exists")
+    if common.check_exists_with_existing_artifact_check(randomx_path, fail_on_existence=False):
         return
 
     common.print_something("Getting randomx")
@@ -300,12 +295,12 @@ def randomx_win(external_dir_path):
 
 
 def miniupnp_win(external_dir_path):
+    root_miniupnp_path = external_dir_path / "miniupnp"
     # we only need to build one of the subdirectories
     miniupnp_path = external_dir_path / "miniupnp" / "miniupnpc"
 
     miniupnp_library_path = miniupnp_path / "libminiupnpc.a"
-    if common.check_exists(miniupnp_library_path, False):
-        common.print_something("Miniupnp library already exists")
+    if common.check_exists_with_existing_artifact_check(root_miniupnp_path, delete_tree=True, fail_on_existence=False):
         return
 
     common.print_something("Getting miniupnp")
@@ -328,8 +323,7 @@ def openpgm_win(external_dir_path):
     inner_path = openpgm_path / "openpgm" / "pgm"
     binary_path = inner_path / "build" / "lib" / "libpgm-v142-mt-gd-5_2_127.lib"
 
-    if common.check_exists(binary_path, False):
-        common.print_something("Openpgm already exists")
+    if common.check_exists_with_existing_artifact_check(openpgm_path, delete_tree=True, fail_on_existence=False):
         return
 
     common.print_something("Getting openpgm for Windows")
@@ -354,8 +348,7 @@ def libnorm_win(external_dir_path):
 
     binary_path = libnorm_path / "build" / "norm_static.lib"
 
-    if common.check_exists(binary_path, False):
-        common.print_something("Libnorm already exists")
+    if common.check_exists_with_existing_artifact_check(libnorm_path, delete_tree=True, fail_on_existence=False):
         return
 
     common.print_something("Getting libnorm for Windows")
@@ -383,8 +376,7 @@ def curl_win(external_dir_path):
 
     common.chdir(raw_path)
 
-    if common.check_exists(raw_path, False):
-        common.print_something(f"{raw_path} already exists")
+    if common.check_exists_with_existing_artifact_check(raw_path, delete_tree=True, fail_on_existence=False):
         return
 
     clone_command = "git clone git@github.com:curl/curl.git"
