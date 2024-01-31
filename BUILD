@@ -23,5 +23,12 @@ py_library(
 py_library(
   name = "common",
   srcs = ["common.py"],
+  deps = [":flags"],
+  imports = [":flags"]
+)
+
+py_library(
+  name = "flags", 
+  srcs = ["flags.py"]
   deps = []
 )

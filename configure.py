@@ -170,14 +170,12 @@ def find_src_files(libraries):
                     except Exception as e:
                         common.print_something(e)
 
-                    if common.check_exists(new_path, False):
-                        common.print_something(f"{new_path} already exists")
+                    if common.check_exists_with_existing_artifact_check(new_path, delete_single_file=True, fail_on_existence=False):
                         continue
-
+                        
                     shutil.copyfile(path, new_path)
 
-                    common.check_exists(new_path)
-
+                    common.check_exists(new_path) 
                 else:
                     common.print_something(path + " does not exist")
 
@@ -207,8 +205,7 @@ def find_includes(libraries):
                     except Exception as e:
                         common.print_something(e)
 
-                    if common.check_exists(new_path, False):
-                        common.check_exists(f"{new_path} already exists")
+                    if common.check_exists_with_existing_artifact_check(new_path, delete_single_file=True, fail_on_existence=False):
                         continue
 
                     shutil.copyfile(path, new_path)
@@ -268,9 +265,7 @@ def find_includes_mac(libraries):
                 try:
                     include_path = pathlib.Path(library.folderpath) / "include"
 
-                    if common.check_exists(include_path, False):
-                        common.print_something(
-                            f"{include_path} already exists")
+                    if common.check_exists_with_existing_artifact_check(new_path, delete_single_file=True, fail_on_existence=False):
                         continue
 
                     shutil.copytree(path, include_path)
@@ -292,8 +287,7 @@ def find_src_files_mac(libraries):
                 filename = path.split("/")[-1]
                 new_path = os.path.join(library.folderpath, filename)
 
-                if common.check_exists(new_path, False):
-                    common.print_something(f"{new_path} already exists")
+                if common.check_exists_with_existing_artifact_check(new_path, delete_single_file=True, fail_on_existence=False):
                     continue
 
                 try:
@@ -313,22 +307,18 @@ def import_dependencies_mac():
 
 
 def miniupnp(external_dir_path):
-    # we only need to build one of the subdirectories
+    # we only need to build one of the subdirectories but we need to remove the whole tree
+    root_miniupnp_path = external_dir_path / "miniupnp"
     miniupnp_path = external_dir_path / "miniupnp" / "miniupnpc"
+    
+    if common.check_exists_with_existing_artifact_check(root_miniupnp_path, delete_tree=True, fail_on_existence=False):
+        return
 
     miniupnp_library_path = miniupnp_path / "libminiupnpc.a"
 
-    if common.check_exists(miniupnp_library_path, False):
-        common.print_something(f"{miniupnp_library_path} already exists")
-        return
-
     common.print_something("Getting miniupnp")
     common.chdir(external_dir_path)
-
-    # remove the empty directory
-    remove_command = "rm -rf " + str(external_dir_path / "miniupnp")
-    common.system(remove_command)
-
+    
     # For now we have to clone this because miniupnp fails to download :(
     clone_command = "git clone git@github.com:miniupnp/miniupnp.git"
     common.system(clone_command)
@@ -346,8 +336,7 @@ def randomx(external_dir_path):
 
     randomx_library_path = randomx_path / "build" / "librandomx.a"
 
-    if common.check_exists(randomx_library_path, False):
-        common.print_something(f"{randomx_library_path} already exists")
+    if common.check_exists_with_existing_artifact_check(randomx_path, fail_on_existence=False):
         return
 
     common.print_something("Getting randomx")
@@ -367,17 +356,12 @@ def supercop(external_dir_path):
     supercop_64_library_path = supercop_path / "libmonero-crypto64.a"
     supercop_other_library_path = supercop_path / "libmonero-crypto.a"
 
-    if common.check_exists(supercop_64_library_path, False) and common.check_exists(supercop_other_library_path, False):
-        common.print_something(
-            f"{supercop_64_library_path} and {supercop_other_library_path} already exist")
+    if common.check_exists_with_existing_artifact_check(supercop_path, delete_tree=True, fail_on_existence=False):
         return
-
+    
     common.print_something("Getting supercop")
 
     common.chdir(external_dir_path)
-
-    remove_command = "rm -rf " + str(supercop_path)
-    common.system(remove_command)
 
     clone_command = "git clone --recursive git@github.com:andrewkatson/supercop.git && cd supercop && git " \
                     "submodule init && git submodule update "
@@ -416,8 +400,7 @@ def unbound(external_dir_path):
 
     libunbound_library_path = unbound_path / "libunbound.so"
 
-    if common.check_exists(libunbound_library_path, False):
-        common.print_something(f"{libunbound_library_path} already exists")
+    if common.check_exists_with_existing_artifact_check(root_miniupnp_path, fail_on_existence=False):
         return
 
     common.print_something("Getting unbound")
@@ -440,11 +423,9 @@ def openssl(external_dir_path):
     libssl_path = openssl_path / "libssl.a"
     libcrypto_path = openssl_path / "libcrypto.a"
 
-    if common.check_exists(libssl_path, False) and common.check_exists(libcrypto_path, False):
-        common.print_something(
-            f"{libssl_path} and {libcrypto_path} already exist")
+    if common.check_exists_with_existing_artifact_check(openssl_path, delete_tree=True, fail_on_existence=False):
         return
-
+    
     common.print_something("Getting openssl")
 
     common.chdir(external_dir_path)
@@ -475,8 +456,7 @@ def libzmq(external_dir_path):
 
     libzmq_library_path = libzmq_path / "libzmq.a"
 
-    if common.check_exists(libzmq_library_path, False):
-        common.print_something(f"{libzmq_library_path} already exists")
+    if common.check_exists_with_existing_artifact_check(libzmq_path, delete_tree=True, fail_on_existence=False):
         return
 
     common.print_something("Getting libzmq")
@@ -498,8 +478,7 @@ def libzmq(external_dir_path):
 def zlib(external_dir_path):
     zlib_path = external_dir_path / "zlib"
 
-    if common.check_exists(zlib_path, False):
-        common.print_something(f"{zlib_path} already exists")
+    if common.check_exists_with_existing_artifact_check(zlib_path, fail_on_existence=False):
         return
 
     common.print_something("Getting zlib")
@@ -519,10 +498,9 @@ def liblmdb(external_dir_path):
 
     liblmdb_library_path = liblmdb_path / "liblmdb.a"
 
-    if common.check_exists(liblmdb_library_path, False):
-        common.print_something(f"{liblmdb_library_path} already exists")
+    if common.check_exists_with_existing_artifact_check(liblmdb_path, fail_on_existence=False):
         return
-
+    
     common.print_something("Getting liblmdb")
     common.chdir(external_dir_path)
 
@@ -537,8 +515,7 @@ def bigint():
     bigint_path = workspace_path / "external"
     common.chdir(bigint_path)
 
-    if common.check_exists(bigint_path, False):
-        common.print_something(f"{bigint_path} already exists")
+    if common.check_exists_with_existing_artifact_check(bigint_path, delete_tree=True, fail_on_existence=False):
         return
 
     clone_command = "git clone git@github.com:kasparsklavins/bigint.git"
@@ -551,9 +528,9 @@ def curl():
     inside_folder_path = curl_path + "/curl"
     common.chdir(curl_path)
     
-    if common.check_exists(inside_folder_path, False):
-        common.print_something(f"{inside_folder_path} already exists")
+    if common.check_exists_with_existing_artifact_check(curl_path, delete_tree=True, fail_on_existence=False):
         return
+
 
     clone_command = "git clone git@github.com:curl/curl.git"
     os.system(clone_command)
@@ -569,8 +546,8 @@ def curl():
 def json():
 
     json_path = workspace_path / "external/json"
-    if common.check_exists(json_path, False):
-        common.print_something(f"{json_path} already exists")
+    
+    if common.check_exists_with_existing_artifact_check(json_path, delete_tree=True, fail_on_existence=False):
         return
 
     common.chdir(json_path)
@@ -627,17 +604,12 @@ def supercop_win(external_dir_path):
     supercop_64_library_path = supercop_path / "libmonero-crypto64.a"
     supercop_other_library_path = supercop_path / "libmonero-crypto.a"
 
-    if common.check_exists(supercop_64_library_path, False) and common.check_exists(supercop_other_library_path, False):
-        common.print_something(
-            f"{supercop_64_library_path} and {supercop_other_library_path} already exist")
+    if common.check_exists_with_existing_artifact_check(supercop_path, delete_tree=True, fail_on_existence=False):
         return
 
     common.print_something("Getting supercop for Windows")
 
     common.chdir(external_dir_path)
-
-    remove_command = "rm -rf " + str(supercop_path)
-    common.system(remove_command)
 
     clone_command = "git clone --recursive git@github.com:andrewkatson/supercop.git && git submodule init && git submodule update"
     common.system(clone_command)
@@ -686,9 +658,9 @@ def randomx_mac(external_dir_path):
 
     randomx_library_path = randomx_path / "build" / "librandomx.a"
 
-    if common.check_exists(randomx_library_path, False):
-        common.print_something(f"{randomx_library_path} already exists")
+    if common.check_exists_with_existing_artifact_check(randomx_path, fail_on_existence=False):
         return
+
 
     common.print_something("Getting randomx")
     common.chdir(external_dir_path)
@@ -706,9 +678,9 @@ def liblmdb_mac(external_dir_path):
 
     liblmdb_library_path = liblmdb_path / "liblmdb.a"
 
-    if common.check_exists(liblmdb_library_path, False):
-        common.print_something(f"{liblmdb_library_path} already exists")
+    if common.check_exists_with_existing_artifact_check(liblmdb_path, fail_on_existence=False):
         return
+
 
     common.print_something("Getting liblmdb")
     common.chdir(external_dir_path)
@@ -725,9 +697,9 @@ def libnorm_mac(external_dir_path):
 
     binary_path = libnorm_path / "build" / "libnorm.a"
 
-    if common.check_exists(binary_path, False):
-        common.print_something(f"{binary_path} already exists")
+    if common.check_exists_with_existing_artifact_check(libnorm_path, delete_tree=True, fail_on_existence=False):
         return
+
 
     common.print_something("Getting libnorm")
     common.chdir(external_dir_path)
@@ -757,8 +729,7 @@ def libusb_mac(external_dir_path):
 
     binary_path = libusb_path / "lib" / "libusb-1.0.a"
 
-    if common.check_exists(binary_path, False):
-        common.print_something(f"{binary_path} already exists")
+    if common.check_exists_with_existing_artifact_check(libusb_path, delete_tree=True, fail_on_existence=False):
         return
 
     common.print_something("Getting libusb")
@@ -814,9 +785,7 @@ def trezor_common():
     trezor_common_workspace_file_path = workspace_path / \
         "trezor_common_workspace_file.txt"
 
-    if common.check_exists(trezor_common_build_file_path, False) and common.check_exists(trezor_common_workspace_file_path, False):
-        common.print_something(
-            f"{trezor_common_build_file_path} and {trezor_common_workspace_file_path} already exist")
+    if common.check_exists_with_existing_artifact_check(trezor_common_build_file_path, delete_single_file=True, fail_on_existence=False) and common.check_exists_with_existing_artifact_check(trezor_common_workspace_file_path, delete_single_file=True, fail_on_existence=False):
         return
 
     try:
@@ -864,8 +833,7 @@ def blocks_generate():
 
         path_to_output = workspace_path / "src" / "blocks" / output_file
 
-        if common.check_exists(path_to_output, False):
-            common.print_something(f"{path_to_output} already exists")
+        if common.check_exists_with_existing_artifact_check(path_to_output, delete_single_file=True, fail_on_existence=False):
             continue
 
         path_to_blocks = str(workspace_path) + "/src/blocks"
@@ -891,8 +859,7 @@ def crypto_wallet_generate():
     copy_file_path = supercop_path / "include" / "monero" / "crypto.h"
 
     ops_file_path = crypto_wallet_path / ops_file
-    if common.check_exists(ops_file_path, False):
-        common.print_something(f"{ops_file_path} already exists")
+    if common.check_exists_with_existing_artifact_check(ops_file_path, delete_single_file=True, fail_on_existence=False):
         return
 
     # If we are on Linux and have 64 bit processor we can use monero's default crypto libraries
@@ -1019,8 +986,7 @@ def generate_version_file_with_replacement(version_tag, is_release):
 
     version_file_path = src_directory / output_file
 
-    if common.check_exists(version_file_path, False):
-        common.print_something(f"{version_file_path} already exists")
+    if common.check_exists_with_existing_artifact_check(version_file_path, delete_single_file=True, fail_on_existence=False):
         return
 
     with open(input_file_path, "r") as copy:
@@ -1076,9 +1042,8 @@ def generate_benchmark_file_with_replacement(replacement):
 
     benchmark_file_path = tests_directory / output_file
 
-    if common.check_exists(benchmark_file_path, False):
-        common.print_something(f"{benchmark_file_path} already exists")
-        return
+    if common.check_exists_with_existing_artifact_check(benchmark_file_path, delete_single_file=True, fail_on_existence=False):
+        continue
 
     with open(input_file_path, "r") as copy:
 
@@ -1125,8 +1090,7 @@ def convert_translation_files():
         converted_file = converted_files[i]
         translated_file_path = translation_file_dir / converted_file
 
-        if common.check_exists(translated_file_path, False):
-            common.print_something(f"{translated_file_path} already exists")
+        if common.check_exists_with_existing_artifact_check(translated_file_path, delete_single_file=True, fail_on_existence=False):
             continue
 
         file = files[i]
@@ -1156,9 +1120,9 @@ def convert_translation_files_win():
         converted_file = converted_files[i]
         translated_file_path = translation_file_dir / converted_file
 
-        if common.check_exists(translated_file_path, False):
-            common.print_something(f"{translated_file_path} already exists")
+        if common.check_exists_with_existing_artifact_check(translated_file_path, delete_single_file=True, fail_on_existence=False):
             continue
+        
         file = files[i]
 
         conversion_command = "/mingw64/bin/lrelease " + file + " -qm " + converted_file
@@ -1186,8 +1150,7 @@ def convert_translation_files_mac():
         converted_file = converted_files[i]
         translated_file_path = translation_file_dir / converted_file
 
-        if common.check_exists(translated_file_path, False):
-            common.print_something(f"{translated_file_path} already exists")
+        if common.check_exists_with_existing_artifact_check(translated_file_path, delete_single_file=True, fail_on_existence=False):
             continue
 
         file = files[i]
@@ -1206,9 +1169,8 @@ def run_translation_generation(translation_files):
 
     translation_file_path = translation_file_dir / "translation_files.h"
 
-    if common.check_exists(translation_file_path, False):
-        common.print_something(f"{translation_file_path} already exists")
-        return
+    if common.check_exists_with_existing_artifact_check(translation_file_path, delete_single_file=True, fail_on_existence=False):
+        continue
 
     common.print_something("Running translation generation")
     # create the file first
@@ -1240,9 +1202,8 @@ def run_translation_generation_win(translation_files):
 
     translation_file_path = translation_file_dir / "translation_files.h"
 
-    if common.check_exists(translation_file_path, False):
-        common.print_something(f"{translation_file_path} already exists")
-        return
+    if common.check_exists_with_existing_artifact_check(translation_file_path, delete_single_file=True, fail_on_existence=False):
+        continue
 
     common.print_something("Running translation generation for Windows")
 
@@ -1275,9 +1236,8 @@ def run_translation_generation_mac(translation_files):
 
     translation_file_path = translation_file_dir / "translation_files.h"
 
-    if common.check_exists(translation_file_path, False):
-        common.print_something(f"{translation_file_path} already exists")
-        return
+    if common.check_exists_with_existing_artifact_check(translation_file_path, delete_single_file=True, fail_on_existence=False):
+        continue
 
     common.print_something("Running translation generation for Mac")
 
