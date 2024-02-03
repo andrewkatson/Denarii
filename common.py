@@ -5,6 +5,7 @@ import shutil
 
 from difflib import SequenceMatcher
 
+import flags
 
 def chdir(path):
     if not os.path.exists(path):
@@ -36,22 +37,23 @@ def check_exists(path, fail_on_existence=True):
             return False
         
 def check_exists_with_existing_artifact_check(path, delete_tree=False, delete_single_file=False, fail_on_existence=True):
-    exists = common.check_exists(new_path, fail_on_existence=fail_on_existence) 
+    exists = check_exists(path, fail_on_existence=fail_on_existence) 
     if exists and flags.args.existing_artifact_delete_policy == flags.SKIP:
-        common.print_something(f"{new_path} already exists")
+        print_something(f"{path} already exists")
         # If we want to skip we should exit whatever called this
         return True
     elif exists and flags.args.existing_artifact_delete_policy == flags.DELETE:
-        common.print_something(f"{new_path} exists and is going to be deleted")
+        print_something(f"{path} exists and is going to be deleted")
         if delete_tree: 
-            shutil.rmtree(new_path)
+            shutil.rmtree(path)
         if delete_single_file: 
-            os.remove(new_path)
+            os.remove(path)
         # If we delete we want to download them again so dont exit whatever called this
         return False
             
-    # To be safe we do nothing.
-    return True
+    # If we fall through we allow whatever logic to continue.
+    print_something(f"{path} does not exist and we are going to allow it to be created")
+    return False
             
 
 def get_all_files_paths(path):

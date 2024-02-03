@@ -6,7 +6,7 @@ DELETE = "DELETE"
 SKIP = "SKIP"
 
 parser = argparse.ArgumentParser(description='Process some integers.')
-parser.add_argument('--existing_artifact_delete_policy', type=str,
+parser.add_argument('--existing_artifact_delete_policy', type=str, default=SKIP,
                     help='What to do when an artifact exists. This does not apply to creating the BUILD files and folders. Valid values are {DELETE}, {SKIP}')
 
 args = parser.parse_args()

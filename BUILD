@@ -29,6 +29,6 @@ py_library(
 
 py_library(
   name = "flags", 
-  srcs = ["flags.py"]
+  srcs = ["flags.py"],
   deps = []
 )

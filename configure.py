@@ -265,7 +265,7 @@ def find_includes_mac(libraries):
                 try:
                     include_path = pathlib.Path(library.folderpath) / "include"
 
-                    if common.check_exists_with_existing_artifact_check(new_path, delete_single_file=True, fail_on_existence=False):
+                    if common.check_exists_with_existing_artifact_check(include_path, delete_single_file=True, fail_on_existence=False):
                         continue
 
                     shutil.copytree(path, include_path)
@@ -511,7 +511,7 @@ def liblmdb(external_dir_path):
     common.check_exists(liblmdb_library_path)
 
 
-def bigint():
+def bigint(external_dir_path):
     bigint_path = workspace_path / "external"
     common.chdir(bigint_path)
 
@@ -523,9 +523,9 @@ def bigint():
 
     common.check_exists(bigint_path)
 
-def curl():
+def curl(external_dir_path):
     curl_path = workspace_path / "external/curl"
-    inside_folder_path = curl_path + "/curl"
+    inside_folder_path = curl_path / "curl"
     common.chdir(curl_path)
     
     if common.check_exists_with_existing_artifact_check(curl_path, delete_tree=True, fail_on_existence=False):
@@ -543,7 +543,7 @@ def curl():
     common.check_exists(inside_folder_path)
 
 
-def json():
+def json(external_dir_path):
 
     json_path = workspace_path / "external/json"
     
@@ -1043,7 +1043,7 @@ def generate_benchmark_file_with_replacement(replacement):
     benchmark_file_path = tests_directory / output_file
 
     if common.check_exists_with_existing_artifact_check(benchmark_file_path, delete_single_file=True, fail_on_existence=False):
-        continue
+        return
 
     with open(input_file_path, "r") as copy:
 
@@ -1362,7 +1362,7 @@ def build_denariid():
 
     common.chdir(workspace_path)
 
-    build_command = "bazel_build src:denariid"
+    build_command = "bazel build src:denariid"
     common.system(build_command)
 
     common.check_exists(denariid_path)
@@ -1447,7 +1447,7 @@ def build_denariid_mac():
 
     common.chdir(workspace_path)
 
-    build_command = "bazel_build src:denariid"
+    build_command = "bazel build src:denariid"
     common.system(build_command)
 
     common.check_exists(denariid_path)
