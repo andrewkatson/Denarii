@@ -8,7 +8,7 @@ cc_library(
     deps = [
         "@com_google_protobuf//:protobuf",
         "@com_google_protobuf//:protobuf_headers",
-        "@gtest",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -18,7 +18,7 @@ cc_library(
     deps = [
         "@com_google_protobuf//:protobuf",
         "@com_google_protobuf//:protobuf_headers",
-        "@gtest",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 

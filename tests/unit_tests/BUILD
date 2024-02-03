@@ -45,7 +45,7 @@ cc_test(
         "@boost//:chrono",
         "@boost//:thread",
         "@com_google_absl//absl/random",
-        "@gtest",
+        "@com_google_googletest//:gtest_main",
         "@liblzma",
         "@libreadline",
         "@libsodium",

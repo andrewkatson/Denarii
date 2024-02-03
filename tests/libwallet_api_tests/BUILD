@@ -16,7 +16,7 @@ cc_test(
         "@boost//:serialization",
         "@boost//:system",
         "@boost//:thread",
-        "@gtest",
+        "@com_google_googletest//:gtest_main",
         "@liblzma",
         "@libreadline",
     ],

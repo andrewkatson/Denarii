@@ -14,7 +14,7 @@ cc_test(
     srcs = ["bits_test.cc"],
     deps = [
         ":bits",
-        "@gtest",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -31,6 +31,6 @@ cc_test(
     srcs = ["combination_test.cc"],
     deps = [
         ":combination",
-        "@gtest",
+        "@com_google_googletest//:gtest_main",
     ],
 )

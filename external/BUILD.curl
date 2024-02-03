@@ -1,6 +1,6 @@
 load("@rules_cc//cc:defs.bzl", "cc_import")
 
-load("@keiros_public//:bazel/curl.bzl", "CURL_COPTS")
+load("@denarii//:bazel/curl.bzl", "CURL_COPTS")
 
 package(features = ["no_copts_tokenization"])
 

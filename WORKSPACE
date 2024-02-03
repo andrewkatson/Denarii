@@ -18,17 +18,17 @@ bazel_skylib_workspace()
 # abseil-cpp
 http_archive(
   name = "com_google_absl",
-  urls = ["https://github.com/abseil/abseil-cpp/archive/20230125.3.zip"],
-  strip_prefix = "abseil-cpp-20230125.3",
-  sha256 = "51d676b6846440210da48899e4df618a357e6e44ecde7106f1e44ea16ae8adc7"
+  urls = ["https://github.com/abseil/abseil-cpp/archive/20240116.0.zip"],
+  strip_prefix = "abseil-cpp-20240116.0",
+  integrity = "sha256-0PmlgEYzdZePWuTgTaOcNmS9qiNySy8L8AiWoCv4Abk="
 )
 
 # Google Test
 http_archive(
-  name = "gtest",
-  urls = ["https://github.com/google/googletest/archive/release-1.12.1.zip"],
-  strip_prefix = "googletest-release-1.12.1",
-  sha256 = "24564e3b712d3eb30ac9a85d92f7d720f60cc0173730ac166f27dda7fed76cb2"
+  name = "com_google_googletest",
+  urls = ["https://github.com/google/googletest/archive/5ab508a01f9eb089207ee87fd547d290da39d015.zip"],
+  strip_prefix = "googletest-5ab508a01f9eb089207ee87fd547d290da39d015",
+  integrity = "sha256-dV+aObxyBfWgxCjpIN2tCSwzyKG0aZfe8/HUqCre1uE="
 )
 
 # rules_cc defines rules for generating C++ code from Protocol Buffers.
@@ -67,8 +67,9 @@ http_archive(
 # the base google protocol buffer code.
 http_archive(
     name = "com_google_protobuf",
-    strip_prefix = "protobuf-23.3",
-    urls = ["https://github.com/protocolbuffers/protobuf/archive/v23.3.zip"],
+    strip_prefix = "protobuf-25.2",
+    urls = ["https://github.com/protocolbuffers/protobuf/archive/v25.2.zip"],
+    integrity = "sha256-3dD1Jx8xtUnvx06zkGHhQhMmU9XQQwcfzsJlvVcec8Q="
 )
 
 # gRPC code -- has py_proto_library rule which is useful.
@@ -105,9 +106,9 @@ http_archive(
 
     # Replace the commit hash in both places (below) with the latest, rather than using the stale one here.
     # Even better, set up Renovate and let it do the work for you (see "Suggestion: Updates" in the README).
-    url = "https://github.com/nelhage/rules_boost/archive/6b7c1ce2b8d77cb6b3df6ccca0b6cf7ed13136fc.tar.gz",
-    strip_prefix = "rules_boost-6b7c1ce2b8d77cb6b3df6ccca0b6cf7ed13136fc",
-    sha256 = "1a3316cde21eccc337c067b21d767d252e4ac2e8041d65eb4b7b91da569c5e3f"
+    url = "https://github.com/nelhage/rules_boost/archive/98bdaa9155c32a9b7aed15a2e6c33c90a2f6840c.tar.gz",
+    strip_prefix = "rules_boost-98bdaa9155c32a9b7aed15a2e6c33c90a2f6840c",
+    integrity = "sha256-MejlbKWZotRlbWnm3lLaWmMHlwjZBVHbnY8yGl9QT5M="
 )
 
 http_archive(
@@ -126,56 +127,56 @@ http_archive(
 # boost archive extra files
 new_local_repository(
     name = "boost_extra",
-    build_file = "@@//external:BUILD.boost_extra",
+    build_file = "@//external:BUILD.boost",
     path = "external/boost",
 )
 
 # db drivers
 new_local_repository(
     name = "db_drivers",
-    build_file = "@@//external:BUILD.db_drivers",
+    build_file = "@//external:BUILD.db_drivers",
     path = "external/db_drivers",
 )
 
 # easylogging++
 new_local_repository(
     name = "easy_logging",
-    build_file = "@@//external:BUILD.easy_logging",
+    build_file = "@//external:BUILD.easylogging++",
     path = "external/easylogging++",
 )
 
 #  miniupnp
 new_local_repository(
     name = "miniupnp",
-    build_file = "@@//external:BUILD.miniupnp",
+    build_file = "@//external:BUILD.miniupnp",
     path = "external/miniupnp",
 )
 
 #qrcodegen
 new_local_repository(
     name = "qrcodegen",
-    build_file = "@@//external:BUILD.qrcodegen",
+    build_file = "@//external:BUILD.qrcodegen",
     path = "external/qrcodegen",
 )
 
 #randomx
 new_local_repository(
     name = "randomx",
-    build_file = "@@//external:BUILD.randomx",
+    build_file = "@//external:BUILD.randomx",
     path = "external/randomx",
 )
 
 # rapidjson
 new_local_repository(
     name = "rapidjson",
-    build_file = "@@//external:BUILD.rapidjson",
+    build_file = "@//external:BUILD.rapidjson",
     path = "external/rapidjson",
 )
 
 # supercop
 new_local_repository(
     name = "supercop",
-    build_file = "@@//external:BUILD.supercop",
+    build_file = "@//external:BUILD.supercop",
     path = "external/supercop",
 )
 
@@ -188,140 +189,140 @@ local_repository(
 # unbound
 new_local_repository(
     name = "unbound",
-    build_file = "@@//external:BUILD.unbound",
+    build_file = "@//external:BUILD.unbound",
     path = "external/unbound",
 )
 
 # openssl
 new_local_repository(
     name = "openssl",
-    build_file = "@@//external:BUILD.openssl",
+    build_file = "@//external:BUILD.openssl",
     path = "external/openssl",
 )
 
 # libzmq
 new_local_repository(
     name = "libzmq",
-    build_file = "@@//external:BUILD.libzmq",
+    build_file = "@//external:BUILD.libzmq",
     path = "external/libzmq",
 )
 
 # openpgm
 new_local_repository(
     name = "openpgm",
-    build_file = "@@//external:BUILD.openpgm",
+    build_file = "@//external:BUILD.openpgm",
     path = "external/openpgm",
 )
 
 # expat
 new_local_repository(
     name = "expat",
-    build_file = "@@//external:BUILD.expat",
+    build_file = "@//external:BUILD.expat",
     path = "external/expat",
 )
 
 # ldns
 new_local_repository(
     name = "ldns",
-    build_file = "@@//external:BUILD.ldns",
+    build_file = "@//external:BUILD.ldns",
     path = "external/ldns",
 )
 
 # libhidapi
 new_local_repository(
     name = "libhidapi",
-    build_file = "@@//external:BUILD.libhidapi",
+    build_file = "@//external:BUILD.libhidapi",
     path = "external/libhidapi",
 )
 
 # liblzma
 new_local_repository(
     name = "liblzma",
-    build_file = "@@//external:BUILD.liblzma",
+    build_file = "@//external:BUILD.liblzma",
     path = "external/liblzma",
 )
 
 # libnorm
 new_local_repository(
     name = "libnorm",
-    build_file = "@@//external:BUILD.libnorm",
+    build_file = "@//external:BUILD.libnorm",
     path = "external/libnorm",
 )
 
 # libreadline
 new_local_repository(
     name = "libreadline",
-    build_file = "@@//external:BUILD.libreadline",
+    build_file = "@//external:BUILD.libreadline",
     path = "external/libreadline",
 )
 
 # libsodium
 new_local_repository(
     name = "libsodium",
-    build_file = "@@//external:BUILD.libsodium",
+    build_file = "@//external:BUILD.libsodium",
     path = "external/libsodium",
 )
 
 # libudev
 new_local_repository(
     name = "libudev",
-    build_file = "@@//external:BUILD.libudev",
+    build_file = "@//external:BUILD.libudev",
     path = "external/libudev",
 )
 
 # libunbound
 new_local_repository(
     name = "libunbound",
-    build_file = "@@//external:BUILD.libunbound",
+    build_file = "@//external:BUILD.libunbound",
     path = "external/libunbound",
 )
 
 # libunwind
 new_local_repository(
     name = "libunwind",
-    build_file = "@@//external:BUILD.libunwind",
+    build_file = "@//external:BUILD.libunwind",
     path = "external/libunwind",
 )
 
 # libusb
 new_local_repository(
     name = "libusb",
-    build_file = "@@//external:BUILD.libusb",
+    build_file = "@//external:BUILD.libusb",
     path = "external/libusb",
 )
 
 # lrelease
 new_local_repository(
     name = "lrelease",
-    build_file = "@@//external:BUILD.lrelease",
+    build_file = "@//external:BUILD.lrelease",
     path = "external/lrelease",
 )
 
 #zlib
 new_local_repository(
     name = "zlib",
-    build_file = "@@//external:BUILD.zlib",
+    build_file = "@//external:BUILD.zlib",
     path = "external/zlib",
 )
 
 #bigint
 new_local_repository(
     name = "bigint",
-    build_file = "@@//external:BUILD.bigint",
+    build_file = "@//external:BUILD.bigint",
     path = "external/bigint",
 )
 
 #json
 new_local_repository(
     name = "json",
-    build_file = "@@//external:BUILD.json",
+    build_file = "@//external:BUILD.json",
     path = "external/json/json",
 )
 
 #curl
 new_local_repository(
     name = "curl",
-    build_file = "@@//external:BUILD.curl",
+    build_file = "@//external:BUILD.curl",
     path = "external/curl/curl",
 )
 
@@ -344,10 +345,6 @@ load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_
 rules_proto_dependencies()
 
 rules_proto_toolchains()
-
-load("@rules_python//python:repositories.bzl", "py_repositories")
-
-py_repositories()
 
 load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
 

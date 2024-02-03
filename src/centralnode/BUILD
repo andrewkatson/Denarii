@@ -7,7 +7,7 @@ cc_library(
     data = [":critical_values_textpb"],
     deps = [
         "//src/centralnode/Proto:critical_values_cc_proto",
-        "@keiros_public//ProtoBuf/TextProto:read_text_proto",
+        "//ProtoBuf/TextProto:read_text_proto",
     ],
 )
 

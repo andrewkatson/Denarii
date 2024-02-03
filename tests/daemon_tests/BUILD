@@ -10,6 +10,6 @@ cc_test(
         "//src:cryptonote_core",
         "//src:rpc",
         "//src/wallet/api:wallet_api",
-        "@gtest",
+        "@com_google_googletest//:gtest_main",
     ],
 )
