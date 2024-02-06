@@ -265,7 +265,7 @@ def find_includes_mac(libraries):
                 try:
                     include_path = pathlib.Path(library.folderpath) / "include"
 
-                    if common.check_exists_with_existing_artifact_check(include_path, delete_single_file=True, fail_on_existence=False):
+                    if common.check_exists_with_existing_artifact_check(path=include_path, delete_single_file=True, fail_on_existence=False):
                         continue
 
                     shutil.copytree(path, include_path)
@@ -287,7 +287,7 @@ def find_src_files_mac(libraries):
                 filename = path.split("/")[-1]
                 new_path = os.path.join(library.folderpath, filename)
 
-                if common.check_exists_with_existing_artifact_check(new_path, delete_single_file=True, fail_on_existence=False):
+                if common.check_exists_with_existing_artifact_check(path=new_path, delete_single_file=True, fail_on_existence=False):
                     continue
 
                 try:
@@ -310,11 +310,11 @@ def miniupnp(external_dir_path):
     # we only need to build one of the subdirectories but we need to remove the whole tree
     root_miniupnp_path = external_dir_path / "miniupnp"
     miniupnp_path = external_dir_path / "miniupnp" / "miniupnpc"
+    miniupnp_library_path = miniupnp_path / "build" / "libminiupnpc.a"
     
-    if common.check_exists_with_existing_artifact_check(root_miniupnp_path, delete_tree=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=miniupnp_library_path, root_path=root_miniupnp_path, delete_tree=True, fail_on_existence=False):
         return
 
-    miniupnp_library_path = miniupnp_path / "libminiupnpc.a"
 
     common.print_something("Getting miniupnp")
     common.chdir(external_dir_path)
@@ -336,7 +336,7 @@ def randomx(external_dir_path):
 
     randomx_library_path = randomx_path / "build" / "librandomx.a"
 
-    if common.check_exists_with_existing_artifact_check(randomx_path, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=randomx_library_path, root_path=randomx_path, fail_on_existence=False):
         return
 
     common.print_something("Getting randomx")
@@ -356,7 +356,7 @@ def supercop(external_dir_path):
     supercop_64_library_path = supercop_path / "libmonero-crypto64.a"
     supercop_other_library_path = supercop_path / "libmonero-crypto.a"
 
-    if common.check_exists_with_existing_artifact_check(supercop_path, delete_tree=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(paths=[supercop_64_library_path, supercop_other_library_path],root_path=supercop_path, delete_tree=True, fail_on_existence=False):
         return
     
     common.print_something("Getting supercop")
@@ -400,7 +400,7 @@ def unbound(external_dir_path):
 
     libunbound_library_path = unbound_path / "libunbound.so"
 
-    if common.check_exists_with_existing_artifact_check(root_miniupnp_path, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=libunbound_library_path, root_path=unbound_path, fail_on_existence=False):
         return
 
     common.print_something("Getting unbound")
@@ -423,7 +423,7 @@ def openssl(external_dir_path):
     libssl_path = openssl_path / "libssl.a"
     libcrypto_path = openssl_path / "libcrypto.a"
 
-    if common.check_exists_with_existing_artifact_check(openssl_path, delete_tree=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(paths=[libssl_path, libcrypto_path], root_path=openssl_path, delete_tree=True, fail_on_existence=False):
         return
     
     common.print_something("Getting openssl")
@@ -456,7 +456,7 @@ def libzmq(external_dir_path):
 
     libzmq_library_path = libzmq_path / "libzmq.a"
 
-    if common.check_exists_with_existing_artifact_check(libzmq_path, delete_tree=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=libzmq_library_path, root_path=libzmq_path, delete_tree=True, fail_on_existence=False):
         return
 
     common.print_something("Getting libzmq")
@@ -478,7 +478,7 @@ def libzmq(external_dir_path):
 def zlib(external_dir_path):
     zlib_path = external_dir_path / "zlib"
 
-    if common.check_exists_with_existing_artifact_check(zlib_path, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=zlib_path, root_path=zlib_path, fail_on_existence=False):
         return
 
     common.print_something("Getting zlib")
@@ -498,7 +498,7 @@ def liblmdb(external_dir_path):
 
     liblmdb_library_path = liblmdb_path / "liblmdb.a"
 
-    if common.check_exists_with_existing_artifact_check(liblmdb_path, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=liblmdb_library_path, root_path=liblmdb_path, fail_on_existence=False):
         return
     
     common.print_something("Getting liblmdb")
@@ -515,7 +515,7 @@ def bigint(external_dir_path):
     bigint_path = workspace_path / "external"
     common.chdir(bigint_path)
 
-    if common.check_exists_with_existing_artifact_check(bigint_path, delete_tree=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=bigint_path, root_path=bigint_path, delete_tree=True, fail_on_existence=False):
         return
 
     clone_command = "git clone git@github.com:kasparsklavins/bigint.git"
@@ -524,11 +524,11 @@ def bigint(external_dir_path):
     common.check_exists(bigint_path)
 
 def curl(external_dir_path):
-    curl_path = workspace_path / "external/curl"
+    curl_path = workspace_path / "external" / "curl"
     inside_folder_path = curl_path / "curl"
     common.chdir(curl_path)
     
-    if common.check_exists_with_existing_artifact_check(curl_path, delete_tree=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=inside_folder_path, root_path=curl_path, delete_tree=True, fail_on_existence=False):
         return
 
 
@@ -547,7 +547,7 @@ def json(external_dir_path):
 
     json_path = workspace_path / "external/json"
     
-    if common.check_exists_with_existing_artifact_check(json_path, delete_tree=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=json_path, root_path=json_path, delete_tree=True, fail_on_existence=False):
         return
 
     common.chdir(json_path)
@@ -604,7 +604,7 @@ def supercop_win(external_dir_path):
     supercop_64_library_path = supercop_path / "libmonero-crypto64.a"
     supercop_other_library_path = supercop_path / "libmonero-crypto.a"
 
-    if common.check_exists_with_existing_artifact_check(supercop_path, delete_tree=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(paths=[supercop_64_library_path, supercop_other_library_path], root_path=supercop_path, delete_tree=True, fail_on_existence=False):
         return
 
     common.print_something("Getting supercop for Windows")
@@ -658,7 +658,7 @@ def randomx_mac(external_dir_path):
 
     randomx_library_path = randomx_path / "build" / "librandomx.a"
 
-    if common.check_exists_with_existing_artifact_check(randomx_path, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=randomx_library_path, root_path=randomx_path, fail_on_existence=False):
         return
 
 
@@ -678,7 +678,7 @@ def liblmdb_mac(external_dir_path):
 
     liblmdb_library_path = liblmdb_path / "liblmdb.a"
 
-    if common.check_exists_with_existing_artifact_check(liblmdb_path, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=liblmdb_library_path, root_path=liblmdb_path, fail_on_existence=False):
         return
 
 
@@ -697,7 +697,7 @@ def libnorm_mac(external_dir_path):
 
     binary_path = libnorm_path / "build" / "libnorm.a"
 
-    if common.check_exists_with_existing_artifact_check(libnorm_path, delete_tree=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=binary_path, root_path=libnorm_path, delete_tree=True, fail_on_existence=False):
         return
 
 
@@ -729,7 +729,7 @@ def libusb_mac(external_dir_path):
 
     binary_path = libusb_path / "lib" / "libusb-1.0.a"
 
-    if common.check_exists_with_existing_artifact_check(libusb_path, delete_tree=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=binary_path, root_path=libusb_path, delete_tree=True, fail_on_existence=False):
         return
 
     common.print_something("Getting libusb")
@@ -785,7 +785,7 @@ def trezor_common():
     trezor_common_workspace_file_path = workspace_path / \
         "trezor_common_workspace_file.txt"
 
-    if common.check_exists_with_existing_artifact_check(trezor_common_build_file_path, delete_single_file=True, fail_on_existence=False) and common.check_exists_with_existing_artifact_check(trezor_common_workspace_file_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(paths=[trezor_common_build_file_path, trezor_common_workspace_file_path], delete_single_file=True, fail_on_existence=False):
         return
 
     try:
@@ -833,7 +833,7 @@ def blocks_generate():
 
         path_to_output = workspace_path / "src" / "blocks" / output_file
 
-        if common.check_exists_with_existing_artifact_check(path_to_output, delete_single_file=True, fail_on_existence=False):
+        if common.check_exists_with_existing_artifact_check(path=path_to_output, delete_single_file=True, fail_on_existence=False):
             continue
 
         path_to_blocks = str(workspace_path) + "/src/blocks"
@@ -859,7 +859,7 @@ def crypto_wallet_generate():
     copy_file_path = supercop_path / "include" / "monero" / "crypto.h"
 
     ops_file_path = crypto_wallet_path / ops_file
-    if common.check_exists_with_existing_artifact_check(ops_file_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=ops_file_path, delete_single_file=True, fail_on_existence=False):
         return
 
     # If we are on Linux and have 64 bit processor we can use monero's default crypto libraries
@@ -986,7 +986,7 @@ def generate_version_file_with_replacement(version_tag, is_release):
 
     version_file_path = src_directory / output_file
 
-    if common.check_exists_with_existing_artifact_check(version_file_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=version_file_path, delete_single_file=True, fail_on_existence=False):
         return
 
     with open(input_file_path, "r") as copy:
@@ -1042,7 +1042,7 @@ def generate_benchmark_file_with_replacement(replacement):
 
     benchmark_file_path = tests_directory / output_file
 
-    if common.check_exists_with_existing_artifact_check(benchmark_file_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=benchmark_file_path, delete_single_file=True, fail_on_existence=False):
         return
 
     with open(input_file_path, "r") as copy:
@@ -1090,7 +1090,7 @@ def convert_translation_files():
         converted_file = converted_files[i]
         translated_file_path = translation_file_dir / converted_file
 
-        if common.check_exists_with_existing_artifact_check(translated_file_path, delete_single_file=True, fail_on_existence=False):
+        if common.check_exists_with_existing_artifact_check(path=translated_file_path, delete_single_file=True, fail_on_existence=False):
             continue
 
         file = files[i]
@@ -1120,7 +1120,7 @@ def convert_translation_files_win():
         converted_file = converted_files[i]
         translated_file_path = translation_file_dir / converted_file
 
-        if common.check_exists_with_existing_artifact_check(translated_file_path, delete_single_file=True, fail_on_existence=False):
+        if common.check_exists_with_existing_artifact_check(path=translated_file_path, delete_single_file=True, fail_on_existence=False):
             continue
         
         file = files[i]
@@ -1150,7 +1150,7 @@ def convert_translation_files_mac():
         converted_file = converted_files[i]
         translated_file_path = translation_file_dir / converted_file
 
-        if common.check_exists_with_existing_artifact_check(translated_file_path, delete_single_file=True, fail_on_existence=False):
+        if common.check_exists_with_existing_artifact_check(path=translated_file_path, delete_single_file=True, fail_on_existence=False):
             continue
 
         file = files[i]
@@ -1169,7 +1169,7 @@ def run_translation_generation(translation_files):
 
     translation_file_path = translation_file_dir / "translation_files.h"
 
-    if common.check_exists_with_existing_artifact_check(translation_file_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=translation_file_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Running translation generation")
@@ -1202,7 +1202,7 @@ def run_translation_generation_win(translation_files):
 
     translation_file_path = translation_file_dir / "translation_files.h"
 
-    if common.check_exists_with_existing_artifact_check(translation_file_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=translation_file_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Running translation generation for Windows")
@@ -1236,7 +1236,7 @@ def run_translation_generation_mac(translation_files):
 
     translation_file_path = translation_file_dir / "translation_files.h"
 
-    if common.check_exists_with_existing_artifact_check(translation_file_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=translation_file_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Running translation generation for Mac")
@@ -1317,7 +1317,7 @@ def move_own_py_files():
     workspace_path_finder_dest_path = workspace_path / \
         "utils" / "gui" / "workspace_path_finder.py"
 
-    if common.check_exists_with_existing_artifact_check(workspace_path_finder_dest_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=workspace_path_finder_dest_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Moving own py files")
@@ -1335,7 +1335,7 @@ def move_own_py_files():
         "utils" / "gui" / "denarii_client.py"
 
 
-    if common.check_exists_with_existing_artifact_check(dest_denarii_client_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=dest_denarii_client_path, delete_single_file=True, fail_on_existence=False):
         return
 
     src_denarii_client_path = workspace_path / "client" / "Denarii" / "denarii_client.py"
@@ -1355,7 +1355,7 @@ def build_denariid():
     denariid_path = workspace_path / "bazel-bin" / "src" / "denariid"
 
 
-    if common.check_exists_with_existing_artifact_check(denariid_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=denariid_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Building denariid")
@@ -1373,7 +1373,7 @@ def build_denarii_wallet_rpc_server():
         "bazel-bin" / "src" / "denarii_wallet_rpc_server"
 
 
-    if common.check_exists_with_existing_artifact_check(denarii_wallet_rpc_server_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=denarii_wallet_rpc_server_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Building denarii_wallet_rpc_server")
@@ -1398,7 +1398,7 @@ def build_denariid_win():
 
     denariid_win_path = workspace_path / "bazel-bin" / "src" / "denariid.exe"
 
-    if common.check_exists_with_existing_artifact_check(denariid_win_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=denariid_win_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Building denariid.exe")
@@ -1416,7 +1416,7 @@ def build_denarii_wallet_rpc_server_win():
     denarii_wallet_rpc_server_win_path = workspace_path / \
         "bazel-bin" / "src" / "denarii_wallet_rpc_server.exe"
 
-    if common.check_exists_with_existing_artifact_check(denarii_wallet_rpc_server_win_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=denarii_wallet_rpc_server_win_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Building denarii_wallet_rpc_server.exe")
@@ -1440,7 +1440,7 @@ def build_binaries_win():
 def build_denariid_mac():
     denariid_path = workspace_path / "bazel-bin" / "src" / "denariid"
 
-    if common.check_exists_with_existing_artifact_check(denariid_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=denariid_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Building denariid for Mac")
@@ -1458,7 +1458,7 @@ def build_denarii_wallet_rpc_server_mac():
     denarii_wallet_rpc_server_path = workspace_path / \
         "bazel-bin" / "src" / "denarii_wallet_rpc_server"
 
-    if common.check_exists_with_existing_artifact_check(denarii_wallet_rpc_server_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=denarii_wallet_rpc_server_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Building denarii_wallet_rpc_server for Mac")
@@ -1482,7 +1482,7 @@ def build_binaries_mac():
 def move_denariid():
     dest_path = workspace_path / "utils" / "gui" / "denariid"
 
-    if common.check_exists_with_existing_artifact_check(dest_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=dest_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Moving denariid")
@@ -1498,7 +1498,7 @@ def move_denariid():
 def move_denarii_wallet_rpc_server():
     dest_path = workspace_path / "utils" / "gui" / "denarii_wallet_rpc_server"
 
-    if common.check_exists_with_existing_artifact_check(dest_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=dest_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Moving denarii_wallet_rpc_server")
@@ -1522,7 +1522,7 @@ def move_binaries():
 def move_denariid_win():
     dest_path = workspace_path / "utils" / "gui" / "denariid.exe"
 
-    if common.check_exists_with_existing_artifact_check(dest_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=dest_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Moving denariid.exe")
@@ -1538,7 +1538,7 @@ def move_denariid_win():
 def move_denarii_wallet_rpc_server_win():
     dest_path = workspace_path / "utils" / "gui" / "denarii_wallet_rpc_server.exe"
 
-    if common.check_exists_with_existing_artifact_check(dest_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=dest_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Moving denarii_wallet_rpc_server.exe")
@@ -1563,7 +1563,7 @@ def move_binaries_win():
 def move_denariid_mac():
     dest_path = workspace_path / "utils" / "gui" / "denariid"
 
-    if common.check_exists_with_existing_artifact_check(dest_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=dest_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Moving denariid for Mac")
@@ -1579,7 +1579,7 @@ def move_denariid_mac():
 def move_denarii_wallet_rpc_server_mac():
     dest_path = workspace_path / "utils" / "gui" / "denarii_wallet_rpc_server"
 
-    if common.check_exists_with_existing_artifact_check(dest_path, delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=dest_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Moving denarii_wallet_rpc_server for Mac")
@@ -1602,7 +1602,6 @@ def move_binaries_mac():
 
 def setup_ui():
     common.print_something("Setting up the UI")
-    download_dependencies_for_ui()
 
     move_misc()
 
@@ -1613,7 +1612,6 @@ def setup_ui():
 
 def setup_ui_win():
     common.print_something("Setting up the UI for Windows")
-    download_dependencies_for_ui()
 
     move_misc()
 

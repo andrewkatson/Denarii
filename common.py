@@ -36,25 +36,42 @@ def check_exists(path, fail_on_existence=True):
             print_something(f"Returning false because {path} does not exist")
             return False
         
-def check_exists_with_existing_artifact_check(path, delete_tree=False, delete_single_file=False, fail_on_existence=True):
-    exists = check_exists(path, fail_on_existence=fail_on_existence) 
-    if exists and flags.args.existing_artifact_delete_policy == flags.SKIP:
-        print_something(f"{path} already exists")
+def check_exists_with_existing_artifact_check(path="", paths=None, root_path="", delete_tree=False, delete_single_file=False, fail_on_existence=True):
+
+
+    if root_path == "" and delete_tree == True: 
+        raise ValueError("If delete_tree is specified you need to supply a root_path")
+
+    if paths is None and path != "": 
+        paths = [path]
+    elif paths is not None: 
+        paths = paths 
+    else: 
+        raise ValueError(f"Something is wrong with {paths} or {path}")
+
+    all_exist = True
+    for some_path in paths: 
+        all_exist = check_exists(some_path, fail_on_existence=fail_on_existence) and all_exist 
+
+    if all_exist and flags.args.existing_artifact_delete_policy == flags.SKIP:
+        print_something(f"{paths} all already exist")
         # If we want to skip we should exit whatever called this
         return True
-    elif exists and flags.args.existing_artifact_delete_policy == flags.DELETE:
-        print_something(f"{path} exists and is going to be deleted")
+    elif all_exist and flags.args.existing_artifact_delete_policy == flags.DELETE:
         if delete_tree: 
-            shutil.rmtree(path)
+            print_something(f"{paths} exist and their tree from {root_path} is going to be deleted")
+            shutil.rmtree(root_path)
         if delete_single_file: 
-            os.remove(path)
+            for some_path in paths:
+                print_something(f"{some_path} exists and is going to be deleted")
+                os.remove(path)
         # If we delete we want to download them again so dont exit whatever called this
         return False
             
     # If we fall through we allow whatever logic to continue.
-    print_something(f"{path} does not exist and we are going to allow it to be created")
+    print_something(f"{paths} do not exist and we are going to allow them to be created")
     return False
-            
+        
 
 def get_all_files_paths(path):
     paths = []

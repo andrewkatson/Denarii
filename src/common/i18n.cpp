@@ -28,6 +28,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 
+#include <algorithm>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>

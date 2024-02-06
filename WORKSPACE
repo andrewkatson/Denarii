@@ -5,15 +5,25 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 http_archive(
     name = "bazel_skylib",
+    sha256 = "cd55a062e763b9349921f0f5db8c3933288dc8ba4f76dd9416aac68acee3cb94",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.3.0/bazel-skylib-1.3.0.tar.gz",
-        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.3.0/bazel-skylib-1.3.0.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.5.0/bazel-skylib-1.5.0.tar.gz",
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.5.0/bazel-skylib-1.5.0.tar.gz",
     ],
-    sha256 = "74d544d96f4a5bb630d465ca8bbcfe231e3594e5aae57e1edbf17a6eb3ca2506",
 )
 load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
+
 bazel_skylib_workspace()
 
+# Allows  us to check which features are available
+http_archive(
+    name = "bazel_features",
+    sha256 = "0f23d75c7623d6dba1fd30513a94860447de87c8824570521fcc966eda3151c2",
+    strip_prefix = "bazel_features-1.4.1",
+    url = "https://github.com/bazel-contrib/bazel_features/releases/download/v1.4.1/bazel_features-v1.4.1.tar.gz",
+)
+load("@bazel_features//:deps.bzl", "bazel_features_deps")
+bazel_features_deps()
 
 # abseil-cpp
 http_archive(
@@ -31,70 +41,22 @@ http_archive(
   integrity = "sha256-dV+aObxyBfWgxCjpIN2tCSwzyKG0aZfe8/HUqCre1uE="
 )
 
-# rules_cc defines rules for generating C++ code from Protocol Buffers.
-http_archive(
-    name = "rules_cc",
-    sha256 = "35f2fb4ea0b3e61ad64a369de284e4fbbdcdba71836a5555abb5e194cf119509",
-    strip_prefix = "rules_cc-624b5d59dfb45672d4239422fa1e3de1822ee110",
-    urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_cc/archive/624b5d59dfb45672d4239422fa1e3de1822ee110.tar.gz",
-        "https://github.com/bazelbuild/rules_cc/archive/624b5d59dfb45672d4239422fa1e3de1822ee110.tar.gz",
-    ],
-)
-
-# rules_java defines rules for generating Java code from Protocol Buffers.
-http_archive(
-    name = "rules_java",
-    sha256 = "ccf00372878d141f7d5568cedc4c42ad4811ba367ea3e26bc7c43445bbc52895",
-    strip_prefix = "rules_java-d7bf804c8731edd232cb061cb2a9fe003a85d8ee",
-    urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_java/archive/d7bf804c8731edd232cb061cb2a9fe003a85d8ee.tar.gz",
-        "https://github.com/bazelbuild/rules_java/archive/d7bf804c8731edd232cb061cb2a9fe003a85d8ee.tar.gz",
-    ],
-)
-
-# rules_proto defines abstract rules for building Protocol Buffers.
-http_archive(
-    name = "rules_proto",
-    sha256 = "2490dca4f249b8a9a3ab07bd1ba6eca085aaf8e45a734af92aad0c42d9dc7aaf",
-    strip_prefix = "rules_proto-218ffa7dfa5408492dc86c01ee637614f8695c45",
-    urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_proto/archive/218ffa7dfa5408492dc86c01ee637614f8695c45.tar.gz",
-        "https://github.com/bazelbuild/rules_proto/archive/218ffa7dfa5408492dc86c01ee637614f8695c45.tar.gz",
-    ],
-)
-
-# the base google protocol buffer code.
-http_archive(
-    name = "com_google_protobuf",
-    strip_prefix = "protobuf-25.2",
-    urls = ["https://github.com/protocolbuffers/protobuf/archive/v25.2.zip"],
-    integrity = "sha256-3dD1Jx8xtUnvx06zkGHhQhMmU9XQQwcfzsJlvVcec8Q="
-)
-
-# gRPC code -- has py_proto_library rule which is useful.
-http_archive(
-    name = "com_github_grpc_grpc",
-    sha256 = "b0d3b876d85e4e4375aa211a52a33b7e8ca9f9d6d97a60c3c844070a700f0ea3",
-    strip_prefix = "grpc-1.28.1",
-    urls = ["https://github.com/grpc/grpc/archive/v1.28.1.zip"],
-)
-
-# proto libraries for grpc. this gives us all the esoteric languages that can be used
-http_archive(
-    name = "rules_proto_grpc",
-    sha256 = "bbe4db93499f5c9414926e46f9e35016999a4e9f6e3522482d3760dc61011070",
-    strip_prefix = "rules_proto_grpc-4.2.0",
-    urls = ["https://github.com/rules-proto-grpc/rules_proto_grpc/archive/4.2.0.tar.gz"],
-)
-
 http_archive(
     name = "platforms",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.5/platforms-0.0.5.tar.gz",
-        "https://github.com/bazelbuild/platforms/releases/download/0.0.5/platforms-0.0.5.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.8/platforms-0.0.8.tar.gz",
+        "https://github.com/bazelbuild/platforms/releases/download/0.0.8/platforms-0.0.8.tar.gz",
     ],
-    sha256 = "379113459b0feaf6bfbb584a91874c065078aa673222846ac765f86661c27407",
+    sha256 = "8150406605389ececb6da07cbcb509d5637a3ab9a24bc69b1101531367d89d74",
+)
+
+http_archive(
+    name = "bazel_skylib_gazelle_plugin",
+    sha256 = "747addf3f508186234f6232674dd7786743efb8c68619aece5fb0cac97b8f415",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.5.0/bazel-skylib-gazelle-plugin-1.5.0.tar.gz",
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.5.0/bazel-skylib-gazelle-plugin-1.5.0.tar.gz",
+    ],
 )
 
 # Boost
@@ -112,16 +74,9 @@ http_archive(
 )
 
 http_archive(
-    name = "build_bazel_rules_nodejs",
-    sha256 = "c2ad51299792d5af3b258f1dd71b3b57eff9424c2e1797d9c1d65717d95da03a",
-    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/5.7.3/rules_nodejs-5.7.3.tar.gz"],
-)
-
-http_archive(
     name = "com_googlesource_code_re2",
-    sha256 = "0a890c2aa0bb05b2ce906a15efb520d0f5ad4c7d37b8db959c43772802991887",
-    strip_prefix = "re2-a427f10b9fb4622dd6d8643032600aa1b50fbd12",
-    urls = ["https://github.com/google/re2/archive/a427f10b9fb4622dd6d8643032600aa1b50fbd12.zip"],  # 2022-06-09
+    strip_prefix = "re2-2024-02-01",
+    urls = ["https://github.com/google/re2/archive/2024-02-01.zip"],  # 2024-02-01
 )
 
 # boost archive extra files
@@ -326,47 +281,14 @@ new_local_repository(
     path = "external/curl/curl",
 )
 
-load("@rules_proto_grpc//python:repositories.bzl", rules_proto_grpc_python_repos = "python_repos")
-
-rules_proto_grpc_python_repos()
-
-load("@rules_cc//cc:repositories.bzl", "rules_cc_dependencies")
-
-rules_cc_dependencies()
-
-load("@rules_java//java:repositories.bzl", "rules_java_dependencies", "rules_java_toolchains")
-
-rules_java_dependencies()
-
-rules_java_toolchains()
-
-load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
-
-rules_proto_dependencies()
-
-rules_proto_toolchains()
-
-load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
-
-protobuf_deps()
-
-load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
-
-grpc_deps()
-
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
+
 boost_deps()
 
+load("@bazel_skylib_gazelle_plugin//:workspace.bzl", "bazel_skylib_gazelle_plugin_workspace")
 
-load("@rules_proto_grpc//:repositories.bzl", "rules_proto_grpc_toolchains", "rules_proto_grpc_repos")
-rules_proto_grpc_toolchains()
-rules_proto_grpc_repos()
+bazel_skylib_gazelle_plugin_workspace()
 
-load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
-rules_proto_dependencies()
-rules_proto_toolchains()
+load("@bazel_skylib_gazelle_plugin//:setup.bzl", "bazel_skylib_gazelle_plugin_setup")
 
-load("@build_bazel_rules_nodejs//:repositories.bzl", "build_bazel_rules_nodejs_dependencies")
-
-build_bazel_rules_nodejs_dependencies()
-
+bazel_skylib_gazelle_plugin_setup()

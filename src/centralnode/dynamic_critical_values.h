@@ -2,7 +2,7 @@
 #define DENARII_DYNAMIC_CRITICAL_VALUES_H
 
 
-#include "ProtoBuf/TextProto/read_text_proto.h"
+#include "Protobuf/TextProto/read_text_proto.h"
 #include "src/centralnode/Proto/critical_values.pb.h"
 
 namespace centralnode {

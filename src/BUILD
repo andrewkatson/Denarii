@@ -62,7 +62,7 @@ cc_binary(
         "-lcrypto",
     ] + select({
         "windows": [
-            "-L external/db_drivers",
+            "-L external/db_drivers/liblmdb",
             "-llmdb",
             "-lzmq",
             "-lunbound",
@@ -76,7 +76,7 @@ cc_binary(
         ],
         "mac": ["-Lexternal/openssl"],
         "linux": [
-            "-L external/db_drivers",
+            "-L external/db_drivers/liblmdb",
             "-llmdb",
             "-lzmq",
             "-lunbound",
