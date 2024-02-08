@@ -83,3 +83,10 @@ py_binary(
     deps = ["//:workspace_path_finder"],
     imports = ["//:workspace_path_finder"]
 )
+
+py_binary(
+    name = "get_monero_test_commands",
+    srcs = ["get_monero_test_commands.py"],
+    deps = ["//:workspace_path_finder"],
+    imports = ["//:workspace_path_finder"]
+)

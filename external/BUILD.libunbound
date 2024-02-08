@@ -31,7 +31,7 @@ cc_library(
   srcs = select({
     "windows": glob(["**/*.a"]),
     "mac": glob(["**/*.dylib"]),
-    "linux": glob(["**/*.so", "**/*.a"]),
+    "linux": glob(["**/*.so"]),
   }),
   hdrs = glob(["**/include/**/*.h"]),
   linkopts =  select({

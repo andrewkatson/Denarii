@@ -1,5 +1,29 @@
 package(default_visibility = ["//visibility:public"])
 
+config_setting(
+    name="windows",
+    constraint_values=[
+        "@platforms//os:windows",
+    ],
+    visibility=["//visibility:public"],
+)
+
+config_setting(
+    name = "mac",
+    constraint_values=[
+        "@platforms//os:macos",
+    ],
+    visibility=["//visibility:public"],
+)
+
+config_setting(
+   name = "linux",
+   constraint_values = [
+      "@platforms//os:linux",
+   ],
+   visibility = ["//visibility:public"],
+)
+
 cc_binary(
     name = "core_tests",
     srcs = glob([
@@ -12,7 +36,11 @@ cc_binary(
         "-lsodium",
         "-lunwind",
         "-llzma",
-    ],
+    ] + select({
+        'linux': ["-fPIC",],
+        'windows': ["-fPIC",],
+        'mac': []
+    }),
     deps = [
         "//contrib/epee",
         "//src:cryptonote_core",
@@ -20,7 +48,7 @@ cc_binary(
         "//src:p2p",
         "//src:version",
         "//src:wallet",
-        "//src/multisig",
+        "//src:multisig",
         "@liblzma",
         "@libreadline",
         "@libunwind",
@@ -52,7 +80,7 @@ cc_library(
         "//src:p2p",
         "//src:version",
         "//src:wallet",
-        "//src/multisig",
+        "//src:multisig",
         "@liblzma",
         "@libreadline",
         "@libunwind",

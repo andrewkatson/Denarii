@@ -181,7 +181,7 @@ Visual Studio: https://visualstudio.microsoft.com/
 ### On Linux 
 
 
-Do `sudo bazel build target` for all targets -- e.g. ```sudo bazel build src:denariid```
+Do `bazel build target` for all targets -- e.g. ```bazel build src:denariid```
 
 
 ### On Windows  
@@ -214,7 +214,7 @@ The build places the binary in `bazel-bin/` sub-directory. To run in the
 foreground:
 
 ```bash
-sudo ./bazel-bin/src/denariid
+./bazel-bin/src/denariid
 ```
 
 To list all available options, run `./bazel-bin/src/denariid--help`.  Options can be
@@ -226,7 +226,7 @@ of the argument without the leading dashes, for example, `log-level=1`.
 To run in background:
 
 ```bash
-sudo ./bazel-bin/src/denariid --log-file denariid.log --detach
+./bazel-bin/src/denariid --log-file denariid.log --detach
 ```
 
 ### On Windows 
@@ -236,7 +236,7 @@ start bazel-bin/src/denariid.exe
 
 ### On Mac
 ```bash
-sudo ./bazel-bin/src/denariid
+./bazel-bin/src/denariid
 ```
 
 If you're on Mac, you may need to add the `--max-concurrency 1` option to
@@ -258,6 +258,15 @@ sudo ./bazel-bin/src/denarii_wallet_rpc_server --rpc-bind-port=8080 --wallet-dir
 start bazel-bin/src/denarii_wallet_rpc_server.exe --rpc-bind-port=8080 --wallet-dir=/some/existing/path
 ```
 
+## Testing 
+
+Run 
+```bash 
+bazel run tests:get_monero_test_commands
+```
+
+Then execute the command it prints out.
+
 #### Stack Traces on Windows 
 
 Linux has stack traces by default. Windows crashes when there is a stack trace so we by default do not log them. However, you can enable them with `--copt="-DSTACK_TRACE_DENARII`
@@ -265,7 +274,7 @@ Linux has stack traces by default. Windows crashes when there is a stack trace s
 ### On Mac
 
 ```bash
-sudo ./bazel-bin/src/denarii_wallet_rpc_server --rpc-bind-port=8080 --wallet-dir=/some/existing/path
+./bazel-bin/src/denarii_wallet_rpc_server --rpc-bind-port=8080 --wallet-dir=/some/existing/path
 ```
 
 ## Running Denarii GUI

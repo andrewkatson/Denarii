@@ -1,5 +1,7 @@
 # Running all tests
 
+WARNING: THIS IS OUTDATED CHECK THE MAIN README.md FILE FOR INFO
+
 To run all tests, run:
 
 ```bash

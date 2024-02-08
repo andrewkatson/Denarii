@@ -73,6 +73,8 @@ cc_binary(
             "-lws2_32",
             "-lwsock32",
             "-lbcrypt",
+            "-lbsd",
+            "-fPIC"
         ],
         "mac": ["-Lexternal/openssl"],
         "linux": [
@@ -83,6 +85,8 @@ cc_binary(
             "-L external/miniupnp/miniupnpc",
             "-lminiupnpc",
             "-lunwind",
+            "-lbsd",
+            "-fPIC",
         ],
     }),
     deps=[
@@ -738,9 +742,10 @@ cc_binary(
             "-lws2_32",
             "-lwsock32",
             "-lbcrypt",
+            "-fPIC"
         ],
         "mac": ["-Lexternal/openssl"],
-        "linux": [],
+        "linux": ["-fPIC"],
     }),
     deps=[
         ":wallet",

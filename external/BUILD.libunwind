@@ -3,6 +3,6 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
   name = "libunwind",
-  srcs = glob(["**/libunwind.so", "**/libunwind.a"]),
+  srcs = glob(["**/libunwind.a"]),
   hdrs = glob(["**/include/**/*.h"])
 )
