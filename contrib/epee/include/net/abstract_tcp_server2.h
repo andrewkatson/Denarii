@@ -44,6 +44,7 @@
 #include <cassert>
 #include <map>
 #include <memory>
+#include <any>
 
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
@@ -324,6 +325,8 @@ namespace net_utils
         //needed call handler here ?...
         ptr->m_timer.expires_from_now(boost::posix_time::milliseconds(ptr->m_period));
         ptr->m_timer.async_wait(boost::bind(&boosted_tcp_server<t_protocol_handler>::global_timer_handler<t_handler>, this, ptr));
+
+        m_callback_ptrs.push_back(ptr);
         return true;
       }
 
@@ -356,6 +359,11 @@ namespace net_utils
     bool is_thread_worker();
 
     const std::shared_ptr<typename connection<t_protocol_handler>::shared_state> m_state;
+
+    // A vector of shared pointers that point to callbacks
+    // Had to use std::any because the templates of this class are a mess and scattered all over the codebase
+    // sorry :(
+    std::vector<std::any> m_callback_ptrs;
 
     /// The io_service used to perform asynchronous operations.
     struct worker
