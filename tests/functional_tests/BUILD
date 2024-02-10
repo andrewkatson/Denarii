@@ -46,7 +46,7 @@ py_binary(
     name = "functional_tests_rpc",
     srcs = ["functional_tests_rpc.py"],
     deps = [],
-    data = ["//src:denarii_wallet_rpc_server"],
+    data = ["//src:denarii_wallet_rpc_server", "//src:denariid"],
 )
 
 py_binary(

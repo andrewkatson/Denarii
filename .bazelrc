@@ -1,5 +1,5 @@
 startup --windows_enable_symlinks
 build --enable_runfiles
-build --cxxopt=-std=c++14
-build --host_cxxopt=-std=c++14
+build --cxxopt=-std=c++17
+build --host_cxxopt=-std=c++17
 common --enable_bzlmod
