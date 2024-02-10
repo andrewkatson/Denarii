@@ -580,7 +580,7 @@ try:
 
             if os.path.exists(MAIN_DENARII_PATH_LINUX):
                 return subprocess.Popen(
-                    "sudo " + MAIN_DENARII_PATH_LINUX + " --no-igd",
+                    f"{MAIN_DENARII_PATH_LINUX} --no_igd",
                     shell=True,
                     encoding="utf-8",
                     stderr=subprocess.PIPE,
@@ -588,7 +588,7 @@ try:
                 )
             elif os.path.exists(MAIN_DENARII_PATH_WINDOWS):
                 return subprocess.Popen(
-                    "start " + MAIN_DENARII_PATH_WINDOWS + " --no-igd",
+                    f"start {MAIN_DENARII_PATH_WINDOWS} --no_igd",
                     shell=True,
                     encoding="utf-8",
                     stderr=subprocess.PIPE,
@@ -596,7 +596,7 @@ try:
                 )
             elif os.path.exists(DENARIID_PATH_LINUX):
                 return subprocess.Popen(
-                    "sudo " + DENARIID_PATH_LINUX + " --no-igd",
+                    f"{DENARIID_PATH_LINUX} --no_igd",
                     shell=True,
                     encoding="utf-8",
                     stderr=subprocess.PIPE,
@@ -604,7 +604,7 @@ try:
                 )
             elif os.path.exists(DENARIID_PATH_WINDOWS):
                 return subprocess.Popen(
-                    "start " + DENARIID_PATH_WINDOWS + " --no-igd",
+                    f"start {DENARIID_PATH_WINDOWS} --no_igd",
                     shell=True,
                     encoding="utf-8",
                     stderr=subprocess.PIPE,
@@ -622,8 +622,7 @@ try:
 
             if os.path.exists(MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX):
                 return subprocess.Popen(
-                    "sudo "
-                    + MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX
+                    MAIN_DENARII_WALLET_RPC_SERVER_PATH_LINUX
                     + " --rpc-bind-port=8080"
                     + f" --wallet-dir={DENARIID_WALLET_PATH}"
                     + " --disable-rpc-login",
@@ -646,8 +645,7 @@ try:
                 )
             elif os.path.exists(DENARII_WALLET_RPC_SERVER_PATH_LINUX):
                 return subprocess.Popen(
-                    "sudo "
-                    + DENARII_WALLET_RPC_SERVER_PATH_LINUX
+                    DENARII_WALLET_RPC_SERVER_PATH_LINUX
                     + " --rpc-bind-port=8080"
                     + f" --wallet-dir={DENARIID_WALLET_PATH}"
                     + " --disable-rpc-login",
