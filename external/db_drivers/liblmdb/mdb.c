@@ -5455,9 +5455,27 @@ mdb_env_open(MDB_env *env, const char *path, unsigned int flags, mdb_mode_t mode
 		/* silently ignore WRITEMAP when we're only getting read access */
 		flags &= ~MDB_WRITEMAP;
 	} else {
-		if (!((env->me_free_pgs = mdb_midl_alloc(MDB_IDL_UM_MAX)) &&
-			  (env->me_dirty_list = calloc(MDB_IDL_UM_SIZE, sizeof(MDB_ID2)))))
+		if (env == NULL) {
+			goto leave;
+		}
+		env->me_free_pgs = mdb_midl_alloc(MDB_IDL_UM_MAX);
+		env->me_dirty_list = calloc(MDB_IDL_UM_SIZE, sizeof(MDB_ID2));
+
+		if (!env->me_free_pgs || !env->me_dirty_list) {
+			// At least one memory allocation failed
+			if (env->me_free_pgs) {
+				// Free previously allocated memory for me_free_pgs
+				free(env->me_free_pgs);
+				env->me_free_pgs = NULL;
+			}
+			if (env->me_dirty_list) {
+				// Free previously allocated memory for me_dirty_list
+				free(env->me_dirty_list);
+				env->me_dirty_list = NULL;
+			}
+			// Set error code
 			rc = ENOMEM;
+		}
 	}
 
 	env->me_flags = flags;
