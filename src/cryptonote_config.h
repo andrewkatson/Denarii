@@ -161,7 +161,15 @@
 #define RPC_PAYMENTS_DATA_FILENAME              "rpcpayments.bin"
 #define MINER_CONFIG_FILE_NAME                  "miner_conf.json"
 
+// We request a stack of 5MB so we can do resolution with unbound
+#ifdef __GNUC__ 
 #define THREAD_STACK_SIZE                       5 * 1024 * 1024
+#elif __clang__
+#define THREAD_STACK_SIZE                       5 * 1024 * 1024
+#else 
+#define THREAD_STACK_SIZE                       5 * 1024 * 1024
+#endif
+
 
 #define HF_VERSION_DYNAMIC_FEE                  4
 #define HF_VERSION_MIN_MIXIN_4                  6
