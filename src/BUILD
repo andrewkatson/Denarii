@@ -258,6 +258,7 @@ cc_library(
         ":windows": [
             "-lssl",
             "-lcrypto",
+            "-L external/libunbound",
             "-lunbound",
             "-lws2_32",
             "-lwsock32",
@@ -267,6 +268,7 @@ cc_library(
         "linux": [
             "-lssl",
             "-lcrypto",
+            "-L external/libunbound",
             "-lunbound",
             "-ldl",
             "-lunwind",

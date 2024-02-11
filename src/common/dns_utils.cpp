@@ -31,6 +31,8 @@
 
 #ifdef __clang__
 #include "include/unbound.h"
+#elif __GNUC__ 
+#include "include/unbound.h"
 #else
 #include "unbound.h"
 #endif
