@@ -91,6 +91,12 @@ unsigned mdb_midl_search( MDB_IDL ids, MDB_ID id );
 	 */
 MDB_IDL mdb_midl_alloc(int num);
 
+	/** Allocate an IDL for mdb_env_open
+	 * Allocates memory for an IDL of the given size.
+	 * @return	IDL on success, NULL on failure.
+	 */
+MDB_IDL mdb_midl_alloc_for_mdb_env_open(int num);
+
 	/** Free an IDL.
 	 * @param[in] ids	The IDL to free.
 	 */

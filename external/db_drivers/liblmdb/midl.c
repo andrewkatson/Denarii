@@ -111,6 +111,17 @@ MDB_IDL mdb_midl_alloc(int num)
 	return ids;
 }
 
+MDB_IDL mdb_midl_alloc_for_mdb_env_open(int num)
+{
+	MDB_IDL ids = malloc((num+1) * sizeof(MDB_ID));
+	if (ids) {
+		*ids++ = num;
+		*ids = 0;
+	}
+	return ids;
+}
+
+
 void mdb_midl_free(MDB_IDL ids)
 {
 	if (ids)

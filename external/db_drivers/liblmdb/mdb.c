@@ -5458,7 +5458,7 @@ mdb_env_open(MDB_env *env, const char *path, unsigned int flags, mdb_mode_t mode
 		if (env == NULL) {
 			goto leave;
 		}
-		env->me_free_pgs = mdb_midl_alloc(MDB_IDL_UM_MAX);
+		env->me_free_pgs = mdb_midl_alloc_for_mdb_env_open(MDB_IDL_UM_MAX);
 		env->me_dirty_list = calloc(MDB_IDL_UM_SIZE, sizeof(MDB_ID2));
 
 		if (!env->me_free_pgs || !env->me_dirty_list) {
