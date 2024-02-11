@@ -228,7 +228,7 @@ POP_WARNINGS
 #ifdef _WIN32
           return "C:Users\\katso\\Documents\\Github\\denarii";
 #else
-          return "/home/andrew/denarii";
+          return "/home/katsonandrew/denarii";
 #endif
       }
       return getenv("DENARII_WORKSPACE_PATH");

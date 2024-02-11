@@ -260,6 +260,8 @@ start bazel-bin/src/denarii_wallet_rpc_server.exe --rpc-bind-port=8080 --wallet-
 
 ## Testing 
 
+Set the path to this workspace in `contrib/epee/include/string_tools.h` in function `get_workspace_path`. And set it in `tests/unit_tests/BUILD`.
+
 Run 
 ```bash 
 bazel run tests:get_monero_test_commands

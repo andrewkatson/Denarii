@@ -10,7 +10,7 @@ cc_test(
         exclude = ["test_notifier.cpp"],
     ),
     copts = [
-        "-DDEFAULT_DATA_DIR=\\\"/home/andrew/denarii/tests/data\\\"",
+        "-DDEFAULT_DATA_DIR=\\\"/home/katsonandrew/denarii/tests/data\\\"",
         "-Wno-undef",
         "-Wno-sign-compare",
     ],
