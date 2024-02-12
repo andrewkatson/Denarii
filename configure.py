@@ -512,8 +512,8 @@ def liblmdb(external_dir_path):
 
 
 def bigint(external_dir_path):
-    bigint_path = workspace_path / "external"
-    common.chdir(bigint_path)
+    bigint_path = workspace_path / "external" / "bigint"
+    common.chdir(external_dir_path)
 
     if common.check_exists_with_existing_artifact_check(path=bigint_path, root_path=bigint_path, delete_tree=True, fail_on_existence=False):
         return
@@ -652,13 +652,18 @@ def build_dependencies_win():
     common.chdir(external_dir_path)
     bigint(external_dir_path)
 
+    json(external_dir_path)
+    common.chdir(external_dir_path)
+
 
 def randomx_mac(external_dir_path):
     randomx_path = external_dir_path / "randomx"
 
     randomx_library_path = randomx_path / "build" / "librandomx.a"
+    
+    build_folder_path = randomx_path / "build"
 
-    if common.check_exists_with_existing_artifact_check(path=randomx_library_path, root_path=randomx_path, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=randomx_library_path, delete_tree=True, root_path=build_folder_path, fail_on_existence=False):
         return
 
 
@@ -784,8 +789,11 @@ def trezor_common():
         "trezor_common_build_file.txt"
     trezor_common_workspace_file_path = workspace_path / \
         "trezor_common_workspace_file.txt"
+        
+    trezor_dest_build_file_path = workspace_path / "external" / "trezor-common" / "protob" / "BUILD"
+    trezor_dest_workspace_file_path = workspace_path / "external" / "trezor-common" / "protob" / "WORKSPACE"
 
-    if common.check_exists_with_existing_artifact_check(paths=[trezor_common_build_file_path, trezor_common_workspace_file_path], delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(paths=[trezor_dest_build_file_path, trezor_dest_workspace_file_path], delete_single_file=True, fail_on_existence=False):
         return
 
     try:
@@ -793,7 +801,7 @@ def trezor_common():
             text = f.read()
         common.print_something("Setting up trezor common")
 
-        path_to_dir = str(workspace_path) + "/external/trezor-common/protob"
+        path_to_dir = str(workspace_path / "external" / "trezor-common" / "protob")
         common.chdir(path_to_dir)
 
         common.system(f"echo \'{text}\' > BUILD")
@@ -801,10 +809,10 @@ def trezor_common():
     except Exception as e:
         common.print_something(e)
 
-    common.check_exists(trezor_common_build_file_path)
+    common.check_exists(trezor_dest_build_file_path)
 
     try:
-        path_to_workspace_dir = str(workspace_path) + "/external/trezor-common"
+        path_to_workspace_dir = str(workspace_path / "external" / "trezor-common")
         common.chdir(path_to_workspace_dir)
 
         with open(trezor_common_workspace_file_path) as f:

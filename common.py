@@ -67,7 +67,12 @@ def check_exists_with_existing_artifact_check(path="", paths=None, root_path="",
                 os.remove(path)
         # If we delete we want to download them again so dont exit whatever called this
         return False
-            
+    elif root_path != "" and os.path.exists(root_path) and delete_tree is True: 
+        print_something(f"{paths} does not exist but their tree from {root_path} does so that is going to be deleted")
+        shutil.rmtree(root_path)
+        # If we delete we want to download them again so dont exit whatever called this
+        return False
+        
     # If we fall through we allow whatever logic to continue.
     print_something(f"{paths} do not exist and we are going to allow them to be created")
     return False
