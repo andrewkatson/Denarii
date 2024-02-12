@@ -31,6 +31,7 @@
 #pragma once
 #define WIN32_LEAN_AND_MEAN
 
+#include <functional>
 #include "cryptonote_basic.h"
 #include "src/crypto/crypto.h"
 #include "src/crypto/hash.h"
@@ -51,7 +52,7 @@ namespace cryptonote {
   /*                                                                      */
   /************************************************************************/
   template<class t_array>
-  struct array_hasher: std::unary_function<t_array&, std::size_t>
+  struct array_hasher: std::function<std::size_t(int)>
   {
     std::size_t operator()(const t_array& val) const
     {

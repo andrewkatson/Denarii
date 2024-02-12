@@ -519,6 +519,7 @@ cc_library(
         "@boost//:thread",
         "@boost_extra",
     ],
+    linkopts = [] + select({'windows': [], 'mac': ["-framework IOKit"], 'linux': []})
 )
 
 cc_library(

@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include <functional>
 #include <limits>
 #include <boost/thread.hpp>
 #include <boost/utility/value_init.hpp>
@@ -81,11 +82,7 @@ namespace misc_utils
 	// TEMPLATE STRUCT less
 	template<class _Ty>
 	struct less_as_pod
-  #ifdef __clang__
-		: public std::__binary_function<_Ty, _Ty, bool>
-  #else 
-		: public std::binary_function<_Ty, _Ty, bool>
-  #endif
+  : public std::function<bool(_Ty, _Ty)>
 	{	// functor for operator<
 		bool operator()(const _Ty& _Left, const _Ty& _Right) const
 		{	// apply operator< to operands
