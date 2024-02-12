@@ -432,19 +432,19 @@ def openssl(external_dir_path):
 
     openssl_zip_path = external_dir_path / "openssl.zip"
     download_url(
-        "https://www.openssl.org/source/openssl-1.1.1i.tar.gz", str(openssl_zip_path))
+        "https://www.openssl.org/source/openssl-3.2.1.tar.gz", str(openssl_zip_path))
 
     unzip_command = "tar -xvzf " + \
         str(openssl_zip_path) + " -C " + str(external_dir_path)
     common.system(unzip_command)
 
-    openssl_wrong_name_path = external_dir_path / "openssl-1.1.1i"
+    openssl_wrong_name_path = external_dir_path / "openssl-3.2.1"
 
     shutil.copytree(str(openssl_wrong_name_path), str(openssl_path))
 
     common.chdir(openssl_path)
 
-    make_command = "./config && make && make test"
+    make_command = "./Configure && make && make test"
     common.system(make_command)
 
     common.check_exists(libssl_path)
