@@ -58,6 +58,7 @@ cc_binary(
     linkopts=[
         "-lpthread",
         "-llzma",
+        "-Lexternal/openssl",
         "-lssl",
         "-lcrypto",
     ] + select({
@@ -256,9 +257,10 @@ cc_library(
     linkopts=
         select({
         ":windows": [
+            "-Lexternal/openssl",
             "-lssl",
             "-lcrypto",
-            "-L external/libunbound",
+            "-Lexternal/libunbound",
             "-lunbound",
             "-lws2_32",
             "-lwsock32",
@@ -266,9 +268,10 @@ cc_library(
         ],
         "mac": [],
         "linux": [
+            "-Lexternal/openssl",
             "-lssl",
             "-lcrypto",
-            "-L external/libunbound",
+            "-Lexternal/libunbound",
             "-lunbound",
             "-ldl",
             "-lunwind",
@@ -292,7 +295,7 @@ cc_library(
         "@libsodium",
         "@libunbound",
         "@openssl//:libcrypto",
-        "@openssl//:libssl",
+        "@openssl//:ssl",
     ] + select({
         ":windows": [
         ],
@@ -395,6 +398,7 @@ cc_library(
     linkopts= 
         select({
         "windows": [
+            "-Lexternal/openssl",
             "-lssl",
             "-lcrypto",
             "-lws2_32",
@@ -402,6 +406,7 @@ cc_library(
         ],
         "mac": [],
         "linux": [
+            "-Lexternal/openssl",
             "-lssl",
             "-lcrypto",
             "-ldl"
@@ -412,7 +417,7 @@ cc_library(
         "//src:common",
         "//src/centralnode:dynamic_critical_values",
         "@openssl//:libcrypto",
-        "@openssl//:libssl",
+        "@openssl//:ssl",
     ],
 )
 
@@ -423,6 +428,7 @@ cc_library(
     linkopts=
     select({
         "windows": [
+            "-Lexternal/openssl",
             "-lssl",
             "-lcrypto",
             "-lws2_32",
@@ -430,6 +436,7 @@ cc_library(
         ],
         "mac": [],
         "linux": [
+            "-Lexternal/openssl",
             "-lssl",
             "-lcrypto",
             "-ldl"
@@ -441,7 +448,7 @@ cc_library(
         "//src:cryptonote_basic",
         "//src:device",
         "@openssl//:libcrypto",
-        "@openssl//:libssl",
+        "@openssl//:ssl",
     ],
 )
 
@@ -571,6 +578,7 @@ cc_library(
     linkopts= 
     select({
         "windows": [
+            "-Lexternal/openssl",
             "-lssl",
             "-lcrypto",
             "-lws2_32",
@@ -578,6 +586,7 @@ cc_library(
         ],
         "mac": [],
         "linux": [
+            "-Lexternal/openssl",
             "-lssl",
             "-lcrypto",
             "-ldl"
@@ -594,7 +603,7 @@ cc_library(
         "@boost//:multi_index",
         "@libhidapi",
         "@openssl//:libcrypto",
-        "@openssl//:libssl",
+        "@openssl//:ssl",
     ] + select({
         "windows": [],
         "mac": [],
@@ -735,6 +744,7 @@ cc_binary(
     linkopts=[
         "-lpthread",
         "-llzma",
+        "-Lexternal/openssl",
         "-lssl",
         "-lcrypto",
     ] + select({
@@ -978,14 +988,14 @@ cc_binary(
         "serialization/difficulty_type.h",
         "serialization/json_utils.h",
     ],
-    linkopts= ["-lssl", "-lcrypto",] + 
+    linkopts= ["-Lexternal/openssl", "-lssl", "-lcrypto",] + 
     select({
         "windows": [
             "-llzma",
             "-lws2_32",
             "-lwsock32",
         ],
-        "mac": ["-Lexternal/openssl"],
+        "mac": [],
         "linux": [
             "-llzma",
             "-ldl"
@@ -1001,7 +1011,7 @@ cc_binary(
         "@boost//:thread",
         "@liblzma",
         "@openssl//:libcrypto",
-        "@openssl//:libssl",
+        "@openssl//:ssl",
     ],
 )
 

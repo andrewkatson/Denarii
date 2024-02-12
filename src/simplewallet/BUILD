@@ -23,6 +23,7 @@ cc_binary(
         "simplewallet.h",
     ],
     linkopts = [
+        "-Lexternal/openssl",
         "-lssl",
         "-lcrypto",
         "-ldl",
@@ -31,7 +32,7 @@ cc_binary(
         "-lboost_thread",
     ] + select({
         "windows": [],
-        "mac": ["-Lexternal/openssl"],
+        "mac": []],
         "//conditions:default": [],
     }),
     deps = [
@@ -54,7 +55,7 @@ cc_binary(
         "@liblzma",
         "@libreadline",
         "@openssl//:libcrypto",
-        "@openssl//:libssl",
+        "@openssl//:ssl",
         "@qrcodegen",
     ],
 )

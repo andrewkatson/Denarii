@@ -35,9 +35,9 @@ cc_library(
         "**/*.hpp",
         "**/*.inl",
     ]),
-    linkopts = ["-lssl","-lcrypto"] + select({
+    linkopts = ["-Lexternal/openssl", "-lssl","-lcrypto"] + select({
         "windows": ["-lcrypt32", "-lws2_32","-lwsock32"],
-        "mac": ["-Lexternal/openssl"],
+        "mac": [],
         "linux": [],
     }),
     deps = [
@@ -52,7 +52,6 @@ cc_library(
         "@boost//:uuid",
         "@easy_logging",
         "@openssl//:libcrypto",
-        "@openssl//:libssl",
         "@openssl//:ssl",
         "@libreadline//:libreadline",
         "@zlib",
