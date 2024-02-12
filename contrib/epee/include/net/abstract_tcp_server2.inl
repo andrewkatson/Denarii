@@ -1360,7 +1360,7 @@ POP_WARNINGS
   }
   //---------------------------------------------------------------------------------
   template<class t_protocol_handler>
-  typename boosted_tcp_server<t_protocol_handler>::try_connect_result_t boosted_tcp_server<t_protocol_handler>::try_connect(connection_ptr new_connection_l, const std::string& adr, const std::string& port, boost::asio::ip::tcp::socket &sock_, const boost::asio::ip::tcp::endpoint &remote_endpoint, const std::string &bind_ip, uint32_t conn_timeout, epee::net_utils::ssl_support_t ssl_support)
+  typename boosted_tcp_server<t_protocol_handler>::try_connect_result_t boosted_tcp_server<t_protocol_handler>::try_connect(raw_connection_ptr new_connection_l, const std::string& adr, const std::string& port, boost::asio::ip::tcp::socket &sock_, const boost::asio::ip::tcp::endpoint &remote_endpoint, const std::string &bind_ip, uint32_t conn_timeout, epee::net_utils::ssl_support_t ssl_support)
   {
     TRY_ENTRY();
 
@@ -1462,12 +1462,12 @@ POP_WARNINGS
   {
     TRY_ENTRY();
 
-    connection_ptr new_connection_l(new connection<t_protocol_handler>(io_service_, m_state, m_connection_type, ssl_support) );
     connections_mutex.lock();
-    connections_.insert(new_connection_l);
+    connections_.push_back(std::move(std::make_unique<connection<t_protocol_handler>>(io_service_, m_state, m_connection_type, ssl_support)));
+    raw_connection_ptr new_connection_l = connections_.back().get();
     MDEBUG("connections_ size now " << connections_.size());
     connections_mutex.unlock();
-    epee::misc_utils::auto_scope_leave_caller scope_exit_handler = epee::misc_utils::create_scope_leave_handler([&](){ CRITICAL_REGION_LOCAL(connections_mutex); connections_.erase(new_connection_l); });
+    epee::misc_utils::auto_scope_leave_caller scope_exit_handler = epee::misc_utils::create_scope_leave_handler([&](){ CRITICAL_REGION_LOCAL(connections_mutex); connections_.pop_back(); });
     boost::asio::ip::tcp::socket&  sock_ = new_connection_l->socket();
 
     bool try_ipv6 = false;
@@ -1562,21 +1562,22 @@ POP_WARNINGS
 
     // start adds the connection to the config object's list, so we don't need to have it locally anymore
     connections_mutex.lock();
-    connections_.erase(new_connection_l);
+    std::unique_ptr<connection<t_protocol_handler>> new_connection_moved = std::move(connections_.back());
+    connections_.pop_back();
     connections_mutex.unlock();
-    bool r = new_connection_l->start(false, 1 < m_threads_count);
+    bool r = new_connection_moved->start(false, 1 < m_threads_count);
     if (r)
     {
-      new_connection_l->get_context(conn_context);
+      new_connection_moved->get_context(conn_context);
       //new_connection_l.reset(new connection<t_protocol_handler>(io_service_, m_config, m_sock_count, m_pfilter));
     }
     else
     {
       assert(m_state != nullptr); // always set in constructor
-      _erro("[sock " << new_connection_l->socket().native_handle() << "] Failed to start connection, connections_count = " << m_state->sock_count);
+      _erro("[sock " << new_connection_moved->socket().native_handle() << "] Failed to start connection, connections_count = " << m_state->sock_count);
     }
     
-	new_connection_l->save_dbg_log();
+	  new_connection_moved->save_dbg_log();
 
     return r;
 
@@ -1587,12 +1588,12 @@ POP_WARNINGS
   bool boosted_tcp_server<t_protocol_handler>::connect_async(const std::string& adr, const std::string& port, uint32_t conn_timeout, const t_callback &cb, const std::string& bind_ip, epee::net_utils::ssl_support_t ssl_support)
   {
     TRY_ENTRY();    
-    connection_ptr new_connection_l(new connection<t_protocol_handler>(io_service_, m_state, m_connection_type, ssl_support) );
     connections_mutex.lock();
-    connections_.insert(new_connection_l);
+    connections_.push_back(std::move(std::make_unique<connection<t_protocol_handler>>(io_service_, m_state, m_connection_type, ssl_support)));
+    raw_connection_ptr new_connection_l = connections_.back().get();
     MDEBUG("connections_ size now " << connections_.size());
     connections_mutex.unlock();
-    epee::misc_utils::auto_scope_leave_caller scope_exit_handler = epee::misc_utils::create_scope_leave_handler([&](){ CRITICAL_REGION_LOCAL(connections_mutex); connections_.erase(new_connection_l); });
+    epee::misc_utils::auto_scope_leave_caller scope_exit_handler = epee::misc_utils::create_scope_leave_handler([&](){ CRITICAL_REGION_LOCAL(connections_mutex); connections_.pop_back(); });
     boost::asio::ip::tcp::socket&  sock_ = new_connection_l->socket();
     
     bool try_ipv6 = false;
@@ -1668,7 +1669,7 @@ POP_WARNINGS
     boost::shared_ptr<boost::asio::deadline_timer> sh_deadline(new boost::asio::deadline_timer(io_service_));
     //start deadline
     sh_deadline->expires_from_now(boost::posix_time::milliseconds(conn_timeout));
-    sh_deadline->async_wait([=](const boost::system::error_code& error)
+    sh_deadline->async_wait([=, &new_connection_l](const boost::system::error_code& error)
       {
           if(error != boost::asio::error::operation_aborted) 
           {
@@ -1677,10 +1678,11 @@ POP_WARNINGS
           }
       });
     //start async connect
-    sock_.async_connect(remote_endpoint, [=](const boost::system::error_code& ec_)
+    sock_.async_connect(remote_endpoint, [=,  &new_connection_l](const boost::system::error_code& ec_)
       {
         t_connection_context conn_context = AUTO_VAL_INIT(conn_context);
         boost::system::error_code ignored_ec;
+ 
         boost::asio::ip::tcp::socket::endpoint_type lep = new_connection_l->socket().local_endpoint(ignored_ec);
         if(!ec_)
         {//success
@@ -1694,17 +1696,18 @@ POP_WARNINGS
 
             // start adds the connection to the config object's list, so we don't need to have it locally anymore
             connections_mutex.lock();
-            connections_.erase(new_connection_l);
+            std::unique_ptr<connection<t_protocol_handler>> new_connection_moved = std::move(connections_.back());
+            connections_.pop_back();
             connections_mutex.unlock();
-            bool r = new_connection_l->start(false, 1 < m_threads_count);
+            bool r = new_connection_moved->start(false, 1 < m_threads_count);
             if (r)
             {
-              new_connection_l->get_context(conn_context);
+              new_connection_moved->get_context(conn_context);
               cb(conn_context, ec_);
             }
             else
             {
-              _dbg3("[sock " << new_connection_l->socket().native_handle() << "] Failed to start connection to " << adr << ':' << port);
+              _dbg3("[sock " << new_connection_moved->socket().native_handle() << "] Failed to start connection to " << adr << ':' << port);
               cb(conn_context, boost::asio::error::fault);
             }
           }
