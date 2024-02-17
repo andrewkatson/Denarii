@@ -45,11 +45,14 @@
 #include <map>
 #include <memory>
 #include <any>
+#include <stdexcept>
+#include <chrono>
 
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
 #include <boost/array.hpp>
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/thread/thread.hpp>
 #include <boost/interprocess/detail/atomic.hpp>
 #include <boost/thread/thread.hpp>
 #include "contrib/epee/include/byte_slice.h"
@@ -82,8 +85,7 @@ namespace net_utils
   /// Represents a single connection from a client.
   template<class t_protocol_handler>
   class connection
-    : public boost::enable_shared_from_this<connection<t_protocol_handler> >,
-    private boost::noncopyable, 
+    : private boost::noncopyable,
     public i_service_endpoint,
     public connection_basic
   {
@@ -145,7 +147,7 @@ namespace net_utils
     //------------------------------------------------------
     bool do_send_chunk(byte_slice chunk); ///< will send (or queue) a part of data. internal use only
 
-    boost::shared_ptr<connection<t_protocol_handler> > safe_shared_from_this();
+    connection<t_protocol_handler>* safe_raw_connection_ptr_from_this();
     bool shutdown();
     /// Handle completion of a receive operation.
     void handle_receive(const boost::system::error_code& e,
@@ -177,7 +179,7 @@ namespace net_utils
     t_protocol_handler m_protocol_handler;
     //typename t_protocol_handler::config_type m_dummy_config;
     size_t m_reference_count = 0; // reference count managed through add_ref/release support
-    boost::shared_ptr<connection<t_protocol_handler> > m_self_ref; // the reference to hold
+    connection<t_protocol_handler>* m_self_ref; // the reference to hold
     critical_section m_self_refs_lock;
     critical_section m_chunking_lock; // held while we add small chunks of the big do_send() to small do_send_chunk()
     critical_section m_shutdown_lock; // held while shutting down
@@ -250,7 +252,22 @@ namespace net_utils
 
     void set_threads_prefix(const std::string& prefix_name);
 
-    bool deinit_server(){return true;}
+    bool deinit_server(){
+        connections_mutex.lock();
+        for (auto &c: connections_)
+        {
+            if (c.get() == nullptr) {
+                continue;
+            }
+            bool succeeded = c->cancel();
+            if (!succeeded) {
+                throw std::runtime_error("One of the connections failed to close");
+            }
+        }
+        connections_.clear();
+        connections_mutex.unlock();
+        return true;
+    }
 
     size_t get_threads_count(){return m_threads_count;}
 
@@ -293,14 +310,18 @@ namespace net_utils
 
     struct idle_callback_conext_base
     {
-      virtual ~idle_callback_conext_base(){}
+      virtual ~idle_callback_conext_base(){
+          this->m_timer.wait();
+          this->m_timer.cancel();
+      }
 
       virtual bool call_handler(){return true;}
 
       idle_callback_conext_base(boost::asio::io_service& io_serice):
                                                           m_timer(io_serice)
-      {}
-      boost::asio::deadline_timer m_timer;
+      {
+      }
+      boost::asio::system_timer m_timer;
     };
 
     template <class t_handler>
@@ -319,26 +340,39 @@ namespace net_utils
       uint64_t m_period;
     };
 
-    template<class t_handler>
-    bool add_idle_handler(t_handler t_callback, uint64_t timeout_ms)
+      bool add_idle_handler(const std::function<bool()>& t_callback, uint64_t timeout_ms)
       {
-        boost::shared_ptr<idle_callback_conext<t_handler>> ptr(new idle_callback_conext<t_handler>(io_service_, t_callback, timeout_ms));
-        //needed call handler here ?...
-        ptr->m_timer.expires_from_now(boost::posix_time::milliseconds(ptr->m_period));
-        ptr->m_timer.async_wait(boost::bind(&boosted_tcp_server<t_protocol_handler>::global_timer_handler<t_handler>, this, ptr));
+          std::unique_ptr<idle_callback_conext<const std::function<bool()>>> ptr = std::make_unique<idle_callback_conext<const std::function<bool()>>>(io_service_, t_callback, timeout_ms);
 
-        m_callback_ptrs.push_back(ptr);
-        return true;
+
+
+          // Add the duration to a time point
+          boost::chrono::system_clock::time_point now = boost::chrono::system_clock::now();
+          boost::chrono::system_clock::time_point milliseconds_later = now + boost::chrono::milliseconds(ptr->m_period);
+          auto duration = boost::chrono::duration_cast<boost::chrono::microseconds>(milliseconds_later - now);
+          ptr->m_timer.expires_after(std::chrono::microseconds(duration.count()));
+          ptr->m_timer.async_wait(boost::bind(&boosted_tcp_server<t_protocol_handler>::global_timer_handler, this, ptr.get()));
+
+          m_callback_ptrs.push_back(std::move(ptr));
+          return true;
       }
 
-    template<class t_handler>
-    bool global_timer_handler(/*const boost::system::error_code& err, */boost::shared_ptr<idle_callback_conext<t_handler>> ptr)
+    bool global_timer_handler(/*const boost::system::error_code& err, */idle_callback_conext<const std::function<bool()>> *ptr)
     {
+
+        if (!ptr) {
+            return true;
+        }
       //if handler return false - he don't want to be called anymore
       if(!ptr->call_handler())
         return true;
-      ptr->m_timer.expires_from_now(boost::posix_time::milliseconds(ptr->m_period));
-      ptr->m_timer.async_wait(boost::bind(&boosted_tcp_server<t_protocol_handler>::global_timer_handler<t_handler>, this, ptr));
+
+      // Add the duration to a time point
+      boost::chrono::system_clock::time_point now = boost::chrono::system_clock::now();
+      boost::chrono::system_clock::time_point milliseconds_later = now + boost::chrono::milliseconds(ptr->m_period);
+      auto duration = boost::chrono::duration_cast<boost::chrono::microseconds>(milliseconds_later - now);
+      ptr->m_timer.expires_after(std::chrono::microseconds (duration.count()));
+      ptr->m_timer.async_wait(boost::bind(&boosted_tcp_server<t_protocol_handler>::global_timer_handler, this, ptr));
       return true;
     }
 
@@ -361,10 +395,7 @@ namespace net_utils
 
     const std::shared_ptr<typename connection<t_protocol_handler>::shared_state> m_state;
 
-    // A vector of shared pointers that point to callbacks
-    // Had to use std::any because the templates of this class are a mess and scattered all over the codebase
-    // sorry :(
-    std::vector<std::any> m_callback_ptrs;
+    std::vector<std::unique_ptr<idle_callback_conext<const std::function<bool()>>>> m_callback_ptrs;
 
     /// The io_service used to perform asynchronous operations.
     struct worker
