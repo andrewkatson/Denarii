@@ -170,6 +170,13 @@ connection_basic::connection_basic(boost::asio::io_service &io_service, std::sha
 	++(m_state->sock_count); // increase the global counter
 	mI->m_peer_number = m_state->sock_number.fetch_add(1); // use, and increase the generated number
 
+    if (m_state->peer_numbers_used.find(mI->m_peer_number) != m_state->peer_numbers_used.end()) {
+        _note("While constructing connection " << mI->m_peer_number << " we found we had already connected");
+        throw std::runtime_error("Connection with peer number: " + std::to_string(mI->m_peer_number) + " already had a connection");
+    }
+
+    m_state->peer_numbers_used.emplace(mI->m_peer_number);
+
 	std::string remote_addr_str = "?";
 	try { boost::system::error_code e; remote_addr_str = socket().remote_endpoint(e).address().to_string(); } catch(...){} ;
 
@@ -178,6 +185,11 @@ connection_basic::connection_basic(boost::asio::io_service &io_service, std::sha
 
 connection_basic::~connection_basic() noexcept(false) {
 	--(m_state->sock_count);
+
+    if (m_state->sock_count == 0) {
+        _note("While destructing connection #" <<mI->m_peer_number << ". We noticed that the socket_count was already zero");
+        return;
+    }
 
 	std::string remote_addr_str = "?";
 	try { boost::system::error_code e; remote_addr_str = socket().remote_endpoint(e).address().to_string(); } catch(...){} ;

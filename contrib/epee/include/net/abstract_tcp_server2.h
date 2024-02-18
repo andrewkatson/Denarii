@@ -42,6 +42,7 @@
 #include <boost/shared_ptr.hpp>
 #include <atomic>
 #include <cassert>
+#include <thread>
 #include <map>
 #include <memory>
 #include <any>
@@ -50,6 +51,7 @@
 
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
+#include <boost/chrono.hpp>
 #include <boost/array.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/thread/thread.hpp>
@@ -254,6 +256,11 @@ namespace net_utils
 
     bool deinit_server(){
         connections_mutex.lock();
+        if (connections_.empty()) {
+            _dbg3("Connections was empty while deinitializing server.");
+            connections_mutex.unlock();
+            return true;
+        }
         for (auto &c: connections_)
         {
             if (c.get() == nullptr) {
@@ -311,14 +318,11 @@ namespace net_utils
     struct idle_callback_conext_base
     {
       virtual ~idle_callback_conext_base(){
-          this->m_timer.wait();
-          this->m_timer.cancel();
       }
 
       virtual bool call_handler(){return true;}
 
-      idle_callback_conext_base(boost::asio::io_service& io_serice):
-                                                          m_timer(io_serice)
+      idle_callback_conext_base(boost::asio::io_service& io_serice) : m_timer(io_serice)
       {
       }
       boost::asio::system_timer m_timer;
@@ -340,47 +344,69 @@ namespace net_utils
       uint64_t m_period;
     };
 
-      bool add_idle_handler(const std::function<bool()>& t_callback, uint64_t timeout_ms)
-      {
-          std::unique_ptr<idle_callback_conext<const std::function<bool()>>> ptr = std::make_unique<idle_callback_conext<const std::function<bool()>>>(io_service_, t_callback, timeout_ms);
+      bool add_idle_handler(const std::function<bool()>& t_callback, uint64_t timeout_ms) {
 
-
+#ifndef __clang__
+          std::shared_ptr<idle_callback_conext<const std::function<bool()>>> ptr = std::make_unique<idle_callback_conext<const std::function<bool()>>>(get_io_service(), t_callback, timeout_ms);
 
           // Add the duration to a time point
           boost::chrono::system_clock::time_point now = boost::chrono::system_clock::now();
           boost::chrono::system_clock::time_point milliseconds_later = now + boost::chrono::milliseconds(ptr->m_period);
           auto duration = boost::chrono::duration_cast<boost::chrono::microseconds>(milliseconds_later - now);
           ptr->m_timer.expires_after(std::chrono::microseconds(duration.count()));
-          ptr->m_timer.async_wait(boost::bind(&boosted_tcp_server<t_protocol_handler>::global_timer_handler, this, ptr.get()));
+          ptr->m_timer.async_wait([this, ptr](const boost::system::error_code& e) {
+              _dbg1("Ran into error with add_idle_handler: " << e.what());
+              return global_timer_handler(1, ptr);
+          });
 
           m_callback_ptrs.push_back(std::move(ptr));
+#else
+
+          m_callback_threads.push_back(std::move(std::make_unique<std::thread>([this, &t_callback, &timeout_ms]() {
+              auto startTime = std::chrono::system_clock::now();
+              auto endTime = startTime + std::chrono::milliseconds(timeout_ms);
+              while (std::chrono::system_clock::now() < endTime && !m_stop_signal_sent) {
+                  // If the handler returns false just exit
+                  if (!async_call(t_callback)) {
+                      return true;
+                  }
+                  std::this_thread::sleep_for(comparable_milliseconds(10));
+              }
+          })));
+#endif
           return true;
       }
 
-    bool global_timer_handler(/*const boost::system::error_code& err, */idle_callback_conext<const std::function<bool()>> *ptr)
+    bool global_timer_handler(/*const boost::system::error_code& err, */int count, std::shared_ptr<idle_callback_conext<const std::function<bool()>>> ptr)
     {
 
-        if (!ptr) {
+        if (!ptr.get()) {
             return true;
         }
       //if handler return false - he don't want to be called anymore
       if(!ptr->call_handler())
         return true;
 
+      if (count > 3) {
+          return true;
+      }
+
       // Add the duration to a time point
       boost::chrono::system_clock::time_point now = boost::chrono::system_clock::now();
       boost::chrono::system_clock::time_point milliseconds_later = now + boost::chrono::milliseconds(ptr->m_period);
       auto duration = boost::chrono::duration_cast<boost::chrono::microseconds>(milliseconds_later - now);
       ptr->m_timer.expires_after(std::chrono::microseconds (duration.count()));
-      ptr->m_timer.async_wait(boost::bind(&boosted_tcp_server<t_protocol_handler>::global_timer_handler, this, ptr));
-      return true;
+        ptr->m_timer.async_wait([this, ptr, &count](const boost::system::error_code& e) {
+            _dbg1("Ran into error with global_timer_handler: " << e.what());
+            return global_timer_handler(count+=1,ptr);
+        });
+        return true;
     }
 
-    template<class t_handler>
-    bool async_call(t_handler t_callback)
+
+    bool async_call(const std::function<bool()> &callback)
     {
-      io_service_.post(t_callback);
-      return true;
+      return callback();
     }
 
   private:
@@ -395,7 +421,8 @@ namespace net_utils
 
     const std::shared_ptr<typename connection<t_protocol_handler>::shared_state> m_state;
 
-    std::vector<std::unique_ptr<idle_callback_conext<const std::function<bool()>>>> m_callback_ptrs;
+    std::vector<std::shared_ptr<idle_callback_conext<const std::function<bool()>>>> m_callback_ptrs;
+    std::vector<std::unique_ptr<std::thread>> m_callback_threads;
 
     /// The io_service used to perform asynchronous operations.
     struct worker

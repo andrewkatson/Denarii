@@ -1246,20 +1246,29 @@ POP_WARNINGS
     typename connection<t_protocol_handler>::shared_state *state = static_cast<typename connection<t_protocol_handler>::shared_state*>(m_state.get());
     state->stop_signal_sent = true;
     TRY_ENTRY();
-    connections_mutex.lock();
-    for (auto &c: connections_)
-    {
-      if (c.get() == nullptr) {
-        continue;
-      }
-      bool succeeded = c->cancel();
-      if (!succeeded) {
-        throw std::runtime_error("One of the connections failed to close");
-      }
+    if (!io_service_.stopped()) {
+        io_service_.stop();
     }
-    connections_.clear();
+    connections_mutex.lock();
+    if (!connections_.empty()) {
+        for (auto &c: connections_) {
+            if (c.get() == nullptr) {
+                continue;
+            }
+            bool succeeded = c->cancel();
+            if (!succeeded) {
+                throw std::runtime_error("One of the connections failed to close");
+            }
+        }
+        connections_.clear();
+    }
     connections_mutex.unlock();
-    io_service_.stop();
+#ifdef __clang__
+    for (auto& callback_thread : m_callback_threads) {
+        callback_thread->join();
+    }
+    m_callback_threads.clear();
+#endif
     CATCH_ENTRY_L0("boosted_tcp_server<t_protocol_handler>::send_stop_signal()", void());
   }
   //---------------------------------------------------------------------------------
