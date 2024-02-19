@@ -187,11 +187,6 @@ bazel-testlogs
 .vs/ProjectSettings.json
 .vs/slnx.sqlite
 .vs/VSWorkspaceState.json
-external/supercop
-external/trezor-common
-external/unbound
-external/zlib/Makefile
-external/zlib/zconf.h
 out/build/x64-Debug (default)/.cmake/api/v1/query/client-MicrosoftVS/query.json
 out/build/x64-Debug (default)/VSInheritEnvironments.txt
 src/blocks/generated_checkpoints.c
@@ -201,7 +196,6 @@ src/crypto/wallet/ops.h
 src/version.cpp
 tests/benchmark.h
 *.qm
-translations/translation_files.h
 translations/translation_files.h
 wallet/
 
