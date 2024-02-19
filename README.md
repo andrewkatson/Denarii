@@ -155,13 +155,13 @@ Visual Studio: https://visualstudio.microsoft.com/
     To build for 64-bit Windows in Msys2:
 
     ```bash
-    pacman -S mingw-w64-x86_64-toolchain make mingw-w64-x86_64-cmake mingw-w64-x86_64-boost mingw-w64-x86_64-openssl mingw-w64-x86_64-zeromq mingw-w64-x86_64-libsodium mingw-w64-x86_64-hidapi mingw-w64-x86_64-libunwind mingw-w64-x86_64-libusb mingw-w64-x86_64-unbound mingw-w64-i686-lmdb mingw-w64-i686-qt-creator mingw-w64-x86_64-python-pyqt5
+    pacman -S mingw-w64-x86_64-toolchain make mingw-w64-x86_64-cmake mingw-w64-x86_64-boost mingw-w64-x86_64-openssl mingw-w64-x86_64-zeromq mingw-w64-x86_64-libsodium mingw-w64-x86_64-hidapi mingw-w64-x86_64-libunwind mingw-w64-x86_64-libusb mingw-w64-x86_64-unbound mingw-w64-x86_64-lmdb mingw-w64-x86_64-qt-creator mingw-w64-x86_64-python-pyqt5 mingw-w64-x86_64-qt5-tools
     ```
 
     To build for 32-bit Windows in Msys2:
 
     ```bash
-    pacman -S mingw-w64-i686-toolchain make mingw-w64-i686-cmake mingw-w64-i686-boost mingw-w64-i686-openssl mingw-w64-i686-zeromq mingw-w64-i686-libsodium mingw-w64-i686-hidapi mingw-w64-i686-libunwind mingw-w64-i686-libusb mingw-w64-i686-unbound mingw-w64-i686-lmdb mingw-w64-i686-qt-creator mingw-w64-i686-python-pyqt5
+    pacman -S mingw-w64-i686-toolchain make mingw-w64-i686-cmake mingw-w64-i686-boost mingw-w64-i686-openssl mingw-w64-i686-zeromq mingw-w64-i686-libsodium mingw-w64-i686-hidapi mingw-w64-i686-libunwind mingw-w64-i686-libusb mingw-w64-i686-unbound mingw-w64-i686-lmdb mingw-w64-i686-qt-creator mingw-w64-i686-python-pyqt5 mingw-w64-i686-qt5-tools
     ```
   
     Then run in command prompt 
@@ -173,7 +173,7 @@ Visual Studio: https://visualstudio.microsoft.com/
 
     ``` 
     bazel run :configure_win (run through command prompt)
-    bazel run :configure     (run through msys2) 
+    bazel run :configure     (run through msys2) or python configure.py (run through msys2)
     ```
 
 ## Building 

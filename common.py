@@ -84,8 +84,8 @@ def get_all_files_paths(path):
         for file in files:
             paths.append(os.path.join(subdir, file))
 
-        for dir in dirs:
-            new_paths = get_all_files_paths(dir)
+        for directory in dirs:
+            new_paths = get_all_files_paths(directory)
             for new_path in new_paths:
                 paths.append(new_path)
 

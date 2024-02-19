@@ -27,6 +27,9 @@ py_files_to_check = ["descriptor.py", "descriptor_pool.py",
 common_build_options_windows = '--compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" ' \
                                '--copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static" '
 
+# The above should produce a command like so
+# bazel build src:denariid --compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static
+
 
 class LibraryInfo:
 
@@ -641,13 +644,30 @@ def supercop_win(external_dir_path):
     common.check_exists(supercop_64_library_path)
     common.check_exists(supercop_other_library_path)
 
+def build_zlib(external_dir_path):
+
+    zlib_path = external_dir_path / "zlib"
+
+    common.chdir(zlib_path)
+
+    # Run this everytime there doesn't seem to be any harm
+    command = "./configure"
+    common.system(command)
+
+    # need to undef UNISTD_H
+    zconf_path = zlib_path / "zconf.h"
+    common.replace_phrase("#  define Z_HAVE_UNISTD_H", "#  undef Z_HAVE_UNISTD_H", zconf_path)
 
 def build_dependencies_win():
     common.print_something("Building dependencies for Windows")
     external_dir_path = workspace_path / "external"
 
-    common.chdir(external_dir_path)
-    supercop_win(external_dir_path)
+    # The crypto algorithm libraries cannot be found on cygwin
+    if sys.platform != "cygwin":
+        common.chdir(external_dir_path)
+        supercop_win(external_dir_path)
+
+    build_zlib(external_dir_path)
 
     common.chdir(external_dir_path)
     bigint(external_dir_path)
@@ -1133,7 +1153,10 @@ def convert_translation_files_win():
         
         file = files[i]
 
-        conversion_command = "/mingw64/bin/lrelease " + file + " -qm " + converted_file
+        if sys.platform == "cygwin":
+            conversion_command = "/mingw64/bin/lrelease.exe " + file + " -qm " + converted_file
+        else:
+            conversion_command = "/mingw64/bin/lrelease " + file + " -qm " + converted_file
         common.system(conversion_command)
 
         common.check_exists(translated_file_path)

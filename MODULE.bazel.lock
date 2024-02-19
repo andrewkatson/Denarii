@@ -1122,7 +1122,7 @@
     },
     "@@protobuf~23.1//:non_module_deps.bzl%non_module_deps": {
       "general": {
-        "bzlTransitiveDigest": "y/QVhgwEpduKjMEF4YflykcfvrWnGGE8W8O3bTxy5eI=",
+        "bzlTransitiveDigest": "nJFMm/vRxbtLfYuEILU2GsQ7tOACJhS4W1AV0O3xer0=",
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
