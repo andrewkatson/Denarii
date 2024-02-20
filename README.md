@@ -171,7 +171,7 @@ Visual Studio: https://visualstudio.microsoft.com/
 * Run Configure 
 
     ``` 
-    bazel run :configure_win (run through command prompt)
+    bazel run :configure_win (run through command prompt) or python configure_win.py (run through command prompt)
     bazel run :configure     (run through msys2) or python configure.py (run through msys2)
     ```
 
