@@ -119,9 +119,8 @@ Denarii uses bazel (https://bazel.build/). And it needs `C++14` at least. So set
 
     ```bash
     cd denarii
-    git checkout release-v0.17
-    sudo bazel run :configure
-    sudo chmod -R 777 /path/to/denarii
+    git checkout main
+    bazel run :configure
     ```
 
 ### On Windows
