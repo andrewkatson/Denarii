@@ -216,6 +216,7 @@ def find_includes(libraries):
                     common.check_exists(new_path)
                 except Exception as e:
                     common.print_something(e)
+                    exit(-1)
 
 
 def import_dependencies():
