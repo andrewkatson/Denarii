@@ -33,7 +33,7 @@ Denarii is a private, secure, untraceable, decentralised digital currency. You a
 
 **Decentralization:** The utility of Denarii depends on its decentralised peer-to-peer consensus network - anyone should be able to run the denarii software, validate the integrity of the blockchain, and participate in all aspects of the denarii network using consumer-grade commodity hardware. Decentralization of the monero network is maintained by software development that minimizes the costs of running the denarii software and inhibits the proliferation of specialized, non-commodity hardware.  
 
-**Stability:** Denarii is a stable currency through the adoption of proven modern monetary policy. 
+**Stability:** Denarii is a stable currency through the adoption of proven modern monetary policy modified to be decentralized. Essentially it manages the emission rate and the transaction fee to react to the market over time. This is done through the adjustment of these critical values by the nodes of the network -- but restricted by the average of the previous n blocks.
 
 ## License
 
