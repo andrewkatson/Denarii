@@ -185,7 +185,14 @@ Do `bazel build target` for all targets -- e.g. ```bazel build src:denariid```
 
 ### On Windows  
 
-All builds should use ```--compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static"```
+All builds should use ```--bazelrc=/path/to/.windows_bazelrc --output_base="C:\bazel-bin"``` before the `build` command and ```--compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static"``` after `target`
+
+For why we need `output_base` see https://github.com/protocolbuffers/protobuf/issues/12947
+
+Ex: 
+
+`bazel --bazelrc="/c/Users/katso/Documents/Github/denarii/.windows_bazelrc" --output_base="C:\bazel-bin" build src:denariid --compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static"`
+
 
 If you want to build in debug mode use `--compilation_mode=dbg` instead of `--copt="-O3"` and also add in `--linkopt="mcmodel=medium"` and `--copt="=Wa,-mbig-obj"`
 

@@ -954,6 +954,6 @@ BOOST_PP_REPEAT_FROM_TO(1, 6, GEN_throw_wallet_ex, ~)
   if (cond)                                                                                                 \
   {                                                                                                         \
     LOG_ERROR(#cond << ". THROW EXCEPTION: " << #err_type);                                                 \
-    tools::error::throw_wallet_ex(std::move(std::string(__FILE__ ":" STRINGIZE(__LINE__))));                \
+    tools::error::throw_wallet_ex<err_type>(std::move(std::string(__FILE__ ":" STRINGIZE(__LINE__))));                \
   }
 #endif

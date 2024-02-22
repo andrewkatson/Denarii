@@ -1,0 +1,5 @@
+startup --windows_enable_symlinks
+build --enable_runfiles
+build --cxxopt=-std=c++11
+build --host_cxxopt=-std=c++11
+common --enable_bzlmod

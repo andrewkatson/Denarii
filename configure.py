@@ -16,6 +16,8 @@ import zipfile
 import common
 import workspace_path_finder
 
+workspace_path = workspace_path_finder.find_workspace_path()
+
 py_pb_files_to_check = ["any_pb2.py", "api_pb2.py", "descriptor_pb2.py", "duration_pb2.py", "empty_pb2.py",
                         "field_mask_pb2.py", "source_context_pb2.py", "struct_pb2.py", "timestamp_pb2.py",
                         "type_pb2.py",
@@ -24,6 +26,8 @@ py_pb_files_to_check = ["any_pb2.py", "api_pb2.py", "descriptor_pb2.py", "durati
 py_files_to_check = ["descriptor.py", "descriptor_pool.py",
                      "message.py", "reflection.py", "symbol_database.py"]
 
+windows_bazel_rc_path = workspace_path / ".windows_bazelrc"
+common_bazel_options_windows = f'--bazelrc="{windows_bazel_rc_path}" --output_base="C:\\bazel-bin'
 common_build_options_windows = '--compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" ' \
                                '--copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static" '
 
@@ -71,7 +75,6 @@ mac_library_info = [LibraryInfo("autoconf"), LibraryInfo("autogen"), LibraryInfo
                         "miniupnpc", "miniupnp"), LibraryInfo("readline", "libreadline"), LibraryInfo("ldns"), LibraryInfo("expat"),
                     LibraryInfo("doxygen"), LibraryInfo("graphviz"), LibraryInfo("libunwind-headers", "libunwind"), LibraryInfo("xz", "liblzma"), LibraryInfo("protobuf")]
 
-workspace_path = workspace_path_finder.find_workspace_path()
 
 github_path = workspace_path.parent
 print(f"GITHUB PATH {github_path}")
@@ -1437,7 +1440,7 @@ def build_denariid_win():
 
     common.chdir(workspace_path)
 
-    build_command = f"bazel build src:denariid {common_build_options_windows}"
+    build_command = f"bazel {common_bazel_options_windows} build src:denariid {common_build_options_windows}"
     common.system(build_command)
 
     common.check_exists(denariid_win_path)
@@ -1455,7 +1458,7 @@ def build_denarii_wallet_rpc_server_win():
 
     common.chdir(workspace_path)
 
-    build_command = f"bazel build src:denarii_wallet_rpc_server {common_build_options_windows}"
+    build_command = f"bazel {common_bazel_options_windows} build src:denarii_wallet_rpc_server {common_build_options_windows}"
     common.system(build_command)
 
     common.check_exists(denarii_wallet_rpc_server_win_path)
@@ -1511,127 +1514,6 @@ def build_binaries_mac():
     build_denarii_wallet_rpc_server_mac()
 
 
-def move_denariid():
-    dest_path = workspace_path / "utils" / "gui" / "denariid"
-
-    if common.check_exists_with_existing_artifact_check(path=dest_path, delete_single_file=True, fail_on_existence=False):
-        return
-
-    common.print_something("Moving denariid")
-
-    common.chdir(workspace_path)
-
-    src_path = workspace_path / "bazel-bin" / "src" / "denariid"
-    shutil.copyfile(src_path, dest_path)
-
-    common.check_exists(dest_path)
-
-
-def move_denarii_wallet_rpc_server():
-    dest_path = workspace_path / "utils" / "gui" / "denarii_wallet_rpc_server"
-
-    if common.check_exists_with_existing_artifact_check(path=dest_path, delete_single_file=True, fail_on_existence=False):
-        return
-
-    common.print_something("Moving denarii_wallet_rpc_server")
-
-    common.chdir(workspace_path)
-
-    src_path = workspace_path / "bazel-bin" / "src" / "denarii_wallet_rpc_server"
-    shutil.copyfile(src_path, dest_path)
-
-    common.check_exists(dest_path)
-
-
-def move_binaries():
-    common.print_something("Moving binaries")
-
-    move_denariid()
-
-    move_denarii_wallet_rpc_server()
-
-
-def move_denariid_win():
-    dest_path = workspace_path / "utils" / "gui" / "denariid.exe"
-
-    if common.check_exists_with_existing_artifact_check(path=dest_path, delete_single_file=True, fail_on_existence=False):
-        return
-
-    common.print_something("Moving denariid.exe")
-
-    common.chdir(workspace_path)
-
-    src_path = workspace_path / "bazel-bin" / "src" / "denariid.exe"
-    shutil.copyfile(src_path, dest_path)
-
-    common.check_exists(dest_path)
-
-
-def move_denarii_wallet_rpc_server_win():
-    dest_path = workspace_path / "utils" / "gui" / "denarii_wallet_rpc_server.exe"
-
-    if common.check_exists_with_existing_artifact_check(path=dest_path, delete_single_file=True, fail_on_existence=False):
-        return
-
-    common.print_something("Moving denarii_wallet_rpc_server.exe")
-
-    common.chdir(workspace_path)
-
-    src_path = workspace_path / "bazel-bin" / \
-        "src" / "denarii_wallet_rpc_server.exe"
-    shutil.copyfile(src_path, dest_path)
-
-    common.check_exists(dest_path)
-
-
-def move_binaries_win():
-    common.print_something("Moving binaries for Windows")
-
-    move_denariid_win()
-
-    move_denarii_wallet_rpc_server_win()
-
-
-def move_denariid_mac():
-    dest_path = workspace_path / "utils" / "gui" / "denariid"
-
-    if common.check_exists_with_existing_artifact_check(path=dest_path, delete_single_file=True, fail_on_existence=False):
-        return
-
-    common.print_something("Moving denariid for Mac")
-
-    common.chdir(workspace_path)
-
-    src_path = workspace_path / "bazel-bin" / "src" / "denariid"
-    shutil.copyfile(src_path, dest_path)
-
-    common.check_exists(dest_path)
-
-
-def move_denarii_wallet_rpc_server_mac():
-    dest_path = workspace_path / "utils" / "gui" / "denarii_wallet_rpc_server"
-
-    if common.check_exists_with_existing_artifact_check(path=dest_path, delete_single_file=True, fail_on_existence=False):
-        return
-
-    common.print_something("Moving denarii_wallet_rpc_server for Mac")
-
-    common.chdir(workspace_path)
-
-    src_path = workspace_path / "bazel-bin" / "src" / "denarii_wallet_rpc_server"
-    shutil.copyfile(src_path, dest_path)
-
-    common.check_exists(dest_path)
-
-
-def move_binaries_mac():
-    common.print_something("Moving binaries for Mac")
-
-    move_denariid_mac()
-
-    move_denarii_wallet_rpc_server_mac()
-
-
 def setup_ui():
     common.print_something("Setting up the UI")
 
@@ -1639,7 +1521,6 @@ def setup_ui():
 
     build_binaries()
 
-    move_binaries()
 
 
 def setup_ui_win():
@@ -1649,7 +1530,6 @@ def setup_ui_win():
 
     build_binaries_win()
 
-    move_binaries_win()
 
 
 def setup_ui_mac():
@@ -1659,7 +1539,6 @@ def setup_ui_mac():
 
     build_binaries_mac()
 
-    move_binaries_mac()
 
 
 common.print_something(workspace_path)

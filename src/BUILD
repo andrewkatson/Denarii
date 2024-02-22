@@ -157,7 +157,6 @@ cc_library(
         "windows": glob([
             "**/crypto/wallet/*.c",
             "**/crypto/wallet/*.cpp",
-            "**/crypto/CryptonightR_template.S",
         ]),
         "mac": [],
         "linux": glob([
@@ -199,6 +198,7 @@ cc_library(
         ":config",
         "//contrib/epee",
         "@boost//:system",
+        "@boost//:scope_exit",
         "@libsodium",
         "@randomx//:randomx_lib",
     ],
