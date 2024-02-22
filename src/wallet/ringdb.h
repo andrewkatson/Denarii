@@ -34,35 +34,49 @@
 #include "contrib/epee/include/wipeable_string.h"
 #include "src/crypto/crypto.h"
 #include "src/cryptonote_basic/cryptonote_basic.h"
+#if defined(__clang__) || defined(__GNUC__)
+namespace tools {
+#endif
 
-namespace tools
-{
-  class ringdb
-  {
-  public:
-    ringdb(std::string filename, const std::string &genesis);
-    void close();
-    ~ringdb();
+    class ringdb {
+    public:
+        ringdb(std::string filename, const std::string &genesis);
 
-    bool add_rings(const crypto::chacha_key &chacha_key, const cryptonote::transaction_prefix &tx);
-    bool remove_rings(const crypto::chacha_key &chacha_key, const std::vector<crypto::key_image> &key_images);
-    bool remove_rings(const crypto::chacha_key &chacha_key, const cryptonote::transaction_prefix &tx);
-    bool get_ring(const crypto::chacha_key &chacha_key, const crypto::key_image &key_image, std::vector<uint64_t> &outs);
-    bool set_ring(const crypto::chacha_key &chacha_key, const crypto::key_image &key_image, const std::vector<uint64_t> &outs, bool relative);
+        void close();
 
-    bool blackball(const std::pair<uint64_t, uint64_t> &output);
-    bool blackball(const std::vector<std::pair<uint64_t, uint64_t>> &outputs);
-    bool unblackball(const std::pair<uint64_t, uint64_t> &output);
-    bool blackballed(const std::pair<uint64_t, uint64_t> &output);
-    bool clear_blackballs();
+        ~ringdb();
 
-  private:
-    bool blackball_worker(const std::vector<std::pair<uint64_t, uint64_t>> &outputs, int op);
+        bool add_rings(const crypto::chacha_key &chacha_key, const cryptonote::transaction_prefix &tx);
 
-  private:
-    std::string filename;
-    MDB_env *env;
-    MDB_dbi dbi_rings;
-    MDB_dbi dbi_blackballs;
-  };
-}
+        bool remove_rings(const crypto::chacha_key &chacha_key, const std::vector <crypto::key_image> &key_images);
+
+        bool remove_rings(const crypto::chacha_key &chacha_key, const cryptonote::transaction_prefix &tx);
+
+        bool get_ring(const crypto::chacha_key &chacha_key, const crypto::key_image &key_image,
+                      std::vector <uint64_t> &outs);
+
+        bool set_ring(const crypto::chacha_key &chacha_key, const crypto::key_image &key_image,
+                      const std::vector <uint64_t> &outs, bool relative);
+
+        bool blackball(const std::pair <uint64_t, uint64_t> &output);
+
+        bool blackball(const std::vector <std::pair<uint64_t, uint64_t>> &outputs);
+
+        bool unblackball(const std::pair <uint64_t, uint64_t> &output);
+
+        bool blackballed(const std::pair <uint64_t, uint64_t> &output);
+
+        bool clear_blackballs();
+
+    private:
+        bool blackball_worker(const std::vector <std::pair<uint64_t, uint64_t>> &outputs, int op);
+
+    private:
+        std::string filename;
+        MDB_env *env;
+        MDB_dbi dbi_rings;
+        MDB_dbi dbi_blackballs;
+    };
+#if defined(__clang__) || defined(__GNUC__)
+} // namespace tools
+#endif
