@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "e30ca46fb0fe6f12d25012acd19bf438fe91d26382c3b530cafd6f97f0f9c286",
+  "moduleFileHash": "0dff0c55184cf868d551fc7bd4edc2a91d9c18be2741c52eac7fda9f243ff4e5",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -29,7 +29,7 @@
         "rules_proto": "rules_proto@6.0.0-rc2",
         "rules_java": "rules_java@7.3.0",
         "com_google_protobuf": "protobuf@23.1",
-        "abseil-cpp": "abseil-cpp@20240116.1",
+        "com_google_absl": "abseil-cpp@20240116.1",
         "com_google_googletest": "googletest@1.14.0.bcr.1",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
