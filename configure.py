@@ -26,9 +26,9 @@ py_pb_files_to_check = ["any_pb2.py", "api_pb2.py", "descriptor_pb2.py", "durati
 py_files_to_check = ["descriptor.py", "descriptor_pool.py",
                      "message.py", "reflection.py", "symbol_database.py"]
 
-windows_bazel_rc_path = workspace_path / ".windows_bazelrc"
-common_bazel_options_windows = f'--bazelrc="{windows_bazel_rc_path}" --output_base="C:\\bazel-bin'
-common_build_options_windows = '--compiler=mingw-gcc --host_compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" ' \
+common_bazel_options_windows = f' --output_base="C:\\bazel-bin '
+common_bazel_build_command_options_windows = f' --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows_mingw --extra_execution_platforms=//:windows-mingw-gcc '
+common_build_options_windows = f' --compiler=mingw-gcc --host_compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" ' \
                                '--copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static" '
 
 class LibraryInfo:
@@ -1436,7 +1436,7 @@ def build_denariid_win():
 
     common.chdir(workspace_path)
 
-    build_command = f"bazel {common_bazel_options_windows} build src:denariid {common_build_options_windows}"
+    build_command = f"bazel {common_bazel_options_windows} build {common_bazel_build_command_options_windows} src:denariid {common_build_options_windows}"
     common.system(build_command)
 
     common.check_exists(denariid_win_path)
@@ -1454,7 +1454,7 @@ def build_denarii_wallet_rpc_server_win():
 
     common.chdir(workspace_path)
 
-    build_command = f"bazel {common_bazel_options_windows} build src:denarii_wallet_rpc_server {common_build_options_windows}"
+    build_command = f"bazel {common_bazel_options_windows} build {common_bazel_build_command_options_windows} src:denarii_wallet_rpc_server {common_build_options_windows}"
     common.system(build_command)
 
     common.check_exists(denarii_wallet_rpc_server_win_path)

@@ -25,22 +25,6 @@ http_archive(
 load("@bazel_features//:deps.bzl", "bazel_features_deps")
 bazel_features_deps()
 
-# abseil-cpp
-http_archive(
-  name = "com_google_absl",
-  urls = ["https://github.com/abseil/abseil-cpp/archive/20240116.0.zip"],
-  strip_prefix = "abseil-cpp-20240116.0",
-  integrity = "sha256-0PmlgEYzdZePWuTgTaOcNmS9qiNySy8L8AiWoCv4Abk="
-)
-
-# Google Test
-http_archive(
-  name = "com_google_googletest",
-  urls = ["https://github.com/google/googletest/archive/5ab508a01f9eb089207ee87fd547d290da39d015.zip"],
-  strip_prefix = "googletest-5ab508a01f9eb089207ee87fd547d290da39d015",
-  integrity = "sha256-dV+aObxyBfWgxCjpIN2tCSwzyKG0aZfe8/HUqCre1uE="
-)
-
 http_archive(
     name = "platforms",
     urls = [

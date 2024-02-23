@@ -1159,6 +1159,13 @@ cc_binary(
 )
 
 cc_binary(
+    name = "example_of_error",
+    srcs = ["example_of_error.cpp"],
+    deps = [
+    ],
+)
+
+cc_binary(
     name="cannot_catch_exception",
     srcs=[
         "cannot_catch_exception.cpp",

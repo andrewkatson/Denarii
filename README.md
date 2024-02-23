@@ -185,13 +185,13 @@ Do `bazel build target` for all targets -- e.g. ```bazel build src:denariid```
 
 ### On Windows  
 
-All builds should use ```--bazelrc=/path/to/.windows_bazelrc --output_base="C:\bazel-bin"``` before the `build` command and ```--compiler=mingw-gcc --host_compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static"``` after `target`
+All builds should use ```--output_base="C:\bazel-bin"``` before the `build` command and ```  --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows_mingw --extra_execution_platforms=//:windows-mingw-gcc ``` after the build command and ```--compiler=mingw-gcc --host_compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static"``` after `target`
 
 For why we need `output_base` see https://github.com/protocolbuffers/protobuf/issues/12947
 
 Ex: 
 
-`bazel --bazelrc="/c/Users/katso/Documents/Github/denarii/.windows_bazelrc" --output_base="C:\bazel-bin" build src:denariid --compiler=mingw-gcc --host_compiler=mingmw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static"`
+`bazel --output_base="C:\bazel-bin" build  --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows_mingw --extra_execution_platforms=//:windows-mingw-gcc src:denariid --compiler=mingw-gcc --host_compiler=mingmw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static"`
 
 
 If you want to build in debug mode use `--compilation_mode=dbg` instead of `--copt="-O3"` and also add in `--linkopt="mcmodel=medium"` and `--copt="=Wa,-mbig-obj"`
