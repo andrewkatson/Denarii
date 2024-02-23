@@ -28,12 +28,8 @@ py_files_to_check = ["descriptor.py", "descriptor_pool.py",
 
 windows_bazel_rc_path = workspace_path / ".windows_bazelrc"
 common_bazel_options_windows = f'--bazelrc="{windows_bazel_rc_path}" --output_base="C:\\bazel-bin'
-common_build_options_windows = '--compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" ' \
+common_build_options_windows = '--compiler=mingw-gcc --host_compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" ' \
                                '--copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static" '
-
-# The above should produce a command like so
-# bazel build src:denariid --compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static
-
 
 class LibraryInfo:
 
