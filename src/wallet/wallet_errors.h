@@ -824,31 +824,21 @@ namespace tools {
             }
         };
         //----------------------------------------------------------------------------------------------------
-#if !defined(_MSC_VER)
-
-        template<typename TException, typename... TArgs>
-        inline void throw_wallet_ex(std::string &&loc, const TArgs &... args) {
-            TException e(std::move(loc), args...);
+        // Base case for the variadic template recursion
+        template<typename TException>
+        void throw_wallet_ex(std::string&& loc) {
+            TException e(std::move(loc));
             LOG_PRINT_L0(e.to_string());
             throw e;
         }
 
-#else
-#include <boost/preprocessor/repetition/enum_binary_params.hpp>
-#include <boost/preprocessor/repetition/enum_params.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
-
-#define GEN_throw_wallet_ex(z, n, data)                                                       \
-    template<typename TException, BOOST_PP_ENUM_PARAMS(n, typename TArg)>                     \
-    inline void throw_wallet_ex(std::string&& loc, BOOST_PP_ENUM_BINARY_PARAMS(n, const TArg, &arg)) \
-    {                                                                                         \
-      TException e(std::move(loc), BOOST_PP_ENUM_PARAMS(n, arg));                             \
-      LOG_PRINT_L0(e.to_string());                                                            \
-      throw e;                                                                                \
-    }
-
-        BOOST_PP_REPEAT_FROM_TO(1, 6, GEN_throw_wallet_ex, ~)
-#endif
+        // Recursive variadic template function to accept a variable number of string arguments
+        template<typename TException, typename... Args>
+        void throw_wallet_ex(std::string&& loc, const Args& ... args) {
+            TException e(std::move(loc), args...);
+            LOG_PRINT_L0(e.to_string());
+            throw e;
+        }
     }
 }
 
