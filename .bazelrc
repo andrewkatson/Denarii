@@ -1,5 +1,23 @@
 startup --windows_enable_symlinks
-build --enable_runfiles
-build --cxxopt=-std=c++17
-build --host_cxxopt=-std=c++17
 common --enable_bzlmod
+build --enable_platform_specific_config
+build --incompatible_enable_cc_toolchain_resolution
+build --incompatible_strict_action_env
+build --enable_runfiles
+
+build:windows --cxxopt=/std:c++latest
+build:linux --cxxopt=-std=c++2b
+build:linux --linkopt=-lc++experimental
+build:macos --cxxopt=-std=c++2b
+
+common:ci --announce_rc
+common:ci --verbose_failures
+common:ci --keep_going
+common:ci --disk_cache=~/.cache/bazel-disk-cache
+
+# add bazelboost registry
+common --registry=https://raw.githubusercontent.com/bazelboost/registry/main
+# by adding the bazelboost registry the BCR gets removed so you must add it here as well
+common --registry=https://bcr.bazel.build
+
+try-import %workspace%/user.bazelrc

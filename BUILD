@@ -1,5 +1,15 @@
 package(default_visibility = ["//visibility:public"])
 
+platform(
+    name = "windows-mingw-gcc",
+    constraint_values = [
+        "@platforms//os:windows",
+         "@platforms//cpu:x86_64",
+        "@bazel_tools//tools/cpp:mingw",
+    ],
+)
+
+
 py_binary(
     name = "configure",
     srcs = ["configure.py"],

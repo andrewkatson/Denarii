@@ -6,6 +6,7 @@
 import os
 import pathlib
 import shutil
+import traceback
 
 import common
 import workspace_path_finder
@@ -38,7 +39,7 @@ workspace_path = workspace_path_finder.find_workspace_path()
 def get_libunwind():
     libunwind_path = workspace_path / "external" / "libunwind"
     
-    if common.check_exists_with_existing_artifact_check(libunwind_path, delete_tree=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(libunwind_path, root_path=libunwind_path, delete_tree=True, fail_on_existence=False):
         return
 
     common.print_something("Getting libunwind")
@@ -81,7 +82,7 @@ def get_libunwind():
 def get_zlib():
     zlib_path = workspace_path / "external" / "zlib"
 
-    if common.check_exists_with_existing_artifact_check(zlib_path, delete_tree=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(zlib_path, root_path=zlib_path, delete_tree=True, fail_on_existence=False):
         return
 
     common.print_something("Getting Zlib")
@@ -89,7 +90,7 @@ def get_zlib():
 
     common.chdir(raw_path)
 
-    clone_command = "git clone git@github.com:andrewkatson/zlib.git"
+    clone_command = "git clone git@github.com:madler/zlib.git"
     common.system(clone_command)
 
     common.check_exists(zlib_path)
@@ -209,7 +210,6 @@ def copy_file(path, library):
     if "include" in path:
         try:
             filename = path.split("\\")[-1]
-            new_path = os.path.join(library.folderpath + "/include", filename)
 
             new_path_wo_filename = ""
             # openssl requires it be in a directory called openssl
@@ -230,20 +230,26 @@ def copy_file(path, library):
             if not os.path.exists(new_path_wo_filename):
                 os.makedirs(new_path_wo_filename)
 
+            real_new_path = os.path.join(new_path_wo_filename, filename)
+
             try:
-                if not os.path.exists(new_path):
-                    with open(new_path, 'w'):
+                if not os.path.exists(real_new_path):
+                    with open(real_new_path, 'w'):
                         pass
             except Exception as e:
                 common.print_something(e)
 
-            if common.check_exists_with_existing_artifact_check(new_path, delete_single_file=True, fail_on_existence=False):
+            if common.check_exists_with_existing_artifact_check(real_new_path, delete_single_file=True, fail_on_existence=False):
                 return
 
-            shutil.copyfile(path, new_path)
+            shutil.copyfile(path, real_new_path)
+
+            common.check_exists(real_new_path)
         except Exception as e:
             common.print_something("Could not copy file " + path)
             common.print_something(e)
+            common.print_something(traceback.print_exc())
+            exit(-1)
 
 
 def find_includes_win(libraries):
@@ -252,13 +258,13 @@ def find_includes_win(libraries):
 
         if library.get_includes:
 
-            for path in library.relevant_paths:
+            for relevant_path in library.relevant_paths:
 
-                paths = common.get_all_files_paths(path)
+                paths = common.get_all_files_paths(relevant_path)
 
                 for path in paths:
-
-                    copy_file(path)
+                    common.print_something(f"Trying to copy path {path}")
+                    copy_file(path, library)
 
 
 def import_dependencies_win():
@@ -279,7 +285,7 @@ def randomx_win(external_dir_path):
 
     randomx_library_path = build_path / "librandomx.a"
 
-    if common.check_exists_with_existing_artifact_check(randomx_path, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(randomx_library_path, delete_single_file=True, fail_on_existence=False):
         return
 
     common.print_something("Getting randomx")
@@ -300,7 +306,7 @@ def miniupnp_win(external_dir_path):
     miniupnp_path = external_dir_path / "miniupnp" / "miniupnpc"
 
     miniupnp_library_path = miniupnp_path / "libminiupnpc.a"
-    if common.check_exists_with_existing_artifact_check(root_miniupnp_path, delete_tree=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(miniupnp_library_path, root_path=root_miniupnp_path, delete_tree=True, fail_on_existence=False):
         return
 
     common.print_something("Getting miniupnp")
@@ -321,9 +327,9 @@ def miniupnp_win(external_dir_path):
 def openpgm_win(external_dir_path):
     openpgm_path = external_dir_path / "openpgm"
     inner_path = openpgm_path / "openpgm" / "pgm"
-    binary_path = inner_path / "build" / "lib" / "libpgm-v142-mt-gd-5_2_127.lib"
+    binary_path = inner_path / "build" / "lib" / "Debug" / "libpgm-v142-mt-gd-5_2_127.lib"
 
-    if common.check_exists_with_existing_artifact_check(openpgm_path, delete_tree=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(binary_path, root_path=openpgm_path, delete_tree=True, fail_on_existence=False):
         return
 
     common.print_something("Getting openpgm for Windows")
@@ -348,7 +354,7 @@ def libnorm_win(external_dir_path):
 
     binary_path = libnorm_path / "build" / "norm_static.lib"
 
-    if common.check_exists_with_existing_artifact_check(libnorm_path, delete_tree=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(binary_path, root_path=libnorm_path, delete_tree=True, fail_on_existence=False):
         return
 
     common.print_something("Getting libnorm for Windows")
@@ -376,7 +382,7 @@ def curl_win(external_dir_path):
 
     common.chdir(raw_path)
 
-    if common.check_exists_with_existing_artifact_check(raw_path, delete_tree=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(raw_path, root_path=raw_path, delete_tree=True, fail_on_existence=False):
         return
 
     clone_command = "git clone git@github.com:curl/curl.git"

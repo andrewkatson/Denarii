@@ -15,7 +15,7 @@ cc_test(
         "//src:common",
         "//src:cryptonote_core",
         "//src:wallet",
-        "@boost//:chrono",
+        "@boost.chrono",
         "@liblzma",
         "@libreadline",
         "@libsodium",

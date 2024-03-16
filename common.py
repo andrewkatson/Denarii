@@ -2,10 +2,17 @@
 import os
 import re
 import shutil
+import stat
 
 from difflib import SequenceMatcher
+from pathlib import Path
 
 import flags
+
+def readonly_to_writable(foo, file, err):
+  if Path(file).suffix in ['.idx', '.pack'] and 'PermissionError' == err[0].__name__:
+    os.chmod(file, stat.S_IWRITE)
+    foo(file)
 
 def chdir(path):
     if not os.path.exists(path):
@@ -60,14 +67,19 @@ def check_exists_with_existing_artifact_check(path="", paths=None, root_path="",
     elif all_exist and flags.args.existing_artifact_delete_policy == flags.DELETE:
         if delete_tree: 
             print_something(f"{paths} exist and their tree from {root_path} is going to be deleted")
-            shutil.rmtree(root_path)
+            shutil.rmtree(root_path, onerror=readonly_to_writable)
         if delete_single_file: 
             for some_path in paths:
                 print_something(f"{some_path} exists and is going to be deleted")
                 os.remove(path)
         # If we delete we want to download them again so dont exit whatever called this
         return False
-            
+    elif root_path != "" and os.path.exists(root_path) and delete_tree is True: 
+        print_something(f"{paths} does not exist but their tree from {root_path} does so that is going to be deleted")
+        shutil.rmtree(root_path, onerror=readonly_to_writable)
+        # If we delete we want to download them again so dont exit whatever called this
+        return False
+        
     # If we fall through we allow whatever logic to continue.
     print_something(f"{paths} do not exist and we are going to allow them to be created")
     return False
@@ -79,8 +91,8 @@ def get_all_files_paths(path):
         for file in files:
             paths.append(os.path.join(subdir, file))
 
-        for dir in dirs:
-            new_paths = get_all_files_paths(dir)
+        for directory in dirs:
+            new_paths = get_all_files_paths(directory)
             for new_path in new_paths:
                 paths.append(new_path)
 

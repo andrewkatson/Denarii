@@ -29,19 +29,20 @@
 #ifndef MONERO_EXCEPTION_H
 #define MONERO_EXCEPTION_H
 
-#include <string>
 #ifdef _WIN32
 #include <windows.h>
 #include <intrin.h>
 #include <dbghelp.h>
+#else
+#include <cxxabi.h>
 #endif
+#include <string>
 #include <stdio.h>
 #include <vector>
 #include <sstream>
 #include <iostream>
 #include <typeinfo>
 #include <memory>
-#include <cxxabi.h>
 #include <cstdlib>
 
 

@@ -58,8 +58,8 @@ cc_library(
     }),
     deps = [
         "//src:common",
-        "@boost//:chrono",
-        "@boost//:filesystem",
-        "@boost//:program_options",
+        "@boost.chrono",
+        "@boost.filesystem",
+        "@boost.program_options",
     ],
 )

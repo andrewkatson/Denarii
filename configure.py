@@ -16,6 +16,8 @@ import zipfile
 import common
 import workspace_path_finder
 
+workspace_path = workspace_path_finder.find_workspace_path()
+
 py_pb_files_to_check = ["any_pb2.py", "api_pb2.py", "descriptor_pb2.py", "duration_pb2.py", "empty_pb2.py",
                         "field_mask_pb2.py", "source_context_pb2.py", "struct_pb2.py", "timestamp_pb2.py",
                         "type_pb2.py",
@@ -24,9 +26,10 @@ py_pb_files_to_check = ["any_pb2.py", "api_pb2.py", "descriptor_pb2.py", "durati
 py_files_to_check = ["descriptor.py", "descriptor_pool.py",
                      "message.py", "reflection.py", "symbol_database.py"]
 
-common_build_options_windows = '--compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" ' \
+common_bazel_options_windows = f' --output_base="C:\\bazel-bin '
+common_bazel_build_command_options_windows = f' --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows_mingw --extra_execution_platforms=//:windows-mingw-gcc '
+common_build_options_windows = f' --compiler=mingw-gcc --host_compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" ' \
                                '--copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static" '
-
 
 class LibraryInfo:
 
@@ -68,7 +71,6 @@ mac_library_info = [LibraryInfo("autoconf"), LibraryInfo("autogen"), LibraryInfo
                         "miniupnpc", "miniupnp"), LibraryInfo("readline", "libreadline"), LibraryInfo("ldns"), LibraryInfo("expat"),
                     LibraryInfo("doxygen"), LibraryInfo("graphviz"), LibraryInfo("libunwind-headers", "libunwind"), LibraryInfo("xz", "liblzma"), LibraryInfo("protobuf")]
 
-workspace_path = workspace_path_finder.find_workspace_path()
 
 github_path = workspace_path.parent
 print(f"GITHUB PATH {github_path}")
@@ -213,6 +215,7 @@ def find_includes(libraries):
                     common.check_exists(new_path)
                 except Exception as e:
                     common.print_something(e)
+                    exit(-1)
 
 
 def import_dependencies():
@@ -512,8 +515,8 @@ def liblmdb(external_dir_path):
 
 
 def bigint(external_dir_path):
-    bigint_path = workspace_path / "external"
-    common.chdir(bigint_path)
+    bigint_path = workspace_path / "external" / "bigint"
+    common.chdir(external_dir_path)
 
     if common.check_exists_with_existing_artifact_check(path=bigint_path, root_path=bigint_path, delete_tree=True, fail_on_existence=False):
         return
@@ -641,24 +644,46 @@ def supercop_win(external_dir_path):
     common.check_exists(supercop_64_library_path)
     common.check_exists(supercop_other_library_path)
 
+def build_zlib(external_dir_path):
+
+    zlib_path = external_dir_path / "zlib"
+
+    common.chdir(zlib_path)
+
+    # Run this everytime there doesn't seem to be any harm
+    command = "./configure"
+    common.system(command)
+
+    # need to undef UNISTD_H
+    zconf_path = zlib_path / "zconf.h"
+    common.replace_phrase("#  define Z_HAVE_UNISTD_H", "#  undef Z_HAVE_UNISTD_H", zconf_path)
 
 def build_dependencies_win():
     common.print_something("Building dependencies for Windows")
     external_dir_path = workspace_path / "external"
 
-    common.chdir(external_dir_path)
-    supercop_win(external_dir_path)
+    # The crypto algorithm libraries cannot be found on cygwin
+    if sys.platform != "cygwin":
+        common.chdir(external_dir_path)
+        supercop_win(external_dir_path)
+
+    build_zlib(external_dir_path)
 
     common.chdir(external_dir_path)
     bigint(external_dir_path)
+
+    json(external_dir_path)
+    common.chdir(external_dir_path)
 
 
 def randomx_mac(external_dir_path):
     randomx_path = external_dir_path / "randomx"
 
     randomx_library_path = randomx_path / "build" / "librandomx.a"
+    
+    build_folder_path = randomx_path / "build"
 
-    if common.check_exists_with_existing_artifact_check(path=randomx_library_path, root_path=randomx_path, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(path=randomx_library_path, delete_tree=True, root_path=build_folder_path, fail_on_existence=False):
         return
 
 
@@ -784,8 +809,11 @@ def trezor_common():
         "trezor_common_build_file.txt"
     trezor_common_workspace_file_path = workspace_path / \
         "trezor_common_workspace_file.txt"
+        
+    trezor_dest_build_file_path = workspace_path / "external" / "trezor-common" / "protob" / "BUILD"
+    trezor_dest_workspace_file_path = workspace_path / "external" / "trezor-common" / "protob" / "WORKSPACE"
 
-    if common.check_exists_with_existing_artifact_check(paths=[trezor_common_build_file_path, trezor_common_workspace_file_path], delete_single_file=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(paths=[trezor_dest_build_file_path, trezor_dest_workspace_file_path], delete_single_file=True, fail_on_existence=False):
         return
 
     try:
@@ -793,7 +821,7 @@ def trezor_common():
             text = f.read()
         common.print_something("Setting up trezor common")
 
-        path_to_dir = str(workspace_path) + "/external/trezor-common/protob"
+        path_to_dir = str(workspace_path / "external" / "trezor-common" / "protob")
         common.chdir(path_to_dir)
 
         common.system(f"echo \'{text}\' > BUILD")
@@ -801,10 +829,10 @@ def trezor_common():
     except Exception as e:
         common.print_something(e)
 
-    common.check_exists(trezor_common_build_file_path)
+    common.check_exists(trezor_dest_build_file_path)
 
     try:
-        path_to_workspace_dir = str(workspace_path) + "/external/trezor-common"
+        path_to_workspace_dir = str(workspace_path / "external" / "trezor-common")
         common.chdir(path_to_workspace_dir)
 
         with open(trezor_common_workspace_file_path) as f:
@@ -1125,7 +1153,10 @@ def convert_translation_files_win():
         
         file = files[i]
 
-        conversion_command = "/mingw64/bin/lrelease " + file + " -qm " + converted_file
+        if sys.platform == "cygwin":
+            conversion_command = "/mingw64/bin/lrelease.exe " + file + " -qm " + converted_file
+        else:
+            conversion_command = "/mingw64/bin/lrelease " + file + " -qm " + converted_file
         common.system(conversion_command)
 
         common.check_exists(translated_file_path)
@@ -1405,7 +1436,7 @@ def build_denariid_win():
 
     common.chdir(workspace_path)
 
-    build_command = f"bazel build src:denariid {common_build_options_windows}"
+    build_command = f"bazel {common_bazel_options_windows} build {common_bazel_build_command_options_windows} src:denariid {common_build_options_windows}"
     common.system(build_command)
 
     common.check_exists(denariid_win_path)
@@ -1423,7 +1454,7 @@ def build_denarii_wallet_rpc_server_win():
 
     common.chdir(workspace_path)
 
-    build_command = f"bazel build src:denarii_wallet_rpc_server {common_build_options_windows}"
+    build_command = f"bazel {common_bazel_options_windows} build {common_bazel_build_command_options_windows} src:denarii_wallet_rpc_server {common_build_options_windows}"
     common.system(build_command)
 
     common.check_exists(denarii_wallet_rpc_server_win_path)
@@ -1479,127 +1510,6 @@ def build_binaries_mac():
     build_denarii_wallet_rpc_server_mac()
 
 
-def move_denariid():
-    dest_path = workspace_path / "utils" / "gui" / "denariid"
-
-    if common.check_exists_with_existing_artifact_check(path=dest_path, delete_single_file=True, fail_on_existence=False):
-        return
-
-    common.print_something("Moving denariid")
-
-    common.chdir(workspace_path)
-
-    src_path = workspace_path / "bazel-bin" / "src" / "denariid"
-    shutil.copyfile(src_path, dest_path)
-
-    common.check_exists(dest_path)
-
-
-def move_denarii_wallet_rpc_server():
-    dest_path = workspace_path / "utils" / "gui" / "denarii_wallet_rpc_server"
-
-    if common.check_exists_with_existing_artifact_check(path=dest_path, delete_single_file=True, fail_on_existence=False):
-        return
-
-    common.print_something("Moving denarii_wallet_rpc_server")
-
-    common.chdir(workspace_path)
-
-    src_path = workspace_path / "bazel-bin" / "src" / "denarii_wallet_rpc_server"
-    shutil.copyfile(src_path, dest_path)
-
-    common.check_exists(dest_path)
-
-
-def move_binaries():
-    common.print_something("Moving binaries")
-
-    move_denariid()
-
-    move_denarii_wallet_rpc_server()
-
-
-def move_denariid_win():
-    dest_path = workspace_path / "utils" / "gui" / "denariid.exe"
-
-    if common.check_exists_with_existing_artifact_check(path=dest_path, delete_single_file=True, fail_on_existence=False):
-        return
-
-    common.print_something("Moving denariid.exe")
-
-    common.chdir(workspace_path)
-
-    src_path = workspace_path / "bazel-bin" / "src" / "denariid.exe"
-    shutil.copyfile(src_path, dest_path)
-
-    common.check_exists(dest_path)
-
-
-def move_denarii_wallet_rpc_server_win():
-    dest_path = workspace_path / "utils" / "gui" / "denarii_wallet_rpc_server.exe"
-
-    if common.check_exists_with_existing_artifact_check(path=dest_path, delete_single_file=True, fail_on_existence=False):
-        return
-
-    common.print_something("Moving denarii_wallet_rpc_server.exe")
-
-    common.chdir(workspace_path)
-
-    src_path = workspace_path / "bazel-bin" / \
-        "src" / "denarii_wallet_rpc_server.exe"
-    shutil.copyfile(src_path, dest_path)
-
-    common.check_exists(dest_path)
-
-
-def move_binaries_win():
-    common.print_something("Moving binaries for Windows")
-
-    move_denariid_win()
-
-    move_denarii_wallet_rpc_server_win()
-
-
-def move_denariid_mac():
-    dest_path = workspace_path / "utils" / "gui" / "denariid"
-
-    if common.check_exists_with_existing_artifact_check(path=dest_path, delete_single_file=True, fail_on_existence=False):
-        return
-
-    common.print_something("Moving denariid for Mac")
-
-    common.chdir(workspace_path)
-
-    src_path = workspace_path / "bazel-bin" / "src" / "denariid"
-    shutil.copyfile(src_path, dest_path)
-
-    common.check_exists(dest_path)
-
-
-def move_denarii_wallet_rpc_server_mac():
-    dest_path = workspace_path / "utils" / "gui" / "denarii_wallet_rpc_server"
-
-    if common.check_exists_with_existing_artifact_check(path=dest_path, delete_single_file=True, fail_on_existence=False):
-        return
-
-    common.print_something("Moving denarii_wallet_rpc_server for Mac")
-
-    common.chdir(workspace_path)
-
-    src_path = workspace_path / "bazel-bin" / "src" / "denarii_wallet_rpc_server"
-    shutil.copyfile(src_path, dest_path)
-
-    common.check_exists(dest_path)
-
-
-def move_binaries_mac():
-    common.print_something("Moving binaries for Mac")
-
-    move_denariid_mac()
-
-    move_denarii_wallet_rpc_server_mac()
-
-
 def setup_ui():
     common.print_something("Setting up the UI")
 
@@ -1607,7 +1517,6 @@ def setup_ui():
 
     build_binaries()
 
-    move_binaries()
 
 
 def setup_ui_win():
@@ -1617,7 +1526,6 @@ def setup_ui_win():
 
     build_binaries_win()
 
-    move_binaries_win()
 
 
 def setup_ui_mac():
@@ -1627,7 +1535,6 @@ def setup_ui_mac():
 
     build_binaries_mac()
 
-    move_binaries_mac()
 
 
 common.print_something(workspace_path)

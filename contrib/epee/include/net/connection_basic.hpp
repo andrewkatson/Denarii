@@ -66,6 +66,7 @@ namespace net_utils
 		boost::asio::ssl::context ssl_context;
 		std::atomic<long> sock_count;
 		std::atomic<long> sock_number;
+        std::set<long> peer_numbers_used;
 
 		connection_basic_shared_state()
 		  : ssl_options_(ssl_support_t::e_ssl_support_disabled),

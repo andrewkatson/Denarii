@@ -34,8 +34,8 @@ cc_binary(
     deps = [
         "//src:common",
         "//src:version",
-        "@boost//:program_options",
-        "@boost//:system",
+        "@boost.program_options",
+        "@boost.system",
         "@liblzma",
     ],
 )

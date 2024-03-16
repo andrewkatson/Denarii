@@ -33,7 +33,7 @@ Denarii is a private, secure, untraceable, decentralised digital currency. You a
 
 **Decentralization:** The utility of Denarii depends on its decentralised peer-to-peer consensus network - anyone should be able to run the denarii software, validate the integrity of the blockchain, and participate in all aspects of the denarii network using consumer-grade commodity hardware. Decentralization of the monero network is maintained by software development that minimizes the costs of running the denarii software and inhibits the proliferation of specialized, non-commodity hardware.  
 
-**Stability:** Denarii is a stable currency through the adoption of proven modern monetary policy. 
+**Stability:** Denarii is a stable currency through the adoption of proven modern monetary policy modified to be decentralized. Essentially it manages the emission rate and the transaction fee to react to the market over time. This is done through the adjustment of these critical values by the nodes of the network -- but restricted by the average of the previous n blocks.
 
 ## License
 
@@ -119,9 +119,8 @@ Denarii uses bazel (https://bazel.build/). And it needs `C++14` at least. So set
 
     ```bash
     cd denarii
-    git checkout release-v0.17
-    sudo bazel run :configure
-    sudo chmod -R 777 /path/to/denarii
+    git checkout main
+    bazel run :configure
     ```
 
 ### On Windows
@@ -155,13 +154,13 @@ Visual Studio: https://visualstudio.microsoft.com/
     To build for 64-bit Windows in Msys2:
 
     ```bash
-    pacman -S mingw-w64-x86_64-toolchain make mingw-w64-x86_64-cmake mingw-w64-x86_64-boost mingw-w64-x86_64-openssl mingw-w64-x86_64-zeromq mingw-w64-x86_64-libsodium mingw-w64-x86_64-hidapi mingw-w64-x86_64-libunwind mingw-w64-x86_64-libusb mingw-w64-x86_64-unbound mingw-w64-i686-lmdb mingw-w64-i686-qt-creator mingw-w64-x86_64-python-pyqt5
+    pacman -S mingw-w64-x86_64-toolchain make mingw-w64-x86_64-cmake mingw-w64-x86_64-boost mingw-w64-x86_64-openssl mingw-w64-x86_64-zeromq mingw-w64-x86_64-libsodium mingw-w64-x86_64-hidapi mingw-w64-x86_64-libunwind mingw-w64-x86_64-libusb mingw-w64-x86_64-unbound mingw-w64-x86_64-lmdb mingw-w64-x86_64-qt-creator mingw-w64-x86_64-python-pyqt5 mingw-w64-x86_64-qt5-tools
     ```
 
     To build for 32-bit Windows in Msys2:
 
     ```bash
-    pacman -S mingw-w64-i686-toolchain make mingw-w64-i686-cmake mingw-w64-i686-boost mingw-w64-i686-openssl mingw-w64-i686-zeromq mingw-w64-i686-libsodium mingw-w64-i686-hidapi mingw-w64-i686-libunwind mingw-w64-i686-libusb mingw-w64-i686-unbound mingw-w64-i686-lmdb mingw-w64-i686-qt-creator mingw-w64-i686-python-pyqt5
+    pacman -S mingw-w64-i686-toolchain make mingw-w64-i686-cmake mingw-w64-i686-boost mingw-w64-i686-openssl mingw-w64-i686-zeromq mingw-w64-i686-libsodium mingw-w64-i686-hidapi mingw-w64-i686-libunwind mingw-w64-i686-libusb mingw-w64-i686-unbound mingw-w64-i686-lmdb mingw-w64-i686-qt-creator mingw-w64-i686-python-pyqt5 mingw-w64-i686-qt5-tools
     ```
   
     Then run in command prompt 
@@ -172,8 +171,8 @@ Visual Studio: https://visualstudio.microsoft.com/
 * Run Configure 
 
     ``` 
-    bazel run :configure_win (run through command prompt)
-    bazel run :configure     (run through msys2) 
+    bazel run :configure_win (run through command prompt) or python configure_win.py (run through command prompt)
+    bazel run :configure     (run through msys2) or python configure.py (run through msys2)
     ```
 
 ## Building 
@@ -186,7 +185,14 @@ Do `bazel build target` for all targets -- e.g. ```bazel build src:denariid```
 
 ### On Windows  
 
-All builds should use ```--compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static"```
+All builds should use ```--output_base="C:\bazel-bin"``` before the `build` command and ```  --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows_mingw --extra_execution_platforms=//:windows-mingw-gcc ``` after the build command and ```--compiler=mingw-gcc --host_compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static"``` after `target`
+
+For why we need `output_base` see https://github.com/protocolbuffers/protobuf/issues/12947
+
+Ex: 
+
+`bazel --output_base="C:\bazel-bin" build  --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows_mingw --extra_execution_platforms=//:windows-mingw-gcc src:denariid --compiler=mingw-gcc --host_compiler=mingmw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static"`
+
 
 If you want to build in debug mode use `--compilation_mode=dbg` instead of `--copt="-O3"` and also add in `--linkopt="mcmodel=medium"` and `--copt="=Wa,-mbig-obj"`
 

@@ -7,8 +7,8 @@ cc_binary(
         "//contrib/epee",
         "//src:common",
         "//src:version",
-        "@boost//:filesystem",
-        "@boost//:program_options",
+        "@boost.filesystem",
+        "@boost.program_options",
         "@liblzma",
     ],
 )

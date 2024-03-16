@@ -8,8 +8,8 @@ cc_library(
         "//contrib/epee",
         "//src:cncrypto",
         "//src:common",
-        "@boost//:system",
-        "@boost//:crc",
+        "@boost.system",
+        "@boost.crc",
         "@easy_logging",
     ],
 )

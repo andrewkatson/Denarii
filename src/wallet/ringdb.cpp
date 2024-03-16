@@ -205,8 +205,9 @@ static size_t get_ring_data_size(size_t n_entries)
 
 enum { BLACKBALL_BLACKBALL, BLACKBALL_UNBLACKBALL, BLACKBALL_QUERY, BLACKBALL_CLEAR};
 
-namespace tools
-{
+#if defined(__clang__) || defined(__GNUC__)
+namespace tools {
+#endif
 
 ringdb::ringdb(std::string filename, const std::string &genesis):
   filename(filename),
@@ -222,7 +223,7 @@ ringdb::ringdb(std::string filename, const std::string &genesis):
   THROW_WALLET_EXCEPTION_IF(dbr, tools::error::wallet_internal_error, "Failed to create LDMB environment: " + std::string(mdb_strerror(dbr)));
   dbr = mdb_env_set_maxdbs(env, 2);
   THROW_WALLET_EXCEPTION_IF(dbr, tools::error::wallet_internal_error, "Failed to set max env dbs: " + std::string(mdb_strerror(dbr)));
-  const std::string actual_filename = get_rings_filename(filename); 
+  const std::string actual_filename = get_rings_filename(filename);
   dbr = mdb_env_open(env, actual_filename.c_str(), 0, 0664);
   THROW_WALLET_EXCEPTION_IF(dbr, tools::error::wallet_internal_error, "Failed to open rings database file '"
       + actual_filename + "': " + std::string(mdb_strerror(dbr)));
@@ -508,5 +509,6 @@ bool ringdb::clear_blackballs()
 {
   return blackball_worker(std::vector<std::pair<uint64_t, uint64_t>>(), BLACKBALL_CLEAR);
 }
-
-}
+#if defined(__clang__) || defined(__GNUC__)
+} // namespace tools
+#endif

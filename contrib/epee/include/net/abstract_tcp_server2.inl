@@ -125,16 +125,16 @@ PRAGMA_WARNING_DISABLE_VS(4355)
   }
   //---------------------------------------------------------------------------------
   template<class t_protocol_handler>
-  boost::shared_ptr<connection<t_protocol_handler> > connection<t_protocol_handler>::safe_shared_from_this()
+  connection<t_protocol_handler>* connection<t_protocol_handler>::safe_raw_connection_ptr_from_this()
   {
     try
     {
-      return connection<t_protocol_handler>::shared_from_this();
+      return this;
     }
-    catch (const boost::bad_weak_ptr&)
+    catch (...)
     {
       // It happens when the connection is being deleted
-      return boost::shared_ptr<connection<t_protocol_handler> >();
+      return nullptr;
     }
   }
   //---------------------------------------------------------------------------------
@@ -166,8 +166,8 @@ PRAGMA_WARNING_DISABLE_VS(4355)
   {
     TRY_ENTRY();
 
-    // Use safe_shared_from_this, because of this is public method and it can be called on the object being deleted
-    auto self = safe_shared_from_this();
+    // Use safe_raw_connection_ptr_from_this, because of this is public method and it can be called on the object being deleted
+    connection<t_protocol_handler>* self = safe_raw_connection_ptr_from_this();
     if(!self)
       return false;
 
@@ -242,8 +242,8 @@ PRAGMA_WARNING_DISABLE_VS(4355)
   {
     TRY_ENTRY();
     _dbg2("[" << print_connection_context_short(context) << "] request_callback");
-    // Use safe_shared_from_this, because of this is public method and it can be called on the object being deleted
-    auto self = safe_shared_from_this();
+    // Use safe_raw_connection_ptr_from_this, because of this is public method and it can be called on the object being deleted
+    connection<t_protocol_handler>* self = safe_raw_connection_ptr_from_this();
     if(!self)
       return false;
 
@@ -263,8 +263,8 @@ PRAGMA_WARNING_DISABLE_VS(4355)
   {
     TRY_ENTRY();
 
-    // Use safe_shared_from_this, because of this is public method and it can be called on the object being deleted
-    auto self = safe_shared_from_this();
+    // Use safe_raw_connection_ptr_from_this, because of this is public method and it can be called on the object being deleted
+    connection<t_protocol_handler>* self = safe_raw_connection_ptr_from_this();
     if(!self)
       return false;
     //_dbg3("[sock " << socket().native_handle() << "] add_ref, m_peer_number=" << mI->m_peer_number);
@@ -273,7 +273,7 @@ PRAGMA_WARNING_DISABLE_VS(4355)
     if(m_was_shutdown)
       return false;
     ++m_reference_count;
-    m_self_ref = std::move(self);
+    m_self_ref = self;
     return true;
     CATCH_ENTRY_L0("connection<t_protocol_handler>::add_ref()", false);
   }
@@ -282,14 +282,15 @@ PRAGMA_WARNING_DISABLE_VS(4355)
   bool connection<t_protocol_handler>::release()
   {
     TRY_ENTRY();
-    boost::shared_ptr<connection<t_protocol_handler> >  back_connection_copy;
     LOG_TRACE_CC(context, "[sock " << socket().native_handle() << "] release");
     CRITICAL_REGION_BEGIN(m_self_refs_lock);
     CHECK_AND_ASSERT_MES(m_reference_count, false, "[sock " << socket().native_handle() << "] m_reference_count already at 0 at connection<t_protocol_handler>::release() call");
     // is this the last reference?
     if (--m_reference_count == 0) {
-        // move the held reference to a local variable, keeping the object alive until the function terminates
-        std::swap(back_connection_copy, m_self_ref);
+        _dbg1("During release this was determined to be the last reference to the unique_ptr for connection " << socket().native_handle() << ". Nothing to do.");
+    } else {
+        _dbg1("During release this was determined to not be the last reference for connection " << socket().native_handle() << ". Failing");
+        throw std::runtime_error("A connection was attempted to be released but wasn't the last reference.");
     }
     CRITICAL_REGION_END();
     return true;
@@ -393,7 +394,7 @@ PRAGMA_WARNING_DISABLE_VS(4355)
         reset_timer(get_timeout_from_bytes_read(bytes_transferred), false);
         async_read_some(boost::asio::buffer(buffer_),
           strand_.wrap(
-            boost::bind(&connection<t_protocol_handler>::handle_read, connection<t_protocol_handler>::shared_from_this(),
+            boost::bind(&connection<t_protocol_handler>::handle_read, connection<t_protocol_handler>::safe_raw_connection_ptr_from_this(),
               boost::asio::placeholders::error,
               boost::asio::placeholders::bytes_transferred)));
         //_info("[sock " << socket().native_handle() << "]Async read requested.");
@@ -446,7 +447,7 @@ PRAGMA_WARNING_DISABLE_VS(4355)
       socket().async_receive(boost::asio::buffer(buffer_.data() + buffer_ssl_init_fill, buffer_.size() - buffer_ssl_init_fill),
         boost::asio::socket_base::message_peek,
         strand_.wrap(
-          boost::bind(&connection<t_protocol_handler>::handle_receive, connection<t_protocol_handler>::shared_from_this(),
+          boost::bind(&connection<t_protocol_handler>::handle_receive, connection<t_protocol_handler>::safe_raw_connection_ptr_from_this(),
             boost::asio::placeholders::error,
             boost::asio::placeholders::bytes_transferred)));
       return;
@@ -488,7 +489,7 @@ PRAGMA_WARNING_DISABLE_VS(4355)
 
     async_read_some(boost::asio::buffer(buffer_),
       strand_.wrap(
-        boost::bind(&connection<t_protocol_handler>::handle_read, connection<t_protocol_handler>::shared_from_this(),
+        boost::bind(&connection<t_protocol_handler>::handle_read, connection<t_protocol_handler>::safe_raw_connection_ptr_from_this(),
           boost::asio::placeholders::error,
           boost::asio::placeholders::bytes_transferred)));
 
@@ -529,8 +530,8 @@ PRAGMA_WARNING_DISABLE_VS(4355)
   bool connection<t_protocol_handler>::do_send(byte_slice message) {
     TRY_ENTRY();
 
-    // Use safe_shared_from_this, because of this is public method and it can be called on the object being deleted
-    auto self = safe_shared_from_this();
+    // Use safe_raw_connection_ptr_from_this, because of this is public method and it can be called on the object being deleted
+    connection<t_protocol_handler>* self = safe_raw_connection_ptr_from_this();
     if (!self) return false;
     if (m_was_shutdown) return false;
 		// TODO avoid copy
@@ -598,8 +599,8 @@ PRAGMA_WARNING_DISABLE_VS(4355)
   bool connection<t_protocol_handler>::do_send_chunk(byte_slice chunk)
   {
     TRY_ENTRY();
-    // Use safe_shared_from_this, because of this is public method and it can be called on the object being deleted
-    auto self = safe_shared_from_this();
+    // Use safe_raw_connection_ptr_from_this, because of this is public method and it can be called on the object being deleted
+    connection<t_protocol_handler>* self = safe_raw_connection_ptr_from_this();
     if(!self)
       return false;
     if(m_was_shutdown)
@@ -754,7 +755,7 @@ PRAGMA_WARNING_DISABLE_VS(4355)
       return;
     }
     MTRACE((add ? "Adding" : "Setting") << " " << ms << " expiry");
-    auto self = safe_shared_from_this();
+    connection<t_protocol_handler>* self = safe_raw_connection_ptr_from_this();
     if(!self)
     {
       MERROR("Resetting timer on a dead object");
@@ -812,9 +813,11 @@ PRAGMA_WARNING_DISABLE_VS(4355)
   bool connection<t_protocol_handler>::close()
   {
     TRY_ENTRY();
-    auto self = safe_shared_from_this();
-    if(!self)
-      return false;
+    connection<t_protocol_handler>* self = safe_raw_connection_ptr_from_this();
+    if(!self) {
+        return false;
+    }
+
     //_info("[sock " << socket().native_handle() << "] Que Shutdown called.");
     m_timer.cancel();
     size_t send_que_size = 0;
@@ -826,7 +829,6 @@ PRAGMA_WARNING_DISABLE_VS(4355)
     {
       shutdown();
     }
-    
     return true;
     CATCH_ENTRY_L0("connection<t_protocol_handler>::close", false);
   }
@@ -891,7 +893,7 @@ PRAGMA_WARNING_DISABLE_VS(4355)
 		CHECK_AND_ASSERT_MES( size_now == m_send_que.front().size(), void(), "Unexpected queue size");
 		  async_write(boost::asio::buffer(m_send_que.front().data(), size_now) , 
            strand_.wrap(
-            std::bind(&connection<t_protocol_handler>::handle_write, connection<t_protocol_handler>::shared_from_this(), std::placeholders::_1, std::placeholders::_2)
+            std::bind(&connection<t_protocol_handler>::handle_write, connection<t_protocol_handler>::safe_raw_connection_ptr_from_this(), std::placeholders::_1, std::placeholders::_2)
 			  )
           );
       //_dbg3("(normal)" << size_now);
@@ -964,11 +966,11 @@ PRAGMA_WARNING_DISABLE_VS(4355)
   boosted_tcp_server<t_protocol_handler>::~boosted_tcp_server()
   {
     this->send_stop_signal();
-    timed_wait_server_stop(10000);
+    timed_wait_server_stop(50000);
   }
   //---------------------------------------------------------------------------------
   template<class t_protocol_handler>
-  void boosted_tcp_server<t_protocol_handler>::create_server_type_map() 
+  void boosted_tcp_server<t_protocol_handler>::create_server_type_map()
   {
 		server_type_map["NET"] = e_connection_type_NET;
 		server_type_map["RPC"] = e_connection_type_RPC;
@@ -1244,14 +1246,29 @@ POP_WARNINGS
     typename connection<t_protocol_handler>::shared_state *state = static_cast<typename connection<t_protocol_handler>::shared_state*>(m_state.get());
     state->stop_signal_sent = true;
     TRY_ENTRY();
-    connections_mutex.lock();
-    for (auto &c: connections_)
-    {
-      c->cancel();
+    if (!io_service_.stopped()) {
+        io_service_.stop();
     }
-    connections_.clear();
+    connections_mutex.lock();
+    if (!connections_.empty()) {
+        for (auto &c: connections_) {
+            if (c.get() == nullptr) {
+                continue;
+            }
+            bool succeeded = c->cancel();
+            if (!succeeded) {
+                throw std::runtime_error("One of the connections failed to close");
+            }
+        }
+        connections_.clear();
+    }
     connections_mutex.unlock();
-    io_service_.stop();
+#ifdef __clang__
+    for (auto& callback_thread : m_callback_threads) {
+        callback_thread->join();
+    }
+    m_callback_threads.clear();
+#endif
     CATCH_ENTRY_L0("boosted_tcp_server<t_protocol_handler>::send_stop_signal()", void());
   }
   //---------------------------------------------------------------------------------
@@ -1344,11 +1361,12 @@ POP_WARNINGS
   {
     if(std::addressof(get_io_service()) == std::addressof(GET_IO_SERVICE(sock)))
     {
-      connection_ptr conn(new connection<t_protocol_handler>(std::move(sock), m_state, m_connection_type, ssl_support));
+      connection_ptr conn = std::make_unique<connection<t_protocol_handler>>(std::move(sock), m_state, m_connection_type, ssl_support);
       if(conn->start(false, 1 < m_threads_count, std::move(real_remote)))
       {
         conn->get_context(out);
         conn->save_dbg_log();
+        connections_.push_back(std::move(conn));
         return true;
       }
     }
@@ -1467,7 +1485,6 @@ POP_WARNINGS
     raw_connection_ptr new_connection_l = connections_.back().get();
     MDEBUG("connections_ size now " << connections_.size());
     connections_mutex.unlock();
-    epee::misc_utils::auto_scope_leave_caller scope_exit_handler = epee::misc_utils::create_scope_leave_handler([&](){ CRITICAL_REGION_LOCAL(connections_mutex); connections_.pop_back(); });
     boost::asio::ip::tcp::socket&  sock_ = new_connection_l->socket();
 
     bool try_ipv6 = false;
@@ -1577,8 +1594,8 @@ POP_WARNINGS
       _erro("[sock " << new_connection_moved->socket().native_handle() << "] Failed to start connection, connections_count = " << m_state->sock_count);
     }
     
-	  new_connection_moved->save_dbg_log();
-
+    new_connection_moved->save_dbg_log();
+    connections_.push_back(std::move(new_connection_moved));
     return r;
 
     CATCH_ENTRY_L0("boosted_tcp_server<t_protocol_handler>::connect", false);
@@ -1710,6 +1727,7 @@ POP_WARNINGS
               _dbg3("[sock " << new_connection_moved->socket().native_handle() << "] Failed to start connection to " << adr << ':' << port);
               cb(conn_context, boost::asio::error::fault);
             }
+            connections_.push_back(std::move(new_connection_moved));
           }
         }else
         {
