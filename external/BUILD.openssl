@@ -26,27 +26,6 @@ config_setting(
 )
 
 cc_library(
- name = "libssl",
- srcs = select({
-    "windows": glob(["**/libssl.a"]),
-    "mac": glob(["**/libssl.a"]),
-    "linux": glob(["**/libssl.a"]),
- }),
- hdrs =
- select({
-         ":windows": glob(["**/*.h"]),
-         "mac": glob(["**/*.h"]),
-         "linux": glob(["**/ssl/**/*.h"]),
-     }),
-includes = select({
-    "windows": [],
-    "mac": ["include"],
-    "linux": [],
-  }),
-  linkstatic = True
-)
-
-cc_library(
  name = "ssl",
  srcs = select({
     "windows": glob(["**/libssl.a"]),
