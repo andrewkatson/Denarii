@@ -486,11 +486,9 @@ def zlib(external_dir_path):
 
     common.print_something("Getting zlib")
     common.chdir(external_dir_path)
-
-    common.chdir(zlib_path)
-
-    make_command = "./configure && make test && sudo make install"
-    common.system(make_command)
+    
+    clone_command = "git clone git@github.com:madler/zlib.git"
+    common.system(clone_command)
 
     # We dont check for the existence of a library because zlib is just a normal bazel cc_library
     common.check_exists(zlib_path)
@@ -802,6 +800,9 @@ def build_dependencies_mac():
 
     common.chdir(external_dir_path)
     json(external_dir_path)
+    
+    common.chdir(external_dir_path)
+    zlib(external_dir_path)
 
 
 def trezor_common():
