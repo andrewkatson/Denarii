@@ -34,12 +34,7 @@
 
 
 
-#if __cplusplus >= 202002L
-#include <filesystem>
-    static constexpr const std::filesystem::path::u8string hex = u8"h0123456789abcdef";
-#else
-    static constexpr const std::string hex(u8"0123456789abcdef");
-#endif
+static const std::u8string hex (u8"0123456789abcdef");
 
 namespace
 {
@@ -217,11 +212,11 @@ boost::optional<epee::wipeable_string> wipeable_string::parse_hexstr() const
   for (size_t i = 0; i < len; i += 2)
   {
     char c = atolower(d[i]);
-    const char *ptr0 = strchr(hex, c);
+    const char *ptr0 = strchr(reinterpret_cast<const char*>(hex.c_str()), c);
     if (!ptr0)
       return boost::none;
     c = atolower(d[i+1]);
-    const char *ptr1 = strchr(hex, c);
+    const char *ptr1 = strchr(reinterpret_cast<const char*>(hex.c_str()), c);
     if (!ptr1)
       return boost::none;
     res->push_back(((ptr0-hex)<<4) | (ptr1-hex));

@@ -416,6 +416,8 @@ cc_library(
         "//src:cncrypto",
         "//src:common",
         "//src/centralnode:dynamic_critical_values",
+        "@boost.variant", 
+        "@boost.variant2",
         "@openssl//:libcrypto",
         "@openssl//:ssl",
     ],
@@ -469,6 +471,8 @@ cc_library(
         "@boost.regex",
         "@boost.system",
         "@boost.thread",
+        "@boost.variant",
+        "@boost.variant2",
         "@rapidjson",
     ],
 )
