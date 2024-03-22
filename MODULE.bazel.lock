@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 6,
-  "moduleFileHash": "dea47bda7b20de2ef8714b95fd35290369d758b22d3e205e8de0a5ae2ae7dfa5",
+  "moduleFileHash": "b732e23a6d574808fa5d787a5bcabcb2c4980116bbf77589bb1f39d382c575c7",
   "flags": {
     "cmdRegistries": [
       "https://raw.githubusercontent.com/bazelboost/registry/main",
@@ -50,6 +50,7 @@
         "boost.locale": "boost.locale@1.83.0.bzl.1",
         "boost.lambda": "boost.lambda@1.83.0.bzl.1",
         "boost.spirit": "boost.spirit@1.83.0.bzl.1",
+        "boost.foreach": "boost.foreach@1.83.0.bzl.1",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       }
@@ -1056,6 +1057,39 @@
             "https://github.com/bazelboost/spirit/releases/download/bazelboost-1.83.0.bzl.1/spirit-bazelboost-1.83.0.bzl.1.tar.gz"
           ],
           "integrity": "sha256-RectNkgMHgB/D4blj0DTV6brTbEAFqg/y3Jey7X6yNU=",
+          "strip_prefix": "",
+          "remote_patches": {},
+          "remote_patch_strip": 0
+        }
+      }
+    },
+    "boost.foreach@1.83.0.bzl.1": {
+      "name": "boost.foreach",
+      "version": "1.83.0.bzl.1",
+      "key": "boost.foreach@1.83.0.bzl.1",
+      "repoName": "boost.foreach",
+      "executionPlatformsToRegister": [],
+      "toolchainsToRegister": [],
+      "extensionUsages": [],
+      "deps": {
+        "rules_cc": "rules_cc@0.0.9",
+        "boost.config": "boost.config@1.83.0.bzl.6",
+        "boost.core": "boost.core@1.83.0.bzl.1",
+        "boost.iterator": "boost.iterator@1.83.0.bzl.1",
+        "boost.mpl": "boost.mpl@1.83.0.bzl.1",
+        "boost.range": "boost.range@1.83.0.bzl.1",
+        "boost.type_traits": "boost.type_traits@1.83.0.bzl.1",
+        "bazel_tools": "bazel_tools@_",
+        "local_config_platform": "local_config_platform@_"
+      },
+      "repoSpec": {
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+        "ruleClassName": "http_archive",
+        "attributes": {
+          "urls": [
+            "https://github.com/bazelboost/foreach/releases/download/bazelboost-1.83.0.bzl.1/foreach-bazelboost-1.83.0.bzl.1.tar.gz"
+          ],
+          "integrity": "sha256-ZHPSIDL8UwGmU0CbWx9ovdfCBTiBj8UqUlUsoe2P+bs=",
           "strip_prefix": "",
           "remote_patches": {},
           "remote_patch_strip": 0
