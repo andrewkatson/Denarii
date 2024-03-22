@@ -810,6 +810,7 @@ cc_library(
         "//contrib/epee",
         "//src:common",
         "@libzmq",
+        "@boost.spirit"
     ] + select({
         "windows": ["@boost.asio"],
         "mac": [],

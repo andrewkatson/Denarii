@@ -32,7 +32,10 @@
 #include "contrib/epee/include/misc_log_ex.h"
 #include "contrib/epee/include/wipeable_string.h"
 
+
+
 #if __cplusplus >= 202002L
+#include <filesystem>
     static constexpr const std::filesystem::path::u8string hex = u8"h0123456789abcdef";
 #else
     static constexpr const std::string hex(u8"0123456789abcdef");
