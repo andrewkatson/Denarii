@@ -32,8 +32,7 @@
 #include "contrib/epee/include/misc_log_ex.h"
 #include "contrib/epee/include/wipeable_string.h"
 
-static constexpr const char hex[] = u8"0123456789abcdef";
-
+static constexpr const std::string hex(u8"0123456789abcdef");
 namespace
 {
   int atolower(int c)

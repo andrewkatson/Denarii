@@ -330,6 +330,12 @@ POP_WARNINGS
 		return res;
 	}
   //----------------------------------------------------------------------------
+  std::string from_u8string(const std::string &s) {
+    return s;
+  }
+  std::string from_u8string(std::string &&s) {
+    return std::move(s);
+  }
 #ifdef _WIN32
   inline std::wstring utf8_to_utf16(const std::string& str)
   {
