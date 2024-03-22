@@ -370,7 +370,7 @@ namespace net_utils
                   if (!async_call(t_callback)) {
                       return true;
                   }
-                  std::this_thread::sleep_for(comparable_milliseconds(10));
+                  std::this_thread::sleep_for(std::chrono::milliseconds(10));
               }
           })));
 #endif

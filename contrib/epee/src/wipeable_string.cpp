@@ -219,7 +219,7 @@ boost::optional<epee::wipeable_string> wipeable_string::parse_hexstr() const
     const char *ptr1 = strchr(reinterpret_cast<const char*>(hex.c_str()), c);
     if (!ptr1)
       return boost::none;
-    res->push_back(((ptr0-hex)<<4) | (ptr1-hex));
+    res->push_back(((ptr0-reinterpret_cast<const char*>(hex.c_str()))<<4) | (ptr1-reinterpret_cast<const char*>(hex.c_str())));
   }
   return res;
 }

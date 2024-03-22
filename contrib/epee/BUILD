@@ -52,6 +52,7 @@ cc_library(
         "@boost.uuid",
         "@boost.lambda",
         "@boost.foreach",
+        "@boost.spirit",
         "@easy_logging",
         "@openssl//:libcrypto",
         "@openssl//:ssl",
