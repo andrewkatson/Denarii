@@ -50,6 +50,7 @@ cc_library(
         "@boost.interprocess",
         "@boost.mpl",
         "@boost.uuid",
+        "@boost.lambda",
         "@easy_logging",
         "@openssl//:libcrypto",
         "@openssl//:ssl",

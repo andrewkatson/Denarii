@@ -492,6 +492,16 @@ def zlib(external_dir_path):
 
     # We dont check for the existence of a library because zlib is just a normal bazel cc_library
     common.check_exists(zlib_path)
+    
+    # We need to add a bit to the top of the zlib file
+    gzguts_path = zlib_path / "gzguts.h"
+    to_replace_path = workspace_path / "top_of_gzguts.txt"
+    replace_with_path = workspace_path / "prepend_to_gzguts.txt"
+    with open(to_replace_path, 'r') as to_replace_file: 
+        to_replace_phrase = to_replace_file.read()
+        with open(replace_with_path, 'r') as replace_with_file:
+            replace_with_phrase = replace_with_file.read()
+            common.replace_phrase(to_replace_phrase, replace_with_phrase, gzguts_path)
 
 
 def liblmdb(external_dir_path):
