@@ -32,18 +32,18 @@ namespace net
 {
     namespace
     {
-        constexpr const char tld[] = u8".onion";
+        constexpr const char8_t tld[] = u8".onion";
         constexpr const char unknown_host[] = "<unknown tor host>";
 
         constexpr const unsigned v2_length = 16;
         constexpr const unsigned v3_length = 56;
 
-        constexpr const char base32_alphabet[] =
+        constexpr const char8_t base32_alphabet[] =
             u8"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz234567";
 
         expect<void> host_check(boost::string_ref host) noexcept
         {
-            if (!host.ends_with(tld))
+            if (!host.ends_with(reinterpret_cast<const char *>(tld)))
                 return {net::error::expected_tld};
 
             host.remove_suffix(sizeof(tld) - 1);
@@ -51,7 +51,7 @@ namespace net
             //! \TODO v3 has checksum, base32 decoding is required to verify it
             if (host.size() != v2_length && host.size() != v3_length)
                 return {net::error::invalid_tor_address};
-            if (host.find_first_not_of(base32_alphabet) != boost::string_ref::npos)
+            if (host.find_first_not_of(reinterpret_cast<const char *>(base32_alphabet)) != boost::string_ref::npos)
                 return {net::error::invalid_tor_address};
 
             return success();

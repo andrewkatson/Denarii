@@ -496,12 +496,6 @@ namespace net_utils
   std::string print_connection_context(const connection_context_base& ctx);
   std::string print_connection_context_short(const connection_context_base& ctx);
 
-inline MAKE_LOGGABLE(connection_context_base, ct, os)
-{
-  os << "[" << epee::net_utils::print_connection_context_short(ct) << "] ";
-  return os;
-}
-
 #define LOG_ERROR_CC(ct, message) MERROR(ct << message)
 #define LOG_WARNING_CC(ct, message) MWARNING(ct << message)
 #define LOG_INFO_CC(ct, message) MINFO(ct << message)

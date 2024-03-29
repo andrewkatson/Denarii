@@ -29,15 +29,17 @@
 #include <vector>
 #include "contrib/epee/include/misc_os_dependent.h"
 #include "perf_timer.h"
+#include "contrib/epee/include/misc_log_ex.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "perf"
 
 #define PERF_LOG_ALWAYS(level, cat, x) \
-  el::base::Writer(level, el::Color::Default, __FILE__, __LINE__, ELPP_FUNC, el::base::DispatchAction::FileOnlyLog).construct(cat) << x
+  MCLOG(level, x)
+  
 #define PERF_LOG(level, cat, x) \
   do { \
-    if (ELPP->vRegistry()->allowed(level, cat)) PERF_LOG_ALWAYS(level, cat, x); \
+    PERF_LOG_ALWAYS(level, cat, x); \
   } while(0)
 
 namespace tools
@@ -88,19 +90,38 @@ namespace tools
 namespace tools
 {
 
-el::Level performance_timer_log_level = el::Level::Info;
+int performance_timer_log_level = 3;
 
 static thread_local std::vector<LoggingPerformanceTimer*> *performance_timers = NULL;
 
-void set_performance_timer_log_level(el::Level level)
+void set_performance_timer_log_level(int level)
 {
-  if (level != el::Level::Debug && level != el::Level::Trace && level != el::Level::Info
-   && level != el::Level::Warning && level != el::Level::Error && level != el::Level::Fatal)
+  if (level != 4 && level != 5 && level != 3
+   && level != 2 && level != 1 && level != 0)
   {
-    MERROR("Wrong log level: " << el::LevelHelper::convertToString(level) << ", using Info");
-    level = el::Level::Info;
+    MERROR("Wrong log level: " << convertLevelToString(level) << ", using Info");
+    level = 3;
   }
   performance_timer_log_level = level;
+}
+
+std::string convertLevelToString(int level) {
+  switch(level) {
+    case 0: 
+      return "FATAL";
+    case 1:
+      return "ERROR";
+    case 2:
+      return "WARNING";
+    case 3: 
+      return "INFO";
+    case 4: 
+      return "DEBUG";
+    case 5: 
+      return "TRACE";
+  }
+
+  return "FATAL";
 }
 
 PerformanceTimer::PerformanceTimer(bool paused): started(true), paused(paused)
@@ -111,9 +132,10 @@ PerformanceTimer::PerformanceTimer(bool paused): started(true), paused(paused)
     ticks = get_tick_count();
 }
 
-LoggingPerformanceTimer::LoggingPerformanceTimer(const std::string &s, const std::string &cat, uint64_t unit, el::Level l): PerformanceTimer(), name(s), cat(cat), unit(unit), level(l)
+LoggingPerformanceTimer::LoggingPerformanceTimer(const std::string &s, const std::string &cat, uint64_t unit, int l): PerformanceTimer(), name(s), cat(cat), unit(unit), level(l)
 {
-  const bool log = ELPP->vRegistry()->allowed(level, cat.c_str());
+
+  const bool log = true;
   if (!performance_timers)
   {
     if (log)
@@ -147,7 +169,7 @@ LoggingPerformanceTimer::~LoggingPerformanceTimer()
 {
   pause();
   performance_timers->pop_back();
-  const bool log = ELPP->vRegistry()->allowed(level, cat.c_str());
+  const bool log = true;
   if (log)
   {
     char s[12];

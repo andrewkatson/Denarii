@@ -171,11 +171,11 @@ void ZmqServer::serve()
   catch (const std::system_error& e)
   {
     if (e.code() != net::zmq::make_error_code(ETERM))
-      MERROR("ZMQ RPC Server Error: " << e.what());
+      MERROR(std::string("ZMQ RPC Server Error: ") << e.what());
   }
   catch (const std::exception& e)
   {
-    MERROR("ZMQ RPC Server Error: " << e.what());
+    MERROR(std::string("ZMQ RPC Server Error: ") << e.what());
   }
   catch (...)
   {

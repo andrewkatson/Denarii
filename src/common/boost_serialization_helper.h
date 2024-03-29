@@ -36,8 +36,8 @@
 #include "portable_binary_oarchive.hpp"
 #include "portable_binary_iarchive.hpp"
 #else
-#include "archive/portable_binary_oarchive.hpp"
-#include "archive/portable_binary_iarchive.hpp"
+#include "src/boost/archive/portable_binary_oarchive.hpp"
+#include "src/boost/archive/portable_binary_iarchive.hpp"
 #endif
 #include <boost/filesystem/operations.hpp>
 

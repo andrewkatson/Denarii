@@ -86,7 +86,7 @@ int spawn(const char *filename, const std::vector<std::string>& args, bool wait)
   pid_t pid = fork();
   if (pid < 0)
   {
-    MERROR("Error forking: " << strerror(errno));
+    MERROR(std::string("Error forking: ") + std::string(strerror(errno)));
     return -1;
   }
 
@@ -97,7 +97,7 @@ int spawn(const char *filename, const std::vector<std::string>& args, bool wait)
     close(0);
     char *envp[] = {NULL};
     execve(filename, argv.data(), envp);
-    MERROR("Failed to execve: " << strerror(errno));
+    MERROR(std::string("Failed to execve: ") +  std::string(strerror(errno)));
     return -1;
   }
 

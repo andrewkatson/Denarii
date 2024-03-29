@@ -224,7 +224,7 @@ namespace misc_utils
               break;
             default:
               val.push_back(*it);
-              LOG_PRINT_L0("Unknown escape sequence :\"\\" << *it << "\"");
+              LOG_PRINT_L0("Unknown escape sequence :\"" + std::string(1, *it) + "\"");
             }
             escape_mode = false;
           }else if(*it == '"')
@@ -240,7 +240,7 @@ namespace misc_utils
             val.push_back(*it); 
           }
         }
-        ASSERT_MES_AND_THROW("Failed to match string in json entry: " << std::string(star_end_string, buf_end));
+        ASSERT_MES_AND_THROW(std::string("Failed to match string in json entry: ") + std::string(star_end_string, buf_end));
       }
       inline bool match_string(std::string::const_iterator& star_end_string, std::string::const_iterator buf_end, std::string& val)
       {
@@ -286,10 +286,10 @@ namespace misc_utils
               return;
             }
             else 
-              ASSERT_MES_AND_THROW("wrong number in json entry: " << std::string(star_end_string, buf_end));
+              ASSERT_MES_AND_THROW(std::string("wrong number in json entry: ") + std::string(star_end_string, buf_end));
           }
         }
-        ASSERT_MES_AND_THROW("wrong number in json entry: " << std::string(star_end_string, buf_end));
+        ASSERT_MES_AND_THROW(std::string("wrong number in json entry: ") + std::string(star_end_string, buf_end));
       }
       inline bool match_number(std::string::const_iterator& star_end_string, std::string::const_iterator buf_end, boost::string_ref& val)
       {
@@ -318,10 +318,10 @@ namespace misc_utils
               star_end_string = --it;
               return;
             }else 
-              ASSERT_MES_AND_THROW("failed to match word number in json entry: " << std::string(star_end_string, buf_end));
+              ASSERT_MES_AND_THROW(std::string("failed to match word number in json entry: ") + std::string(star_end_string, buf_end));
           }
         }
-        ASSERT_MES_AND_THROW("failed to match word number in json entry: " << std::string(star_end_string, buf_end));
+        ASSERT_MES_AND_THROW(std::string("failed to match word number in json entry: ") + std::string(star_end_string, buf_end));
       }
       inline bool match_word(std::string::const_iterator& star_end_string, std::string::const_iterator buf_end, boost::string_ref& val)
       {

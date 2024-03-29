@@ -36,8 +36,8 @@
 #include <boost/serialization/set.hpp>
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/is_bitwise_serializable.hpp>
-#include "archive/portable_binary_iarchive.hpp"
-#include "archive/portable_binary_oarchive.hpp"
+#include "src/boost/archive/portable_binary_iarchive.hpp"
+#include "src/boost/archive/portable_binary_oarchive.hpp"
 #include "cryptonote_basic.h"
 #include "difficulty.h"
 #include "src/common/unordered_containers_boost_serialization.h"

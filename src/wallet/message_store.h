@@ -50,7 +50,7 @@
 #include "src/serialization/containers.h"
 #include "message_transporter.h"
 
-#include "archive/portable_binary_iarchive.hpp"
+#include "src/boost/archive/portable_binary_iarchive.hpp"
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
 #include <fstream>

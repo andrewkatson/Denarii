@@ -28,6 +28,11 @@
 
 #pragma once
 #include <string>
+#include <fstream>
+
+#ifdef __clang__
+#include <signal.h>
+#endif
 
 #ifndef WIN32
 

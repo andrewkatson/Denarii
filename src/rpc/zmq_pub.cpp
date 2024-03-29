@@ -192,16 +192,16 @@ namespace
     json_pub(buf, (txes | adapt::filtered(is_valid{}) | adapt::transformed(to_minimal_tx)));
   }
 
-  constexpr const std::array<context<chain_writer>, 2> chain_contexts =
+  const std::array<context<chain_writer>, 2> chain_contexts =
   {{
-    {u8"json-full-chain_main", json_full_chain},
-    {u8"json-minimal-chain_main", json_minimal_chain}
+    {reinterpret_cast<const char*>(std::u8string(u8"json-full-chain_main").c_str()), json_full_chain},
+    {reinterpret_cast<const char*>(std::u8string(u8"json-minimal-chain_main").c_str()), json_minimal_chain}
   }};
 
-  constexpr const std::array<context<txpool_writer>, 2> txpool_contexts =
+  const std::array<context<txpool_writer>, 2> txpool_contexts =
   {{
-    {u8"json-full-txpool_add", json_full_txpool},
-    {u8"json-minimal-txpool_add", json_minimal_txpool}
+    {reinterpret_cast<const char*>(std::u8string(u8"json-full-txpool_add").c_str()), json_full_txpool},
+    {reinterpret_cast<const char*>(std::u8string(u8"json-minimal-txpool_add").c_str()), json_minimal_txpool}
   }};
 
   template<typename T, std::size_t N>

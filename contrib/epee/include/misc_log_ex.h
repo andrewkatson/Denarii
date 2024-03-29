@@ -31,8 +31,11 @@
 #ifdef __cplusplus
 
 #include <string>
+#include <sstream>
 
-#include "easylogging++.h"
+#include "include/spdlog/spdlog.h"
+#include "include/spdlog/sinks/basic_file_sink.h"
+
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "default"
@@ -40,29 +43,48 @@
 #define MAX_LOG_FILE_SIZE 104850000 // 100 MB - 7600 bytes
 #define MAX_LOG_FILES 50
 
-#define MCLOG_TYPE(level, cat, x) do { \
-    if (ELPP->vRegistry()->allowed(static_cast<el::base::type::VerboseLevel>(level), cat)) { \
-      el::base::Writer(level,__FILE__, __LINE__, ELPP_FUNC).construct(1, cat) << x; \
+static int log_level = 0;
+
+#define ALLOWED_TO_LOG(level) \
+  log_level <= level;
+
+#define MCLOG(level, x) do { \
+  std::stringstream ss; \
+  ss << x; \
+  if (level <= log_level) { \
+    switch(log_level) { \
+      case 0: \
+        spdlog::critical(ss.str()); \
+        break; \
+      case 1: \
+        spdlog::error(ss.str()); \
+      case 2: \
+        spdlog::warn(ss.str()); \
+      case 3: \
+        spdlog::info(ss.str()); \
+      case 4: \
+        spdlog::debug(ss.str()); \
+      case 5: \
+        spdlog::trace(ss.str()); \
+      default: \
+        spdlog::critical(ss.str()); \
     } \
-  } while (0)
+  } \
+} while(0)
 
-#define MCLOG(level, cat, x) MCLOG_TYPE(level, cat, x)
-#define MCLOG_FILE(level, cat, x) MCLOG_TYPE(level, cat, x)
+#define MCFATAL(cat,x) MCLOG(0, x)
+#define MCERROR(cat,x) MCLOG(1, x)
+#define MCWARNING(cat,x) MCLOG(2, x)
+#define MCINFO(cat,x) MCLOG(3, x)
+#define MCDEBUG(cat,x) MCLOG(4, x)
+#define MCTRACE(cat,x) MCLOG(5, x)
 
-#define MCFATAL(cat,x) MCLOG(el::Level::Fatal,cat, x)
-#define MCERROR(cat,x) MCLOG(el::Level::Error,cat, x)
-#define MCWARNING(cat,x) MCLOG(el::Level::Warning,cat, x)
-#define MCINFO(cat,x) MCLOG(el::Level::Info,cat, x)
-#define MCDEBUG(cat,x) MCLOG(el::Level::Debug,cat, x)
-#define MCTRACE(cat,x) MCLOG(el::Level::Trace,cat, x)
-
-#define MCLOG_COLOR(level,cat,x) MCLOG(level,cat,x)
-#define MCLOG_RED(level,cat,x) MCLOG_COLOR(level,cat,x)
-#define MCLOG_GREEN(level,cat,x) MCLOG_COLOR(level,cat,x)
-#define MCLOG_YELLOW(level,cat,x) MCLOG_COLOR(level,cat,x)
-#define MCLOG_BLUE(level,cat,x) MCLOG_COLOR(level,cat,x)
-#define MCLOG_MAGENTA(level,cat,x) MCLOG_COLOR(level,cat,x)
-#define MCLOG_CYAN(level,cat,x) MCLOG_COLOR(level,cat,x)
+#define MCLOG_RED(level,cat,x) MCFATAL(cat,x)
+#define MCLOG_GREEN(level,cat,x) MCINFO(cat,x)
+#define MCLOG_YELLOW(level,cat,x) MCWARNING(cat,x)
+#define MCLOG_BLUE(level,cat,x) MCINFO(cat,x)
+#define MCLOG_MAGENTA(level,cat,x) MCINFO(cat,x)
+#define MCLOG_CYAN(level,cat,x) MCINFO(cat,x)
 
 #define MLOG_RED(level,x) MCLOG_RED(level,MONERO_DEFAULT_LOG_CATEGORY,x)
 #define MLOG_GREEN(level,x) MCLOG_GREEN(level,MONERO_DEFAULT_LOG_CATEGORY,x)
@@ -77,24 +99,18 @@
 #define MINFO(x) MCINFO(MONERO_DEFAULT_LOG_CATEGORY,x)
 #define MDEBUG(x) MCDEBUG(MONERO_DEFAULT_LOG_CATEGORY,x)
 #define MTRACE(x) MCTRACE(MONERO_DEFAULT_LOG_CATEGORY,x)
-#define MLOG(level,x) MCLOG(level,MONERO_DEFAULT_LOG_CATEGORY,x)
+#define MLOG(x) MINFO(MONERO_DEFAULT_LOG_CATEGORY,x)
 
-#define MGINFO(x) MCINFO("global",x)
-#define MGINFO_RED(x) MCLOG_RED(el::Level::Info, "global",x)
-#define MGINFO_GREEN(x) MCLOG_GREEN(el::Level::Info, "global",x)
-#define MGINFO_YELLOW(x) MCLOG_YELLOW(el::Level::Info, "global",x)
-#define MGINFO_BLUE(x) MCLOG_BLUE(el::Level::Info, "global",x)
-#define MGINFO_MAGENTA(x) MCLOG_MAGENTA(el::Level::Info, "global",x)
-#define MGINFO_CYAN(x) MCLOG_CYAN(el::Level::Info, "global",x)
+#define MGINFO(x) MCINFO(MONERO_DEFAULT_LOG_CATEGORY, x)
+#define MGINFO_RED(x) MCINFO(MONERO_DEFAULT_LOG_CATEGORY, x)
+#define MGINFO_GREEN(x) MCINFO(MONERO_DEFAULT_LOG_CATEGORY, x)
+#define MGINFO_YELLOW(x) MCINFO(MONERO_DEFAULT_LOG_CATEGORY, x)
+#define MGINFO_BLUE(x) MCINFO(MONERO_DEFAULT_LOG_CATEGORY, x)
+#define MGINFO_MAGENTA(x) MCINFO(MONERO_DEFAULT_LOG_CATEGORY, x)
+#define MGINFO_CYAN(x) MCINFO(MONERO_DEFAULT_LOG_CATEGORY, x)
 
-#define IFLOG(level, cat, init, x) \
-  do { \
-    if (ELPP->vRegistry()->allowed(static_cast<type::VerboseLevel>(level), cat)) { \
-      init; \
-      el::base::Writer(level, __FILE__, __LINE__, ELPP_FUNC).construct(1, cat) << x; \
-    } \
-  } while(0)
-#define MIDEBUG(init, x) IFLOG(el::Level::Debug, MONERO_DEFAULT_LOG_CATEGORY, init, x)
+
+#define MIDEBUG(init, x) MCDEBUG(MONERO_DEFAULT_LOG_CATEGORY, x)
 
 
 #define LOG_ERROR(x) MERROR(x)
@@ -114,7 +130,21 @@
 #define _warn(x) MWARNING(x)
 #define _erro(x) MERROR(x)
 
-#define MLOG_SET_THREAD_NAME(x) el::Helpers::setThreadName(x)
+// Define the platform-specific code for setting the thread name
+#ifdef _WIN32
+#define SET_THREAD_NAME_PLATFORM(x) SetThreadDescription(std::this_thread::native_handle(), x);
+#elif defined(__linux__)
+#define SET_THREAD_NAME_PLATFORM(x) pthread_setname_np(pthread_self(), x);
+#else 
+#define SET_THREAD_NAME_PLATFORM(x) do { \
+  std::stringstream ss; \
+  ss << x; \
+  pthread_setname_np(ss.str().c_str()); \
+} while(0); 
+#endif
+
+// Define the macro to set the thread name
+#define MLOG_SET_THREAD_NAME(x) SET_THREAD_NAME_PLATFORM(x);
 
 #ifndef LOCAL_ASSERT
 #include <assert.h>
@@ -129,7 +159,8 @@
 std::string mlog_get_default_log_path(const char *default_filename);
 void mlog_configure(const std::string &filename_base, bool console, const std::size_t max_log_file_size = MAX_LOG_FILE_SIZE, const std::size_t max_log_files = MAX_LOG_FILES);
 void mlog_set_categories(const char *categories);
-std::string mlog_get_categories();
+std::string mlog_get_categories(int level);
+std::string mlog_get_default_categories(int level);
 void mlog_set_log_level(int level);
 void mlog_set_log(const char *log);
 

@@ -83,12 +83,12 @@ characters without "consuming" the input character. */
 namespace
 {
   namespace http = epee::net_utils::http;
-
-  // string_ref is only constexpr if length is given
+    
+  // string_view is only constexpr if length is given
   template<std::size_t N>
-  constexpr boost::string_ref ceref(const char (&arg)[N])
+  constexpr std::basic_string_view<char8_t> ceref(const char8_t (&arg)[N])
   {
-    return boost::string_ref(arg, N - 1);
+      return {arg};
   }
 
   constexpr const auto client_auth_field = ceref(u8"Authorization");
@@ -106,7 +106,7 @@ namespace
 
   struct md5_
   {
-    static constexpr const boost::string_ref name = ceref(u8"MD5");
+    static constexpr const std::basic_string_view<char8_t> name = ceref(u8"MD5");
 
     struct update
     {
@@ -158,7 +158,7 @@ namespace
       return epee::to_hex::array(digest);
     }
   };
-  constexpr const boost::string_ref md5_::name;
+  constexpr const std::basic_string_view<char8_t> md5_::name;
 
   //! Digest Algorithms available for HTTP Digest Auth. Sort better algos to the left
   constexpr const std::tuple<md5_> digest_algorithms{};
@@ -204,15 +204,15 @@ namespace
   }
 
   template<typename T>
-  void add_first_field(std::string& str, const char* const name, const T& value)
+  void add_first_field(std::string& str, const char8_t* name, const T& value)
   {
-    str.append(name);
+    str.append(reinterpret_cast<const char*>(name));
     str.push_back(equal_sign);
     boost::copy(value, std::back_inserter(str));
   }
 
   template<typename T>
-  void add_field(std::string& str, const char* const name, const T& value)
+  void add_field(std::string& str, const char8_t* name, const T& value)
   {
     str.push_back(comma);
     add_first_field(str, name, value);
@@ -232,14 +232,14 @@ namespace
   //// Digest Authentication
 
   template<typename Digest>
-  typename std::result_of<Digest()>::type generate_a1(
+  typename std::invoke_result<Digest()>::type generate_a1(
     Digest digest, const http::login& creds, const boost::string_ref realm)
   {
     return digest(creds.username, u8":", realm, u8":", creds.password);
   }
 
   template<typename Digest>
-  typename std::result_of<Digest()>::type generate_a1(
+  typename std::invoke_result<Digest()>::type generate_a1(
     Digest digest, const http::http_client_auth::session& user)
   {
     return generate_a1(std::move(digest), user.credentials, user.server.realm);
@@ -250,7 +250,7 @@ namespace
     const boost::string_ref algorithm, const http::http_client_auth::session& user,
     const boost::string_ref uri, const T& response)
   {
-    str.append(u8"Digest ");
+    str.append(reinterpret_cast<const char*>("Digest "));
     add_first_field(str, u8"algorithm", algorithm);
     add_field(str, u8"nonce", denarii_quoted(user.server.nonce));
     add_field(str, u8"realm", denarii_quoted(user.server.realm));
@@ -678,18 +678,22 @@ namespace
 
       for (unsigned i = 0; i < 2; ++i)
       {
-        std::string out(fvalue);
+        std::string out(to_string(fvalue));
 
         const auto algorithm = boost::range::join(
-          Digest::name, (i == 0 ? boost::string_ref{} : sess_algo)
+          Digest::name, (i == 0 ? std::basic_string_view<char8_t> {} : sess_algo)
         );
         add_field(out, u8"algorithm", algorithm);
         add_field(out, u8"realm", denarii_quoted(auth_realm));
         add_field(out, u8"nonce", denarii_quoted(nonce));
-        add_field(out, u8"stale", is_stale ? ceref("true") : ceref("false"));
+        add_field(out, u8"stale", is_stale ? ceref(u8"true") : ceref(u8"false"));
         
-        fields.push_back(std::make_pair(std::string(server_auth_field), std::move(out)));
+        fields.push_back(std::make_pair(std::string(to_string(server_auth_field)), std::move(out)));
       }
+    }
+
+    std::string to_string(const std::basic_string_view<char8_t>& view) const {
+      return std::string(view.begin(), view.end());
     }
 
     const boost::string_ref nonce;
@@ -701,10 +705,10 @@ namespace
   {
     epee::net_utils::http::http_response_info rc{};
     rc.m_response_code = 401;
-    rc.m_response_comment = u8"Unauthorized";
-    rc.m_mime_tipe = u8"text/html";
+    rc.m_response_comment = to_string(std::basic_string_view<char8_t>(u8"Unauthorized"));
+    rc.m_mime_tipe = to_string(std::basic_string_view<char8_t>(u8"text/html"));
     rc.m_body = 
-      u8"<html><head><title>Unauthorized Access</title></head><body><h1>401 Unauthorized</h1></body></html>";
+      to_string(std::basic_string_view<char8_t>(u8"<html><head><title>Unauthorized Access</title></head><body><h1>401 Unauthorized</h1></body></html>"));
 
     boost::fusion::for_each(
       digest_algorithms, add_challenge{nonce, rc.m_additional_fields, is_stale}
@@ -792,4 +796,3 @@ namespace epee
     }
   }
 }
-

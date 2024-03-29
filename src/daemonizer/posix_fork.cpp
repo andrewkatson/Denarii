@@ -44,7 +44,7 @@ void fork(const std::string & pidfile)
     if (! pidrifs.fail())
     {
 	  // Read the PID and send signal 0 to see if the process exists.
-	  if (pidrifs >> oldpid && oldpid > 1 && kill(oldpid, 0) == 0)
+	  if (pidrifs >> oldpid && oldpid > 1 && kill(oldpid, SIGKILL) == 0)
       {
         quit("PID file " + pidfile + " already exists and the PID therein is valid");
 	  }

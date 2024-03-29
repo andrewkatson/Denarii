@@ -141,6 +141,7 @@ external/protolib
 external/bigint
 external/json
 external/curl
+external/spdlog
 
 # Testing stuff
 tests/functional_tests/functional-tests-directory/

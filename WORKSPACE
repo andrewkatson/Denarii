@@ -3,13 +3,6 @@ workspace(name = "denarii")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
-# boost archive extra files
-new_local_repository(
-    name = "boost_extra",
-    build_file = "@//external:BUILD.boost",
-    path = "external/boost",
-)
-
 # db drivers
 new_local_repository(
     name = "db_drivers",
@@ -205,3 +198,9 @@ new_local_repository(
     path = "external/curl/curl",
 )
 
+#spdlog
+new_local_repository(
+    name = "spdlog",
+    build_file = "@//external:BUILD.spdlog",
+    path = "external/spdlog",
+)

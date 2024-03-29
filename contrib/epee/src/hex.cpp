@@ -43,7 +43,6 @@ namespace epee
     void write_hex(T&& out, const span<const std::uint8_t> src)
     {
       static const std::u8string hex (u8"0123456789abcdef");
-      static_assert(sizeof(hex) == 17, "bad string size");
       for (const std::uint8_t byte : src)
       {
         *out = hex[byte >> 4];

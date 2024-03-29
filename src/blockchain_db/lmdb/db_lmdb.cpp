@@ -1351,7 +1351,7 @@ void BlockchainLMDB::open(const std::string& filename, const int db_flags)
   if (is_hdd_result)
   {
     if (is_hdd_result.value())
-        MCLOG_RED(el::Level::Warning, "global", "The blockchain is on a rotating drive: this will be very slow, use an SSD if possible");
+        MCLOG_RED(2, "global", "The blockchain is on a rotating drive: this will be very slow, use an SSD if possible");
   }
 
   m_folder = filename;
@@ -1360,7 +1360,7 @@ void BlockchainLMDB::open(const std::string& filename, const int db_flags)
 
 #ifdef __OpenBSD__
   if ((mdb_flags & MDB_WRITEMAP) == 0) {
-    MCLOG_RED(el::Level::Info, "global", "Running on OpenBSD: forcing WRITEMAP");
+    MCLOG_RED(3, "global", "Running on OpenBSD: forcing WRITEMAP");
     mdb_flags |= MDB_WRITEMAP;
   }
 #endif
@@ -4557,7 +4557,7 @@ void BlockchainLMDB::fixup()
     ptr = (char *)k.mv_data; \
     ptr[sizeof(name)-2]++; } while(0)
 
-#define LOGIF(y)    if (ELPP->vRegistry()->allowed(y, "global"))
+#define LOGIF(y) ALLOWED_TO_LOG(y)
 
 void BlockchainLMDB::migrate_0_1()
 {
@@ -4618,7 +4618,7 @@ void BlockchainLMDB::migrate_0_1()
     while(1) {
       if (!(i % 2000)) {
         if (i) {
-          LOGIF(el::Level::Info) {
+          LOGIF(3) {
             std::cout << i << " / " << z << "  \r" << std::flush;
           }
           txn.commit();
@@ -4711,7 +4711,7 @@ void BlockchainLMDB::migrate_0_1()
       MDB_val k, v;
       if (!(i % 2000)) {
         if (i) {
-          LOGIF(el::Level::Info) {
+          LOGIF(3) {
             std::cout << i << " / " << z << "  \r" << std::flush;
           }
           txn.commit();
@@ -4845,7 +4845,7 @@ void BlockchainLMDB::migrate_0_1()
     while(1) {
       if (!(i % 2000)) {
         if (i) {
-          LOGIF(el::Level::Info) {
+          LOGIF(3) {
             std::cout << i << " / " << z << "  \r" << std::flush;
           }
           txn.commit();
@@ -4991,7 +4991,7 @@ void BlockchainLMDB::migrate_0_1()
     while(1) {
       if (!(i % 1000)) {
         if (i) {
-          LOGIF(el::Level::Info) {
+          LOGIF(3) {
             std::cout << i << " / " << z << "  \r" << std::flush;
           }
           MDB_val_set(pk, "txblk");
@@ -5150,7 +5150,7 @@ void BlockchainLMDB::migrate_1_2()
           result = mdb_stat(txn, m_txs, &db_stats_txs);
           if (result)
             throw0(DB_ERROR(lmdb_error("Failed to query m_txs: ", result).c_str()));
-          LOGIF(el::Level::Info) {
+          LOGIF(3) {
             std::cout << i << " / " << (i + db_stats_txs.ms_entries) << "  \r" << std::flush;
           }
           txn.commit();
@@ -5294,7 +5294,7 @@ void BlockchainLMDB::migrate_2_3()
     while(1) {
       if (!(i % 1000)) {
         if (i) {
-          LOGIF(el::Level::Info) {
+          LOGIF(3) {
             std::cout << i << " / " << blockchain_height << "  \r" << std::flush;
           }
           txn.commit();
@@ -5423,7 +5423,7 @@ void BlockchainLMDB::migrate_3_4()
     while(1) {
       if (!(i % 1000)) {
         if (i) {
-          LOGIF(el::Level::Info) {
+          LOGIF(3) {
             std::cout << i << " / " << blockchain_height << "  \r" << std::flush;
           }
           txn.commit();
@@ -5580,7 +5580,7 @@ void BlockchainLMDB::migrate_4_5()
     while(1) {
       if (!(i % 1000)) {
         if (i) {
-          LOGIF(el::Level::Info) {
+          LOGIF(3) {
             std::cout << i << " / " << blockchain_height << "  \r" << std::flush;
           }
           txn.commit();

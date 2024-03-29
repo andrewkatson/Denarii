@@ -290,7 +290,7 @@ cc_library(
         "@boost.thread",
         "@boost.program_options",
         "@boost.format",
-        "@boost_extra",
+        "//src/boost/archive:boost_extra",
         "@easy_logging",
         "@libsodium",
         "@libunbound",
@@ -357,7 +357,7 @@ cc_library(
         "@boost.system",
         "@boost.thread",
         "@boost.multi_index",
-        "@boost_extra",
+        "//src/boost/archive:boost_extra",
         "@miniupnp//:miniupnpc",
     ],
 )
@@ -521,7 +521,8 @@ cc_library(
         "@boost.serialization",
         "@boost.system",
         "@boost.thread",
-        "@boost_extra",
+        "@boost.logic",
+        "//src/boost/archive:boost_extra",
     ],
     linkopts = [] + select({'windows': [], 'mac': ["-framework IOKit"], 'linux': []})
 )
@@ -606,6 +607,7 @@ cc_library(
         "@boost.serialization",
         "@boost.core",
         "@boost.multi_index",
+        "@boost.logic",
         "@libhidapi",
         "@openssl//:libcrypto",
         "@openssl//:ssl",
@@ -884,6 +886,7 @@ cc_library(
         "//src:cryptonote_protocol",
         "//src:net",
         "//src:version",
+        "//src/boost/archive:boost_extra",
         "@boost.regex",
         "@boost.thread",
         "@miniupnp//:miniupnpc",

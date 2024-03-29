@@ -308,6 +308,26 @@ def import_dependencies_mac():
     find_includes_mac(mac_library_info)
     find_src_files_mac(mac_library_info)
 
+def spdlog(external_dir_path): 
+    spdlog_path = external_dir_path / "spdlog"
+
+    spdlog_library_path = spdlog_path / "build" / "libspdlog.a"
+
+    if common.check_exists_with_existing_artifact_check(path=spdlog_library_path, root_path=spdlog_path, fail_on_existence=False):
+        return
+
+    common.print_something("Getting spdlog")
+    common.chdir(external_dir_path)
+    
+    clone_command = "git clone git@github.com:gabime/spdlog.git"
+    common.system(clone_command)
+
+    common.chdir(spdlog_path)
+
+    command = "mkdir build && cd build && cmake .. && make -j"
+    common.system(command)
+
+    common.check_exists(spdlog_library_path)
 
 def miniupnp(external_dir_path):
     # we only need to build one of the subdirectories but we need to remove the whole tree
@@ -608,6 +628,8 @@ def build_dependencies():
     json(external_dir_path)
     common.chdir(external_dir_path)
 
+    spdlog(external_dir_path)
+    common.chdir(external_dir_path)
 
 def supercop_win(external_dir_path):
     supercop_path = external_dir_path / "supercop"
@@ -681,6 +703,9 @@ def build_dependencies_win():
     bigint(external_dir_path)
 
     json(external_dir_path)
+    common.chdir(external_dir_path)
+    
+    spdlog(external_dir_path)
     common.chdir(external_dir_path)
 
 
@@ -813,6 +838,9 @@ def build_dependencies_mac():
     
     common.chdir(external_dir_path)
     zlib(external_dir_path)
+    
+    spdlog(external_dir_path)
+    common.chdir(external_dir_path)
 
 
 def trezor_common():

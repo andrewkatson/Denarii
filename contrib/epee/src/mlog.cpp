@@ -49,7 +49,7 @@
 
 #define MLOG_BASE_FORMAT "%datetime{%Y-%M-%d %H:%m:%s.%g}\t%thread\t%level\t%logger\t%loc\t%msg"
 
-#define MLOG_LOG(x) CINFO(el::base::Writer,el::base::DispatchAction::FileOnlyLog,MONERO_DEFAULT_LOG_CATEGORY) << x
+#define MLOG_LOG(x) MLOG_GREEN(x)
 
 using namespace epee;
 
@@ -86,41 +86,6 @@ std::string mlog_get_default_log_path(const char *default_filename)
   return (boost::filesystem::path(default_log_folder) / boost::filesystem::path(default_log_file)).string();
 }
 
-static void mlog_set_common_prefix()
-{
-  static const char * const expected_filename = "contrib/epee/src/mlog.cpp";
-  const char *path = __FILE__, *expected_ptr = strstr(path, expected_filename);
-  if (!expected_ptr)
-    return;
-  el::Loggers::setFilenameCommonPrefix(std::string(path, expected_ptr - path));
-}
-
-static const char *get_default_categories(int level)
-{
-  const char *categories = "";
-  switch (level)
-  {
-    case 0:
-      categories = "*:WARNING,net:FATAL,net.http:FATAL,net.ssl:FATAL,net.p2p:FATAL,net.cn:FATAL,daemon.rpc:FATAL,global:INFO,verify:FATAL,serialization:FATAL,daemon.rpc.payment:ERROR,stacktrace:INFO,logging:INFO,msgwriter:INFO";
-      break;
-    case 1:
-      categories = "*:INFO,global:INFO,stacktrace:INFO,logging:INFO,msgwriter:INFO,perf.*:DEBUG";
-      break;
-    case 2:
-      categories = "*:DEBUG";
-      break;
-    case 3:
-      categories = "*:TRACE,*.dump:DEBUG";
-      break;
-    case 4:
-      categories = "*:TRACE";
-      break;
-    default:
-      break;
-  }
-  return categories;
-}
-
 #ifdef WIN32
 bool EnableVTMode()
 {
@@ -148,89 +113,16 @@ bool EnableVTMode()
 
 void mlog_configure(const std::string &filename_base, bool console, const std::size_t max_log_file_size, const std::size_t max_log_files)
 {
-  el::Configurations c;
-  c.setGlobally(el::ConfigurationType::Filename, filename_base);
-  c.setGlobally(el::ConfigurationType::ToFile, "true");
-  const char *log_format = getenv("MONERO_LOG_FORMAT");
-  if (!log_format)
-    log_format = MLOG_BASE_FORMAT;
-  c.setGlobally(el::ConfigurationType::Format, log_format);
-  c.setGlobally(el::ConfigurationType::ToStandardOutput, console ? "true" : "false");
-  c.setGlobally(el::ConfigurationType::MaxLogFileSize, std::to_string(max_log_file_size));
-  el::Loggers::setDefaultConfigurations(c, true);
 
-  el::Loggers::addFlag(el::LoggingFlag::HierarchicalLogging);
-  el::Loggers::addFlag(el::LoggingFlag::CreateLoggerAutomatically);
-  el::Loggers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog);
-  el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
-  el::Loggers::addFlag(el::LoggingFlag::StrictLogFileSizeCheck);
-  el::Helpers::installPreRollOutCallback([filename_base, max_log_files](const char *name, size_t){
-    std::string rname = generate_log_filename(filename_base.c_str());
-    int ret = rename(name, rname.c_str());
-    if (ret < 0)
+    try 
     {
-      // can't log a failure, but don't do the file removal below
-      return;
+        auto logger = spdlog::basic_logger_mt("basic_logger", filename_base);
     }
-    if (max_log_files != 0)
+    catch (const spdlog::spdlog_ex &ex)
     {
-      std::vector<boost::filesystem::path> found_files;
-      const boost::filesystem::directory_iterator end_itr;
-      const boost::filesystem::path filename_base_path(filename_base);
-      const boost::filesystem::path parent_path = filename_base_path.has_parent_path() ? filename_base_path.parent_path() : ".";
-      for (boost::filesystem::directory_iterator iter(parent_path); iter != end_itr; ++iter)
-      {
-        const std::string filename = iter->path().string();
-        if (filename.size() >= filename_base.size() && std::memcmp(filename.data(), filename_base.data(), filename_base.size()) == 0)
-        {
-          found_files.push_back(iter->path());
-        }
-      }
-      if (found_files.size() >= max_log_files)
-      {
-        std::sort(found_files.begin(), found_files.end(), [](const boost::filesystem::path &a, const boost::filesystem::path &b) {
-          boost::system::error_code ec;
-          std::time_t ta = boost::filesystem::last_write_time(boost::filesystem::path(a), ec);
-          if (ec)
-          {
-            MERROR("Failed to get timestamp from " << a << ": " << ec);
-            ta = std::time(nullptr);
-          }
-          std::time_t tb = boost::filesystem::last_write_time(boost::filesystem::path(b), ec);
-          if (ec)
-          {
-            MERROR("Failed to get timestamp from " << b << ": " << ec);
-            tb = std::time(nullptr);
-          }
-          static_assert(std::is_integral<time_t>(), "bad time_t");
-          return ta < tb;
-        });
-        for (size_t i = 0; i <= found_files.size() - max_log_files; ++i)
-        {
-          try
-          {
-            boost::system::error_code ec;
-            boost::filesystem::remove(found_files[i], ec);
-            if (ec)
-            {
-              MERROR("Failed to remove " << found_files[i] << ": " << ec);
-            }
-          }
-          catch (const std::exception &e)
-          {
-            MERROR("Failed to remove " << found_files[i] << ": " << e.what());
-          }
-        }
-      }
+        std::cout << "Log init failed: " << ex.what() << std::endl;
     }
-  });
-  mlog_set_common_prefix();
-  const char *monero_log = getenv("MONERO_LOGS");
-  if (!monero_log)
-  {
-    monero_log = get_default_categories(0);
-  }
-  mlog_set_log(monero_log);
+
 #ifdef WIN32
   EnableVTMode();
 #endif
@@ -244,7 +136,7 @@ void mlog_set_categories(const char *categories)
     if (*categories == '+')
     {
       ++categories;
-      new_categories = mlog_get_categories();
+      new_categories = mlog_get_categories(log_level);
       if (*categories)
       {
         if (!new_categories.empty())
@@ -255,7 +147,7 @@ void mlog_set_categories(const char *categories)
     else if (*categories == '-')
     {
       ++categories;
-      new_categories = mlog_get_categories();
+      new_categories = mlog_get_categories(log_level);
       std::vector<std::string> single_categories;
       boost::split(single_categories, categories, boost::is_any_of(","), boost::token_compress_on);
       for (const std::string &s: single_categories)
@@ -270,20 +162,56 @@ void mlog_set_categories(const char *categories)
       new_categories = categories;
     }
   }
-  el::Loggers::setCategories(new_categories.c_str(), true);
-  MLOG_LOG("New log categories: " << el::Loggers::getCategories());
 }
 
-std::string mlog_get_categories()
+
+std::string mlog_get_default_categories(int level)
 {
-  return el::Loggers::getCategories();
+  return mlog_get_categories(level);
+}
+
+std::string mlog_get_categories(int level)
+{
+  switch(level) {
+    case 0:
+      return "FATAL";
+    case 1:
+      return "FATAL,ERROR";
+    case 2:
+      return "FATAL,ERROR,WARNING";
+    case 3:
+      return "FATAL,ERROR,WARNING,INFO";
+    case 4:
+      return "FATAL,ERRER,WARNING,INFO,DEBUG";
+    case 5: 
+      return "FATAL,ERROR,WARNING,INFO,DEBUG,TRACE";
+    default: 
+      return "FATAL";
+  }
 }
 
 // maps epee style log level to new logging system
 void mlog_set_log_level(int level)
 {
-  const char *categories = get_default_categories(level);
-  mlog_set_categories(categories);
+  log_level = level;
+
+  switch(log_level) {
+    case 0:
+      spdlog::set_level(spdlog::level::critical); 
+      break;
+    case 1:
+      spdlog::set_level(spdlog::level::err); 
+    case 2:
+      spdlog::set_level(spdlog::level::warn); 
+    case 3:
+      spdlog::set_level(spdlog::level::info); 
+    case 4:
+      spdlog::set_level(spdlog::level::debug); 
+    case 5: 
+      spdlog::set_level(spdlog::level::trace); 
+    default: 
+      spdlog::set_level(spdlog::level::critical); 
+  }
 }
 
 void mlog_set_log(const char *log)
@@ -301,14 +229,14 @@ void mlog_set_log(const char *log)
   {
     // we can have a default level, eg, 2,foo:ERROR
     if (*ptr == ',') {
-      std::string new_categories = std::string(get_default_categories(level)) + ptr;
+      std::string new_categories = std::string(mlog_get_default_categories(level)) + ptr;
       mlog_set_categories(new_categories.c_str());
     }
     else {
       mlog_set_categories(log);
     }
   }
-  else if (level >= 0 && level <= 4)
+  if (level >= 0 && level <= 5)
   {
     mlog_set_log_level(level);
   }
@@ -473,53 +401,15 @@ void reset_console_color() {
 
 }
 
-static bool mlog(el::Level level, const char *category, const char *format, va_list ap) noexcept
-{
-  int size = 0;
-  char *p = NULL;
-  va_list apc;
-  bool ret = true;
-
-  /* Determine required size */
-  va_copy(apc, ap);
-  size = vsnprintf(p, size, format, apc);
-  va_end(apc);
-  if (size < 0)
-    return false;
-
-  size++;             /* For '\0' */
-  p = (char*)malloc(size);
-  if (p == NULL)
-    return false;
-
-  size = vsnprintf(p, size, format, ap);
-  if (size < 0)
-  {
-    free(p);
-    return false;
-  }
-
-  try
-  {
-    MCLOG(level, category, el::Color::Default, p);
-  }
-  catch(...)
-  {
-    ret = false;
-  }
-  free(p);
-
-  return ret;
-}
 
 #define DEFLOG(fun,lev) \
-  bool m##fun(const char *category, const char *fmt, ...) { va_list ap; va_start(ap, fmt); bool ret = mlog(el::Level::lev, category, fmt, ap); va_end(ap); return ret; }
+  bool m##fun(const char *category, const char *fmt, ...) { va_list ap; va_start(ap, fmt); bool ret = true; log_level = lev; va_end(ap); return ret; }
 
-DEFLOG(error, Error)
-DEFLOG(warning, Warning)
-DEFLOG(info, Info)
-DEFLOG(debug, Debug)
-DEFLOG(trace, Trace)
+DEFLOG(error, 1)
+DEFLOG(warning, 2)
+DEFLOG(info, 3)
+DEFLOG(debug, 4)
+DEFLOG(trace, 5)
 
 #undef DEFLOG
 

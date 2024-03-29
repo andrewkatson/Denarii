@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 6,
-  "moduleFileHash": "077a4c9e6fadec869cd7ab38e444d396a352c1842fcc2ea1c17e9667993af0ad",
+  "moduleFileHash": "674fe6829cb06d03925a2dac87cdeed9bfa156728eccf843cbeaa92a94523647",
   "flags": {
     "cmdRegistries": [
       "https://raw.githubusercontent.com/bazelboost/registry/main",
@@ -39,7 +39,7 @@
         "boost.uuid": "boost.uuid@1.83.0.bzl.2",
         "boost.program_options": "boost.program_options@1.83.0.bzl.1",
         "boost.regex": "boost.regex@1.83.0.bzl.1",
-        "boost.serialization": "boost.serialization@1.83.0.bzl.1",
+        "boost.serialization": "boost.serialization@1.83.0.bzl.2",
         "boost.system": "boost.system@1.83.0.bzl.1",
         "boost.scope_exit": "boost.scope_exit@1.83.0.bzl.1",
         "boost.date_time": "boost.date_time@1.83.0.bzl.2",
@@ -53,6 +53,8 @@
         "boost.foreach": "boost.foreach@1.83.0.bzl.1",
         "boost.variant": "boost.variant@1.83.0.bzl.1",
         "boost.variant2": "boost.variant2@1.83.0.bzl.1",
+        "boost.logic": "boost.logic@1.83.0.bzl.1",
+        "boost.timer": "boost.timer@1.83.0.bzl.1",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       }
@@ -645,10 +647,10 @@
         }
       }
     },
-    "boost.serialization@1.83.0.bzl.1": {
+    "boost.serialization@1.83.0.bzl.2": {
       "name": "boost.serialization",
-      "version": "1.83.0.bzl.1",
-      "key": "boost.serialization@1.83.0.bzl.1",
+      "version": "1.83.0.bzl.2",
+      "key": "boost.serialization@1.83.0.bzl.2",
       "repoName": "boost.serialization",
       "executionPlatformsToRegister": [],
       "toolchainsToRegister": [],
@@ -684,9 +686,9 @@
         "ruleClassName": "http_archive",
         "attributes": {
           "urls": [
-            "https://github.com/bazelboost/serialization/releases/download/bazelboost-1.83.0.bzl.1/serialization-bazelboost-1.83.0.bzl.1.tar.gz"
+            "https://github.com/bazelboost/serialization/releases/download/bazelboost-1.83.0.bzl.2/serialization-bazelboost-1.83.0.bzl.2.tar.gz"
           ],
-          "integrity": "sha256-h+d+r8qXXAjZ4wwLZ7UgbRYoaSwE8N26LsQHbdHTjLM=",
+          "integrity": "sha256-+QYS2h6r3xxGCmJ94U/tiLFq/aHbGVIVPfg7876xsjg=",
           "strip_prefix": "",
           "remote_patches": {},
           "remote_patch_strip": 0
@@ -1164,6 +1166,65 @@
             "https://github.com/bazelboost/variant2/releases/download/bazelboost-1.83.0.bzl.1/variant2-bazelboost-1.83.0.bzl.1.tar.gz"
           ],
           "integrity": "sha256-+hj7v9IXiXdntpCwQgeQKZPQNlGd0SVZVwerS1IJXE0=",
+          "strip_prefix": "",
+          "remote_patches": {},
+          "remote_patch_strip": 0
+        }
+      }
+    },
+    "boost.logic@1.83.0.bzl.1": {
+      "name": "boost.logic",
+      "version": "1.83.0.bzl.1",
+      "key": "boost.logic@1.83.0.bzl.1",
+      "repoName": "boost.logic",
+      "executionPlatformsToRegister": [],
+      "toolchainsToRegister": [],
+      "extensionUsages": [],
+      "deps": {
+        "rules_cc": "rules_cc@0.0.9",
+        "boost.config": "boost.config@1.83.0.bzl.6",
+        "boost.core": "boost.core@1.83.0.bzl.1",
+        "bazel_tools": "bazel_tools@_",
+        "local_config_platform": "local_config_platform@_"
+      },
+      "repoSpec": {
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+        "ruleClassName": "http_archive",
+        "attributes": {
+          "urls": [
+            "https://github.com/bazelboost/logic/releases/download/bazelboost-1.83.0.bzl.1/logic-bazelboost-1.83.0.bzl.1.tar.gz"
+          ],
+          "integrity": "sha256-c/pgvPBIu9i4YZyJngWm5UcSNob63dR8l0hvfY2m0k4=",
+          "strip_prefix": "",
+          "remote_patches": {},
+          "remote_patch_strip": 0
+        }
+      }
+    },
+    "boost.timer@1.83.0.bzl.1": {
+      "name": "boost.timer",
+      "version": "1.83.0.bzl.1",
+      "key": "boost.timer@1.83.0.bzl.1",
+      "repoName": "boost.timer",
+      "executionPlatformsToRegister": [],
+      "toolchainsToRegister": [],
+      "extensionUsages": [],
+      "deps": {
+        "rules_cc": "rules_cc@0.0.9",
+        "boost.config": "boost.config@1.83.0.bzl.6",
+        "boost.io": "boost.io@1.83.0.bzl.1",
+        "boost.predef": "boost.predef@1.83.0.bzl.1",
+        "bazel_tools": "bazel_tools@_",
+        "local_config_platform": "local_config_platform@_"
+      },
+      "repoSpec": {
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+        "ruleClassName": "http_archive",
+        "attributes": {
+          "urls": [
+            "https://github.com/bazelboost/timer/releases/download/bazelboost-1.83.0.bzl.1/timer-bazelboost-1.83.0.bzl.1.tar.gz"
+          ],
+          "integrity": "sha256-vC6ibAYNO0wQ3hcOYXKQqRjsYrKdDCnfNQPOxdKrDow=",
           "strip_prefix": "",
           "remote_patches": {},
           "remote_patch_strip": 0
