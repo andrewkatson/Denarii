@@ -116,7 +116,7 @@ namespace
 #ifdef _WIN32
         const std::string data(std::begin(arg), std::end(arg));
 #else
-        const boost::iterator_range<const char*> data(boost::as_literal(arg));
+        const boost::iterator_range<const char*> data(boost::as_literal(arg.data()));
 #endif
 
 #ifdef _WIN32
@@ -198,11 +198,6 @@ namespace
   };
   constexpr const http_list_separator_ http_list_separator{};
 
-  std::string to_string(boost::iterator_range<const char*> source)
-  {
-    return {source.begin(), source.size()};
-  }
-
   template<typename T>
   void add_first_field(std::string& str, const char8_t* name, const T& value)
   {
@@ -231,18 +226,18 @@ namespace
 
   //// Digest Authentication
 
+  // Function to generate digest using credentials and realm
   template<typename Digest>
-  typename std::invoke_result<Digest()>::type generate_a1(
-    Digest digest, const http::login& creds, const boost::string_ref realm)
+  auto generate_a1(Digest digest, const http::login& creds, const boost::string_ref realm)
   {
-    return digest(creds.username, u8":", realm, u8":", creds.password);
+      return digest(creds.username, u8":", realm, u8":", creds.password);
   }
 
+  // Overload to generate digest using session credentials and realm
   template<typename Digest>
-  typename std::invoke_result<Digest()>::type generate_a1(
-    Digest digest, const http::http_client_auth::session& user)
+  auto generate_a1(Digest digest, const http::http_client_auth::session& user)
   {
-    return generate_a1(std::move(digest), user.credentials, user.server.realm);
+      return generate_a1(std::move(digest), user.credentials, user.server.realm);
   }
 
   template<typename T>
@@ -547,16 +542,16 @@ namespace
       template<typename Digest>
       bool operator()(const Digest& digest) const
       {
-        if (boost::starts_with(request.algorithm, Digest::name, ascii_iequal) ||
+        if (boost::starts_with(request.algorithm,reinterpret_cast<const char*>(Digest::name.data()), ascii_iequal) ||
             (request.algorithm.empty() && std::is_same<md5_, Digest>::value))
         {
-          auto key = generate_a1(digest, user.credentials, auth_realm);
+          auto key = generate_a1(digest, user.credentials, epee::string_tools::toBoostStringRef(auth_realm));
           if (boost::ends_with(request.algorithm, sess_algo, ascii_iequal))
           {
-            key = digest(key, u8":", request.nonce, u8":", request.cnonce);
+            key = digest(key, reinterpret_cast<const char *>(u8":"), request.nonce, reinterpret_cast<const char *>(u8":"), request.cnonce);
           }
 
-          auto auth = digest(method, u8":", request.uri);
+          auto auth = digest(method, reinterpret_cast<const char *>(u8":"), request.uri);
           if (request.qop.empty())
           {
             return check(generate_old_response(std::move(digest), std::move(key), std::move(auth)));
@@ -627,7 +622,7 @@ namespace
 
       http::http_client_auth::session::keys take()
       {
-        return {to_string(nonce), to_string(opaque), to_string(realm), std::move(value_generator)};
+        return {epee::string_tools::iteratorRangeToString(nonce), epee::string_tools::iteratorRangeToString(opaque), epee::string_tools::iteratorRangeToString(realm), std::move(value_generator)};
       }
 
       boost::iterator_range<iterator> nonce;
@@ -678,7 +673,7 @@ namespace
 
       for (unsigned i = 0; i < 2; ++i)
       {
-        std::string out(to_string(fvalue));
+        std::string out(epee::string_tools::basicStringViewToString(fvalue));
 
         const auto algorithm = boost::range::join(
           Digest::name, (i == 0 ? std::basic_string_view<char8_t> {} : sess_algo)
@@ -688,12 +683,8 @@ namespace
         add_field(out, u8"nonce", denarii_quoted(nonce));
         add_field(out, u8"stale", is_stale ? ceref(u8"true") : ceref(u8"false"));
         
-        fields.push_back(std::make_pair(std::string(to_string(server_auth_field)), std::move(out)));
+        fields.push_back(std::make_pair(epee::string_tools::basicStringViewToString(server_auth_field), std::move(out)));
       }
-    }
-
-    std::string to_string(const std::basic_string_view<char8_t>& view) const {
-      return std::string(view.begin(), view.end());
     }
 
     const boost::string_ref nonce;
@@ -705,10 +696,10 @@ namespace
   {
     epee::net_utils::http::http_response_info rc{};
     rc.m_response_code = 401;
-    rc.m_response_comment = to_string(std::basic_string_view<char8_t>(u8"Unauthorized"));
-    rc.m_mime_tipe = to_string(std::basic_string_view<char8_t>(u8"text/html"));
+    rc.m_response_comment = epee::string_tools::basicStringViewToString(std::basic_string_view<char8_t>(u8"Unauthorized"));
+    rc.m_mime_tipe = epee::string_tools::basicStringViewToString(std::basic_string_view<char8_t>(u8"text/html"));
     rc.m_body = 
-      to_string(std::basic_string_view<char8_t>(u8"<html><head><title>Unauthorized Access</title></head><body><h1>401 Unauthorized</h1></body></html>"));
+      epee::string_tools::basicStringViewToString(std::basic_string_view<char8_t>(u8"<html><head><title>Unauthorized Access</title></head><body><h1>401 Unauthorized</h1></body></html>"));
 
     boost::fusion::for_each(
       digest_algorithms, add_challenge{nonce, rc.m_additional_fields, is_stale}
@@ -789,7 +780,7 @@ namespace epee
         if (user->server.generator)
         {
           ++(user->counter);
-          return std::make_pair(std::string(client_auth_field), user->server.generator(*user, method, uri));
+          return std::make_pair(epee::string_tools::basicStringViewToString(client_auth_field), user->server.generator(*user, method, uri));
         }
         return boost::none;
       }

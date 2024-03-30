@@ -40,7 +40,7 @@ namespace
   template<typename context_t>
   void on_levin_traffic(const context_t &context, bool initiator, bool sent, bool error, size_t bytes, const char *category)
   {
-    MCINFO("net.p2p.traffic", context << bytes << " bytes " << (sent ? "sent" : "received") << (error ? "/corrupt" : "")
+    MCINFO("net.p2p.traffic", epee::net_utils::print_connection_context(context) << bytes << " bytes " << (sent ? "sent" : "received") << (error ? "/corrupt" : "")
         << " for category " << category << " initiated by " << (initiator ? "us" : "peer"));
   }
   template<typename context_t>

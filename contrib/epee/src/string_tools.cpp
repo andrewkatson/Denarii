@@ -66,6 +66,6 @@ namespace string_tools
         return false;
     return true;
   }
-}
-}
+} // namespace string_tools
+} // namespace epee
 

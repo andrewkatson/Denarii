@@ -127,7 +127,7 @@ class async_protocol_handler
     if(!m_pservice_endpoint->do_send(byte_slice{as_byte_span(head), in_buff}))
       return false;
 
-    MDEBUG(m_connection_context << "LEVIN_PACKET_SENT. [len=" << head.m_cb
+    MDEBUG(epee::net_utils::print_connection_context(m_connection_context) << "LEVIN_PACKET_SENT. [len=" << head.m_cb
         << ", flags" << head.m_flags
         << ", r?=" << head.m_have_to_return_data
         <<", cmd = " << head.m_command
@@ -319,7 +319,7 @@ public:
     }
     CHECK_AND_ASSERT_MES_NO_RET(0 == boost::interprocess::ipcdetail::atomic_read32(&m_wait_count), "Failed to wait for operation completion. m_wait_count = " << m_wait_count);
 
-    MTRACE(m_connection_context << "~async_protocol_handler()");
+    MTRACE(epee::net_utils::print_connection_context(m_connection_context) << "~async_protocol_handler()");
 
     }
     catch (...) { /* ignore */ }
@@ -327,10 +327,10 @@ public:
 
   bool start_outer_call()
   {
-    MTRACE(m_connection_context << "[levin_protocol] -->> start_outer_call");
+    MTRACE(epee::net_utils::print_connection_context(m_connection_context) << "[levin_protocol] -->> start_outer_call");
     if(!m_pservice_endpoint->add_ref())
     {
-      MERROR(m_connection_context << "[levin_protocol] -->> start_outer_call failed");
+      MERROR(epee::net_utils::print_connection_context(m_connection_context) << "[levin_protocol] -->> start_outer_call failed");
       return false;
     }
     boost::interprocess::ipcdetail::atomic_inc32(&m_wait_count);
@@ -338,7 +338,7 @@ public:
   }
   bool finish_outer_call()
   {
-    MTRACE(m_connection_context << "[levin_protocol] <<-- finish_outer_call");
+    MTRACE(epee::net_utils::print_connection_context(m_connection_context) << "[levin_protocol] <<-- finish_outer_call");
     boost::interprocess::ipcdetail::atomic_dec32(&m_wait_count);
     m_pservice_endpoint->release();
     return true;
@@ -394,7 +394,7 @@ public:
 
     if(!m_config.m_pcommands_handler)
     {
-      MERROR(m_connection_context << "Commands handler not set!");
+      MERROR(epee::net_utils::print_connection_context(m_connection_context) << "Commands handler not set!");
       return false;
     }
 
@@ -405,7 +405,7 @@ public:
     // flipped to subtraction; prevent overflow since m_max_packet_size is variable and public
     if(cb > m_config.m_max_packet_size - m_cache_in_buffer.size() - m_fragment_buffer.size())
     {
-      MWARNING(m_connection_context << "Maximum packet size exceed!, m_max_packet_size = " << m_config.m_max_packet_size
+      MWARNING(epee::net_utils::print_connection_context(m_connection_context) << "Maximum packet size exceed!, m_max_packet_size = " << m_config.m_max_packet_size
                           << ", packet received " << m_cache_in_buffer.size() +  cb 
                           << ", connection will be closed.");
       return false;
@@ -430,7 +430,7 @@ public:
               //async call scenario
               boost::shared_ptr<invoke_response_handler_base> response_handler = m_invoke_response_handlers.front();
               response_handler->reset_timer();
-              MDEBUG(m_connection_context << "LEVIN_PACKET partial msg received. len=" << cb);
+              MDEBUG(epee::net_utils::print_connection_context(m_connection_context) << "LEVIN_PACKET partial msg received. len=" << cb);
             }
           }
           break;
@@ -458,7 +458,7 @@ public:
 
             if (m_fragment_buffer.size() < sizeof(bucket_head2))
             {
-              MERROR(m_connection_context << "Fragmented data too small for levin header");
+              MERROR(epee::net_utils::print_connection_context(m_connection_context) << "Fragmented data too small for levin header");
               return false;
             }
 
@@ -470,7 +470,7 @@ public:
 
           bool is_response = (m_oponent_protocol_ver == LEVIN_PROTOCOL_VER_1 && m_current_head.m_flags&LEVIN_PACKET_RESPONSE);
 
-          MDEBUG(m_connection_context << "LEVIN_PACKET_RECEIVED. [len=" << m_current_head.m_cb
+          MDEBUG(epee::net_utils::print_connection_context(m_connection_context) << "LEVIN_PACKET_RECEIVED. [len=" << m_current_head.m_cb
             << ", flags" << m_current_head.m_flags 
             << ", r?=" << m_current_head.m_have_to_return_data 
             <<", cmd = " << m_current_head.m_command 
@@ -498,7 +498,7 @@ public:
               //use sync call scenario
               if(!boost::interprocess::ipcdetail::atomic_read32(&m_wait_count) && !boost::interprocess::ipcdetail::atomic_read32(&m_close_called))
               {
-                MERROR(m_connection_context << "no active invoke when response came, wtf?");
+                MERROR(epee::net_utils::print_connection_context(m_connection_context) << "no active invoke when response came, wtf?");
                 return false;
               }else
               {
@@ -526,7 +526,7 @@ public:
               if(!m_pservice_endpoint->do_send(byte_slice{std::move(return_buff)}))
                 return false;
 
-              MDEBUG(m_connection_context << "LEVIN_PACKET_SENT. [len=" << head.m_cb
+              MDEBUG(epee::net_utils::print_connection_context(m_connection_context) << "LEVIN_PACKET_SENT. [len=" << head.m_cb
                 << ", flags" << head.m_flags
                 << ", r?=" << head.m_have_to_return_data
                 <<", cmd = " << head.m_command
@@ -549,7 +549,7 @@ public:
           {
             if(m_cache_in_buffer.size() >= sizeof(uint64_t) && *((uint64_t*)m_cache_in_buffer.span(8).data()) != SWAP64LE(LEVIN_SIGNATURE))
             {
-              MWARNING(m_connection_context << "Signature mismatch, connection will be closed");
+              MWARNING(epee::net_utils::print_connection_context(m_connection_context) << "Signature mismatch, connection will be closed");
               return false;
             }
             is_continue = false;
@@ -569,7 +569,7 @@ public:
 #endif
           if(LEVIN_SIGNATURE != phead.m_signature)
           {
-            LOG_ERROR_CC(m_connection_context, "Signature mismatch, connection will be closed");
+            LOG_ERROR_CC(epee::net_utils::print_connection_context(m_connection_context), "Signature mismatch, connection will be closed");
             return false;
           }
           m_current_head = phead;
@@ -579,7 +579,7 @@ public:
           m_oponent_protocol_ver = m_current_head.m_protocol_version;
           if(m_current_head.m_cb > m_config.m_max_packet_size)
           {
-            LOG_ERROR_CC(m_connection_context, "Maximum packet size exceed!, m_max_packet_size = " << m_config.m_max_packet_size 
+            LOG_ERROR_CC(epee::net_utils::print_connection_context(m_connection_context), "Maximum packet size exceed!, m_max_packet_size = " << m_config.m_max_packet_size 
               << ", packet header received " << m_current_head.m_cb 
               << ", connection will be closed.");
             return false;
@@ -587,7 +587,7 @@ public:
         }
         break;
       default:
-        LOG_ERROR_CC(m_connection_context, "Undefined state in levin_server_impl::connection_handler, m_state=" << m_state);
+        LOG_ERROR_CC(epee::net_utils::print_connection_context(m_connection_context), "Undefined state in levin_server_impl::connection_handler, m_state=" << m_state);
         return false;
       }
     }
@@ -636,7 +636,7 @@ public:
 
       if(!send_message(command, in_buff, LEVIN_PACKET_REQUEST, true))
       {
-        LOG_ERROR_CC(m_connection_context, "Failed to do_send");
+        LOG_ERROR_CC(epee::net_utils::print_connection_context(m_connection_context), "Failed to do_send");
         err_code = LEVIN_ERROR_CONNECTION;
         break;
       }
@@ -677,7 +677,7 @@ public:
 
     if (!send_message(command, in_buff, LEVIN_PACKET_REQUEST, true))
     {
-      LOG_ERROR_CC(m_connection_context, "Failed to send request");
+      LOG_ERROR_CC(epee::net_utils::print_connection_context(m_connection_context), "Failed to send request");
       return LEVIN_ERROR_CONNECTION;
     }
 
@@ -693,7 +693,7 @@ public:
       }
       if(misc_utils::get_tick_count() - ticks_start > m_config.m_invoke_timeout)
       {
-        MWARNING(m_connection_context << "invoke timeout (" << m_config.m_invoke_timeout << "), closing connection ");
+        MWARNING(epee::net_utils::print_connection_context(m_connection_context) << "invoke timeout (" << m_config.m_invoke_timeout << "), closing connection ");
         close();
         return LEVIN_ERROR_CONNECTION_TIMEDOUT;
       }
@@ -727,7 +727,7 @@ public:
 
     if (!send_message(command, in_buff, LEVIN_PACKET_REQUEST, false))
     {
-      LOG_ERROR_CC(m_connection_context, "Failed to send notify message");
+      LOG_ERROR_CC(epee::net_utils::print_connection_context(m_connection_context), "Failed to send notify message");
       return -1;
     }
 
@@ -752,11 +752,11 @@ public:
     const std::size_t length = message.size();
     if (!m_pservice_endpoint->do_send(std::move(message)))
     {
-      LOG_ERROR_CC(m_connection_context, "Failed to send message, dropping it");
+      LOG_ERROR_CC(epee::net_utils::print_connection_context(m_connection_context), "Failed to send message, dropping it");
       return -1;
     }
 
-    MDEBUG(m_connection_context << "LEVIN_PACKET_SENT. [len=" << (length - sizeof(bucket_head2)) << ", r?=0]");
+    MDEBUG(epee::net_utils::print_connection_context(m_connection_context) << "LEVIN_PACKET_SENT. [len=" << (length - sizeof(bucket_head2)) << ", r?=0]");
     return 1;
   }
   //------------------------------------------------------------------------------------------

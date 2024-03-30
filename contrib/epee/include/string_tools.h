@@ -336,6 +336,18 @@ POP_WARNINGS
   std::string from_u8string(std::string &&s) {
     return std::move(s);
   }
+  //----------------------------------------------------------------------------
+  std::string basicStringViewToString(const std::basic_string_view<char8_t>& view) {
+    return std::string(view.begin(), view.end());
+  }
+  //----------------------------------------------------------------------------
+  std::string iteratorRangeToString(boost::iterator_range<const char*> source)
+  {
+    return {source.begin(), source.size()};
+  }
+  boost::string_ref toBoostStringRef(const std::basic_string_view<char8_t>& view) {
+    return boost::string_ref(reinterpret_cast<const char*>(view.data()), view.size());
+  }
 #ifdef _WIN32
   inline std::wstring utf8_to_utf16(const std::string& str)
   {
