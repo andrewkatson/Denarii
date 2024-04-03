@@ -10,13 +10,6 @@ new_local_repository(
     path = "external/db_drivers",
 )
 
-# easylogging++
-new_local_repository(
-    name = "easy_logging",
-    build_file = "@//external:BUILD.easylogging++",
-    path = "external/easylogging++",
-)
-
 #  miniupnp
 new_local_repository(
     name = "miniupnp",

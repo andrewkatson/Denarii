@@ -186,13 +186,13 @@ public:
     {
       if(m_con.start_outer_call())
       {
-        MDEBUG(con.get_context_ref() << "anvoke_handler, timeout: " << timeout);
+        MDEBUG(epee::net_utils::print_connection_context(con.get_context_ref()) << "anvoke_handler, timeout: " << timeout);
         m_timer.expires_from_now(boost::posix_time::milliseconds(timeout));
         m_timer.async_wait([&con, command, cb, timeout](const boost::system::error_code& ec)
         {
           if(ec == boost::asio::error::operation_aborted)
             return;
-          MINFO(con.get_context_ref() << "Timeout on invoke operation happened, command: " << command << " timeout: " << timeout);
+          MINFO(epee::net_utils::print_connection_context(con.get_context_ref()) << "Timeout on invoke operation happened, command: " << command << " timeout: " << timeout);
           epee::span<const uint8_t> fake;
           cb(LEVIN_ERROR_CONNECTION_TIMEDOUT, fake, con.get_context_ref());
           con.close();
@@ -256,7 +256,7 @@ public:
         {
           if(ec == boost::asio::error::operation_aborted)
             return;
-          MINFO(con.get_context_ref() << "Timeout on invoke operation happened, command: " << command << " timeout: " << timeout);
+          MINFO(epee::net_utils::print_connection_context(con.get_context_ref()) << "Timeout on invoke operation happened, command: " << command << " timeout: " << timeout);
           epee::span<const uint8_t> fake;
           cb(LEVIN_ERROR_CONNECTION_TIMEDOUT, fake, con.get_context_ref());
           con.close();

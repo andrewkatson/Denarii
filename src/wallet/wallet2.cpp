@@ -2502,7 +2502,7 @@ void wallet2::process_new_transaction(const crypto::hash &txid, const cryptonote
       total_received_2 += i.second;
     if (total_received_1 != total_received_2)
     {
-      const el::Level level = el::Level::Warning;
+      const int level = WARNING_LOG;
       MCLOG_RED(level, "global", "**********************************************************************");
       MCLOG_RED(level, "global", "Consistency failure in amounts received");
       MCLOG_RED(level, "global", "Check transaction " << txid);
@@ -8621,7 +8621,7 @@ void wallet2::get_outs(std::vector<std::vector<tools::wallet2::get_outs_entry>> 
           [](const get_outputs_out &a, const get_outputs_out &b) { return a.index < b.index; });
     }
 
-    if (ELPP->vRegistry()->allowed(el::Level::Debug, MONERO_DEFAULT_LOG_CATEGORY))
+    if (ALLOWED_TO_LOG(DEBUG_LOG))
     {
       std::map<uint64_t, std::set<uint64_t>> outs;
       for (const auto &i: req.outputs)

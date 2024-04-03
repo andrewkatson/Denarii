@@ -27,7 +27,6 @@
 
 #include "expect.h"
 
-#include "easylogging++.h"
 #include <string>
 
 namespace detail
@@ -49,7 +48,9 @@ namespace detail
 
                 // remove path, get just filename + extension
                 char buff[256] = {0};
-                el::base::utils::File::buildBaseFilename(file, buff, sizeof(buff) - 1);
+                char separator = '/';
+                char * separator_ptr = &separator;
+                buildBaseFilename(file, buff, sizeof(buff) - 1, separator_ptr);
                 error_msg.append(buff);
 
                 error_msg.push_back(':');

@@ -291,7 +291,6 @@ cc_library(
         "@boost.program_options",
         "@boost.format",
         "//src/boost/archive:boost_extra",
-        "@easy_logging",
         "@libsodium",
         "@libunbound",
         "@openssl//:libcrypto",

@@ -68,6 +68,22 @@ string. `code` can be any enum convertible to `std::error_code`. */
 #define MONERO_THROW(code, msg) \
     ::detail::expect::throw_( code , msg , __FILE__ , __LINE__ )
 
+#  define STRCAT(a, b, len) strcat(a, b)
+
+inline void buildBaseFilename(const std::string& fullPath, char buff[], std::size_t limit, const char* separator) {
+    const char *filename = fullPath.c_str();
+    std::size_t lastSlashAt = fullPath.find_last_of(separator);
+    filename += lastSlashAt ? lastSlashAt+1 : 0;
+    std::size_t sizeOfFilename = strlen(filename);
+    if (sizeOfFilename >= limit) {
+        filename += (sizeOfFilename - limit);
+        if (filename[0] != '.' && filename[1] != '.') {  // prepend if not already
+        filename += 3;  // 3 = '..'
+        STRCAT(buff, "..", limit);
+        }
+    }
+    STRCAT(buff, filename, limit);
+}
 
 template<typename> class expect;
 

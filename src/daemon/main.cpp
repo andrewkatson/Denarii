@@ -102,7 +102,7 @@ uint16_t parse_public_rpc_port(const po::variables_map &vm)
 
   if (address->is_loopback() || address->is_local())
   {
-    MLOG_RED(el::Level::Warning, "--" << public_node_arg.name 
+    MLOG_RED(WARNING_LOG, "--" << public_node_arg.name 
       << " is enabled, but RPC server " << address->str() 
       << " may be unreachable from outside, please check RPC server bind address");
   }

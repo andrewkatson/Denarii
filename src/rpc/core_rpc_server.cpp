@@ -1464,7 +1464,7 @@ namespace cryptonote
   {
     RPC_TRACKER(set_log_categories);
     mlog_set_log(req.categories.c_str());
-    res.categories = mlog_get_categories();
+    res.categories = mlog_get_categories(log_level);
     res.status = CORE_RPC_STATUS_OK;
     return true;
   }

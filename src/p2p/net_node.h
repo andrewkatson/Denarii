@@ -42,6 +42,7 @@
 #include <functional>
 #include <utility>
 #include <vector>
+#include <typeinfo>
 
 #include "src/cryptonote_config.h"
 #include "src/cryptonote_protocol/fwd.h"

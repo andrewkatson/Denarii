@@ -1298,6 +1298,16 @@ namespace nodetool
 #define LOG_PRINT_CC_PRIORITY_NODE(priority, con, msg) \
   do { \
     if (priority) {\
+      LOG_INFO_CC(epee::net_utils::print_connection_context(con), "[priority]" << msg); \
+    } else {\
+      LOG_INFO_CC(epee::net_utils::print_connection_context(con), msg); \
+    } \
+  } while(0)
+
+
+#define LOG_PRINT_CC_PRIORITY_NODE_BOOL(priority, con, msg) \
+  do { \
+    if (priority) {\
       LOG_INFO_CC(con, "[priority]" << msg); \
     } else {\
       LOG_INFO_CC(con, msg); \
@@ -1337,7 +1347,7 @@ namespace nodetool
     if(!con)
     {
       bool is_priority = is_priority_node(na);
-      LOG_PRINT_CC_PRIORITY_NODE(is_priority, bool(con), "Connect failed to " << na.str()
+      LOG_PRINT_CC_PRIORITY_NODE_BOOL(is_priority, bool(con), "Connect failed to " << na.str()
         /*<< ", try " << try_count*/);
       record_addr_failed(na);
       return false;
@@ -1359,7 +1369,7 @@ namespace nodetool
     if(just_take_peerlist)
     {
       zone.m_net_server.get_config_object().close(con->m_connection_id);
-      LOG_DEBUG_CC(*con, "CONNECTION HANDSHAKED OK AND CLOSED.");
+      LOG_DEBUG_CC(epee::net_utils::print_connection_context(*con), "CONNECTION HANDSHAKED OK AND CLOSED.");
       return true;
     }
 
@@ -1383,7 +1393,7 @@ namespace nodetool
     zone.m_peerlist.append_with_peer_anchor(ape);
     zone.m_notifier.new_out_connection();
 
-    LOG_DEBUG_CC(*con, "CONNECTION HANDSHAKED OK.");
+    LOG_DEBUG_CC(epee::net_utils::print_connection_context(*con), "CONNECTION HANDSHAKED OK.");
     return true;
   }
 
@@ -1414,14 +1424,14 @@ namespace nodetool
     if (!res) {
       bool is_priority = is_priority_node(na);
 
-      LOG_PRINT_CC_PRIORITY_NODE(is_priority, *con, "Failed to HANDSHAKE with peer " << na.str());
+      LOG_PRINT_CC_PRIORITY_NODE(is_priority,  *con, "Failed to HANDSHAKE with peer " << na.str());
       record_addr_failed(na);
       return false;
     }
 
     zone.m_net_server.get_config_object().close(con->m_connection_id);
 
-    LOG_DEBUG_CC(*con, "CONNECTION HANDSHAKED OK AND CLOSED.");
+    LOG_DEBUG_CC(epee::net_utils::print_connection_context(*con), "CONNECTION HANDSHAKED OK AND CLOSED.");
 
     return true;
   }
@@ -2267,7 +2277,7 @@ namespace nodetool
     {
       if(ec)
       {
-        LOG_WARNING_CC(ping_context, "back ping connect failed to " << address.str());
+        LOG_WARNING_CC(epee::net_utils::print_connection_context(ping_context), "back ping connect failed to " << address.str());
         return false;
       }
       COMMAND_PING::request req;
@@ -2288,14 +2298,14 @@ namespace nodetool
       {
         if(code <= 0)
         {
-          LOG_WARNING_CC(ping_context, "Failed to invoke COMMAND_PING to " << address.str() << "(" << code <<  ", " << epee::levin::get_err_descr(code) << ")");
+          LOG_WARNING_CC(epee::net_utils::print_connection_context(ping_context), "Failed to invoke COMMAND_PING to " << address.str() << "(" << code <<  ", " << epee::levin::get_err_descr(code) << ")");
           return;
         }
 
         network_zone& zone = m_network_zones.at(address.get_zone());
         if(rsp.status != PING_OK_RESPONSE_STATUS_TEXT || pr != rsp.peer_id)
         {
-          LOG_WARNING_CC(ping_context, "back ping invoke wrong response \"" << rsp.status << "\" from" << address.str() << ", hsh_peer_id=" << pr_ << ", rsp.peer_id=" << peerid_to_string(rsp.peer_id));
+          LOG_WARNING_CC(epee::net_utils::print_connection_context(ping_context), "back ping invoke wrong response \"" << rsp.status << "\" from" << address.str() << ", hsh_peer_id=" << pr_ << ", rsp.peer_id=" << peerid_to_string(rsp.peer_id));
           zone.m_net_server.get_config_object().close(ping_context.m_connection_id);
           return;
         }
@@ -2305,7 +2315,7 @@ namespace nodetool
 
       if(!inv_call_res)
       {
-        LOG_WARNING_CC(ping_context, "back ping invoke failed to " << address.str());
+        LOG_WARNING_CC(epee::net_utils::print_connection_context(ping_context), "back ping invoke failed to " << address.str());
         zone.m_net_server.get_config_object().close(ping_context.m_connection_id);
         return false;
       }

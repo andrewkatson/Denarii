@@ -777,7 +777,7 @@ PRAGMA_WARNING_DISABLE_VS(4355)
     {
       if(ec == boost::asio::error::operation_aborted)
         return;
-      MDEBUG(context << "connection timeout, closing");
+      MDEBUG(epee::net_utils::print_connection_context(context) << "connection timeout, closing");
       self->close();
     });
   }
@@ -1372,7 +1372,7 @@ POP_WARNINGS
     }
     else
     {
-	MWARNING(out << " was not added, socket/io_service mismatch");
+	MWARNING(epee::net_utils::print_connection_context(out) << " was not added, socket/io_service mismatch");
     }
     return false;
   }

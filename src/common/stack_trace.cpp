@@ -32,7 +32,6 @@
 #else
 #define ELPP_FEATURE_CRASH_LOG 1
 #endif
-#include "easylogging++.h"
 
 #include <iomanip>
 #include <stdexcept>

@@ -10,6 +10,5 @@ cc_library(
         "//src:common",
         "@boost.system",
         "@boost.crc",
-        "@easy_logging",
     ],
 )
