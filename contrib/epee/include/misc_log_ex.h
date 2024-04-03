@@ -43,10 +43,17 @@
 #define MAX_LOG_FILE_SIZE 104850000 // 100 MB - 7600 bytes
 #define MAX_LOG_FILES 50
 
+#define FATAL_LOG 0
+#define ERROR_LOG 1
+#define WARNING_LOG 2
+#define INFO_LOG 3
+#define DEBUG_LOG 4
+#define TRACE_LOG 5
+
 static int log_level = 0;
 
 #define ALLOWED_TO_LOG(level) \
-  log_level <= level;
+  log_level <= level
 
 #define MCLOG(level, x) do { \
   std::stringstream ss; \
@@ -79,12 +86,12 @@ static int log_level = 0;
 #define MCDEBUG(cat,x) MCLOG(4, x)
 #define MCTRACE(cat,x) MCLOG(5, x)
 
-#define MCLOG_RED(level,cat,x) MCFATAL(cat,x)
-#define MCLOG_GREEN(level,cat,x) MCINFO(cat,x)
-#define MCLOG_YELLOW(level,cat,x) MCWARNING(cat,x)
-#define MCLOG_BLUE(level,cat,x) MCINFO(cat,x)
-#define MCLOG_MAGENTA(level,cat,x) MCINFO(cat,x)
-#define MCLOG_CYAN(level,cat,x) MCINFO(cat,x)
+#define MCLOG_RED(level,cat,x) MCLOG(level,x)
+#define MCLOG_GREEN(level,cat,x) MCLOG(level,x)
+#define MCLOG_YELLOW(level,cat,x) MCLOG(level,x)
+#define MCLOG_BLUE(level,cat,x) MCLOG(level,x)
+#define MCLOG_MAGENTA(level,cat,x) MCLOG(level,x)
+#define MCLOG_CYAN(level,cat,x) MCLOG(level,x)
 
 #define MLOG_RED(level,x) MCLOG_RED(level,MONERO_DEFAULT_LOG_CATEGORY,x)
 #define MLOG_GREEN(level,x) MCLOG_GREEN(level,MONERO_DEFAULT_LOG_CATEGORY,x)

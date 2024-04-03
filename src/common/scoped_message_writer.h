@@ -52,13 +52,13 @@ private:
   std::stringstream m_oss;
   epee::console_colors m_color;
   bool m_bright;
-  el::Level m_log_level;
+  int m_log_level;
 public:
   scoped_message_writer(
       epee::console_colors color = epee::console_color_default
     , bool bright = false
     , std::string&& prefix = std::string()
-    , el::Level log_level = el::Level::Info
+    , int log_level = INFO_LOG
     )
     : m_flush(true)
     , m_color(color)
@@ -99,7 +99,7 @@ public:
     {
       m_flush = false;
 
-      MCLOG_FILE(m_log_level, "msgwriter", m_oss.str());
+      MCLOG(m_log_level, m_oss.str());
 
       PAUSE_READLINE();
       if (epee::console_color_default == m_color)
@@ -119,17 +119,17 @@ public:
 
 inline scoped_message_writer success_msg_writer(bool color = true)
 {
-  return scoped_message_writer(color ? epee::console_color_green : epee::console_color_default, false, std::string(), el::Level::Info);
+  return scoped_message_writer(color ? epee::console_color_green : epee::console_color_default, false, std::string(), INFO_LOG);
 }
 
 inline scoped_message_writer msg_writer(epee::console_colors color = epee::console_color_default)
 {
-  return scoped_message_writer(color, false, std::string(), el::Level::Info);
+  return scoped_message_writer(color, false, std::string(), INFO_LOG);
 }
 
 inline scoped_message_writer fail_msg_writer()
 {
-  return scoped_message_writer(epee::console_color_red, true, "Error: ", el::Level::Error);
+  return scoped_message_writer(epee::console_color_red, true, "Error: ", ERROR_LOG);
 }
 
 } // namespace tools

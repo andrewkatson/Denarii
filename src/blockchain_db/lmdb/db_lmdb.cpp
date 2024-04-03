@@ -4557,7 +4557,7 @@ void BlockchainLMDB::fixup()
     ptr = (char *)k.mv_data; \
     ptr[sizeof(name)-2]++; } while(0)
 
-#define LOGIF(y) ALLOWED_TO_LOG(y)
+#define LOGIF(y) ALLOWED_TO_LOG(y);
 
 void BlockchainLMDB::migrate_0_1()
 {

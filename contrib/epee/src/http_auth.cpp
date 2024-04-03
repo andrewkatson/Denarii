@@ -116,7 +116,7 @@ namespace
 #ifdef _WIN32
         const std::string data(std::begin(arg), std::end(arg));
 #else
-        const boost::iterator_range<const char*> data(boost::as_literal(arg.data()));
+        const boost::iterator_range<const char*> data(boost::as_literal(arg));
 #endif
 
 #ifdef _WIN32
@@ -221,7 +221,7 @@ namespace
   template<typename T>
   quoted_result<T> denarii_quoted(const T& arg)
   {
-    return boost::range::join(boost::range::join(ceref(u8"\""), arg), ceref(u8"\""));
+    return boost::range::join(boost::range::join(epee::string_tools::toBoostStringRef(u8"\""), arg), epee::string_tools::toBoostStringRef(u8"\""));
   }
 
   //// Digest Authentication
@@ -230,7 +230,7 @@ namespace
   template<typename Digest>
   auto generate_a1(Digest digest, const http::login& creds, const boost::string_ref realm)
   {
-      return digest(creds.username, u8":", realm, u8":", creds.password);
+      return digest(creds.username, reinterpret_cast<const char *>(u8":"), realm, reinterpret_cast<const char *>(u8":"), creds.password);
   }
 
   // Overload to generate digest using session credentials and realm
@@ -266,11 +266,11 @@ namespace
       const boost::string_ref method, const boost::string_ref uri) const
     {
       const auto response = digest(
-        generate_a1(digest, user), u8":", user.server.nonce, u8":", digest(method, u8":", uri)
+        generate_a1(digest, user), reinterpret_cast<const char *>(u8":"), user.server.nonce, reinterpret_cast<const char *>(u8":"), digest(method, reinterpret_cast<const char *>(u8":"), uri)
       );
       std::string out{};
       out.reserve(client_reserve_size);
-      init_client_value(out, Digest::name, user, uri, response);
+      init_client_value(out, reinterpret_cast<const char *>(Digest::name.data()), user, uri, response);
       return out;
     }
   private:
@@ -307,10 +307,10 @@ namespace
       std::array<char, 8> nc{{}};
       boost::copy(out, nc.data());
       const auto response = digest(
-        generate_a1(digest, user), u8":", user.server.nonce, u8":", nc, u8"::auth:", digest(method, u8":", uri)
+        generate_a1(digest, user), reinterpret_cast<const char *>(u8":"), user.server.nonce, reinterpret_cast<const char *>(u8":"), nc, reinterpret_cast<const char *>(u8"::auth:"), digest(method, reinterpret_cast<const char *>(u8":"), uri)
       );
       out.clear();
-      init_client_value(out, Digest::name, user, uri, response);
+      init_client_value(out, reinterpret_cast<const char *>(Digest::name.data()), user, uri, response);
       add_field(out, u8"qop", ceref(u8"auth"));
       add_field(out, u8"nc", nc);
       return out;
@@ -362,7 +362,7 @@ namespace
       while (true)
       {
         current = std::find_if(current, end, [] (const field& value) {
-          return boost::equals(server_auth_field, value.first, ascii_iequal);
+          return boost::equals(reinterpret_cast<const char*>(server_auth_field.data()), value.first, ascii_iequal);
         });
         if (current == end)
           break;
@@ -379,7 +379,7 @@ namespace
         }
         ++current;
       }
-      if (is_first || boost::equals(best.stale, ceref(u8"true"), ascii_iequal))
+      if (is_first || boost::equals(best.stale, reinterpret_cast<const char *>(ceref(u8"true").data()), ascii_iequal))
         return best.take();
       return {}; // authentication failed with bad user/pass
     }
@@ -453,24 +453,24 @@ namespace
           };
 
           field_table.add
-            (u8"algorithm", std::bind(parse_token{}, _1, _2, _3, std::bind(&auth_message::algorithm, _4)))
-            (u8"cnonce", std::bind(parse_string{}, _1, _2, _3, std::bind(&auth_message::cnonce, _4)))
-            (u8"domain", std::bind(parse_string{}, _1, _2, _3)) // ignore field
-            (u8"nc", parse_nc{})
-            (u8"nonce", std::bind(parse_string{}, _1, _2, _3, std::bind(&auth_message::nonce, _4)))
-            (u8"opaque", std::bind(parse_string{}, _1, _2, _3, std::bind(&auth_message::opaque, _4)))
-            (u8"qop", std::bind(parse_token{}, _1, _2, _3, std::bind(&auth_message::qop, _4)))
-            (u8"realm", std::bind(parse_string{}, _1, _2, _3, std::bind(&auth_message::realm, _4)))
-            (u8"response", parse_response{})
-            (u8"stale", std::bind(parse_token{}, _1, _2, _3, std::bind(&auth_message::stale, _4)))
-            (u8"uri", std::bind(parse_string{}, _1, _2, _3, std::bind(&auth_message::uri, _4)))
-            (u8"username", std::bind(parse_string{}, _1, _2, _3, std::bind(&auth_message::username, _4)));
+            (reinterpret_cast<const char *>(u8"algorithm"), std::bind(parse_token{}, _1, _2, _3, std::bind(&auth_message::algorithm, _4)))
+            (reinterpret_cast<const char *>(u8"cnonce"), std::bind(parse_string{}, _1, _2, _3, std::bind(&auth_message::cnonce, _4)))
+            (reinterpret_cast<const char *>(u8"domain"), std::bind(parse_string{}, _1, _2, _3)) // ignore field
+            (reinterpret_cast<const char *>(u8"nc"), parse_nc{})
+            (reinterpret_cast<const char *>(u8"nonce"), std::bind(parse_string{}, _1, _2, _3, std::bind(&auth_message::nonce, _4)))
+            (reinterpret_cast<const char *>(u8"opaque"), std::bind(parse_string{}, _1, _2, _3, std::bind(&auth_message::opaque, _4)))
+            (reinterpret_cast<const char *>(u8"qop"), std::bind(parse_token{}, _1, _2, _3, std::bind(&auth_message::qop, _4)))
+            (reinterpret_cast<const char *>(u8"realm"), std::bind(parse_string{}, _1, _2, _3, std::bind(&auth_message::realm, _4)))
+            (reinterpret_cast<const char *>(u8"response"), parse_response{})
+            (reinterpret_cast<const char *>(u8"stale"), std::bind(parse_token{}, _1, _2, _3, std::bind(&auth_message::stale, _4)))
+            (reinterpret_cast<const char *>(u8"uri"), std::bind(parse_string{}, _1, _2, _3, std::bind(&auth_message::uri, _4)))
+            (reinterpret_cast<const char *>(u8"username"), std::bind(parse_string{}, _1, _2, _3, std::bind(&auth_message::username, _4)));
 
           skip_whitespace = *(&qi::ascii::char_ >> qi::ascii::space);
-          header = skip_whitespace >> qi::ascii::no_case[u8"digest"] >> skip_whitespace;
-          quoted_string = (qi::lit(quote) >> qi::raw[+(u8"\\\"" | (qi::ascii::char_ - quote))] >> qi::lit(quote));
+          header = skip_whitespace >> qi::ascii::no_case[reinterpret_cast<const char *>(u8"digest")] >> skip_whitespace;
+          quoted_string = (qi::lit(quote) >> qi::raw[+(reinterpret_cast<const char *>(u8"\\\"") | (qi::ascii::char_ - quote))] >> qi::lit(quote));
           token =
-            (!qi::lit(quote) >> qi::raw[+(&qi::ascii::char_ >> (qi::ascii::graph - qi::ascii::char_(u8"()<>@,;:\\\"/[]?={}")))]) |
+            (!qi::lit(quote) >> qi::raw[+(&qi::ascii::char_ >> (qi::ascii::graph - qi::ascii::char_(reinterpret_cast<const char *>(u8"()<>@,;:\\\"/[]?={}"))))]) |
             quoted_string;
           fields = field_table >> skip_whitespace >> equal_sign >> skip_whitespace;
         }
@@ -522,14 +522,14 @@ namespace
       template<typename Digest, typename Result>
       Result generate_old_response(Digest digest, const Result& key, const Result& auth) const
       {
-        return digest(key, u8":", request.nonce, u8":", auth);
+        return digest(key, reinterpret_cast<const char *>(u8":"), request.nonce, reinterpret_cast<const char *>(u8":"), auth);
       }
 
       template<typename Digest, typename Result>
       Result generate_new_response(Digest digest, const Result& key, const Result& auth) const
       {
         return digest(
-          key, u8":", request.nonce, u8":", request.nc, u8":", request.cnonce, u8":", request.qop, u8":", auth
+          key,  reinterpret_cast<const char *>(u8":"), request.nonce, reinterpret_cast<const char *>(u8":"), request.nc, reinterpret_cast<const char *>(u8":"), request.cnonce, reinterpret_cast<const char *>(u8":"), request.qop, reinterpret_cast<const char *>(u8":"), auth
         );
       }
 
@@ -546,7 +546,7 @@ namespace
             (request.algorithm.empty() && std::is_same<md5_, Digest>::value))
         {
           auto key = generate_a1(digest, user.credentials, epee::string_tools::toBoostStringRef(auth_realm));
-          if (boost::ends_with(request.algorithm, sess_algo, ascii_iequal))
+          if (boost::ends_with(request.algorithm, reinterpret_cast<const char*>(sess_algo.data()), ascii_iequal))
           {
             key = digest(key, reinterpret_cast<const char *>(u8":"), request.nonce, reinterpret_cast<const char *>(u8":"), request.cnonce);
           }
@@ -556,7 +556,7 @@ namespace
           {
             return check(generate_old_response(std::move(digest), std::move(key), std::move(auth)));
           }
-          else if (boost::equals(ceref(u8"auth"), request.qop, ascii_iequal))
+          else if (boost::equals(reinterpret_cast<const char*>(ceref(u8"auth").data()), request.qop, ascii_iequal))
           {
             return check(generate_new_response(std::move(digest), std::move(key), std::move(auth)));
           }
@@ -599,7 +599,7 @@ namespace
         // debug check internal state of the auth_message class
         assert(
           (std::is_same<digest_type, md5_>::value) ||
-          boost::equals((*digest).name, request.algorithm, ascii_iequal)
+          boost::equals(reinterpret_cast<const char *>((*digest).name.data()), request.algorithm, ascii_iequal)
         );
         if (request.qop.empty())
           value_generator = old_algorithm<digest_type>{*digest};
@@ -609,7 +609,7 @@ namespace
                !elem.eof();
                ++elem)
           {
-            if (boost::equals(ceref(u8"auth"), *elem, ascii_iequal))
+            if (boost::equals(reinterpret_cast<const char *>(ceref(u8"auth").data()), *elem, ascii_iequal))
             {
               value_generator = auth_algorithm<digest_type>{*digest};
               break;
@@ -640,7 +640,7 @@ namespace
       {
         if (!current.value_generator)
         {
-          if (boost::equals(response.algorithm, (*digest).name, ascii_iequal))
+          if (boost::equals(response.algorithm, reinterpret_cast<const char *>((*digest).name.data()), ascii_iequal))
           {
             current = server_parameters{response, digest};
           }
@@ -726,7 +726,7 @@ namespace epee
 
         const std::list<field>& fields = request.m_header_info.m_etc_fields;
         const auto auth = boost::find_if(fields, [] (const field& value) {
-          return boost::equals(client_auth_field, value.first, ascii_iequal);
+          return boost::equals(reinterpret_cast<const char *>(client_auth_field.data()), value.first, ascii_iequal);
         });
 
         bool is_stale = false;

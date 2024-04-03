@@ -49,7 +49,7 @@
   } \
   catch (const std::exception &e) \
   { \
-    MERROR(m_conn_context << "Exception in handle_http_request_map: " << e.what()); \
+    MERROR(epee::net_utils::print_connection_context(m_conn_context) << "Exception in handle_http_request_map: " << e.what()); \
     response.m_response_code = 500; \
     response.m_response_comment = "Internal Server Error"; \
   } \
@@ -77,10 +77,10 @@
       CHECK_AND_ASSERT_MES(parse_res, false, "Failed to parse json: \r\n" << query_info.m_body); \
       uint64_t ticks1 = epee::misc_utils::get_tick_count(); \
       boost::value_initialized<command_type::response> resp;\
-      MINFO(m_conn_context << "calling " << s_pattern); \
+      MINFO(epee::net_utils::print_connection_context(m_conn_context) << "calling " << s_pattern); \
       bool res = false; \
       try { res = callback_f(static_cast<command_type::request&>(req), static_cast<command_type::response&>(resp), &m_conn_context); } \
-      catch (const std::exception &e) { MERROR(m_conn_context << "Failed to " << #callback_f << "(): " << e.what()); } \
+      catch (const std::exception &e) { MERROR(epee::net_utils::print_connection_context(m_conn_context) << "Failed to " << #callback_f << "(): " << e.what()); } \
       if (!res) \
       { \
         response_info.m_response_code = 500; \
@@ -107,10 +107,10 @@
       CHECK_AND_ASSERT_MES(parse_res, false, "Failed to parse bin body data, body size=" << query_info.m_body.size()); \
       uint64_t ticks1 = misc_utils::get_tick_count(); \
       boost::value_initialized<command_type::response> resp;\
-      MINFO(m_conn_context << "calling " << s_pattern); \
+      MINFO(epee::net_utils::print_connection_context(m_conn_context) << "calling " << s_pattern); \
       bool res = false; \
       try { res = callback_f(static_cast<command_type::request&>(req), static_cast<command_type::response&>(resp), &m_conn_context); } \
-      catch (const std::exception &e) { MERROR(m_conn_context << "Failed to " << #callback_f << "()"); } \
+      catch (const std::exception &e) { MERROR(epee::net_utils::print_connection_context(m_conn_context) << "Failed to " << #callback_f << "()"); } \
       if (!res) \
       { \
         response_info.m_response_code = 500; \
@@ -196,10 +196,10 @@
   epee::json_rpc::error_response fail_resp = AUTO_VAL_INIT(fail_resp); \
   fail_resp.jsonrpc = "2.0"; \
   fail_resp.id = req.id; \
-  MINFO(m_conn_context << "Calling RPC method " << method_name); \
+  MINFO(epee::net_utils::print_connection_context(m_conn_context) << "Calling RPC method " << method_name); \
   bool res = false; \
   try { res = callback_f(req.params, resp.result, fail_resp.error, &m_conn_context); } \
-  catch (const std::exception &e) { MERROR(m_conn_context << "Failed to " << #callback_f << "(): " << e.what()); } \
+  catch (const std::exception &e) { MERROR(epee::net_utils::print_connection_context(m_conn_context) << "Failed to " << #callback_f << "(): " << e.what()); } \
   if (!res) \
   { \
     epee::serialization::store_t_to_json(static_cast<epee::json_rpc::error_response&>(fail_resp), response_info.m_body); \
@@ -218,10 +218,10 @@
   epee::json_rpc::error_response fail_resp = AUTO_VAL_INIT(fail_resp); \
   fail_resp.jsonrpc = "2.0"; \
   fail_resp.id = req.id; \
-  MINFO(m_conn_context << "calling RPC method " << method_name); \
+  MINFO(epee::net_utils::print_connection_context(m_conn_context) << "calling RPC method " << method_name); \
   bool res = false; \
   try { res = callback_f(req.params, resp.result, fail_resp.error, response_info, &m_conn_context); } \
-  catch (const std::exception &e) { MERROR(m_conn_context << "Failed to " << #callback_f << "(): " << e.what()); } \
+  catch (const std::exception &e) { MERROR(epee::net_utils::print_connection_context(m_conn_context) << "Failed to " << #callback_f << "(): " << e.what()); } \
   if (!res) \
   { \
     epee::serialization::store_t_to_json(static_cast<epee::json_rpc::error_response&>(fail_resp), response_info.m_body); \
@@ -235,10 +235,10 @@
     else if(callback_name == method_name) \
 { \
   PREPARE_OBJECTS_FROM_JSON(command_type) \
-  MINFO(m_conn_context << "calling RPC method " << method_name); \
+  MINFO(epee::net_utils::print_connection_context(m_conn_context) << "calling RPC method " << method_name); \
   bool res = false; \
   try { res = callback_f(req.params, resp.result, &m_conn_context); } \
-  catch (const std::exception &e) { MERROR(m_conn_context << "Failed to " << #callback_f << "(): " << e.what()); } \
+  catch (const std::exception &e) { MERROR(epee::net_utils::print_connection_context(m_conn_context) << "Failed to " << #callback_f << "(): " << e.what()); } \
   if (!res) \
   { \
     epee::json_rpc::error_response fail_resp = AUTO_VAL_INIT(fail_resp); \

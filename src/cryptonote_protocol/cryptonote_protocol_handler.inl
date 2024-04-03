@@ -48,20 +48,20 @@
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "net.cn"
 
-#define MLOG_P2P_MESSAGE(x) MCINFO("net.p2p.msg", context << x)
+#define MLOG_P2P_MESSAGE(x) MCINFO("net.p2p.msg", epee::net_utils::print_connection_context(context) << x)
 #define MLOGIF_P2P_MESSAGE(init, test, x) \
   do { \
-    const auto level = el::Level::Info; \
+    const auto level = 3; \
     const char *cat = "net.p2p.msg"; \
-    if (ELPP->vRegistry()->allowed(level, cat)) { \
+    if (level <= log_level) { \
       init; \
       if (test) \
-        el::base::Writer(level, el::Color::Default, __FILE__, __LINE__, ELPP_FUNC, el::base::DispatchAction::NormalLog).construct(cat) << x; \
+        MCLOG(level, x); \
     } \
   } while(0)
 
 #define MLOG_PEER_STATE(x) \
-  MCINFO(MONERO_DEFAULT_LOG_CATEGORY, context << "[" << epee::string_tools::to_string_hex(context.m_pruning_seed) << "] state: " << x << " in state " << cryptonote::get_protocol_state_string(context.m_state))
+  MCINFO(MONERO_DEFAULT_LOG_CATEGORY, epee::net_utils::print_connection_context(context) << "[" << epee::string_tools::to_string_hex(context.m_pruning_seed) << "] state: " << x << " in state " << cryptonote::get_protocol_state_string(context.m_state))
 
 #define BLOCK_QUEUE_NSPANS_THRESHOLD 10 // chunks of N blocks
 #define BLOCK_QUEUE_SIZE_THRESHOLD (100*1024*1024) // MB
@@ -308,7 +308,7 @@ namespace cryptonote
       if (version >= 6 && version != hshd.top_version)
       {
         if (version < hshd.top_version && version == m_core.get_ideal_hard_fork_version())
-          MDEBUG(context << " peer claims higher version than we think (" <<
+          MDEBUG(epee::net_utils::print_connection_context(context) << " peer claims higher version than we think (" <<
               (unsigned)hshd.top_version << " for " << (hshd.current_height - 1) << " instead of " << (unsigned)version <<
               ") - we may be forked from the network and a software upgrade may be needed, or that peer is broken or malicious");
         return false;
@@ -321,7 +321,7 @@ namespace cryptonote
       const uint32_t log_stripes = tools::get_pruning_log_stripes(hshd.pruning_seed);
       if (log_stripes != CRYPTONOTE_PRUNING_LOG_STRIPES || tools::get_pruning_stripe(hshd.pruning_seed) > (1u << log_stripes))
       {
-        MWARNING(context << " peer claim unexpected pruning seed " << epee::string_tools::to_string_hex(hshd.pruning_seed) << ", disconnecting");
+        MWARNING(epee::net_utils::print_connection_context(context) << " peer claim unexpected pruning seed " << epee::string_tools::to_string_hex(hshd.pruning_seed) << ", disconnecting");
         return false;
       }
     }
@@ -330,7 +330,7 @@ namespace cryptonote
     context.m_pruning_seed = hshd.pruning_seed;
 #ifdef CRYPTONOTE_PRUNING_DEBUG_SPOOF_SEED
     context.m_pruning_seed = tools::make_pruning_seed(1 + (context.m_remote_address.as<epee::net_utils::ipv4_network_address>().ip()) % (1 << CRYPTONOTE_PRUNING_LOG_STRIPES), CRYPTONOTE_PRUNING_LOG_STRIPES);
-    LOG_INFO_CC(context, "New connection posing as pruning seed " << epee::string_tools::to_string_hex(context.m_pruning_seed) << ", seed address " << &context.m_pruning_seed);
+    LOG_INFO_CC(epee::net_utils::print_connection_context(context), "New connection posing as pruning seed " << epee::string_tools::to_string_hex(context.m_pruning_seed) << ", seed address " << &context.m_pruning_seed);
 #endif
 
     uint64_t target = m_core.get_target_blockchain_height();
@@ -362,7 +362,7 @@ namespace cryptonote
     uint64_t max_block_height = std::max(hshd.current_height,m_core.get_current_blockchain_height());
     uint64_t last_block_v1 = m_core.get_nettype() == TESTNET ? 624633 : m_core.get_nettype() == MAINNET ? 1009826 : (uint64_t)-1;
     uint64_t diff_v2 = max_block_height > last_block_v1 ? std::min(abs_diff, max_block_height - last_block_v1) : 0;
-    MCLOG(is_inital ? el::Level::Info : el::Level::Debug, "global", el::Color::Yellow, context <<  "Sync data returned a new top block candidate: " << m_core.get_current_blockchain_height() << " -> " << hshd.current_height
+    MCLOG(is_inital ? 3 : 4, epee::net_utils::print_connection_context(context) <<  "Sync data returned a new top block candidate: " << m_core.get_current_blockchain_height() << " -> " << hshd.current_height
       << " [Your node is " << abs_diff << " blocks (" << tools::get_human_readable_timespan((abs_diff - diff_v2) * DIFFICULTY_TARGET_V1 + diff_v2 * DIFFICULTY_TARGET_V2) << ") "
       << (0 <= diff ? std::string("behind") : std::string("ahead"))
       << "] " << ENDL << "SYNCHRONIZATION started");
@@ -387,7 +387,7 @@ namespace cryptonote
       }
     m_core.set_target_blockchain_height((hshd.current_height));
     }
-    MINFO(context << "Remote blockchain height: " << hshd.current_height << ", id: " << hshd.top_id);
+    MINFO(epee::net_utils::print_connection_context(context) << "Remote blockchain height: " << hshd.current_height << ", id: " << hshd.top_id);
 
     if (m_no_sync)
     {
@@ -434,7 +434,7 @@ namespace cryptonote
       return 1;
     if(!is_synchronized()) // can happen if a peer connection goes to normal but another thread still hasn't finished adding queued blocks
     {
-      LOG_DEBUG_CC(context, "Received new block while syncing, ignored");
+      LOG_DEBUG_CC(epee::net_utils::print_connection_context(context), "Received new block while syncing, ignored");
       return 1;
     }
     m_core.pause_mine();
@@ -505,7 +505,7 @@ namespace cryptonote
       return 1;
     if(!is_synchronized()) // can happen if a peer connection goes to normal but another thread still hasn't finished adding queued blocks
     {
-      LOG_DEBUG_CC(context, "Received new block while syncing, ignored");
+      LOG_DEBUG_CC(epee::net_utils::print_connection_context(context), "Received new block while syncing, ignored");
       return 1;
     }
     
@@ -933,7 +933,7 @@ namespace cryptonote
     // long block before replying
     if(!is_synchronized())
     {
-      LOG_DEBUG_CC(context, "Received new tx while syncing, ignored");
+      LOG_DEBUG_CC(epee::net_utils::print_connection_context(context), "Received new tx while syncing, ignored");
       return 1;
     }
 
@@ -1084,7 +1084,7 @@ namespace cryptonote
     }
     ++m_sync_spans_downloaded;
     m_sync_download_objects_size += size;
-    MDEBUG(context << " downloaded " << size << " bytes worth of blocks");
+    MDEBUG(epee::net_utils::print_connection_context(context) << " downloaded " << size << " bytes worth of blocks");
 
     /*using namespace boost::chrono;
       auto point = steady_clock::now();
@@ -1169,7 +1169,7 @@ namespace cryptonote
 
     if(!context.m_requested_objects.empty())
     {
-      MERROR(context << "returned not all requested objects (context.m_requested_objects.size()="
+      MERROR(epee::net_utils::print_connection_context(context) << "returned not all requested objects (context.m_requested_objects.size()="
         << context.m_requested_objects.size() << "), dropping connection");
       drop_connection(context, false, false);
       ++m_sync_bad_spans_downloaded;
@@ -1184,14 +1184,14 @@ namespace cryptonote
       {
         if (block_entry.pruned)
         {
-          MERROR(context << "returned a pruned block, dropping connection");
+          MERROR(epee::net_utils::print_connection_context(context) << "returned a pruned block, dropping connection");
           drop_connection(context, false, false);
           ++m_sync_bad_spans_downloaded;
           return 1;
         }
         if (block_entry.block_weight)
         {
-          MERROR(context << "returned a block weight for a non pruned block, dropping connection");
+          MERROR(epee::net_utils::print_connection_context(context) << "returned a block weight for a non pruned block, dropping connection");
           drop_connection(context, false, false);
           ++m_sync_bad_spans_downloaded;
           return 1;
@@ -1200,7 +1200,7 @@ namespace cryptonote
         {
           if (tx_entry.prunable_hash != crypto::null_hash)
           {
-            MERROR(context << "returned at least one pruned object which we did not expect, dropping connection");
+            MERROR(epee::net_utils::print_connection_context(context) << "returned at least one pruned object which we did not expect, dropping connection");
             drop_connection(context, false, false);
             ++m_sync_bad_spans_downloaded;
             return 1;
@@ -1215,7 +1215,7 @@ namespace cryptonote
       {
         if (block_entry.block_weight == 0 && block_entry.pruned)
         {
-          MERROR(context << "returned at least one pruned block with 0 weight, dropping connection");
+          MERROR(epee::net_utils::print_connection_context(context) << "returned at least one pruned block with 0 weight, dropping connection");
           drop_connection(context, false, false);
           ++m_sync_bad_spans_downloaded;
           return 1;
@@ -1224,14 +1224,14 @@ namespace cryptonote
     }
 
     {
-      MLOG_YELLOW(el::Level::Debug, context << " Got NEW BLOCKS inside of " << __FUNCTION__ << ": size: " << arg.blocks.size()
+      MLOG_YELLOW(DEBUG_LOG, epee::net_utils::print_connection_context(context) << " Got NEW BLOCKS inside of " << __FUNCTION__ << ": size: " << arg.blocks.size()
           << ", blocks: " << start_height << " - " << (start_height + arg.blocks.size() - 1) <<
           " (pruning seed " << epee::string_tools::to_string_hex(context.m_pruning_seed) << ")");
 
       // add that new span to the block queue
       const boost::posix_time::time_duration dt = now - request_time;
       const float rate = size * 1e6 / (dt.total_microseconds() + 1);
-      MDEBUG(context << " adding span: " << arg.blocks.size() << " at height " << start_height << ", " << dt.total_microseconds()/1e6 << " seconds, " << (rate/1024) << " kB/s, size now " << (m_block_queue.get_data_size() + blocks_size) / 1048576.f << " MB");
+      MDEBUG(epee::net_utils::print_connection_context(context) << " adding span: " << arg.blocks.size() << " at height " << start_height << ", " << dt.total_microseconds()/1e6 << " seconds, " << (rate/1024) << " kB/s, size now " << (m_block_queue.get_data_size() + blocks_size) / 1048576.f << " MB");
       m_block_queue.add_blocks(start_height, arg.blocks, context.m_connection_id, rate, blocks_size);
 
       const crypto::hash last_block_hash = cryptonote::get_block_hash(b);
@@ -1307,10 +1307,10 @@ namespace cryptonote
       const boost::unique_lock<boost::mutex> sync{m_sync_lock, boost::try_to_lock};
       if (!sync.owns_lock())
       {
-        MINFO(context << "Failed to lock m_sync_lock, going back to download");
+        MINFO(epee::net_utils::print_connection_context(context) << "Failed to lock m_sync_lock, going back to download");
         goto skip;
       }
-      MDEBUG(context << " lock m_sync_lock, adding blocks to chain...");
+      MDEBUG(epee::net_utils::print_connection_context(context) << " lock m_sync_lock, adding blocks to chain...");
       MLOG_PEER_STATE("adding blocks");
 
       {
@@ -1335,39 +1335,39 @@ namespace cryptonote
           boost::uuids::uuid span_connection_id;
           if (!m_block_queue.get_next_span(start_height, blocks, span_connection_id))
           {
-            MDEBUG(context << " no next span found, going back to download");
+            MDEBUG(epee::net_utils::print_connection_context(context) << " no next span found, going back to download");
             break;
           }
 
           if (blocks.empty())
           {
-            MERROR(context << "Next span has no blocks");
+            MERROR(epee::net_utils::print_connection_context(context) << "Next span has no blocks");
             m_block_queue.remove_spans(span_connection_id, start_height);
             continue;
           }
 
-          MDEBUG(context << " next span in the queue has blocks " << start_height << "-" << (start_height + blocks.size() - 1)
+          MDEBUG(epee::net_utils::print_connection_context(context) << " next span in the queue has blocks " << start_height << "-" << (start_height + blocks.size() - 1)
               << ", we need " << previous_height);
 
           block new_block;
           crypto::hash last_block_hash;
           if (!parse_and_validate_block_from_blob(blocks.back().block, new_block, last_block_hash))
           {
-            MERROR(context << "Failed to parse block, but it should already have been parsed");
+            MERROR(epee::net_utils::print_connection_context(context) << "Failed to parse block, but it should already have been parsed");
             m_block_queue.remove_spans(span_connection_id, start_height);
             continue;
           }
           if (m_core.have_block(last_block_hash))
           {
             const uint64_t subchain_height = start_height + blocks.size();
-            LOG_DEBUG_CC(context, "These are old blocks, ignoring: blocks " << start_height << " - " << (subchain_height-1) << ", blockchain height " << m_core.get_current_blockchain_height());
+            LOG_DEBUG_CC(epee::net_utils::print_connection_context(context), "These are old blocks, ignoring: blocks " << start_height << " - " << (subchain_height-1) << ", blockchain height " << m_core.get_current_blockchain_height());
             m_block_queue.remove_spans(span_connection_id, start_height);
             ++m_sync_old_spans_downloaded;
             continue;
           }
           if (!parse_and_validate_block_from_blob(blocks.front().block, new_block))
           {
-            MERROR(context << "Failed to parse block, but it should already have been parsed");
+            MERROR(epee::net_utils::print_connection_context(context) << "Failed to parse block, but it should already have been parsed");
             m_block_queue.remove_spans(span_connection_id, start_height);
             continue;
           }
@@ -1389,13 +1389,13 @@ namespace cryptonote
               {
                 if (should_drop_connection(context, get_next_needed_pruning_stripe().first))
                 {
-                  MDEBUG(context << "Got block with unknown parent which was not requested, but peer does not have that block - dropping connection");
+                  MDEBUG(epee::net_utils::print_connection_context(context) << "Got block with unknown parent which was not requested, but peer does not have that block - dropping connection");
                   if (!context.m_is_income)
                     m_p2p->add_used_stripe_peer(context);
                   drop_connection(context, false, true);
                   return 1;
                 }
-                MDEBUG(context << "Got block with unknown parent which was not requested, but peer does not have that block - back to download");
+                MDEBUG(epee::net_utils::print_connection_context(context) << "Got block with unknown parent which was not requested, but peer does not have that block - back to download");
 
                 goto skip;
               }
@@ -1410,7 +1410,7 @@ namespace cryptonote
             }
 
             // parent was requested, so we wait for it to be retrieved
-            MINFO(context << " parent was requested, we'll get back to it");
+            MINFO(epee::net_utils::print_connection_context(context) << " parent was requested, we'll get back to it");
             break;
           }
 
@@ -1554,7 +1554,7 @@ namespace cryptonote
 
           } // each download block
 
-          MDEBUG(context << "Block process time (" << blocks.size() << " blocks, " << num_txs << " txs): " << block_process_time_full + transactions_process_time_full << " (" << transactions_process_time_full << "/" << block_process_time_full << ") ms");
+          MDEBUG(epee::net_utils::print_connection_context(context) << "Block process time (" << blocks.size() << " blocks, " << num_txs << " txs): " << block_process_time_full + transactions_process_time_full << " (" << transactions_process_time_full << "/" << block_process_time_full << ") ms");
 
           if (!m_core.cleanup_handle_incoming_blocks())
           {
@@ -1590,13 +1590,13 @@ namespace cryptonote
             const uint32_t previous_stripe = tools::get_pruning_stripe(previous_height, target_blockchain_height, CRYPTONOTE_PRUNING_LOG_STRIPES);
             const uint32_t current_stripe = tools::get_pruning_stripe(current_blockchain_height, target_blockchain_height, CRYPTONOTE_PRUNING_LOG_STRIPES);
             std::string timing_message = "";
-            if (ELPP->vRegistry()->allowed(el::Level::Info, "sync-info"))
+            if (ALLOWED_TO_LOG(INFO_LOG))
               timing_message = std::string(" (") + std::to_string(dt.total_microseconds()/1e6) + " sec, "
                 + std::to_string((current_blockchain_height - previous_height) * 1e6 / dt.total_microseconds())
                 + " blocks/sec), " + std::to_string(m_block_queue.get_data_size() / 1048576.f) + " MB queued in "
                 + std::to_string(m_block_queue.get_num_filled_spans()) + " spans, stripe "
                 + std::to_string(previous_stripe) + " -> " + std::to_string(current_stripe);
-            if (ELPP->vRegistry()->allowed(el::Level::Debug, "sync-info"))
+            if (ALLOWED_TO_LOG(DEBUG_LOG))
               timing_message += std::string(": ") + m_block_queue.get_overview(current_blockchain_height);
             MGINFO_YELLOW("Synced " << current_blockchain_height << "/" << target_blockchain_height
                 << progress_message << timing_message);
@@ -1676,7 +1676,7 @@ skip:
         const boost::posix_time::time_duration dt = now - context.m_last_request_time;
         if (dt.total_microseconds() > IDLE_PEER_KICK_TIME)
         {
-          MINFO(context << " kicking idle peer, last update " << (dt.total_microseconds() / 1.e6) << " seconds ago");
+          MINFO(epee::net_utils::print_connection_context(context) << " kicking idle peer, last update " << (dt.total_microseconds() / 1.e6) << " seconds ago");
           LOG_PRINT_CCONTEXT_L2("requesting callback");
           context.m_last_request_time = boost::date_time::not_a_date_time;
           context.m_state = cryptonote_connection_context::state_standby; // we'll go back to adding, then (if we can't), download
@@ -1720,7 +1720,7 @@ skip:
     if (n_synced + n_syncing >= m_max_out_peers && n_syncing < P2P_DEFAULT_SYNC_SEARCH_CONNECTIONS_COUNT && last_synced_peer_id != boost::uuids::nil_uuid())
     {
       if (!m_p2p->for_connection(last_synced_peer_id, [&](cryptonote_connection_context& ctx, nodetool::peerid_type peer_id, uint32_t f)->bool{
-        MINFO(ctx << "dropping synced peer, " << n_syncing << " syncing, " << n_synced << " synced");
+        MINFO(epee::net_utils::print_connection_context(ctx) << "dropping synced peer, " << n_syncing << " syncing, " << n_synced << " synced");
         drop_connection(ctx, false, false);
         return true;
       }))
@@ -1786,7 +1786,7 @@ skip:
     {
       if (!m_block_queue.has_next_span(blockchain_height, filled, request_time, connection_id))
       {
-        MDEBUG(context << " we should download it as no peer reserved it");
+        MDEBUG(epee::net_utils::print_connection_context(context) << " we should download it as no peer reserved it");
         return true;
       }
       if (!filled)
@@ -1794,7 +1794,7 @@ skip:
         const long dt = (now - request_time).total_microseconds();
         if (dt >= REQUEST_NEXT_SCHEDULED_SPAN_THRESHOLD)
         {
-          MDEBUG(context << " we should download it as it's not been received yet after " << dt/1e6);
+          MDEBUG(epee::net_utils::print_connection_context(context) << " we should download it as it's not been received yet after " << dt/1e6);
           return true;
         }
 
@@ -1812,7 +1812,7 @@ skip:
             const bool stalled = last_activity > LAST_ACTIVITY_STALL_THRESHOLD;
             if (stalled)
             {
-              MDEBUG(context << " we should download it as the downloading peer is stalling for " << nowt - ctx.m_last_recv << " seconds");
+              MDEBUG(epee::net_utils::print_connection_context(context) << " we should download it as the downloading peer is stalling for " << nowt - ctx.m_last_recv << " seconds");
               download = true;
               return true;
             }
@@ -1832,7 +1832,7 @@ skip:
             }
             if (dl_speed * .8f > ctx.m_current_speed_down * multiplier)
             {
-              MDEBUG(context << " we should download it as we are substantially faster (" << dl_speed << " vs "
+              MDEBUG(epee::net_utils::print_connection_context(context) << " we should download it as we are substantially faster (" << dl_speed << " vs "
                   << ctx.m_current_speed_down << ", multiplier " << multiplier << " after " << dt/1e6 << " seconds)");
               download = true;
               return true;
@@ -1845,7 +1845,7 @@ skip:
           }
           else
           {
-            MWARNING(context << " we should download it as the downloading peer is unexpectedly not known to us");
+            MWARNING(epee::net_utils::print_connection_context(context) << " we should download it as the downloading peer is unexpectedly not known to us");
             return true;
           }
         }
@@ -1860,25 +1860,25 @@ skip:
   {
     if (context.m_anchor)
     {
-      MDEBUG(context << "This is an anchor peer, not dropping");
+      MDEBUG(epee::net_utils::print_connection_context(context) << "This is an anchor peer, not dropping");
       return false;
     }
     if (context.m_pruning_seed == 0)
     {
-      MDEBUG(context << "This peer is not striped, not dropping");
+      MDEBUG(epee::net_utils::print_connection_context(context) << "This peer is not striped, not dropping");
       return false;
     }
 
     const uint32_t peer_stripe = tools::get_pruning_stripe(context.m_pruning_seed);
     if (next_stripe == peer_stripe)
     {
-      MDEBUG(context << "This peer has needed stripe " << peer_stripe << ", not dropping");
+      MDEBUG(epee::net_utils::print_connection_context(context) << "This peer has needed stripe " << peer_stripe << ", not dropping");
       return false;
     }
     const uint32_t local_stripe = tools::get_pruning_stripe(m_core.get_blockchain_pruning_seed());
     if (m_sync_pruned_blocks && local_stripe && next_stripe != local_stripe)
     {
-      MDEBUG(context << "We can sync pruned blocks off this peer, not dropping");
+      MDEBUG(epee::net_utils::print_connection_context(context) << "We can sync pruned blocks off this peer, not dropping");
       return false;
     }
 
@@ -1887,7 +1887,7 @@ skip:
       const uint64_t next_available_block_height = context.m_last_response_height - context.m_needed_objects.size() + 1;
       if (tools::has_unpruned_block(next_available_block_height, context.m_remote_blockchain_height, context.m_pruning_seed))
       {
-        MDEBUG(context << "This peer has unpruned next block at height " << next_available_block_height << ", not dropping");
+        MDEBUG(epee::net_utils::print_connection_context(context) << "This peer has unpruned next block at height " << next_available_block_height << ", not dropping");
         return false;
       }
     }
@@ -1905,13 +1905,13 @@ skip:
       const uint32_t distance = (peer_stripe + (1<<CRYPTONOTE_PRUNING_LOG_STRIPES) - next_stripe) % (1<<CRYPTONOTE_PRUNING_LOG_STRIPES);
       if ((n_out_peers >= m_max_out_peers && n_peers_on_next_stripe == 0) || (distance > 1 && n_peers_on_next_stripe <= 2) || distance > 2)
       {
-        MDEBUG(context << "we want seed " << next_stripe << ", and either " << n_out_peers << " is at max out peers ("
+        MDEBUG(epee::net_utils::print_connection_context(context) << "we want seed " << next_stripe << ", and either " << n_out_peers << " is at max out peers ("
             << m_max_out_peers << ") or distance " << distance << " from " << next_stripe << " to " << peer_stripe <<
             " is too large and we have only " << n_peers_on_next_stripe << " peers on next seed, dropping connection to make space");
         return true;
       }
     }
-    MDEBUG(context << "End of checks, not dropping");
+    MDEBUG(epee::net_utils::print_connection_context(context) << "End of checks, not dropping");
     return false;
   }
   //------------------------------------------------------------------------------------------------------------------------
@@ -1930,7 +1930,7 @@ skip:
     }
     if (skip > 0)
     {
-      MDEBUG(context << "skipping " << skip << "/" << context.m_needed_objects.size() << " blocks");
+      MDEBUG(epee::net_utils::print_connection_context(context) << "skipping " << skip << "/" << context.m_needed_objects.size() << " blocks");
       context.m_needed_objects = std::vector<std::pair<crypto::hash, uint64_t>>(context.m_needed_objects.begin() + skip, context.m_needed_objects.end());
     }
   }
@@ -2003,18 +2003,18 @@ skip:
           return false; // drop outgoing connections
         }
 
-        MDEBUG(context << "proceed " << proceed << " (queue " << queue_proceed << ", stripe " << stripe_proceed_main << "/" <<
+        MDEBUG(epee::net_utils::print_connection_context(context) << "proceed " << proceed << " (queue " << queue_proceed << ", stripe " << stripe_proceed_main << "/" <<
           stripe_proceed_secondary << "), " << next_needed_pruning_stripe.first << "-" << next_needed_pruning_stripe.second <<
           " needed, bc add stripe " << add_stripe << ", we have " << peer_stripe << "), bc_height " << bc_height);
-        MDEBUG(context << "  - next_block_height " << next_block_height << ", seed " << epee::string_tools::to_string_hex(context.m_pruning_seed) <<
+        MDEBUG(epee::net_utils::print_connection_context(context) << "  - next_block_height " << next_block_height << ", seed " << epee::string_tools::to_string_hex(context.m_pruning_seed) <<
           ", next_needed_height "<< next_needed_height);
-        MDEBUG(context << "  - last_response_height " << context.m_last_response_height << ", m_needed_objects size " << context.m_needed_objects.size());
+        MDEBUG(epee::net_utils::print_connection_context(context) << "  - last_response_height " << context.m_last_response_height << ", m_needed_objects size " << context.m_needed_objects.size());
 
         // if we're waiting for next span, try to get it before unblocking threads below,
         // or a runaway downloading of future spans might happen
         if (stripe_proceed_main && should_download_next_span(context, true))
         {
-          MDEBUG(context << " we should try for that next span too, we think we could get it faster, resuming");
+          MDEBUG(epee::net_utils::print_connection_context(context) << " we should try for that next span too, we think we could get it faster, resuming");
           force_next_span = true;
           MLOG_PEER_STATE("resuming");
           break;
@@ -2024,7 +2024,7 @@ skip:
         {
           if (context.m_state != cryptonote_connection_context::state_standby)
           {
-            LOG_DEBUG_CC(context, "Block queue is " << nspans << " and " << size << ", resuming");
+            LOG_DEBUG_CC(epee::net_utils::print_connection_context(context), "Block queue is " << nspans << " and " << size << ", resuming");
             MLOG_PEER_STATE("resuming");
           }
           break;
@@ -2040,7 +2040,7 @@ skip:
           boost::uuids::uuid connection_id;
           if (m_block_queue.has_next_span(m_core.get_current_blockchain_height(), filled, time, connection_id) && filled)
           {
-            LOG_DEBUG_CC(context, "No other thread is adding blocks, and next span needed is ready, resuming");
+            LOG_DEBUG_CC(epee::net_utils::print_connection_context(context), "No other thread is adding blocks, and next span needed is ready, resuming");
             MLOG_PEER_STATE("resuming");
             context.m_state = cryptonote_connection_context::state_standby;
             ++context.m_callback_request_count;
@@ -2058,8 +2058,8 @@ skip:
               const uint64_t dt = now - m_last_add_end_time;
               if (m_last_add_end_time && tools::ticks_to_ns(dt) >= DROP_ON_SYNC_WEDGE_THRESHOLD)
               {
-                MDEBUG(context << "ns " << tools::ticks_to_ns(dt) << " from " << m_last_add_end_time << " and " << now);
-                MDEBUG(context << "Block addition seems to have wedged, dropping connection");
+                MDEBUG(epee::net_utils::print_connection_context(context) << "ns " << tools::ticks_to_ns(dt) << " from " << m_last_add_end_time << " and " << now);
+                MDEBUG(epee::net_utils::print_connection_context(context) << "Block addition seems to have wedged, dropping connection");
                 return false;
               }
             }
@@ -2069,9 +2069,9 @@ skip:
         if (context.m_state != cryptonote_connection_context::state_standby)
         {
           if (!queue_proceed)
-            LOG_DEBUG_CC(context, "Block queue is " << nspans << " and " << size << ", pausing");
+            LOG_DEBUG_CC(epee::net_utils::print_connection_context(context), "Block queue is " << nspans << " and " << size << ", pausing");
           else if (!stripe_proceed_main && !stripe_proceed_secondary)
-            LOG_DEBUG_CC(context, "We do not have the stripe required to download another block, pausing");
+            LOG_DEBUG_CC(epee::net_utils::print_connection_context(context), "We do not have the stripe required to download another block, pausing");
           context.m_state = cryptonote_connection_context::state_standby;
           MLOG_PEER_STATE("pausing");
         }
@@ -2081,7 +2081,7 @@ skip:
       context.m_state = cryptonote_connection_context::state_synchronizing;
     }
 
-    MDEBUG(context << " request_missing_objects: check " << check_having_blocks << ", force_next_span " << force_next_span
+    MDEBUG(epee::net_utils::print_connection_context(context) << " request_missing_objects: check " << check_having_blocks << ", force_next_span " << force_next_span
         << ", m_needed_objects " << context.m_needed_objects.size() << " lrh " << context.m_last_response_height << ", chain "
         << m_core.get_current_blockchain_height() << ", pruning seed " << epee::string_tools::to_string_hex(context.m_pruning_seed));
     if(context.m_needed_objects.size() || force_next_span)
@@ -2114,10 +2114,10 @@ skip:
       }
       if (span.second == 0)
       {
-        MDEBUG(context << " span size is 0");
+        MDEBUG(epee::net_utils::print_connection_context(context) << " span size is 0");
         if (context.m_last_response_height + 1 < context.m_needed_objects.size())
         {
-          MERROR(context << " ERROR: inconsistent context: lrh " << context.m_last_response_height << ", nos " << context.m_needed_objects.size());
+          MERROR(epee::net_utils::print_connection_context(context) << " ERROR: inconsistent context: lrh " << context.m_last_response_height << ", nos " << context.m_needed_objects.size());
           context.m_needed_objects.clear();
           context.m_last_response_height = 0;
           goto skip;
@@ -2128,20 +2128,20 @@ skip:
         static const uint64_t bp_fork_height = m_core.get_earliest_ideal_height_for_version(8);
         bool sync_pruned_blocks = m_sync_pruned_blocks && first_block_height >= bp_fork_height && m_core.get_blockchain_pruning_seed();
         span = m_block_queue.reserve_span(first_block_height, context.m_last_response_height, count_limit, context.m_connection_id, sync_pruned_blocks, m_core.get_blockchain_pruning_seed(), context.m_pruning_seed, context.m_remote_blockchain_height, context.m_needed_objects);
-        MDEBUG(context << " span from " << first_block_height << ": " << span.first << "/" << span.second);
+        MDEBUG(epee::net_utils::print_connection_context(context) << " span from " << first_block_height << ": " << span.first << "/" << span.second);
         if (span.second > 0)
         {
           const uint32_t stripe = tools::get_pruning_stripe(span.first, context.m_remote_blockchain_height, CRYPTONOTE_PRUNING_LOG_STRIPES);
           if (context.m_pruning_seed && stripe != tools::get_pruning_stripe(context.m_pruning_seed))
           {
-            MDEBUG(context << " starting early on next seed (" << span.first << "  with stripe " << stripe <<
+            MDEBUG(epee::net_utils::print_connection_context(context) << " starting early on next seed (" << span.first << "  with stripe " << stripe <<
                 ", context seed " << epee::string_tools::to_string_hex(context.m_pruning_seed) << ")");
           }
         }
       }
       if (span.second == 0 && !force_next_span)
       {
-        MDEBUG(context << " still no span reserved, we may be in the corner case of next span scheduled and everything else scheduled/filled");
+        MDEBUG(epee::net_utils::print_connection_context(context) << " still no span reserved, we may be in the corner case of next span scheduled and everything else scheduled/filled");
         std::vector<crypto::hash> hashes;
         boost::uuids::uuid span_connection_id;
         boost::posix_time::ptime time;
@@ -2164,7 +2164,7 @@ skip:
           }
         }
       }
-      MDEBUG(context << " span: " << span.first << "/" << span.second << " (" << span.first << " - " << (span.first + span.second - 1) << ")");
+      MDEBUG(epee::net_utils::print_connection_context(context) << " span: " << span.first << "/" << span.second << " (" << span.first << " - " << (span.first + span.second - 1) << ")");
       if (span.second > 0)
       {
         if (!is_next)
@@ -2203,7 +2203,7 @@ skip:
           const uint32_t last_stripe = tools::get_pruning_stripe(span.first + span.second - 1, context.m_remote_blockchain_height, CRYPTONOTE_PRUNING_LOG_STRIPES);
           if ((((first_stripe && peer_stripe != first_stripe) || (last_stripe && peer_stripe != last_stripe)) && !m_sync_pruned_blocks) || (m_sync_pruned_blocks && req.prune))
           {
-            MDEBUG(context << "We need full data, but the peer does not have it, dropping peer");
+            MDEBUG(epee::net_utils::print_connection_context(context) << "We need full data, but the peer does not have it, dropping peer");
             return false;
           }
         }
@@ -2231,7 +2231,7 @@ skip:
       {
         // at this point, we have to either close the connection, or start getting blocks past the
         // current point, or become dormant
-        MDEBUG(context << "this peer is pruned at seed " << epee::string_tools::to_string_hex(context.m_pruning_seed) <<
+        MDEBUG(epee::net_utils::print_connection_context(context) << "this peer is pruned at seed " << epee::string_tools::to_string_hex(context.m_pruning_seed) <<
             ", next stripe needed is " << next_stripe);
         if (!context.m_is_income)
         {
@@ -2265,7 +2265,7 @@ skip:
         bool filled = false;
         if (m_block_queue.get_next_span(start_height, blocks, span_connection_id, filled) && filled)
         {
-          LOG_DEBUG_CC(context, "No other thread is adding blocks, resuming");
+          LOG_DEBUG_CC(epee::net_utils::print_connection_context(context), "No other thread is adding blocks, resuming");
           MLOG_PEER_STATE("will try to add blocks next");
           context.m_state = cryptonote_connection_context::state_standby;
           ++context.m_callback_request_count;
@@ -2325,7 +2325,7 @@ skip:
       }
       else
       {
-        MINFO(context << " we've reached this peer's blockchain height");
+        MINFO(epee::net_utils::print_connection_context(context) << " we've reached this peer's blockchain height");
       }
     }
     return true;
@@ -2361,13 +2361,13 @@ skip:
         << "Use the \"help\" command to see the list of available commands." << ENDL
         << "**********************************************************************");
       m_sync_timer.pause();
-      if (ELPP->vRegistry()->allowed(el::Level::Info, "sync-info"))
+      if (ALLOWED_TO_LOG(INFO_LOG))
       {
         const uint64_t sync_time = m_sync_timer.value();
         const uint64_t add_time = m_add_timer.value();
         if (sync_time && add_time)
         {
-          MCLOG_YELLOW(el::Level::Info, "sync-info", "Sync time: " << sync_time/1e9/60 << " min, idle time " <<
+          MCLOG_YELLOW(INFO_LOG, "sync-info", "Sync time: " << sync_time/1e9/60 << " min, idle time " <<
               (100.f * (1.0f - add_time / (float)sync_time)) << "%" << ", " <<
               (10 * m_sync_download_objects_size / 1024 / 1024) / 10.f << " + " <<
               (10 * m_sync_download_chain_size / 1024 / 1024) / 10.f << " MB downloaded, " <<
@@ -2388,12 +2388,12 @@ skip:
       {
         if(context.m_state < cryptonote_connection_context::state_synchronizing)
         {
-          MDEBUG(context << "not ready, ignoring");
+          MDEBUG(epee::net_utils::print_connection_context(context) << "not ready, ignoring");
           return true;
         }
         if (!request_txpool_complement(context))
         {
-          MERROR(context << "Failed to request txpool complement");
+          MERROR(epee::net_utils::print_connection_context(context) << "Failed to request txpool complement");
           return true;
         }
         return false;
@@ -2444,7 +2444,7 @@ skip:
       drop_connection(context, true, false);
       return 1;
     }
-    MDEBUG(context << "first block hash " << arg.m_block_ids.front() << ", last " << arg.m_block_ids.back());
+    MDEBUG(epee::net_utils::print_connection_context(context) << "first block hash " << arg.m_block_ids.front() << ", last " << arg.m_block_ids.back());
 
     if (arg.total_height >= CRYPTONOTE_MAX_BLOCK_NUMBER || arg.m_block_ids.size() >= CRYPTONOTE_MAX_BLOCK_NUMBER)
     {
@@ -2512,12 +2512,12 @@ skip:
       {
         if(m_core.fluffy_blocks_enabled() && (support_flags & P2P_SUPPORT_FLAG_FLUFFY_BLOCKS))
         {
-          LOG_DEBUG_CC(context, "PEER SUPPORTS FLUFFY BLOCKS - RELAYING THIN/COMPACT WHATEVER BLOCK");
+          LOG_DEBUG_CC(epee::net_utils::print_connection_context(context), "PEER SUPPORTS FLUFFY BLOCKS - RELAYING THIN/COMPACT WHATEVER BLOCK");
           fluffyConnections.push_back({context.m_remote_address.get_zone(), context.m_connection_id});
         }
         else
         {
-          LOG_DEBUG_CC(context, "PEER DOESN'T SUPPORT FLUFFY BLOCKS - RELAYING FULL BLOCK");
+          LOG_DEBUG_CC(epee::net_utils::print_connection_context(context), "PEER DOESN'T SUPPORT FLUFFY BLOCKS - RELAYING FULL BLOCK");
           fullConnections.push_back({context.m_remote_address.get_zone(), context.m_connection_id});
         }
       }
@@ -2644,7 +2644,7 @@ skip:
   template<class t_core>
   void t_cryptonote_protocol_handler<t_core>::drop_connection_with_score(cryptonote_connection_context &context, unsigned score, bool flush_all_spans)
   {
-    LOG_DEBUG_CC(context, "dropping connection id " << context.m_connection_id << " (pruning seed " <<
+    LOG_DEBUG_CC(epee::net_utils::print_connection_context(context), "dropping connection id " << context.m_connection_id << " (pruning seed " <<
         epee::string_tools::to_string_hex(context.m_pruning_seed) <<
         "), score " << score << ", flush_all_spans " << flush_all_spans);
 

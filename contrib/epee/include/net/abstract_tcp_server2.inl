@@ -282,7 +282,7 @@ PRAGMA_WARNING_DISABLE_VS(4355)
   bool connection<t_protocol_handler>::release()
   {
     TRY_ENTRY();
-    LOG_TRACE_CC(context, "[sock " << socket().native_handle() << "] release");
+    LOG_TRACE_CC(epee::net_utils::print_connection_context(context), "[sock " << socket().native_handle() << "] release");
     CRITICAL_REGION_BEGIN(m_self_refs_lock);
     CHECK_AND_ASSERT_MES(m_reference_count, false, "[sock " << socket().native_handle() << "] m_reference_count already at 0 at connection<t_protocol_handler>::release() call");
     // is this the last reference?
@@ -668,7 +668,7 @@ PRAGMA_WARNING_DISABLE_VS(4355)
         MDEBUG("do_send_chunk() NOW just queues: packet="<<size_now<<" B, is added to queue-size="<<m_send_que.size());
         //do_send_handler_delayed( ptr , size_now ); // (((H))) // empty function
       
-      LOG_TRACE_CC(context, "[sock " << socket().native_handle() << "] Async send requested " << m_send_que.front().size());
+      LOG_TRACE_CC(epee::net_utils::print_connection_context(context), "[sock " << socket().native_handle() << "] Async send requested " << m_send_que.front().size());
     }
     else
     { // no active operation
@@ -852,7 +852,7 @@ PRAGMA_WARNING_DISABLE_VS(4355)
   void connection<t_protocol_handler>::handle_write(const boost::system::error_code& e, size_t cb)
   {
     TRY_ENTRY();
-    LOG_TRACE_CC(context, "[sock " << socket().native_handle() << "] Async send calledback " << cb);
+    LOG_TRACE_CC(epee::net_utils::print_connection_context(context), "[sock " << socket().native_handle() << "] Async send calledback " << cb);
 
     if (e)
     {

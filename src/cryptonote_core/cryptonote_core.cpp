@@ -1765,7 +1765,7 @@ namespace cryptonote
     }
 
     std::string url = tools::get_update_url(software, subdir, buildtag, version, true);
-    MCLOG_CYAN(el::Level::Info, "global", "Version " << version << " of " << software << " for " << buildtag << " is available: " << url << ", SHA256 hash " << hash);
+    MCLOG_CYAN(3, "global", "Version " << version << " of " << software << " for " << buildtag << " is available: " << url << ", SHA256 hash " << hash);
     m_update_available = true;
 
     if (check_updates_level == UPDATES_NOTIFY)
@@ -1842,7 +1842,7 @@ namespace cryptonote
           }
         }
         if (good)
-          MCLOG_CYAN(el::Level::Info, "updates", "New version downloaded to " << path.string());
+          MCLOG_CYAN(3, "updates", "New version downloaded to " << path.string());
 #ifdef _WIN32
       }, [this](const std::string &path, const std::string &uri, size_t length, long content_length) {
 #else
@@ -1875,7 +1875,7 @@ namespace cryptonote
     uint64_t free_space = get_free_space();
     if (free_space < 1ull * 1024 * 1024 * 1024) // 1 GB
     {
-      const el::Level level = el::Level::Warning;
+      const int level = 2;
       MCLOG_RED(level, "global", "Free space is below 1 GB on " << m_config_folder);
     }
     return true;

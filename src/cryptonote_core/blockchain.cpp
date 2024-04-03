@@ -4058,7 +4058,7 @@ leave:
   if (!seen_future_version && bl.major_version > m_hardfork->get_ideal_version())
   {
     seen_future_version = true;
-    const el::Level level = el::Level::Warning;
+    const int level = WARNING_LOG;
     MCLOG_RED(level, "global", "**********************************************************************");
     MCLOG_RED(level, "global", "A block was seen on the network with a version higher than the last");
     MCLOG_RED(level, "global", "known one. This may be an old version of the daemon, and a software");

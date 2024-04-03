@@ -40,18 +40,18 @@ namespace rpc
     using handler_function = epee::byte_slice(DaemonHandler& handler, const rapidjson::Value& id, const rapidjson::Value& msg);
     struct handler_map
     {
-      const char* method_name;
+      const char8_t* method_name;
       handler_function* call;
     };
 
     bool operator<(const handler_map& lhs, const handler_map& rhs) noexcept
     {
-      return std::strcmp(lhs.method_name, rhs.method_name) < 0;
+      return std::strcmp(reinterpret_cast<const char *>(lhs.method_name), reinterpret_cast<const char *>(rhs.method_name)) < 0;
     }
 
     bool operator<(const handler_map& lhs, const std::string& rhs) noexcept
     {
-      return std::strcmp(lhs.method_name, rhs.c_str()) < 0;
+      return std::strcmp(reinterpret_cast<const char *>(lhs.method_name), rhs.c_str()) < 0;
     }
 
     template<typename Message>
@@ -67,33 +67,33 @@ namespace rpc
 
     constexpr const handler_map handlers[] =
     {
-      {reinterpret_cast<const char *>(u8"get_block_hash"), handle_message<GetBlockHash>},
-      {reinterpret_cast<const char *>(u8"get_block_header_by_hash"), handle_message<GetBlockHeaderByHash>},
-      {reinterpret_cast<const char *>(u8"get_block_header_by_height"), handle_message<GetBlockHeaderByHeight>},
-      {reinterpret_cast<const char *>(u8"get_block_headers_by_height"), handle_message<GetBlockHeadersByHeight>},
-      {reinterpret_cast<const char *>(u8"get_blocks_fast"), handle_message<GetBlocksFast>},
-      {reinterpret_cast<const char *>(u8"get_dynamic_fee_estimate"), handle_message<GetFeeEstimate>},
-      {reinterpret_cast<const char *>(u8"get_hashes_fast"), handle_message<GetHashesFast>},
-      {reinterpret_cast<const char *>(u8"get_height"), handle_message<GetHeight>},
-      {reinterpret_cast<const char *>(u8"get_info"), handle_message<GetInfo>},
-      {reinterpret_cast<const char *>(u8"get_last_block_header"), handle_message<GetLastBlockHeader>},
-      {reinterpret_cast<const char *>(u8"get_output_distribution"), handle_message<GetOutputDistribution>},
-      {reinterpret_cast<const char *>(u8"get_output_histogram"), handle_message<GetOutputHistogram>},
-      {reinterpret_cast<const char *>(u8"get_output_keys"), handle_message<GetOutputKeys>},
-      {reinterpret_cast<const char *>(u8"get_peer_list"), handle_message<GetPeerList>},
-      {reinterpret_cast<const char *>(u8"get_rpc_version"), handle_message<GetRPCVersion>},
-      {reinterpret_cast<const char *>(u8"get_transaction_pool"), handle_message<GetTransactionPool>},
-      {reinterpret_cast<const char *>(u8"get_transactions"), handle_message<GetTransactions>},
-      {reinterpret_cast<const char *>(u8"get_tx_global_output_indices"), handle_message<GetTxGlobalOutputIndices>},
-      {reinterpret_cast<const char *>(u8"hard_fork_info"), handle_message<HardForkInfo>},
-      {reinterpret_cast<const char *>(u8"key_images_spent"), handle_message<KeyImagesSpent>},
-      {reinterpret_cast<const char *>(u8"mining_status"), handle_message<MiningStatus>},
-      {reinterpret_cast<const char *>(u8"save_bc"), handle_message<SaveBC>},
-      {reinterpret_cast<const char *>(u8"send_raw_tx"), handle_message<SendRawTx>},
-      {reinterpret_cast<const char *>(u8"send_raw_tx_hex"), handle_message<SendRawTxHex>},
-      {reinterpret_cast<const char *>(u8"set_log_level"), handle_message<SetLogLevel>},
-      {reinterpret_cast<const char *>(u8"start_mining"), handle_message<StartMining>},
-      {reinterpret_cast<const char *>(u8"stop_mining"), handle_message<StopMining>}
+      {u8"get_block_hash", handle_message<GetBlockHash>},
+      {u8"get_block_header_by_hash", handle_message<GetBlockHeaderByHash>},
+      {u8"get_block_header_by_height", handle_message<GetBlockHeaderByHeight>},
+      {u8"get_block_headers_by_height", handle_message<GetBlockHeadersByHeight>},
+      {u8"get_blocks_fast", handle_message<GetBlocksFast>},
+      {u8"get_dynamic_fee_estimate", handle_message<GetFeeEstimate>},
+      {u8"get_hashes_fast", handle_message<GetHashesFast>},
+      {u8"get_height", handle_message<GetHeight>},
+      {u8"get_info", handle_message<GetInfo>},
+      {u8"get_last_block_header", handle_message<GetLastBlockHeader>},
+      {u8"get_output_distribution", handle_message<GetOutputDistribution>},
+      {u8"get_output_histogram", handle_message<GetOutputHistogram>},
+      {u8"get_output_keys", handle_message<GetOutputKeys>},
+      {u8"get_peer_list", handle_message<GetPeerList>},
+      {u8"get_rpc_version", handle_message<GetRPCVersion>},
+      {u8"get_transaction_pool", handle_message<GetTransactionPool>},
+      {u8"get_transactions", handle_message<GetTransactions>},
+      {u8"get_tx_global_output_indices", handle_message<GetTxGlobalOutputIndices>},
+      {u8"hard_fork_info", handle_message<HardForkInfo>},
+      {u8"key_images_spent", handle_message<KeyImagesSpent>},
+      {u8"mining_status", handle_message<MiningStatus>},
+      {u8"save_bc", handle_message<SaveBC>},
+      {u8"send_raw_tx", handle_message<SendRawTx>},
+      {u8"send_raw_tx_hex", handle_message<SendRawTxHex>},
+      {u8"set_log_level", handle_message<SetLogLevel>},
+      {u8"start_mining", handle_message<StartMining>},
+      {u8"stop_mining", handle_message<StopMining>}
     };
   } // anonymous
 
@@ -102,7 +102,7 @@ namespace rpc
   {
     const auto last_sorted = std::is_sorted_until(std::begin(handlers), std::end(handlers));
     if (last_sorted != std::end(handlers))
-      throw std::logic_error{std::string{"ZMQ JSON-RPC handlers map is not properly sorted, see "} + last_sorted->method_name};
+      throw std::logic_error{std::string{"ZMQ JSON-RPC handlers map is not properly sorted, see "} + std::string(reinterpret_cast<const char *>(last_sorted->method_name))};
   }
 
   void DaemonHandler::handle(const GetHeight::Request& req, GetHeight::Response& res)
@@ -909,7 +909,7 @@ namespace rpc
 
       const std::string request_type = req_full.getRequestType();
       const auto matched_handler = std::lower_bound(std::begin(handlers), std::end(handlers), request_type);
-      if (matched_handler == std::end(handlers) || matched_handler->method_name != request_type)
+      if (matched_handler == std::end(handlers) || std::string(reinterpret_cast<const char *>(matched_handler->method_name)) != request_type)
         return BAD_REQUEST(request_type, req_full.getID());
 
       epee::byte_slice response = matched_handler->call(*this, req_full.getID(), req_full.getMessage());
