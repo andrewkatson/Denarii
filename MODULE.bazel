@@ -15,7 +15,7 @@ bazel_dep(name = "googletest", version = "1.14.0", repo_name = "com_google_googl
 
 bazel_dep(name = "boost.asio", version = "1.83.0.bzl.3")
 bazel_dep(name = "boost.assign", version = "1.83.0.bzl.1")
-bazel_dep(name = "boost.chrono", version = "1.83.0.bzl.1")
+bazel_dep(name = "boost.chrono", version = "1.83.0.bzl.2")
 bazel_dep(name = "boost.filesystem", version = "1.83.0.bzl.3")
 bazel_dep(name = "boost.thread", version = "1.83.0.bzl.1")
 bazel_dep(name = "boost.multiprecision", version = "1.83.0.bzl.1")
