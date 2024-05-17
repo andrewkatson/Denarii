@@ -30,6 +30,7 @@ bazel_dep(name = "boost.scope_exit", version = "1.83.0.bzl.1")
 bazel_dep(name = "boost.date_time", version = "1.83.0.bzl.2")
 bazel_dep(name = "boost.format", version = "1.83.0.bzl.1")
 bazel_dep(name = "boost.multi_index", version = "1.83.0.bzl.1")
+
 # Used to get boost tribool
 bazel_dep(name = "boost.core", version = "1.83.0.bzl.1")
 bazel_dep(name = "boost.crc", version = "1.83.0.bzl.1")
@@ -41,4 +42,3 @@ bazel_dep(name = "boost.variant", version = "1.83.0.bzl.1")
 bazel_dep(name = "boost.variant2", version = "1.83.0.bzl.1")
 bazel_dep(name = "boost.logic", version = "1.83.0.bzl.1")
 bazel_dep(name = "boost.timer", version = "1.83.0.bzl.1")
-

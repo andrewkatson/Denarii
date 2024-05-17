@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 6,
-  "moduleFileHash": "51cfc5622d97fa9a78e11c7d400551eca3143fe8a39b37243feafcc8f76524e3",
+  "moduleFileHash": "69e6fd2962d8cd4e5c4c867f10fa16e2e07e94b790bb9e202468a614b4dd6707",
   "flags": {
     "cmdRegistries": [
       "https://raw.githubusercontent.com/bazelboost/registry/main",
