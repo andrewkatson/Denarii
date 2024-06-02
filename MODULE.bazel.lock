@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 6,
-  "moduleFileHash": "56dfa31dd47a86193273fd7fdbfc88315a4f42e128544a3a2d8d4da7899e7412",
+  "moduleFileHash": "4461e4b724e00d9532a00ae02fcf70371a68a824c9f1a204b46285a81eb5d57a",
   "flags": {
     "cmdRegistries": [
       "https://raw.githubusercontent.com/bazelboost/registry/main",
@@ -30,6 +30,7 @@
       "toolchainsToRegister": [],
       "extensionUsages": [],
       "deps": {
+        "openssl": "openssl@_",
         "com_google_protobuf": "protobuf@23.1",
         "com_google_googletest": "googletest@1.14.0",
         "boost.asio": "boost.asio@1.83.0.bzl.3",
@@ -60,7 +61,19 @@
         "boost.logic": "boost.logic@1.83.0.bzl.1",
         "boost.timer": "boost.timer@1.83.0.bzl.1",
         "denarii_external": "denarii_external@_",
-        "openssl": "openssl@_",
+        "bazel_tools": "bazel_tools@_",
+        "local_config_platform": "local_config_platform@_"
+      }
+    },
+    "openssl@_": {
+      "name": "openssl",
+      "version": "",
+      "key": "openssl@_",
+      "repoName": "openssl",
+      "executionPlatformsToRegister": [],
+      "toolchainsToRegister": [],
+      "extensionUsages": [],
+      "deps": {
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       }
@@ -1250,19 +1263,6 @@
       "extensionUsages": [],
       "deps": {
         "denarii": "<root>",
-        "bazel_tools": "bazel_tools@_",
-        "local_config_platform": "local_config_platform@_"
-      }
-    },
-    "openssl@_": {
-      "name": "openssl",
-      "version": "",
-      "key": "openssl@_",
-      "repoName": "openssl",
-      "executionPlatformsToRegister": [],
-      "toolchainsToRegister": [],
-      "extensionUsages": [],
-      "deps": {
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       }

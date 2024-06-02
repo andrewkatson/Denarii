@@ -10,6 +10,12 @@ module(
     version = "2.0",
 )
 
+bazel_dep(name = "openssl")
+local_path_override(
+    module_name = "openssl",
+    path = "external_openssl",
+)
+
 bazel_dep(name = "protobuf", version = "23.1", repo_name = "com_google_protobuf")
 bazel_dep(name = "googletest", version = "1.14.0", repo_name = "com_google_googletest")
 
@@ -47,10 +53,4 @@ bazel_dep(name = "denarii_external")
 local_path_override(
     module_name = "denarii_external",
     path = "external",
-)
-
-bazel_dep(name = "openssl")
-local_path_override(
-    module_name = "openssl",
-    path = "external_openssl",
 )
