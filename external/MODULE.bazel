@@ -1,0 +1,10 @@
+module(
+    name = "denarii_external",
+)
+
+local_path_override(
+    module_name = "denarii",
+    path = "..",
+)
+
+bazel_dep(name = "denarii")

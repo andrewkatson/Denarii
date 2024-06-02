@@ -31,6 +31,7 @@ common_bazel_build_command_options_windows = f' --extra_toolchains=@local_config
 common_build_options_windows = f' --compiler=mingw-gcc --host_compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" ' \
                                '--copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static" '
 
+
 class LibraryInfo:
 
     def __init__(self, libname, foldername=""):
@@ -74,6 +75,7 @@ mac_library_info = [LibraryInfo("autoconf"), LibraryInfo("autogen"), LibraryInfo
 
 github_path = workspace_path.parent
 print(f"GITHUB PATH {github_path}")
+
 
 def download_url(url, save_path, chunk_size=128):
     common.print_something(f"Downloading url {url} to {save_path}")
@@ -120,7 +122,11 @@ def create_folder(libraries):
         else:
             common.print_something(f"{path} already exists")
 
-        library.folderpath = path
+        # Openssl needs to be in a module named openssl so boost.asio can use it
+        if sys.platform == "darwin":
+            library.folderpath = workspace_path / "external_openssl" / foldername
+        else:
+            library.folderpath = path
 
         common.check_exists(path)
 
@@ -174,10 +180,10 @@ def find_src_files(libraries):
 
                     if common.check_exists_with_existing_artifact_check(new_path, delete_single_file=True, fail_on_existence=False):
                         continue
-                        
+
                     shutil.copyfile(path, new_path)
 
-                    common.check_exists(new_path) 
+                    common.check_exists(new_path)
                 else:
                     common.print_something(path + " does not exist")
 
@@ -308,7 +314,8 @@ def import_dependencies_mac():
     find_includes_mac(mac_library_info)
     find_src_files_mac(mac_library_info)
 
-def spdlog(external_dir_path): 
+
+def spdlog(external_dir_path):
     spdlog_path = external_dir_path / "spdlog"
 
     spdlog_library_path = spdlog_path / "build" / "libspdlog.a"
@@ -318,7 +325,7 @@ def spdlog(external_dir_path):
 
     common.print_something("Getting spdlog")
     common.chdir(external_dir_path)
-    
+
     clone_command = "git clone git@github.com:gabime/spdlog.git"
     common.system(clone_command)
 
@@ -329,19 +336,19 @@ def spdlog(external_dir_path):
 
     common.check_exists(spdlog_library_path)
 
+
 def miniupnp(external_dir_path):
     # we only need to build one of the subdirectories but we need to remove the whole tree
     root_miniupnp_path = external_dir_path / "miniupnp"
     miniupnp_path = external_dir_path / "miniupnp" / "miniupnpc"
     miniupnp_library_path = miniupnp_path / "build" / "libminiupnpc.a"
-    
+
     if common.check_exists_with_existing_artifact_check(path=miniupnp_library_path, root_path=root_miniupnp_path, delete_tree=True, fail_on_existence=False):
         return
 
-
     common.print_something("Getting miniupnp")
     common.chdir(external_dir_path)
-    
+
     # For now we have to clone this because miniupnp fails to download :(
     clone_command = "git clone git@github.com:miniupnp/miniupnp.git"
     common.system(clone_command)
@@ -379,9 +386,9 @@ def supercop(external_dir_path):
     supercop_64_library_path = supercop_path / "libmonero-crypto64.a"
     supercop_other_library_path = supercop_path / "libmonero-crypto.a"
 
-    if common.check_exists_with_existing_artifact_check(paths=[supercop_64_library_path, supercop_other_library_path],root_path=supercop_path, delete_tree=True, fail_on_existence=False):
+    if common.check_exists_with_existing_artifact_check(paths=[supercop_64_library_path, supercop_other_library_path], root_path=supercop_path, delete_tree=True, fail_on_existence=False):
         return
-    
+
     common.print_something("Getting supercop")
 
     common.chdir(external_dir_path)
@@ -441,14 +448,15 @@ def unbound(external_dir_path):
 
 
 def openssl(external_dir_path):
-    openssl_path = external_dir_path / "openssl"
+    # Openssl is a special snowflake because it needs to be in a module called "openssl"
+    openssl_path = workspace_path / "external_openssl" / "openssl"
 
     libssl_path = openssl_path / "libssl.a"
     libcrypto_path = openssl_path / "libcrypto.a"
 
     if common.check_exists_with_existing_artifact_check(paths=[libssl_path, libcrypto_path], root_path=openssl_path, delete_tree=True, fail_on_existence=False):
         return
-    
+
     common.print_something("Getting openssl")
 
     common.chdir(external_dir_path)
@@ -506,22 +514,23 @@ def zlib(external_dir_path):
 
     common.print_something("Getting zlib")
     common.chdir(external_dir_path)
-    
+
     clone_command = "git clone git@github.com:madler/zlib.git"
     common.system(clone_command)
 
     # We dont check for the existence of a library because zlib is just a normal bazel cc_library
     common.check_exists(zlib_path)
-    
+
     # We need to add a bit to the top of the zlib file
     gzguts_path = zlib_path / "gzguts.h"
     to_replace_path = workspace_path / "top_of_gzguts.txt"
     replace_with_path = workspace_path / "prepend_to_gzguts.txt"
-    with open(to_replace_path, 'r') as to_replace_file: 
+    with open(to_replace_path, 'r') as to_replace_file:
         to_replace_phrase = to_replace_file.read()
         with open(replace_with_path, 'r') as replace_with_file:
             replace_with_phrase = replace_with_file.read()
-            common.replace_phrase(to_replace_phrase, replace_with_phrase, gzguts_path)
+            common.replace_phrase(
+                to_replace_phrase, replace_with_phrase, gzguts_path)
 
 
 def liblmdb(external_dir_path):
@@ -531,7 +540,7 @@ def liblmdb(external_dir_path):
 
     if common.check_exists_with_existing_artifact_check(path=liblmdb_library_path, root_path=liblmdb_path, fail_on_existence=False):
         return
-    
+
     common.print_something("Getting liblmdb")
     common.chdir(external_dir_path)
 
@@ -554,14 +563,14 @@ def bigint(external_dir_path):
 
     common.check_exists(bigint_path)
 
+
 def curl(external_dir_path):
     curl_path = workspace_path / "external" / "curl"
     inside_folder_path = curl_path / "curl"
     common.chdir(curl_path)
-    
+
     if common.check_exists_with_existing_artifact_check(path=inside_folder_path, root_path=curl_path, delete_tree=True, fail_on_existence=False):
         return
-
 
     clone_command = "git clone git@github.com:curl/curl.git"
     os.system(clone_command)
@@ -577,7 +586,7 @@ def curl(external_dir_path):
 def json(external_dir_path):
 
     json_path = workspace_path / "external/json"
-    
+
     if common.check_exists_with_existing_artifact_check(path=json_path, root_path=json_path, delete_tree=True, fail_on_existence=False):
         return
 
@@ -587,6 +596,7 @@ def json(external_dir_path):
     os.system(clone_command)
 
     common.check_exists(json_path)
+
 
 def build_dependencies():
     common.print_something("Building dependencies")
@@ -631,6 +641,7 @@ def build_dependencies():
     spdlog(external_dir_path)
     common.chdir(external_dir_path)
 
+
 def supercop_win(external_dir_path):
     supercop_path = external_dir_path / "supercop"
 
@@ -674,6 +685,7 @@ def supercop_win(external_dir_path):
     common.check_exists(supercop_64_library_path)
     common.check_exists(supercop_other_library_path)
 
+
 def build_zlib(external_dir_path):
 
     zlib_path = external_dir_path / "zlib"
@@ -686,7 +698,9 @@ def build_zlib(external_dir_path):
 
     # need to undef UNISTD_H
     zconf_path = zlib_path / "zconf.h"
-    common.replace_phrase("#  define Z_HAVE_UNISTD_H", "#  undef Z_HAVE_UNISTD_H", zconf_path)
+    common.replace_phrase("#  define Z_HAVE_UNISTD_H",
+                          "#  undef Z_HAVE_UNISTD_H", zconf_path)
+
 
 def build_dependencies_win():
     common.print_something("Building dependencies for Windows")
@@ -704,7 +718,7 @@ def build_dependencies_win():
 
     json(external_dir_path)
     common.chdir(external_dir_path)
-    
+
     spdlog(external_dir_path)
     common.chdir(external_dir_path)
 
@@ -713,12 +727,11 @@ def randomx_mac(external_dir_path):
     randomx_path = external_dir_path / "randomx"
 
     randomx_library_path = randomx_path / "build" / "librandomx.a"
-    
+
     build_folder_path = randomx_path / "build"
 
     if common.check_exists_with_existing_artifact_check(path=randomx_library_path, delete_tree=True, root_path=build_folder_path, fail_on_existence=False):
         return
-
 
     common.print_something("Getting randomx")
     common.chdir(external_dir_path)
@@ -739,7 +752,6 @@ def liblmdb_mac(external_dir_path):
     if common.check_exists_with_existing_artifact_check(path=liblmdb_library_path, root_path=liblmdb_path, fail_on_existence=False):
         return
 
-
     common.print_something("Getting liblmdb")
     common.chdir(external_dir_path)
 
@@ -757,7 +769,6 @@ def libnorm_mac(external_dir_path):
 
     if common.check_exists_with_existing_artifact_check(path=binary_path, root_path=libnorm_path, delete_tree=True, fail_on_existence=False):
         return
-
 
     common.print_something("Getting libnorm")
     common.chdir(external_dir_path)
@@ -835,10 +846,10 @@ def build_dependencies_mac():
 
     common.chdir(external_dir_path)
     json(external_dir_path)
-    
+
     common.chdir(external_dir_path)
     zlib(external_dir_path)
-    
+
     spdlog(external_dir_path)
     common.chdir(external_dir_path)
 
@@ -846,13 +857,11 @@ def build_dependencies_mac():
 def trezor_common():
     trezor_common_build_file_path = workspace_path / \
         "trezor_common_build_file.txt"
-    trezor_common_workspace_file_path = workspace_path / \
-        "trezor_common_workspace_file.txt"
-        
-    trezor_dest_build_file_path = workspace_path / "external" / "trezor-common" / "protob" / "BUILD"
-    trezor_dest_workspace_file_path = workspace_path / "external" / "trezor-common" / "protob" / "WORKSPACE"
 
-    if common.check_exists_with_existing_artifact_check(paths=[trezor_dest_build_file_path, trezor_dest_workspace_file_path], delete_single_file=True, fail_on_existence=False):
+    trezor_dest_build_file_path = workspace_path / \
+        "external" / "trezor-common" / "protob" / "BUILD"
+
+    if common.check_exists_with_existing_artifact_check(paths=[trezor_dest_build_file_path], delete_single_file=True, fail_on_existence=False):
         return
 
     try:
@@ -860,7 +869,8 @@ def trezor_common():
             text = f.read()
         common.print_something("Setting up trezor common")
 
-        path_to_dir = str(workspace_path / "external" / "trezor-common" / "protob")
+        path_to_dir = str(workspace_path / "external" /
+                          "trezor-common" / "protob")
         common.chdir(path_to_dir)
 
         common.system(f"echo \'{text}\' > BUILD")
@@ -869,20 +879,6 @@ def trezor_common():
         common.print_something(e)
 
     common.check_exists(trezor_dest_build_file_path)
-
-    try:
-        path_to_workspace_dir = str(workspace_path / "external" / "trezor-common")
-        common.chdir(path_to_workspace_dir)
-
-        with open(trezor_common_workspace_file_path) as f:
-            workspace_text = f.read()
-
-        common.system(f"echo \'{workspace_text}\' > WORKSPACE")
-
-    except Exception as e:
-        common.print_something(e)
-
-    common.check_exists(trezor_common_workspace_file_path)
 
 
 def blocks_generate():
@@ -1189,7 +1185,7 @@ def convert_translation_files_win():
 
         if common.check_exists_with_existing_artifact_check(path=translated_file_path, delete_single_file=True, fail_on_existence=False):
             continue
-        
+
         file = files[i]
 
         if sys.platform == "cygwin":
@@ -1383,6 +1379,7 @@ def generate_files_mac():
     translations_generate_mac()
     trezor_common()
 
+
 def move_own_py_files():
     workspace_path_finder_dest_path = workspace_path / \
         "utils" / "gui" / "workspace_path_finder.py"
@@ -1404,11 +1401,11 @@ def move_own_py_files():
     dest_denarii_client_path = workspace_path / \
         "utils" / "gui" / "denarii_client.py"
 
-
     if common.check_exists_with_existing_artifact_check(path=dest_denarii_client_path, delete_single_file=True, fail_on_existence=False):
         return
 
-    src_denarii_client_path = workspace_path / "client" / "Denarii" / "denarii_client.py"
+    src_denarii_client_path = workspace_path / \
+        "client" / "Denarii" / "denarii_client.py"
 
     shutil.copyfile(src_denarii_client_path, dest_denarii_client_path)
 
@@ -1423,7 +1420,6 @@ def move_misc():
 
 def build_denariid():
     denariid_path = workspace_path / "bazel-bin" / "src" / "denariid"
-
 
     if common.check_exists_with_existing_artifact_check(path=denariid_path, delete_single_file=True, fail_on_existence=False):
         return
@@ -1441,7 +1437,6 @@ def build_denariid():
 def build_denarii_wallet_rpc_server():
     denarii_wallet_rpc_server_path = workspace_path / \
         "bazel-bin" / "src" / "denarii_wallet_rpc_server"
-
 
     if common.check_exists_with_existing_artifact_check(path=denarii_wallet_rpc_server_path, delete_single_file=True, fail_on_existence=False):
         return
@@ -1557,7 +1552,6 @@ def setup_ui():
     build_binaries()
 
 
-
 def setup_ui_win():
     common.print_something("Setting up the UI for Windows")
 
@@ -1566,14 +1560,12 @@ def setup_ui_win():
     build_binaries_win()
 
 
-
 def setup_ui_mac():
     common.print_something("Setting up the UI for Mac")
 
     move_misc()
 
     build_binaries_mac()
-
 
 
 common.print_something(workspace_path)

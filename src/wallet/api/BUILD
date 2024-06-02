@@ -37,6 +37,6 @@ cc_library(
         "@boost.regex",
         "@boost.serialization",
         "@boost.thread",
-        "@db_drivers",
+        "@denarii_external//:db_drivers",
     ],
 )

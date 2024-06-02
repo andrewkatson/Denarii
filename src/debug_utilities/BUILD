@@ -10,7 +10,7 @@ cc_binary(
         "//src:device",
         "//src:p2p",
         "//src:ringct",
-        "@liblzma",
+        "@denarii_external//:liblzma",
     ],
 )
 
@@ -24,7 +24,7 @@ cc_binary(
         "//src:cryptonote_protocol",
         "//src:p2p",
         "//src/wallet/api:wallet_api",
-        "@liblzma",
+        "@denarii_external//:liblzma",
     ],
 )
 

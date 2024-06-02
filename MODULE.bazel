@@ -42,3 +42,15 @@ bazel_dep(name = "boost.variant", version = "1.83.0.bzl.1")
 bazel_dep(name = "boost.variant2", version = "1.83.0.bzl.1")
 bazel_dep(name = "boost.logic", version = "1.83.0.bzl.1")
 bazel_dep(name = "boost.timer", version = "1.83.0.bzl.1")
+
+bazel_dep(name = "denarii_external")
+local_path_override(
+    module_name = "denarii_external",
+    path = "external",
+)
+
+bazel_dep(name = "openssl")
+local_path_override(
+    module_name = "openssl",
+    path = "external_openssl",
+)

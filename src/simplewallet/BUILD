@@ -52,10 +52,10 @@ cc_binary(
         "@boost.program_options",
         "@boost.system",
         "@boost.thread",
-        "@liblzma",
-        "@libreadline",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
         "@openssl//:libcrypto",
         "@openssl//:ssl",
-        "@qrcodegen",
+        "@denarii_external//:qrcodegen",
     ],
 )

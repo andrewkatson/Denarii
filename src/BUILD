@@ -118,17 +118,17 @@ cc_binary(
         "@boost.serialization",
         "@boost.system",
         "@boost.thread",
-        "@db_drivers",
-        "@liblzma",
-        "@libreadline",
-        "@libsodium",
-        "@libunbound",
-        "@miniupnp//:miniupnpc",
+        "@denarii_external//:db_drivers",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
+        "@denarii_external//:libsodium",
+        "@denarii_external//:libunbound",
+        "@denarii_external//:miniupnpc",
     ] + select({
         "windows": [
         ],
         "mac": [],
-        "linux": ["@libunwind"],
+        "linux": ["@denarii_external//:libunwind"],
     }),
 )
 
@@ -199,8 +199,8 @@ cc_library(
         "//contrib/epee",
         "@boost.scope_exit",
         "@boost.system",
-        "@libsodium",
-        "@randomx//:randomx_lib",
+        "@denarii_external//:libsodium",
+        "@denarii_external//:randomx_lib",
     ],
 )
 
@@ -241,8 +241,8 @@ cc_library(
         ":config",
         "//contrib/epee",
         "@boost.system",
-        "@libsodium",
-        "@randomx//:randomx_lib",
+        "@denarii_external//:libsodium",
+        "@denarii_external//:randomx_lib",
     ],
 )
 
@@ -291,8 +291,8 @@ cc_library(
         "@boost.regex",
         "@boost.system",
         "@boost.thread",
-        "@libsodium",
-        "@libunbound",
+        "@denarii_external//:libsodium",
+        "@denarii_external//:ibunbound",
         "@openssl//:libcrypto",
         "@openssl//:ssl",
     ] + select({
@@ -360,7 +360,7 @@ cc_library(
         "@boost.serialization",
         "@boost.system",
         "@boost.thread",
-        "@miniupnp//:miniupnpc",
+        "@denarii_external//:miniupnpc",
     ],
 )
 
@@ -475,7 +475,7 @@ cc_library(
         "@boost.thread",
         "@boost.variant",
         "@boost.variant2",
-        "@rapidjson",
+        "@denarii_external//:rapidjson",
     ],
 )
 
@@ -614,15 +614,15 @@ cc_library(
         "@boost.logic",
         "@boost.multi_index",
         "@boost.serialization",
-        "@libhidapi",
+        "@denarii_external//:libhidapi",
         "@openssl//:libcrypto",
         "@openssl//:ssl",
     ] + select({
         "windows": [],
         "mac": [],
         "linux": [
-            "@supercop//:supercop51",
-            "@supercop//:supercop64",
+            "@denarii_external//:supercop51",
+            "@denarii_external//:supercop64",
         ],
     }),
 )
@@ -698,7 +698,7 @@ cc_library(
         "//src:ringct",
         "@boost.filesystem",
         "@boost.thread",
-        "@db_drivers",
+        "@denarii_external//:db_drivers",
     ],
 )
 
@@ -744,7 +744,7 @@ cc_library(
         "@boost.serialization",
         "@boost.system",
         "@boost.thread",
-        "@db_drivers",
+        "@denarii_external//:db_drivers",
     ],
 )
 
@@ -785,7 +785,7 @@ cc_binary(
         "@boost.filesystem",
         "@boost.program_options",
         "@boost.thread",
-        "@liblzma",
+        "@denarii_external//:liblzma",
     ],
 )
 
@@ -822,7 +822,7 @@ cc_library(
         "//contrib/epee",
         "//src:common",
         "@boost.spirit",
-        "@libzmq",
+        "@denarii_external//:libzmq",
     ] + select({
         "windows": ["@boost.asio"],
         "mac": [],
@@ -895,8 +895,8 @@ cc_library(
         "//src/boost/archive:boost_extra",
         "@boost.regex",
         "@boost.thread",
-        "@miniupnp//:miniupnpc",
-        "@rapidjson",
+        "@denarii_external//:miniupnpc",
+        "@denarii_external//:rapidjson",
     ],
 )
 
@@ -913,7 +913,7 @@ cc_library(
         "//src:net",
         "//src:serialization",
         "@boost.thread",
-        "@rapidjson",
+        "@denarii_external//:rapidjson",
     ],
 )
 
@@ -934,7 +934,7 @@ cc_library(
         "//src:cryptonote_protocol",
         "//src:serialization",
         "//src:version",
-        "@rapidjson",
+        "@denarii_external//:rapidjson",
     ],
 )
 
@@ -965,8 +965,8 @@ cc_library(
         "@boost.regex",
         "@boost.system",
         "@boost.thread",
-        "@libzmq",
-        "@rapidjson",
+        "@denarii_external//:libzmq",
+        "@denarii_external//:rapidjson",
     ],
 )
 
@@ -986,7 +986,7 @@ cc_library(
         ":daemon_rpc_server",
         "//contrib/epee",
         "//src/daemonizer",
-        "@rapidjson",
+        "@denarii_external//:rapidjson",
     ],
 )
 
@@ -1027,7 +1027,7 @@ cc_binary(
         "@boost.filesystem",
         "@boost.system",
         "@boost.thread",
-        "@liblzma",
+        "@denarii_external//:liblzma",
         "@openssl//:libcrypto",
         "@openssl//:ssl",
     ],
@@ -1056,7 +1056,7 @@ cc_binary(
         "@boost.asio",
         "@boost.filesystem",
         "@boost.thread",
-        "@liblzma",
+        "@denarii_external//:liblzma",
     ],
 )
 
@@ -1079,7 +1079,7 @@ cc_binary(
         "//src:wallet",
         "@boost.filesystem",
         "@boost.thread",
-        "@liblzma",
+        "@denarii_external//:liblzma",
     ],
 )
 
@@ -1094,7 +1094,7 @@ cc_binary(
         "//src:version",
         "@boost.filesystem",
         "@boost.thread",
-        "@liblzma",
+        "@denarii_external//:liblzma",
     ],
 )
 
@@ -1109,7 +1109,7 @@ cc_binary(
         "//src:version",
         "@boost.filesystem",
         "@boost.thread",
-        "@liblzma",
+        "@denarii_external//:liblzma",
     ],
 )
 
@@ -1125,7 +1125,7 @@ cc_binary(
         "//src:version",
         "@boost.filesystem",
         "@boost.thread",
-        "@liblzma",
+        "@denarii_external//:liblzma",
     ],
 )
 
@@ -1141,7 +1141,7 @@ cc_binary(
         "//src:version",
         "@boost.filesystem",
         "@boost.thread",
-        "@liblzma",
+        "@denarii_external//:liblzma",
     ],
 )
 
@@ -1156,7 +1156,7 @@ cc_binary(
         "//src:version",
         "@boost.filesystem",
         "@boost.thread",
-        "@liblzma",
+        "@denarii_external//:liblzma",
     ],
 )
 
@@ -1171,7 +1171,7 @@ cc_binary(
         "//src:version",
         "@boost.filesystem",
         "@boost.thread",
-        "@liblzma",
+        "@denarii_external//:liblzma",
     ],
 )
 
@@ -1195,7 +1195,7 @@ cc_binary(
         "windows": [
         ],
         "mac": [],
-        "linux": ["@libunwind"],
+        "linux": ["@denarii_external//:libunwind"],
     }),
 )
 
@@ -1212,14 +1212,14 @@ cc_binary(
         "windows": [
         ],
         "mac": [],
-        "linux": ["@libunwind"],
+        "linux": ["@denarii_external//:libunwind"],
     }),
 )
 
 cc_binary(
     name = "what_is_argv",
     srcs = ["what_is_argv.cpp"],
-    deps = ["@miniupnp//:miniupnpc"],
+    deps = ["@denarii_external//:miniupnpc"],
 )
 
 # This doesn't work because on Mac the other parts of the select statment get evaluated and

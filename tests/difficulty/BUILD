@@ -9,8 +9,8 @@ cc_binary(
     ],
     deps = [
         "//src:cryptonote_basic",
-        "@liblzma",
-        "@libreadline",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
     ],
 )
 

@@ -9,6 +9,6 @@ cc_binary(
         "//src:version",
         "@boost.filesystem",
         "@boost.program_options",
-        "@liblzma",
+        "@denarii_external//:liblzma",
     ],
 )

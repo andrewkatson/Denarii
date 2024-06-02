@@ -16,9 +16,9 @@ cc_test(
         "//src:cryptonote_core",
         "//src:wallet",
         "@boost.chrono",
-        "@liblzma",
-        "@libreadline",
-        "@libsodium",
-        "@libunwind",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
+        "@denarii_external//:libsodium",
+        "@denarii_external//:libunwind",
     ],
 )

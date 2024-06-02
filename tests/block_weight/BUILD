@@ -8,8 +8,8 @@ cc_binary(
     deps = [
         "//src:blockchain_db",
         "//src:cryptonote_core",
-        "@liblzma",
-        "@libreadline",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
     ],
 )
 

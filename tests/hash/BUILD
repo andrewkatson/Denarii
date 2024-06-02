@@ -7,6 +7,6 @@ cc_binary(
         "//src:cncrypto",
         "//src:common",
         "//tests:io",
-        "@liblzma",
+        "@denarii_external//:liblzma",
     ],
 )

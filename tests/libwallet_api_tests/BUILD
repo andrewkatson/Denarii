@@ -17,7 +17,7 @@ cc_test(
         "@boost.system",
         "@boost.thread",
         "@com_google_googletest//:gtest_main",
-        "@liblzma",
-        "@libreadline",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
     ],
 )

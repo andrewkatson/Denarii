@@ -1,0 +1,465 @@
+load("@denarii//:bazel/curl.bzl", "CURL_COPTS")
+
+package(
+    default_visibility = ["//visibility:public"],
+    features = ["no_copts_tokenization"],
+)
+
+licenses(["notice"])  # BSD/MIT-like license (for zlib)
+
+config_setting(
+    name = "windows",
+    values = {"cpu": "x64_windows"},
+    visibility = ["//visibility:private"],
+)
+
+config_setting(
+    name = "osx",
+    values = {"cpu": "darwin"},
+    visibility = ["//visibility:private"],
+)
+
+cc_library(
+    name = "bigint",
+    srcs = glob(["**/*.cpp"]),
+    hdrs = glob(["**/*.h"]),
+)
+
+cc_library(
+    name = "curl",
+    srcs = glob([
+        "lib/**/*.c",
+    ]),
+    hdrs = glob([
+        "include/curl/*.h",
+        "lib/**/*.h",
+    ]),
+    copts = CURL_COPTS + [
+        "-DOS=\"os\"",
+        "-DCURL_EXTERN_SYMBOL=__attribute__((__visibility__(\"default\")))",
+    ],
+    includes = [
+        "include/",
+        "lib/",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "db_drivers",
+    srcs = select({
+        "windows": glob(["**/*.a"]),
+        "mac": [
+            "liblmdb/mdb.c",
+            "liblmdb/midl.c",
+        ],
+        "linux": glob(["**/*.a"]),
+    }),
+    hdrs = glob(["**/liblmdb/*.h"]),
+)
+
+cc_library(
+    name = "easy_logging",
+    srcs = glob(["**/*.cc"]),
+    hdrs = glob(["**/*.h"]),
+)
+
+cc_library(
+    name = "expat",
+    srcs = select({
+        "windows": glob(["**/*.a"]),
+        "mac": glob(["**/*.a"]),
+        "linux": glob(["**/*.a"]),
+    }),
+    hdrs = glob(["**/include/**/*.h"]),
+)
+
+cc_library(
+    name = "json",
+    hdrs = glob(["**/*.hpp"]),
+)
+
+cc_library(
+    name = "ldns",
+    srcs = select({
+        "windows": glob(["**/*.a"]),
+        "mac": glob(["**/*.a"]),
+        "linux": glob(["**/*.a"]),
+    }),
+    hdrs = glob(["**/include/**/*.h"]),
+)
+
+cc_library(
+    name = "libhidapi",
+    srcs = select({
+        "windows": glob(["**/*.a"]),
+        "mac": glob(["**/*.a"]),
+        "linux": glob(["**/*.a"]),
+    }),
+    hdrs = glob(["**/include/**/*.h"]),
+)
+
+cc_library(
+    name = "liblzma",
+    srcs = select({
+        "windows": glob(["**/*.a"]),
+        "mac": glob(["**/*.a"]),
+        "linux": glob(["**/*.a"]),
+    }),
+    hdrs = glob(["**/include/**/*.h"]),
+)
+
+cc_library(
+    name = "libnorm",
+    srcs = select({
+        "windows": glob(["build/*.lib"]),
+        "mac": ["build/libnorm.a"],
+        "linux": glob(["build/*.a"]),
+    }),
+    hdrs = select({
+        "windows": glob(["include/*.h"]),
+        "mac": [
+            "include/galois.h",
+            "include/normApi.h",
+            "include/normEncoder.h",
+            "include/normEncoderMDP.h",
+            "include/normEncoderRS16.h",
+            "include/normEncoderRS8.h",
+            "include/normFile.h",
+            "include/normMessage.h",
+            "include/normNode.h",
+            "include/normObject.h",
+            "include/normPostProcess.h",
+            "include/normSegment.h",
+            "include/normSession.h",
+            "include/normSimAgent.h",
+            "include/normVersion.h",
+        ],
+        "linux": glob(["include/*.h"]),
+    }),
+    includes = select({
+        "windows": [],
+        "mac": ["include"],
+        "linux": [],
+    }),
+)
+
+cc_library(
+    name = "libreadline",
+    srcs = select({
+        "windows": glob(["**/*.a"]),
+        "mac": glob(["**/*.a"]),
+        "linux": glob(["**/*.a"]),
+    }),
+    hdrs = glob(["**/*.h"]),
+)
+
+cc_library(
+    name = "libsodium",
+    srcs = select({
+        "windows": glob(["**/*.a"]),
+        "mac": glob(["**/*.a"]),
+        "linux": glob(["**/*.a"]),
+    }),
+    hdrs = glob(["**/*.h"]),
+)
+
+cc_library(
+    name = "libudev",
+    srcs = glob(["**/*.a"]),
+    hdrs = glob(["**/include/**/*.h"]),
+)
+
+cc_library(
+    name = "libunbound",
+    srcs = select({
+        "windows": glob(["**/*.a"]),
+        "mac": glob(["**/*.dylib"]),
+        "linux": glob(["**/*.so"]),
+    }),
+    hdrs = glob(["**/include/**/*.h"]),
+    linkopts = select({
+        "windows": ["-liphlpapi"],
+        "mac": [],
+        "linux": [],
+    }),
+    linkstatic = True,
+)
+
+cc_library(
+    name = "libunwind",
+    srcs = select({
+        "linux": glob(["**/*.so"]),
+        "windows": glob(["**/*.a"]),
+        "mac": glob(["**/*.a"]),
+    }),
+    hdrs = glob(["**/include/**/*.h"]),
+)
+
+cc_library(
+    name = "libusb",
+    srcs = select({
+        "windows": glob(["**/*.a"]),
+        "mac": [
+            "libusb/core.c",
+            "libusb/descriptor.c",
+            "libusb/hotplug.c",
+            "libusb/io.c",
+            "libusb/os/darwin_usb.c",
+            "libusb/os/events_posix.c",
+            "libusb/os/threads_posix.c",
+            "libusb/strerror.c",
+            "libusb/sync.c",
+        ],
+        "linux": glob(["**/*.a"]),
+    }),
+    hdrs = select({
+        "windows": glob(["**/include/**/*.h"]),
+        "mac": glob(["**/*.h"]),
+        "linux": glob(["**/include/**/*.h"]),
+    }),
+    includes = select({
+        "windows": [],
+        "mac": ["libusb"],
+        "linux": [],
+    }),
+)
+
+cc_library(
+    name = "libzmq",
+    srcs = select({
+        "windows": glob(["**/libzmq.a"]),
+        "mac": glob(["**/*.dylib"]),
+        "linux": glob(["**/libzmq.a"]),
+    }),
+    hdrs = glob(["**/*.h"]),
+)
+
+cc_library(
+    name = "lrelease",
+    srcs = glob(["**/*.a"]),
+    hdrs = glob(["**/include/**/*.h"]),
+)
+
+cc_library(
+    name = "minissdpd",
+    srcs = glob(["**/minissdpd/*.a"]),
+    hdrs = glob(["**/minissdpd/*.h"]),
+)
+
+cc_library(
+    name = "miniupnpc",
+    srcs = select({
+        "windows": glob([
+            "**/miniupnpc/*.a",
+        ]),
+        "mac": glob(["**/*.a"]),
+        "//conditions:default": glob(["**/miniupnpc/*.a"]),
+    }),
+    hdrs = glob(["**/miniupnpc/**/*.h"]),
+    linkopts = select({
+        "windows": ["-liphlpapi"],
+        "mac": [],
+        "//conditions:default": [],
+    }),
+    linkstatic = True,
+)
+
+cc_library(
+    name = "miniupnpc-async",
+    srcs = glob(["**/miniupnpc-async/*.a"]),
+    hdrs = glob(["**/miniupnpc-async/*.h"]),
+)
+
+cc_library(
+    name = "miniupnpc-libevent",
+    srcs = glob(["**/miniupnpc-libevent/*.a"]),
+    hdrs = glob(["**/miniupnpc-libevent/*.h"]),
+)
+
+cc_library(
+    name = "miniupnpc-libuv",
+    srcs = glob(["**/miniupnpc-libuv/*.a"]),
+    hdrs = glob(["**/miniupnpc-libuv/*.h"]),
+)
+
+cc_library(
+    name = "miniupnpd",
+    srcs = glob(["**/miniupnpd/*.a"]),
+    hdrs = glob(["**/miniupnpd/*.h"]),
+)
+
+cc_library(
+    name = "openpgm",
+    srcs = select({
+        "windows": glob(["**/*.lib"]),
+        "mac": glob(["**/*.a"]),
+        "linux": glob(["**/*.a"]),
+    }),
+    hdrs = glob(["**/include/**/*.h"]),
+)
+
+cc_library(
+    name = "qrcodegen",
+    srcs = glob(["**/*.cpp"]),
+    hdrs = glob(["**/*.hpp"]),
+)
+
+# This doesn't work with all platforms. It only works with x86_64 and maybe not even that.
+cc_library(
+    name = "randomx",
+    srcs = glob(
+        [
+            "**/*.cpp",
+            "**/*.c",
+            "**/jit_compiler_x86_static.S",
+        ],
+        exclude = [
+            "**/tests/*",
+            "**/jit_compiler_a64.cpp",
+            "**/jit_compiler_a64_static.cpp",
+        ],
+    ),
+    hdrs = glob(
+        [
+            "**/*.h",
+            "**/*.hpp",
+        ],
+        exclude = [
+            "**/jit_compiler_a64.hpp",
+            "**/jit_compiler_a64_static.hpp",
+        ],
+    ),
+)
+
+cc_library(
+    name = "randomx_lib",
+    srcs = select({
+        "windows": glob(["**/*.a"]),
+        "mac": glob(
+            [
+                "**/*.cpp",
+                "**/*.c",
+                "**/*.S",
+            ],
+            exclude = [
+                "**/tests/*",
+                "**/*x86*",
+            ],
+        ),
+        "linux": glob(["**/*.a"]),
+    }),
+    hdrs = select({
+        "windows": glob(["**/randomx.h"]),
+        "mac": glob([
+            "**/*.h",
+            "**/*.hpp",
+        ]),
+        "linux": glob(["**/randomx.h"]),
+    }),
+    linkstatic = True,
+)
+
+cc_library(
+    name = "rapidjson",
+    srcs = [],
+    hdrs = glob(["**/include/rapidjson/**/*.h"]),
+)
+
+cc_library(
+    name = "spdlog",
+    srcs = glob(["**/*.a"]),
+    hdrs = glob(["**/*.h"]),
+    includes = ["include"],
+)
+
+cc_library(
+    name = "supercop64",
+    srcs = glob(["**/libmonero-crypto64.a"]),
+    hdrs = glob(["**/include/**/*.h"]),
+)
+
+cc_library(
+    name = "supercop51",
+    srcs = glob(["**/libmonero-crypto.a"]),
+    hdrs = glob(["**/include/**/*.h"]),
+)
+
+cc_proto_library(
+    name = "messages_cc_proto",
+    deps = [":message_proto"],
+)
+
+proto_library(
+    name = "messages_proto",
+    srcs = glob(["**/messages.proto"]),
+    deps = [
+    ],
+)
+
+cc_library(
+    name = "unbound",
+    srcs = glob(["**/*.so"]),
+    hdrs = glob(["**/*.h"]),
+)
+
+_ZLIB_HEADERS = [
+    "crc32.h",
+    "deflate.h",
+    "gzguts.h",
+    "inffast.h",
+    "inffixed.h",
+    "inflate.h",
+    "inftrees.h",
+    "trees.h",
+    "zconf.h",
+    "zlib.h",
+    "zutil.h",
+]
+
+_ZLIB_PREFIXED_HEADERS = ["zlib/include/" + hdr for hdr in _ZLIB_HEADERS]
+
+# In order to limit the damage from the `includes` propagation
+# via `:zlib`, copy the public headers to a subdirectory and
+# expose those.
+genrule(
+    name = "copy_public_headers",
+    srcs = _ZLIB_HEADERS,
+    outs = _ZLIB_PREFIXED_HEADERS,
+    cmd = "cp $(SRCS) $(@D)/zlib/include/",
+    visibility = ["//visibility:private"],
+)
+
+cc_library(
+    name = "zlib",
+    srcs = [
+        "adler32.c",
+        "compress.c",
+        "crc32.c",
+        "deflate.c",
+        "gzclose.c",
+        "gzlib.c",
+        "gzread.c",
+        "gzwrite.c",
+        "infback.c",
+        "inffast.c",
+        "inflate.c",
+        "inftrees.c",
+        "trees.c",
+        "uncompr.c",
+        "zutil.c",
+        # Include the un-prefixed headers in srcs to work
+        # around the fact that zlib isn't consistent in its
+        # choice of <> or "" delimiter when including itself.
+    ] + _ZLIB_HEADERS,
+    hdrs = _ZLIB_PREFIXED_HEADERS,
+    copts = select({
+        "windows": [],
+        "mac": [],
+        "//conditions:default": [
+            "-Wno-unused-variable",
+            "-Wno-implicit-function-declaration",
+        ],
+    }),
+    includes = ["zlib/include/"],
+)

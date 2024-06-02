@@ -21,8 +21,8 @@ cc_binary(
         "//src:wallet",
         "@boost.program_options",
         "@boost.regex",
-        "@liblzma",
-        "@libreadline",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
     ],
 )
 
@@ -37,8 +37,8 @@ cc_binary(
         "//contrib/epee",
         "//src:cncrypto",
         "//src:rpc_base",
-        "@liblzma",
-        "@libreadline",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
     ],
 )
 

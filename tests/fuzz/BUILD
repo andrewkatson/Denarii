@@ -19,10 +19,10 @@ cc_binary(
         "//src:cryptonote_core",
         "//src:device",
         "//src:p2p",
-        "@liblzma",
-        "@libreadline",
-        "@libsodium",
-        "@libunwind",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
+        "@denarii_external//:libsodium",
+        "@denarii_external//:libunwind",
     ],
 )
 
@@ -45,10 +45,10 @@ cc_binary(
         "//src:cryptonote_core",
         "//src:device",
         "//src:p2p",
-        "@liblzma",
-        "@libreadline",
-        "@libsodium",
-        "@libunwind",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
+        "@denarii_external//:libsodium",
+        "@denarii_external//:libunwind",
     ],
 )
 

@@ -6,14 +6,26 @@ package(features = ["no_copts_tokenization"])
 
 config_setting(
     name = "windows",
-    values = {"cpu": "x64_windows"},
-    visibility = ["//visibility:private"],
+    constraint_values = [
+        "@platforms//os:windows",
+    ],
+    visibility = ["//visibility:public"],
 )
 
 config_setting(
-    name = "osx",
-    values = {"cpu": "darwin"},
-    visibility = ["//visibility:private"],
+    name = "mac",
+    constraint_values = [
+        "@platforms//os:macos",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+   name = "linux",
+   constraint_values = [
+      "@platforms//os:linux",
+   ],
+   visibility = ["//visibility:public"],
 )
 
 cc_library(

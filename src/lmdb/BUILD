@@ -19,6 +19,6 @@ cc_library(
     ],
     deps = [
         "//src:common",
-        "@db_drivers",
+        "@denarii_external//:db_drivers",
     ],
 )

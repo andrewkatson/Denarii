@@ -19,8 +19,8 @@ cc_binary(
         "//src:cncrypto",
         "//src:common",
         "//tests:io",
-        "@liblzma",
-        "@libreadline",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
     ],
 )
 
@@ -34,7 +34,7 @@ cc_binary(
     deps = [
         "//src:cncrypto",
         "//src:common",
-        "@liblzma",
-        "@libreadline",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
     ],
 )

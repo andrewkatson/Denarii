@@ -49,10 +49,10 @@ cc_binary(
         "//src:version",
         "//src:wallet",
         "//src:multisig",
-        "@liblzma",
-        "@libreadline",
-        "@libunwind",
-        "@libzmq",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
+        "@denarii_external//:libunwind",
+        "@denarii_external//:libzmq",
     ],
 )
 
@@ -81,9 +81,9 @@ cc_library(
         "//src:version",
         "//src:wallet",
         "//src:multisig",
-        "@liblzma",
-        "@libreadline",
-        "@libunwind",
-        "@libzmq",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
+        "@denarii_external//:libunwind",
+        "@denarii_external//:libzmq",
     ],
 )

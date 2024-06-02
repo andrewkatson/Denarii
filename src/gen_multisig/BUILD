@@ -13,7 +13,7 @@ cc_binary(
         "@boost.filesystem",
         "@boost.program_options",
         "@boost.thread",
-        "@liblzma",
-        "@libreadline",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
     ],
 )

@@ -44,11 +44,11 @@ cc_binary(
     deps = [
         "//src:cncrypto",
         "//src:cryptonote_basic",
-        "@liblzma",
-        "@libnorm",
-        "@libreadline",
-        "@libzmq",
-        "@openpgm",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libnorm",
+        "@denarii_external//:libreadline",
+        "@denarii_external//:libzmq",
+        "@denarii_external//:openpgm",
         "@supercop//:supercop51",
         "@supercop//:supercop64",
     ],
@@ -72,8 +72,8 @@ cc_binary(
         "//contrib/epee",
         "//src:cncrypto",
         "//src:cryptonote_basic",
-        "@liblzma",
-        "@libreadline",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
     ],
 )
 

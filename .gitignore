@@ -142,6 +142,7 @@ external/bigint
 external/json
 external/curl
 external/spdlog
+external_openssl/openssl
 
 # Testing stuff
 tests/functional_tests/functional-tests-directory/

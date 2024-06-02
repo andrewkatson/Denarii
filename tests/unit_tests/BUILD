@@ -46,11 +46,11 @@ cc_test(
         "@boost.thread",
         "@com_google_absl//absl/random",
         "@com_google_googletest//:gtest_main",
-        "@liblzma",
-        "@libreadline",
-        "@libsodium",
-        "@libunwind",
-        "@libzmq",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
+        "@denarii_external//:libsodium",
+        "@denarii_external//:libunwind",
+        "@denarii_external//:libzmq",
     ],
 )
 

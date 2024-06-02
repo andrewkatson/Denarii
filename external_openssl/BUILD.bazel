@@ -1,0 +1,44 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "ssl",
+    srcs = select({
+        "windows": glob(["**/libssl.a"]),
+        "mac": glob(["**/libssl.a"]),
+        "linux": glob(["**/libssl.a"]),
+    }),
+    hdrs = select({
+        ":windows": glob(["**/*.h"]),
+        "mac": glob(["**/*.h"]),
+        "linux": glob(["**/ssl/**/*.h"]),
+    }),
+    includes = select({
+        "windows": [],
+        "mac": ["include"],
+        "linux": [],
+    }),
+    linkstatic = True,
+)
+
+cc_library(
+    name = "libcrypto",
+    srcs = select({
+        "windows": glob(["**/libcrypto.a"]),
+        "mac": glob(["**/libcrypto.a"]),
+        "linux": glob(["**/libcrypto.a"]),
+    }),
+    hdrs =
+        select({
+            ":windows": glob(["**/*.h"]),
+            "mac": glob(["**/*.h"]),
+            "linux": glob(["**/crypto/**/*.h"]),
+        }),
+    includes = select({
+        "windows": [],
+        "mac": ["include"],
+        "linux": [],
+    }),
+    linkstatic = True,
+)

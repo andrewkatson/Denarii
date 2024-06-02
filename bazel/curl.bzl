@@ -182,6 +182,6 @@ CURL_COPTS = select({
         "/DUSE_WINDOWS_SSPI",
         "/DUSE_SCHANNEL",
     ],
-    "//:osx": BASE_CURL_COPTS,
+    "//:mac": BASE_CURL_COPTS,
     "//conditions:default": BASE_CURL_COPTS + LINUX_CURL_COPTS,
 })

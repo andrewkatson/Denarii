@@ -29,6 +29,6 @@ cc_test(
         "@boost.filesystem",
         "@boost.program_options",
         "@boost.system",
-        "@libzmq",
+        "@denarii_external//:libzmq",
     ],
 )

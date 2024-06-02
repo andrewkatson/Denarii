@@ -22,10 +22,10 @@ cc_test(
         "@boost.system",
         "@boost.thread",
         "@com_google_googletest//:gtest_main",
-        "@liblzma",
-        "@libreadline",
-        "@libsodium",
-        "@libunwind",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
+        "@denarii_external//:libsodium",
+        "@denarii_external//:libunwind",
     ],
 )
 
@@ -50,9 +50,9 @@ cc_test(
         "@boost.date_time",
         "@boost.system",
         "@com_google_googletest//:gtest_main",
-        "@liblzma",
-        "@libreadline",
-        "@libsodium",
-        "@libunwind",
+        "@denarii_external//:liblzma",
+        "@denarii_external//:libreadline",
+        "@denarii_external//:libsodium",
+        "@denarii_external//:libunwind",
     ],
 )
