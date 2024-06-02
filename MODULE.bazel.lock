@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 6,
-  "moduleFileHash": "69e6fd2962d8cd4e5c4c867f10fa16e2e07e94b790bb9e202468a614b4dd6707",
+  "moduleFileHash": "acb4221cc13abfc8a5dbb9031d378e6ea311270e094057234d1a0abefb2334df",
   "flags": {
     "cmdRegistries": [
       "https://raw.githubusercontent.com/bazelboost/registry/main",
@@ -39,7 +39,7 @@
         "boost.uuid": "boost.uuid@1.83.0.bzl.2",
         "boost.program_options": "boost.program_options@1.83.0.bzl.1",
         "boost.regex": "boost.regex@1.83.0.bzl.1",
-        "boost.serialization": "boost.serialization@1.83.0.bzl.2",
+        "boost.serialization": "boost.serialization@1.83.0.bzl.3",
         "boost.system": "boost.system@1.83.0.bzl.2",
         "boost.scope_exit": "boost.scope_exit@1.83.0.bzl.1",
         "boost.date_time": "boost.date_time@1.83.0.bzl.2",
@@ -49,7 +49,7 @@
         "boost.crc": "boost.crc@1.83.0.bzl.1",
         "boost.locale": "boost.locale@1.83.0.bzl.1",
         "boost.lambda": "boost.lambda@1.83.0.bzl.1",
-        "boost.spirit": "boost.spirit@1.83.0.bzl.1",
+        "boost.spirit": "boost.spirit@1.83.0.bzl.2",
         "boost.foreach": "boost.foreach@1.83.0.bzl.1",
         "boost.variant": "boost.variant@1.83.0.bzl.1",
         "boost.variant2": "boost.variant2@1.83.0.bzl.1",
@@ -649,10 +649,10 @@
         }
       }
     },
-    "boost.serialization@1.83.0.bzl.2": {
+    "boost.serialization@1.83.0.bzl.3": {
       "name": "boost.serialization",
-      "version": "1.83.0.bzl.2",
-      "key": "boost.serialization@1.83.0.bzl.2",
+      "version": "1.83.0.bzl.3",
+      "key": "boost.serialization@1.83.0.bzl.3",
       "repoName": "boost.serialization",
       "executionPlatformsToRegister": [],
       "toolchainsToRegister": [],
@@ -674,7 +674,7 @@
         "boost.predef": "boost.predef@1.83.0.bzl.1",
         "boost.preprocessor": "boost.preprocessor@1.83.0.bzl.1",
         "boost.smart_ptr": "boost.smart_ptr@1.83.0.bzl.1",
-        "boost.spirit": "boost.spirit@1.83.0.bzl.1",
+        "boost.spirit": "boost.spirit@1.83.0.bzl.2",
         "boost.static_assert": "boost.static_assert@1.83.0.bzl.1",
         "boost.type_traits": "boost.type_traits@1.83.0.bzl.1",
         "boost.unordered": "boost.unordered@1.83.0.bzl.1",
@@ -688,9 +688,9 @@
         "ruleClassName": "http_archive",
         "attributes": {
           "urls": [
-            "https://github.com/bazelboost/serialization/releases/download/bazelboost-1.83.0.bzl.2/serialization-bazelboost-1.83.0.bzl.2.tar.gz"
+            "https://github.com/bazelboost/serialization/releases/download/bazelboost-1.83.0.bzl.3/serialization-bazelboost-1.83.0.bzl.3.tar.gz"
           ],
-          "integrity": "sha256-+QYS2h6r3xxGCmJ94U/tiLFq/aHbGVIVPfg7876xsjg=",
+          "integrity": "sha256-2zmgVd7VzBCSrxh4RFOKcJ9hejLYghHVdOdWPbrrSy4=",
           "strip_prefix": "",
           "remote_patches": {},
           "remote_patch_strip": 0
@@ -1013,16 +1013,17 @@
         }
       }
     },
-    "boost.spirit@1.83.0.bzl.1": {
+    "boost.spirit@1.83.0.bzl.2": {
       "name": "boost.spirit",
-      "version": "1.83.0.bzl.1",
-      "key": "boost.spirit@1.83.0.bzl.1",
+      "version": "1.83.0.bzl.2",
+      "key": "boost.spirit@1.83.0.bzl.2",
       "repoName": "boost.spirit",
       "executionPlatformsToRegister": [],
       "toolchainsToRegister": [],
       "extensionUsages": [],
       "deps": {
         "rules_cc": "rules_cc@0.0.9",
+        "platforms": "platforms@0.0.10",
         "boost.array": "boost.array@1.83.0.bzl.1",
         "boost.assert": "boost.assert@1.83.0.bzl.1",
         "boost.config": "boost.config@1.83.0.bzl.6",
@@ -1060,9 +1061,9 @@
         "ruleClassName": "http_archive",
         "attributes": {
           "urls": [
-            "https://github.com/bazelboost/spirit/releases/download/bazelboost-1.83.0.bzl.1/spirit-bazelboost-1.83.0.bzl.1.tar.gz"
+            "https://github.com/bazelboost/spirit/releases/download/bazelboost-1.83.0.bzl.2/spirit-bazelboost-1.83.0.bzl.2.tar.gz"
           ],
-          "integrity": "sha256-RectNkgMHgB/D4blj0DTV6brTbEAFqg/y3Jey7X6yNU=",
+          "integrity": "sha256-CRyDYoqPgg9gQSq+NtptvHc0ierLDfnfuySXWJtlyVc=",
           "strip_prefix": "",
           "remote_patches": {},
           "remote_patch_strip": 0
@@ -4156,7 +4157,7 @@
     },
     "@@protobuf~//:non_module_deps.bzl%non_module_deps": {
       "general": {
-        "bzlTransitiveDigest": "aGnO/HqVtCmRLEQWGCuKp7jwX+lCh/nc3/hI3clfwD8=",
+        "bzlTransitiveDigest": "Ru/iB33/Fg7l06H1hBzJ1lPAZip3abmjbwD8z/MzBig=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -4184,7 +4185,7 @@
     },
     "@@rules_java~//java:extensions.bzl%toolchains": {
       "general": {
-        "bzlTransitiveDigest": "tJHbmWnq7m+9eUBnUdv7jZziQ26FmcGL9C5/hU3Q9UQ=",
+        "bzlTransitiveDigest": "0N5b5J9fUzo0sgvH4F3kIEaeXunz4Wy2/UtSFV/eXUY=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
