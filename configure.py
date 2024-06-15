@@ -122,7 +122,6 @@ def create_folder(libraries):
         else:
             common.print_something(f"{path} already exists")
 
-
         library.folderpath = path
 
         common.check_exists(path)
@@ -581,7 +580,7 @@ def curl(external_dir_path):
 
 def json(external_dir_path):
 
-    json_path = workspace_path / "external/json"
+    json_path = workspace_path / "external" / "json"
 
     if common.check_exists_with_existing_artifact_check(path=json_path, root_path=json_path, delete_tree=True, fail_on_existence=False):
         return
@@ -787,9 +786,9 @@ def libnorm_mac(external_dir_path):
     common.system(build_command)
 
     common.check_exists(binary_path)
-    
+
     # Delete the recursive symbolic links
-    norm_recursive_path = libnorm_path / "norp"/ "norm"
+    norm_recursive_path = libnorm_path / "norp" / "norm"
     os.removedirs(norm_recursive_path)
 
 
@@ -1567,18 +1566,20 @@ def setup_ui_mac():
 
     build_binaries_mac()
 
-def move_external(): 
+
+def move_external():
     # Bazel doesnt find targets in directory named "external" so instead we move it!
     source = workspace_path / "external"
     dest = workspace_path / "other"
-    
+
     if common.check_exists_with_existing_artifact_check(path=dest, delete_tree=True, fail_on_existence=False):
         return
-    
+
     move_command = f"cp -r {source} {dest}"
     common.system(move_command)
-    
+
     common.check_exists(dest)
+
 
 common.print_something(workspace_path)
 if sys.platform == "linux":
@@ -1587,7 +1588,7 @@ if sys.platform == "linux":
     build_dependencies()
 
     generate_files()
-    
+
     move_external()
 
     setup_ui()
@@ -1595,7 +1596,7 @@ elif sys.platform == "msys" or sys.platform == "cygwin":
     build_dependencies_win()
 
     generate_files_win()
-    
+
     move_external()
 
     setup_ui_win()

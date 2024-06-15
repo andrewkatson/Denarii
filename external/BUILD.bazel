@@ -637,6 +637,7 @@ cc_library(
     includes = ["unbound"],
 )
 
+
 cc_library(
     name = "ssl",
     srcs = glob([
@@ -648,7 +649,12 @@ cc_library(
         "linux": glob(["**/ssl/**/*.h"]),
     }),
     includes = ["openssl/include"],
-    linkstatic = True,
+    linkstatic =
+        select({
+            ":windows": True,
+            "mac": False,
+            "linux": True,
+        }),
 )
 
 cc_library(
@@ -663,5 +669,10 @@ cc_library(
             "linux": glob(["**/crypto/**/*.h"]),
         }),
     includes = ["openssl/include"],
-    linkstatic = True,
+    linkstatic =
+        select({
+            ":windows": True,
+            "mac": False,
+            "linux": True,
+        }),
 )
