@@ -26,7 +26,7 @@
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include "external/db_drivers/liblmdb/lmdb.h"
+#include "other/db_drivers/liblmdb/lmdb.h"
 #include <memory>
 
 #include "src/lmdb/error.h"

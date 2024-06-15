@@ -5,12 +5,12 @@ cc_binary(
     srcs = ["cn_deserialize.cpp"],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
         "//src:blockchain_db",
         "//src:cryptonote_core",
         "//src:device",
         "//src:p2p",
         "//src:ringct",
-        "@denarii_external//:liblzma",
     ],
 )
 
@@ -19,12 +19,12 @@ cc_binary(
     srcs = ["object_sizes.cpp"],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
         "//src:blockchain_db",
         "//src:cryptonote_core",
         "//src:cryptonote_protocol",
         "//src:p2p",
         "//src/wallet/api:wallet_api",
-        "@denarii_external//:liblzma",
     ],
 )
 

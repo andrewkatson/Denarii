@@ -7,6 +7,8 @@ cc_test(
     ],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
+        "//other:libreadline",
         "//src:device",
         "//src:version",
         "//src/wallet/api:wallet_api",
@@ -17,7 +19,5 @@ cc_test(
         "@boost.system",
         "@boost.thread",
         "@com_google_googletest//:gtest_main",
-        "@denarii_external//:liblzma",
-        "@denarii_external//:libreadline",
     ],
 )

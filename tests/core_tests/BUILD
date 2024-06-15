@@ -1,27 +1,27 @@
 package(default_visibility = ["//visibility:public"])
 
 config_setting(
-    name="windows",
-    constraint_values=[
+    name = "windows",
+    constraint_values = [
         "@platforms//os:windows",
     ],
-    visibility=["//visibility:public"],
+    visibility = ["//visibility:public"],
 )
 
 config_setting(
     name = "mac",
-    constraint_values=[
+    constraint_values = [
         "@platforms//os:macos",
     ],
-    visibility=["//visibility:public"],
+    visibility = ["//visibility:public"],
 )
 
 config_setting(
-   name = "linux",
-   constraint_values = [
-      "@platforms//os:linux",
-   ],
-   visibility = ["//visibility:public"],
+    name = "linux",
+    constraint_values = [
+        "@platforms//os:linux",
+    ],
+    visibility = ["//visibility:public"],
 )
 
 cc_binary(
@@ -37,22 +37,22 @@ cc_binary(
         "-lunwind",
         "-llzma",
     ] + select({
-        'linux': ["-fPIC",],
-        'windows': ["-fPIC",],
-        'mac': []
+        "linux": ["-fPIC"],
+        "windows": ["-fPIC"],
+        "mac": [],
     }),
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
+        "//other:libreadline",
+        "//other:libunwind",
+        "//other:libzmq",
         "//src:cryptonote_core",
         "//src:device",
+        "//src:multisig",
         "//src:p2p",
         "//src:version",
         "//src:wallet",
-        "//src:multisig",
-        "@denarii_external//:liblzma",
-        "@denarii_external//:libreadline",
-        "@denarii_external//:libunwind",
-        "@denarii_external//:libzmq",
     ],
 )
 
@@ -75,15 +75,15 @@ cc_library(
     ],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
+        "//other:libreadline",
+        "//other:libunwind",
+        "//other:libzmq",
         "//src:cryptonote_core",
         "//src:device",
+        "//src:multisig",
         "//src:p2p",
         "//src:version",
         "//src:wallet",
-        "//src:multisig",
-        "@denarii_external//:liblzma",
-        "@denarii_external//:libreadline",
-        "@denarii_external//:libunwind",
-        "@denarii_external//:libzmq",
     ],
 )

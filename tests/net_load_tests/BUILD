@@ -14,6 +14,10 @@ cc_test(
     ],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
+        "//other:libreadline",
+        "//other:libsodium",
+        "//other:libunwind",
         "//src:cryptonote_core",
         "//src:p2p",
         "//tests/unit_tests:unit_test_utils",
@@ -22,10 +26,6 @@ cc_test(
         "@boost.system",
         "@boost.thread",
         "@com_google_googletest//:gtest_main",
-        "@denarii_external//:liblzma",
-        "@denarii_external//:libreadline",
-        "@denarii_external//:libsodium",
-        "@denarii_external//:libunwind",
     ],
 )
 
@@ -43,6 +43,10 @@ cc_test(
     ],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
+        "//other:libreadline",
+        "//other:libsodium",
+        "//other:libunwind",
         "//src:cryptonote_core",
         "//src:p2p",
         "//tests/unit_tests:unit_test_utils",
@@ -50,9 +54,5 @@ cc_test(
         "@boost.date_time",
         "@boost.system",
         "@com_google_googletest//:gtest_main",
-        "@denarii_external//:liblzma",
-        "@denarii_external//:libreadline",
-        "@denarii_external//:libsodium",
-        "@denarii_external//:libunwind",
     ],
 )

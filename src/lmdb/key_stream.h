@@ -30,7 +30,7 @@
 #include <cstdint>
 #include <cstring>
 #include <iterator>
-#include "external/db_drivers/liblmdb/lmdb.h"
+#include "other/db_drivers/liblmdb/lmdb.h"
 #include <utility>
 
 #include "src/lmdb/value_stream.h"

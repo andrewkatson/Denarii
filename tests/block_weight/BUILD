@@ -6,10 +6,10 @@ cc_binary(
         "-lreadline",
     ],
     deps = [
+        "//other:liblzma",
+        "//other:libreadline",
         "//src:blockchain_db",
         "//src:cryptonote_core",
-        "@denarii_external//:liblzma",
-        "@denarii_external//:libreadline",
     ],
 )
 

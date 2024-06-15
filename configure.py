@@ -122,11 +122,8 @@ def create_folder(libraries):
         else:
             common.print_something(f"{path} already exists")
 
-        # Openssl needs to be in a module named openssl so boost.asio can use it
-        if sys.platform == "darwin":
-            library.folderpath = workspace_path / "external_openssl" / foldername
-        else:
-            library.folderpath = path
+
+        library.folderpath = path
 
         common.check_exists(path)
 
@@ -448,8 +445,7 @@ def unbound(external_dir_path):
 
 
 def openssl(external_dir_path):
-    # Openssl is a special snowflake because it needs to be in a module called "openssl"
-    openssl_path = workspace_path / "external_openssl" / "openssl"
+    openssl_path = workspace_path / "external" / "openssl"
 
     libssl_path = openssl_path / "libssl.a"
     libcrypto_path = openssl_path / "libcrypto.a"
@@ -791,6 +787,10 @@ def libnorm_mac(external_dir_path):
     common.system(build_command)
 
     common.check_exists(binary_path)
+    
+    # Delete the recursive symbolic links
+    norm_recursive_path = libnorm_path / "norp"/ "norm"
+    os.removedirs(norm_recursive_path)
 
 
 def libusb_mac(external_dir_path):
@@ -1567,6 +1567,18 @@ def setup_ui_mac():
 
     build_binaries_mac()
 
+def move_external(): 
+    # Bazel doesnt find targets in directory named "external" so instead we move it!
+    source = workspace_path / "external"
+    dest = workspace_path / "other"
+    
+    if common.check_exists_with_existing_artifact_check(path=dest, delete_tree=True, fail_on_existence=False):
+        return
+    
+    move_command = f"cp -r {source} {dest}"
+    common.system(move_command)
+    
+    common.check_exists(dest)
 
 common.print_something(workspace_path)
 if sys.platform == "linux":
@@ -1575,12 +1587,16 @@ if sys.platform == "linux":
     build_dependencies()
 
     generate_files()
+    
+    move_external()
 
     setup_ui()
 elif sys.platform == "msys" or sys.platform == "cygwin":
     build_dependencies_win()
 
     generate_files_win()
+    
+    move_external()
 
     setup_ui_win()
 elif sys.platform == "darwin":
@@ -1589,5 +1605,7 @@ elif sys.platform == "darwin":
     build_dependencies_mac()
 
     generate_files_mac()
+
+    move_external()
 
     setup_ui_mac()

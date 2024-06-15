@@ -48,10 +48,10 @@
 #include "trezor_defs.hpp"
 #include "messages_map.hpp"
 
-#include "protob/messages.pb.h"
-#include "protob/messages-common.pb.h"
-#include "protob/messages-management.pb.h"
-#include "protob/messages-monero.pb.h"
+#include "other/trezor-common/protob/messages.pb.h"
+#include "other/trezor-common/protob/messages-common.pb.h"
+#include "other/trezor-common/protob/messages-management.pb.h"
+#include "other/trezor-common/protob/messages-monero.pb.h"
 
 #include <limits.h>
 #include <stddef.h>

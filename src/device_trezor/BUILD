@@ -17,11 +17,11 @@ config_setting(
 )
 
 config_setting(
-   name = "linux",
-   constraint_values = [
-      "@platforms//os:linux",
-   ],
-   visibility = ["//visibility:public"],
+    name = "linux",
+    constraint_values = [
+        "@platforms//os:linux",
+    ],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
@@ -48,6 +48,13 @@ cc_library(
         "linux": [],
     }),
     deps = [
+        "//other:libsodium",
+        "//other:libusb",
+        "//other:rapidjson",
+        "//other/trezor-common/protob:messages_cc_proto",
+        "//other/trezor-common/protob:messages_common_cc_proto",
+        "//other/trezor-common/protob:messages_management_cc_proto",
+        "//other/trezor-common/protob:messages_monero_cc_proto",
         "//src:cncrypto",
         "//src:common",
         "//src:cryptonote_core",
@@ -56,13 +63,6 @@ cc_library(
         "//src:rpc",
         "@boost.chrono",
         "@boost.scope_exit",
-        "@denarii_external//:libsodium",
-        "@denarii_external//:libusb",
-        "@denarii_external//:rapidjson",
-        "@denarii_external//trezor-common/protob:messages_cc_proto",
-        "@denarii_external//trezor-common/protob:messages_common_cc_proto",
-        "@denarii_external//trezor-common/protob:messages_management_cc_proto",
-        "@denarii_external//trezor-common/protob:messages_monero_cc_proto",
     ],
 )
 

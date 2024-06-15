@@ -30,7 +30,7 @@
 #define _HTTP_SERVER_CP_H_
 
 #include "abstract_tcp_server.h"
-#include "external/openssl/apps/include/http_server.h"
+#include "other/openssl/apps/include/http_server.h"
 
 namespace epee
 {

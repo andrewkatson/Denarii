@@ -28,8 +28,10 @@
 
 #include <string.h>
 #include <thread>
-#include <openssl/ssl.h>
-#include <openssl/pem.h>
+#include "openssl/ssl.h"
+#include "openssl/pem.h"
+#include "openssl/ec.h"
+#include "openssl/crypto.h"
 #include "contrib/epee/include/misc_log_ex.h"
 #include "contrib/epee/include/net/net_helper.h"
 #include "contrib/epee/include/net/net_ssl.h"

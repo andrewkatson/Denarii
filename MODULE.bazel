@@ -10,16 +10,13 @@ module(
     version = "2.0",
 )
 
-bazel_dep(name = "openssl")
-local_path_override(
-    module_name = "openssl",
-    path = "external_openssl",
-)
-
+bazel_dep(name = "boringssl", version = "0.0.0-20240530-2db0eb3")
+bazel_dep(name = "platforms", version = "0.0.10")
 bazel_dep(name = "protobuf", version = "23.1", repo_name = "com_google_protobuf")
-bazel_dep(name = "googletest", version = "1.14.0", repo_name = "com_google_googletest")
+bazel_dep(name = "googletest", version = "1.14.0", repo_name = "com_google_googletest",)
+bazel_dep(name = "zlib", version = "1.3.1")
 
-bazel_dep(name = "boost.asio", version = "1.83.0.bzl.3")
+bazel_dep(name = "boost.asio", version = "1.83.0.bzl.4")
 bazel_dep(name = "boost.assign", version = "1.83.0.bzl.1")
 bazel_dep(name = "boost.chrono", version = "1.83.0.bzl.2")
 bazel_dep(name = "boost.filesystem", version = "1.83.0.bzl.3")
@@ -48,9 +45,3 @@ bazel_dep(name = "boost.variant", version = "1.83.0.bzl.1")
 bazel_dep(name = "boost.variant2", version = "1.83.0.bzl.1")
 bazel_dep(name = "boost.logic", version = "1.83.0.bzl.1")
 bazel_dep(name = "boost.timer", version = "1.83.0.bzl.1")
-
-bazel_dep(name = "denarii_external")
-local_path_override(
-    module_name = "denarii_external",
-    path = "external",
-)

@@ -44,7 +44,7 @@
 #include <google/protobuf/generated_enum_reflection.h>
 #include "google/protobuf/descriptor.pb.h"
 
-#include "protob/messages.pb.h"
+#include "other/trezor-common/protob/messages.pb.h"
 
 namespace hw {
 namespace trezor {

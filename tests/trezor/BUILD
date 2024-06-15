@@ -12,6 +12,7 @@ cc_test(
     ],
     deps = [
         "//contrib/epee",
+        "//other:libzmq",
         "//src:cryptonote_core",
         "//src:cryptonote_protocol",
         "//src:daemon_files_for_test",
@@ -29,6 +30,5 @@ cc_test(
         "@boost.filesystem",
         "@boost.program_options",
         "@boost.system",
-        "@denarii_external//:libzmq",
     ],
 )

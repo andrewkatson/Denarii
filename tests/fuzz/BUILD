@@ -15,14 +15,14 @@ cc_binary(
     ],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
+        "//other:libreadline",
+        "//other:libsodium",
+        "//other:libunwind",
         "//src:common",
         "//src:cryptonote_core",
         "//src:device",
         "//src:p2p",
-        "@denarii_external//:liblzma",
-        "@denarii_external//:libreadline",
-        "@denarii_external//:libsodium",
-        "@denarii_external//:libunwind",
     ],
 )
 
@@ -41,14 +41,14 @@ cc_binary(
     ],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
+        "//other:libreadline",
+        "//other:libsodium",
+        "//other:libunwind",
         "//src:common",
         "//src:cryptonote_core",
         "//src:device",
         "//src:p2p",
-        "@denarii_external//:liblzma",
-        "@denarii_external//:libreadline",
-        "@denarii_external//:libsodium",
-        "@denarii_external//:libunwind",
     ],
 )
 

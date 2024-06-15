@@ -28,6 +28,7 @@ cc_library(
         "wallet_manager.h",
     ],
     deps = [
+        "//other:db_drivers",
         "//src:common",
         "//src:cryptonote_core",
         "//src:wallet",
@@ -37,6 +38,5 @@ cc_library(
         "@boost.regex",
         "@boost.serialization",
         "@boost.thread",
-        "@denarii_external//:db_drivers",
     ],
 )

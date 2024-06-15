@@ -5,6 +5,8 @@ cc_binary(
     srcs = ["gen_multisig.cpp"],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
+        "//other:libreadline",
         "//src:cncrypto",
         "//src:common",
         "//src:cryptonote_core",
@@ -13,7 +15,5 @@ cc_binary(
         "@boost.filesystem",
         "@boost.program_options",
         "@boost.thread",
-        "@denarii_external//:liblzma",
-        "@denarii_external//:libreadline",
     ],
 )

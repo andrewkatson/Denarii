@@ -23,6 +23,11 @@ cc_test(
         "-lsodium",
     ],
     deps = [
+        "//other:liblzma",
+        "//other:libreadline",
+        "//other:libsodium",
+        "//other:libunwind",
+        "//other:libzmq",
         "//src:blockchain_db",
         "//src:common",
         "//src:common_for_tests",
@@ -46,11 +51,6 @@ cc_test(
         "@boost.thread",
         "@com_google_absl//absl/random",
         "@com_google_googletest//:gtest_main",
-        "@denarii_external//:liblzma",
-        "@denarii_external//:libreadline",
-        "@denarii_external//:libsodium",
-        "@denarii_external//:libunwind",
-        "@denarii_external//:libzmq",
     ],
 )
 

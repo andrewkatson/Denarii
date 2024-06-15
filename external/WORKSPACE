@@ -1,2 +1,0 @@
-workspace(name = "denarii_external")
-# See MODULE.bazel for dependencies

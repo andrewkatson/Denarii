@@ -33,8 +33,8 @@
 #include <string>
 #include <sstream>
 
-#include "include/spdlog/spdlog.h"
-#include "include/spdlog/sinks/basic_file_sink.h"
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/basic_file_sink.h"
 
 
 #undef MONERO_DEFAULT_LOG_CATEGORY

@@ -17,47 +17,58 @@ config_setting(
 )
 
 config_setting(
-   name = "linux",
-   constraint_values = [
-      "@platforms//os:linux",
-   ],
-   visibility = ["//visibility:public"],
+    name = "linux",
+    constraint_values = [
+        "@platforms//os:linux",
+    ],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
     name = "epee",
-    srcs = glob([
-        "src/*.cpp",
-        "src/*.c",
-    ], exclude = ["src/readline_buffer.cpp"]),
+    srcs = glob(
+        [
+            "src/*.cpp",
+            "src/*.c",
+        ],
+        exclude = ["src/readline_buffer.cpp"],
+    ),
     hdrs = glob([
         "**/*.h",
         "**/*.hpp",
         "**/*.inl",
     ]),
-    linkopts = ["-Lexternal/openssl", "-lssl","-lcrypto"] + select({
-        "windows": ["-lcrypt32", "-lws2_32","-lwsock32"],
+    linkopts = [
+        "-Lother/openssl",
+        "-lssl",
+        "-lcrypto",
+    ] + select({
+        "windows": [
+            "-lcrypt32",
+            "-lws2_32",
+            "-lwsock32",
+        ],
         "mac": [],
         "linux": [],
     }),
     deps = [
+        "//other:crypto",
+        "//other:libreadline",
+        "//other:spdlog",
+        "//other:ssl",
+        "@boost.asio",
         "@boost.assign",
         "@boost.chrono",
-        "@boost.asio",
         "@boost.filesystem",
-        "@boost.thread",
-        "@boost.multiprecision",
-        "@boost.interprocess",
-        "@boost.mpl",
-        "@boost.uuid",
-        "@boost.lambda",
         "@boost.foreach",
+        "@boost.interprocess",
+        "@boost.lambda",
+        "@boost.mpl",
+        "@boost.multiprecision",
         "@boost.spirit",
+        "@boost.thread",
         "@boost.timer",
-        "@denarii_external//:spdlog",
-        "@denarii_external//:libcrypto",
-        "@denarii_external//:ssl",
-        "@denarii_external//:libreadline",
-        "@denarii_external//:zlib",
+        "@boost.uuid",
+        "@zlib",
     ],
 )

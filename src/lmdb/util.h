@@ -28,7 +28,7 @@
 
 #include <cstddef>
 #include <cstring>
-#include "external/db_drivers/liblmdb/lmdb.h"
+#include "other/db_drivers/liblmdb/lmdb.h"
 #include <type_traits>
 #include <utility>
 

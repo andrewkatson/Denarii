@@ -1,19 +1,19 @@
 package(default_visibility = ["//visibility:public"])
 
 config_setting(
-    name="windows",
-    constraint_values=[
+    name = "windows",
+    constraint_values = [
         "@platforms//os:windows",
     ],
-    visibility=["//visibility:public"],
+    visibility = ["//visibility:public"],
 )
 
 config_setting(
-    name="mac",
-    constraint_values=[
+    name = "mac",
+    constraint_values = [
         "@platforms//os:macos",
     ],
-    visibility=["//visibility:public"],
+    visibility = ["//visibility:public"],
 )
 
 cc_binary(
@@ -32,11 +32,16 @@ cc_binary(
         "-lboost_thread",
     ] + select({
         "windows": [],
-        "mac": []],
+        "mac": [],
         "//conditions:default": [],
     }),
     deps = [
         "//contrib/epee",
+        "//other:crypto",
+        "//other:liblzma",
+        "//other:libreadline",
+        "//other:qrcodegen",
+        "//other:ssl",
         "//src:cncrypto",
         "//src:common",
         "//src:cryptonote_core",
@@ -52,10 +57,5 @@ cc_binary(
         "@boost.program_options",
         "@boost.system",
         "@boost.thread",
-        "@denarii_external//:liblzma",
-        "@denarii_external//:libreadline",
-        "@openssl//:libcrypto",
-        "@openssl//:ssl",
-        "@denarii_external//:qrcodegen",
     ],
 )

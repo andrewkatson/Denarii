@@ -58,18 +58,18 @@ cc_binary(
     linkopts = [
         "-lpthread",
         "-llzma",
-        "-Lexternal/openssl",
+        "-Lother/openssl",
         "-lssl",
         "-lcrypto",
     ] + select({
         "windows": [
-            "-L external/db_drivers/liblmdb",
+            "-L db_drivers/liblmdb",
             "-llmdb",
             "-lzmq",
             "-lunbound",
-            "-L external/miniupnp/miniupnpc",
+            "-L miniupnp/miniupnpc",
             "-lminiupnpc",
-            "-L external/randomx/build",
+            "-L randomx/build",
             "-lrandomx",
             "-lws2_32",
             "-lwsock32",
@@ -77,13 +77,13 @@ cc_binary(
             "-lbsd",
             "-fPIC",
         ],
-        "mac": ["-Lexternal/openssl"],
+        "mac": ["-Lother/openssl"],
         "linux": [
-            "-L external/db_drivers/liblmdb",
+            "-L db_drivers/liblmdb",
             "-llmdb",
             "-lzmq",
             "-lunbound",
-            "-L external/miniupnp/miniupnpc",
+            "-L miniupnp/miniupnpc",
             "-lminiupnpc",
             "-lunwind",
             "-lbsd",
@@ -92,6 +92,12 @@ cc_binary(
     }),
     deps = [
         "//contrib/epee",
+        "//other:db_drivers",
+        "//other:liblzma",
+        "//other:libreadline",
+        "//other:libsodium",
+        "//other:libunbound",
+        "//other:miniupnpc",
         "//src:blockchain_db",
         "//src:cncrypto",
         "//src:common",
@@ -118,17 +124,11 @@ cc_binary(
         "@boost.serialization",
         "@boost.system",
         "@boost.thread",
-        "@denarii_external//:db_drivers",
-        "@denarii_external//:liblzma",
-        "@denarii_external//:libreadline",
-        "@denarii_external//:libsodium",
-        "@denarii_external//:libunbound",
-        "@denarii_external//:miniupnpc",
     ] + select({
         "windows": [
         ],
         "mac": [],
-        "linux": ["@denarii_external//:libunwind"],
+        "linux": ["//other:libunwind"],
     }),
 )
 
@@ -188,7 +188,7 @@ cc_library(
     }),
     linkopts = select({
         "windows": [
-            "-L external/randomx/build",
+            "-L randomx/build",
             "-lrandomx",
         ],
         "mac": [],
@@ -197,10 +197,10 @@ cc_library(
     deps = [
         ":config",
         "//contrib/epee",
+        "//other:libsodium",
+        "//other:randomx_lib",
         "@boost.scope_exit",
         "@boost.system",
-        "@denarii_external//:libsodium",
-        "@denarii_external//:randomx_lib",
     ],
 )
 
@@ -231,7 +231,7 @@ cc_library(
     }),
     linkopts = select({
         "windows": [
-            "-L external/randomx/build",
+            "-L randomx/build",
             "-lrandomx",
         ],
         "mac": [],
@@ -240,9 +240,9 @@ cc_library(
     deps = [
         ":config",
         "//contrib/epee",
+        "//other:libsodium",
+        "//other:randomx_lib",
         "@boost.system",
-        "@denarii_external//:libsodium",
-        "@denarii_external//:randomx_lib",
     ],
 )
 
@@ -257,7 +257,7 @@ cc_library(
     linkopts =
         select({
             ":windows": [
-                "-Lexternal/openssl",
+                "-Lother/openssl",
                 "-lssl",
                 "-lcrypto",
                 "-Lexternal/libunbound",
@@ -268,7 +268,7 @@ cc_library(
             ],
             "mac": [],
             "linux": [
-                "-Lexternal/openssl",
+                "-Lother/openssl",
                 "-lssl",
                 "-lcrypto",
                 "-Lexternal/libunbound",
@@ -279,6 +279,10 @@ cc_library(
         }),
     deps = [
         "//contrib/epee",
+        "//other:crypto",
+        "//other:libsodium",
+        "//other:libunbound",
+        "//other:ssl",
         "//src:cncrypto",
         "//src:config",
         "//src/boost/archive:boost_extra",
@@ -291,10 +295,6 @@ cc_library(
         "@boost.regex",
         "@boost.system",
         "@boost.thread",
-        "@denarii_external//:libsodium",
-        "@denarii_external//:ibunbound",
-        "@openssl//:libcrypto",
-        "@openssl//:ssl",
     ] + select({
         ":windows": [
         ],
@@ -349,6 +349,7 @@ cc_library(
         "p2p/stdafx.h",
     ],
     deps = [
+        "//other:miniupnpc",
         "//src:cryptonote_core",
         "//src:net",
         "//src:version",
@@ -360,7 +361,6 @@ cc_library(
         "@boost.serialization",
         "@boost.system",
         "@boost.thread",
-        "@denarii_external//:miniupnpc",
     ],
 )
 
@@ -400,7 +400,7 @@ cc_library(
     linkopts =
         select({
             "windows": [
-                "-Lexternal/openssl",
+                "-Lother/openssl",
                 "-lssl",
                 "-lcrypto",
                 "-lws2_32",
@@ -408,20 +408,20 @@ cc_library(
             ],
             "mac": [],
             "linux": [
-                "-Lexternal/openssl",
+                "-Lother/openssl",
                 "-lssl",
                 "-lcrypto",
                 "-ldl",
             ],
         }),
     deps = [
+        "//other:crypto",
+        "//other:ssl",
         "//src:cncrypto",
         "//src:common",
         "//src/centralnode:dynamic_critical_values",
         "@boost.variant",
         "@boost.variant2",
-        "@openssl//:libcrypto",
-        "@openssl//:ssl",
     ],
 )
 
@@ -432,7 +432,7 @@ cc_library(
     linkopts =
         select({
             "windows": [
-                "-Lexternal/openssl",
+                "-Lother/openssl",
                 "-lssl",
                 "-lcrypto",
                 "-lws2_32",
@@ -440,19 +440,19 @@ cc_library(
             ],
             "mac": [],
             "linux": [
-                "-Lexternal/openssl",
+                "-Lother/openssl",
                 "-lssl",
                 "-lcrypto",
                 "-ldl",
             ],
         }),
     deps = [
+        "//other:crypto",
+        "//other:ssl",
         "//src:cncrypto",
         "//src:common",
         "//src:cryptonote_basic",
         "//src:device",
-        "@openssl//:libcrypto",
-        "@openssl//:ssl",
     ],
 )
 
@@ -465,6 +465,7 @@ cc_library(
     hdrs = ["serialization/json_object.h"],
     deps = [
         "//contrib/epee",
+        "//other:rapidjson",
         "//src:cryptonote_basic",
         "//src:cryptonote_core",
         "//src:cryptonote_protocol",
@@ -475,7 +476,6 @@ cc_library(
         "@boost.thread",
         "@boost.variant",
         "@boost.variant2",
-        "@denarii_external//:rapidjson",
     ],
 )
 
@@ -590,7 +590,7 @@ cc_library(
     linkopts =
         select({
             "windows": [
-                "-Lexternal/openssl",
+                "-Lother/openssl",
                 "-lssl",
                 "-lcrypto",
                 "-lws2_32",
@@ -598,13 +598,16 @@ cc_library(
             ],
             "mac": [],
             "linux": [
-                "-Lexternal/openssl",
+                "-Lother/openssl",
                 "-lssl",
                 "-lcrypto",
                 "-ldl",
             ],
         }),
     deps = [
+        "//other:crypto",
+        "//other:libhidapi",
+        "//other:ssl",
         "//src:cncrypto",
         "//src:ringct_basic",
         "//src:version",
@@ -614,15 +617,12 @@ cc_library(
         "@boost.logic",
         "@boost.multi_index",
         "@boost.serialization",
-        "@denarii_external//:libhidapi",
-        "@openssl//:libcrypto",
-        "@openssl//:ssl",
     ] + select({
         "windows": [],
         "mac": [],
         "linux": [
-            "@denarii_external//:supercop51",
-            "@denarii_external//:supercop64",
+            "//other:supercop51",
+            "//other:supercop64",
         ],
     }),
 )
@@ -693,12 +693,12 @@ cc_library(
         "blockchain_db/testdb.h",
     ],
     deps = [
+        "//other:db_drivers",
         "//src:cncrypto",
         "//src:common",
         "//src:ringct",
         "@boost.filesystem",
         "@boost.thread",
-        "@denarii_external//:db_drivers",
     ],
 )
 
@@ -729,6 +729,7 @@ cc_library(
         "wallet/wallet_rpc_server_error_codes.h",
     ],
     deps = [
+        "//other:db_drivers",
         "//src:common",
         "//src:cryptonote_core",
         "//src:multisig",
@@ -744,7 +745,6 @@ cc_library(
         "@boost.serialization",
         "@boost.system",
         "@boost.thread",
-        "@denarii_external//:db_drivers",
     ],
 )
 
@@ -757,23 +757,24 @@ cc_binary(
     linkopts = [
         "-lpthread",
         "-llzma",
-        "-Lexternal/openssl",
+        "-Lother/openssl",
         "-lssl",
         "-lcrypto",
     ] + select({
         "windows": [
-            "-L external/randomx/build",
+            "-L randomx/build",
             "-lrandomx",
             "-lws2_32",
             "-lwsock32",
             "-lbcrypt",
             "-fPIC",
         ],
-        "mac": ["-Lexternal/openssl"],
+        "mac": ["-Lother/openssl"],
         "linux": ["-fPIC"],
     }),
     deps = [
         ":wallet",
+        "//other:liblzma",
         "//src:cncrypto",
         "//src:common",
         "//src:cryptonote_core",
@@ -785,7 +786,6 @@ cc_binary(
         "@boost.filesystem",
         "@boost.program_options",
         "@boost.thread",
-        "@denarii_external//:liblzma",
     ],
 )
 
@@ -820,9 +820,9 @@ cc_library(
     }),
     deps = [
         "//contrib/epee",
+        "//other:libzmq",
         "//src:common",
         "@boost.spirit",
-        "@denarii_external//:libzmq",
     ] + select({
         "windows": ["@boost.asio"],
         "mac": [],
@@ -876,17 +876,19 @@ cc_library(
     ],
     linkopts = select({
         "windows": [
-            "-L external/miniupnp/miniupnpc",
+            "-L miniupnp/miniupnpc",
             "-lminiupnpc",
         ],
         "mac": [],
         "linux": [
-            "-L external/miniupnp/miniupnpc",
+            "-L miniupnp/miniupnpc",
             "-lminiupnpc",
         ],
     }),
     deps = [
         ":rpc_base",
+        "//other:miniupnpc",
+        "//other:rapidjson",
         "//src:common",
         "//src:cryptonote_core",
         "//src:cryptonote_protocol",
@@ -895,8 +897,6 @@ cc_library(
         "//src/boost/archive:boost_extra",
         "@boost.regex",
         "@boost.thread",
-        "@denarii_external//:miniupnpc",
-        "@denarii_external//:rapidjson",
     ],
 )
 
@@ -909,11 +909,11 @@ cc_library(
     hdrs = ["rpc/zmq_pub.h"],
     deps = [
         "//contrib/epee",
+        "//other:rapidjson",
         "//src:cryptonote_basic",
         "//src:net",
         "//src:serialization",
         "@boost.thread",
-        "@denarii_external//:rapidjson",
     ],
 )
 
@@ -930,11 +930,11 @@ cc_library(
         "rpc/message.h",
     ],
     deps = [
+        "//other:rapidjson",
         "//src:cryptonote_core",
         "//src:cryptonote_protocol",
         "//src:serialization",
         "//src:version",
-        "@denarii_external//:rapidjson",
     ],
 )
 
@@ -957,6 +957,8 @@ cc_library(
         ":daemon_messages",
         ":rpc",
         ":rpc_pub",
+        "//other:libzmq",
+        "//other:rapidjson",
         "//src:cryptonote_core",
         "//src:cryptonote_protocol",
         "//src:serialization",
@@ -965,8 +967,6 @@ cc_library(
         "@boost.regex",
         "@boost.system",
         "@boost.thread",
-        "@denarii_external//:libzmq",
-        "@denarii_external//:rapidjson",
     ],
 )
 
@@ -985,8 +985,8 @@ cc_library(
     deps = [
         ":daemon_rpc_server",
         "//contrib/epee",
+        "//other:rapidjson",
         "//src/daemonizer",
-        "@denarii_external//:rapidjson",
     ],
 )
 
@@ -1004,7 +1004,7 @@ cc_binary(
         "serialization/json_utils.h",
     ],
     linkopts = [
-        "-Lexternal/openssl",
+        "-Lother/openssl",
         "-lssl",
         "-lcrypto",
     ] + select({
@@ -1021,15 +1021,15 @@ cc_binary(
     }),
     deps = [
         "//contrib/epee",
+        "//other:crypto",
+        "//other:liblzma",
+        "//other:ssl",
         "//src:blockchain_db",
         "//src:cryptonote_core",
         "//src:version",
         "@boost.filesystem",
         "@boost.system",
         "@boost.thread",
-        "@denarii_external//:liblzma",
-        "@openssl//:libcrypto",
-        "@openssl//:ssl",
     ],
 )
 
@@ -1049,6 +1049,7 @@ cc_binary(
     linkopts = ["-llzma"],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
         "//src:blockchain_db",
         "//src:cryptonote_core",
         "//src:version",
@@ -1056,7 +1057,6 @@ cc_binary(
         "@boost.asio",
         "@boost.filesystem",
         "@boost.thread",
-        "@denarii_external//:liblzma",
     ],
 )
 
@@ -1073,13 +1073,13 @@ cc_binary(
     linkopts = ["-llzma"],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
         "//src:blockchain_db",
         "//src:cryptonote_core",
         "//src:version",
         "//src:wallet",
         "@boost.filesystem",
         "@boost.thread",
-        "@denarii_external//:liblzma",
     ],
 )
 
@@ -1089,12 +1089,12 @@ cc_binary(
     linkopts = ["-llzma"],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
         "//src:blockchain_db",
         "//src:cryptonote_core",
         "//src:version",
         "@boost.filesystem",
         "@boost.thread",
-        "@denarii_external//:liblzma",
     ],
 )
 
@@ -1104,12 +1104,12 @@ cc_binary(
     linkopts = ["-llzma"],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
         "//src:blockchain_db",
         "//src:cryptonote_core",
         "//src:version",
         "@boost.filesystem",
         "@boost.thread",
-        "@denarii_external//:liblzma",
     ],
 )
 
@@ -1119,13 +1119,13 @@ cc_binary(
     linkopts = ["-llzma"],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
         "//src:blockchain_db",
         "//src:cryptonote_core",
         "//src:p2p",
         "//src:version",
         "@boost.filesystem",
         "@boost.thread",
-        "@denarii_external//:liblzma",
     ],
 )
 
@@ -1135,13 +1135,13 @@ cc_binary(
     linkopts = ["-llzma"],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
         "//src:blockchain_db",
         "//src:cryptonote_core",
         "//src:p2p",
         "//src:version",
         "@boost.filesystem",
         "@boost.thread",
-        "@denarii_external//:liblzma",
     ],
 )
 
@@ -1151,12 +1151,12 @@ cc_binary(
     linkopts = ["-llzma"],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
         "//src:blockchain_db",
         "//src:cryptonote_core",
         "//src:version",
         "@boost.filesystem",
         "@boost.thread",
-        "@denarii_external//:liblzma",
     ],
 )
 
@@ -1166,12 +1166,12 @@ cc_binary(
     linkopts = ["-llzma"],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
         "//src:blockchain_db",
         "//src:cryptonote_core",
         "//src:version",
         "@boost.filesystem",
         "@boost.thread",
-        "@denarii_external//:liblzma",
     ],
 )
 
@@ -1195,7 +1195,7 @@ cc_binary(
         "windows": [
         ],
         "mac": [],
-        "linux": ["@denarii_external//:libunwind"],
+        "linux": ["//other:libunwind"],
     }),
 )
 
@@ -1212,14 +1212,14 @@ cc_binary(
         "windows": [
         ],
         "mac": [],
-        "linux": ["@denarii_external//:libunwind"],
+        "linux": ["//other:libunwind"],
     }),
 )
 
 cc_binary(
     name = "what_is_argv",
     srcs = ["what_is_argv.cpp"],
-    deps = ["@denarii_external//:miniupnpc"],
+    deps = ["//other:miniupnpc"],
 )
 
 # This doesn't work because on Mac the other parts of the select statment get evaluated and

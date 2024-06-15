@@ -11,14 +11,14 @@ cc_test(
     ],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
+        "//other:libreadline",
+        "//other:libsodium",
+        "//other:libunwind",
         "//src:cncrypto",
         "//src:common",
         "//src:cryptonote_core",
         "//src:wallet",
         "@boost.chrono",
-        "@denarii_external//:liblzma",
-        "@denarii_external//:libreadline",
-        "@denarii_external//:libsodium",
-        "@denarii_external//:libunwind",
     ],
 )

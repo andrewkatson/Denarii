@@ -130,11 +130,7 @@ def create_folder_win(libraries):
         else:
             common.print_something(f"{path} already exists")
 
-        # Openssl needs to be in a module called openssl to be used by boost.asio
-        if library.libname == "libopenssl":
-            library.folderpath = workspace_path / "external_openssl" / foldername
-        else: 
-            library.folderpath = path
+        library.folderpath = path
 
         common.check_exists(path)
 

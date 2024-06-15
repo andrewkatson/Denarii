@@ -15,14 +15,14 @@ cc_binary(
     ],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
+        "//other:libreadline",
         "//src:cncrypto",
         "//src:common",
         "//src:cryptonote_core",
         "//src:wallet",
         "@boost.program_options",
         "@boost.regex",
-        "@denarii_external//:liblzma",
-        "@denarii_external//:libreadline",
     ],
 )
 
@@ -35,18 +35,21 @@ cc_binary(
     ],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
+        "//other:libreadline",
         "//src:cncrypto",
         "//src:rpc_base",
-        "@denarii_external//:liblzma",
-        "@denarii_external//:libreadline",
     ],
 )
 
 py_binary(
     name = "functional_tests_rpc",
     srcs = ["functional_tests_rpc.py"],
+    data = [
+        "//src:denarii_wallet_rpc_server",
+        "//src:denariid",
+    ],
     deps = [],
-    data = ["//src:denarii_wallet_rpc_server", "//src:denariid"],
 )
 
 py_binary(

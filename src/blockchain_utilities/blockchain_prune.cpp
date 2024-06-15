@@ -28,7 +28,7 @@
 #define WIN32_LEAN_AND_MEAN
 
 #include <array>
-#include "external/db_drivers/liblmdb/lmdb.h"
+#include "other/db_drivers/liblmdb/lmdb.h"
 #include <boost/algorithm/string.hpp>
 #include "src/common/command_line.h"
 #include "src/common/pruning.h"

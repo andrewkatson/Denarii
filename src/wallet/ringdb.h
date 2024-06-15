@@ -30,7 +30,7 @@
 
 #include <string>
 #include <vector>
-#include "external/db_drivers/liblmdb/lmdb.h"
+#include "other/db_drivers/liblmdb/lmdb.h"
 #include "contrib/epee/include/wipeable_string.h"
 #include "src/crypto/crypto.h"
 #include "src/cryptonote_basic/cryptonote_basic.h"

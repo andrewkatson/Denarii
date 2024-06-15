@@ -17,11 +17,11 @@ config_setting(
 )
 
 config_setting(
-   name = "linux",
-   constraint_values = [
-      "@platforms//os:linux",
-   ],
-   visibility = ["//visibility:public"],
+    name = "linux",
+    constraint_values = [
+        "@platforms//os:linux",
+    ],
+    visibility = ["//visibility:public"],
 )
 
 # Doesn't build on MacOS because it tries to evaluate @libnorm and recurs endlessly.
@@ -35,20 +35,20 @@ cc_binary(
         "windows": [],
         "mac": [],
         "linux": [
-            "-ltinfo", 
+            "-ltinfo",
             "-lnorm",
-        ]
+        ],
     }) + [
         "-lreadline",
     ],
     deps = [
+        "//other:liblzma",
+        "//other:libnorm",
+        "//other:libreadline",
+        "//other:libzmq",
+        "//other:openpgm",
         "//src:cncrypto",
         "//src:cryptonote_basic",
-        "@denarii_external//:liblzma",
-        "@denarii_external//:libnorm",
-        "@denarii_external//:libreadline",
-        "@denarii_external//:libzmq",
-        "@denarii_external//:openpgm",
         "@supercop//:supercop51",
         "@supercop//:supercop64",
     ],
@@ -70,23 +70,23 @@ cc_binary(
     ],
     deps = [
         "//contrib/epee",
+        "//other:liblzma",
+        "//other:libreadline",
         "//src:cncrypto",
         "//src:cryptonote_basic",
-        "@denarii_external//:liblzma",
-        "@denarii_external//:libreadline",
     ],
 )
 
 py_binary(
     name = "run_monero_tests",
     srcs = ["run_monero_tests.py"],
+    imports = ["//:workspace_path_finder"],
     deps = ["//:workspace_path_finder"],
-    imports = ["//:workspace_path_finder"]
 )
 
 py_binary(
     name = "get_monero_test_commands",
     srcs = ["get_monero_test_commands.py"],
+    imports = ["//:workspace_path_finder"],
     deps = ["//:workspace_path_finder"],
-    imports = ["//:workspace_path_finder"]
 )
