@@ -245,12 +245,12 @@ cc_library(
 cc_library(
     name = "db_drivers",
     srcs = select({
-        "windows": glob(["**/*.a"]),
+        "windows": glob(["**/liblmdb.a"]),
         "mac": [
             "db_drivers/liblmdb/mdb.c",
             "db_drivers/liblmdb/midl.c",
         ],
-        "linux": glob(["**/*.a"]),
+        "linux": glob(["**/lidlmdb.a"]),
     }),
     hdrs = glob(["**/liblmdb/*.h"]),
     includes = ["db_drivers"],
@@ -258,7 +258,7 @@ cc_library(
 
 cc_library(
     name = "easy_logging",
-    srcs = glob(["**/*.cc"]),
+    srcs = glob(["**/easylogging++/**/*.cc"]),
     hdrs = glob(["**/easylogging++/**/*.h"]),
     includes = ["easylogging++"],
 )
@@ -266,9 +266,9 @@ cc_library(
 cc_library(
     name = "expat",
     srcs = select({
-        "windows": glob(["**/*.a"]),
-        "mac": glob(["**/*.a"]),
-        "linux": glob(["**/*.a"]),
+        "windows": glob(["**/libexpat.a"]),
+        "mac": glob(["**/libexpat.a"]),
+        "linux": glob(["**/libexpat.a"]),
     }),
     hdrs = glob(["**/expat/include/**/*.h"]),
     includes = ["expat"],
@@ -283,9 +283,9 @@ cc_library(
 cc_library(
     name = "ldns",
     srcs = select({
-        "windows": glob(["**/*.a"]),
-        "mac": glob(["**/*.a"]),
-        "linux": glob(["**/*.a"]),
+        "windows": glob(["**/libldns.a"]),
+        "mac": glob(["**/libldns.a"]),
+        "linux": glob(["**/libldns.a"]),
     }),
     hdrs = glob(["**/ldns/include/**/*.h"]),
     includes = ["ldns"],
@@ -294,9 +294,9 @@ cc_library(
 cc_library(
     name = "libhidapi",
     srcs = select({
-        "windows": glob(["**/*.a"]),
-        "mac": glob(["**/*.a"]),
-        "linux": glob(["**/*.a"]),
+        "windows": glob(["**/libhidapi.a"]),
+        "mac": glob(["**/libhidapi.a"]),
+        "linux": glob(["**/libhidapi.a"]),
     }),
     hdrs = glob(["**/libhidapi/include/**/*.h"]),
     includes = ["libhidapi"],
@@ -304,23 +304,15 @@ cc_library(
 
 cc_library(
     name = "liblzma",
-    srcs = select({
-        "windows": glob(["**/*.a"]),
-        "mac": glob(["**/*.a"]),
-        "linux": glob(["**/*.a"]),
-    }),
+    srcs = glob(["**/liblzma.a"]),
     hdrs = glob(["**/liblzma/include/**/*.h"]),
 )
 
 cc_library(
     name = "libnorm",
-    srcs = select({
-        "windows": glob(["build/*.lib"]),
-        "mac": ["build/libnorm.a"],
-        "linux": glob(["build/*.a"]),
-    }),
+    srcs = ["build/libnorm.a"],
     hdrs = select({
-        "windows": glob(["include/*.h"]),
+        "windows": glob(["**/libnorm/include/*.h"]),
         "mac": [
             "include/galois.h",
             "include/normApi.h",
@@ -338,7 +330,7 @@ cc_library(
             "include/normSimAgent.h",
             "include/normVersion.h",
         ],
-        "linux": glob(["include/*.h"]),
+        "linux": glob(["**/libnorm/include/*.h"]),
     }),
     includes = select({
         "windows": ["libnorm/include"],
@@ -349,29 +341,21 @@ cc_library(
 
 cc_library(
     name = "libreadline",
-    srcs = select({
-        "windows": glob(["**/*.a"]),
-        "mac": glob(["**/*.a"]),
-        "linux": glob(["**/*.a"]),
-    }),
+    srcs = glob(["**/libreadline.a"]),
     hdrs = glob(["**/libreadline/**/*.h"]),
     includes = ["libreadline"],
 )
 
 cc_library(
     name = "libsodium",
-    srcs = select({
-        "windows": glob(["**/*.a"]),
-        "mac": glob(["**/*.a"]),
-        "linux": glob(["**/*.a"]),
-    }),
+    srcs = glob(["**/libsodium.a"]),
     hdrs = glob(["**/libsodium/**/*.h"]),
     includes = ["libsodium"],
 )
 
 cc_library(
     name = "libudev",
-    srcs = glob(["**/*.a"]),
+    srcs = glob(["**/libudev.a"]),
     hdrs = glob(["**/libudev/include/**/*.h"]),
     includes = ["libudev"],
 )
@@ -379,12 +363,12 @@ cc_library(
 cc_library(
     name = "libunbound",
     srcs = select({
-        "windows": glob(["**/*.a"]),
+        "windows": glob(["**/libunbound.a"]),
         "mac": glob([
             "**/libunbound.*.dylib",
             "**/libunbound.dylib",
         ]),
-        "linux": glob(["**/*.so"]),
+        "linux": glob(["**/libunbound.so"]),
     }),
     hdrs = glob(["**/libunbound/include/**/*.h"]),
     includes = ["libunbound"],
@@ -399,9 +383,9 @@ cc_library(
 cc_library(
     name = "libunwind",
     srcs = select({
-        "linux": glob(["**/*.so"]),
-        "windows": glob(["**/*.a"]),
-        "mac": glob(["**/*.a"]),
+        "linux": glob(["**/libunwind.so"]),
+        "windows": glob(["**/libunwind.a"]),
+        "mac": glob(["**/libunwind.a"]),
     }),
     hdrs = glob(["**/libunwind/include/**/*.h"]),
     includes = ["libunwind"],
@@ -410,7 +394,7 @@ cc_library(
 cc_library(
     name = "libusb",
     srcs = select({
-        "windows": glob(["**/*.a"]),
+        "windows": glob(["**/libusb.a"]),
         "mac": [
             "libusb/libusb/core.c",
             "libusb/libusb/descriptor.c",
@@ -422,7 +406,7 @@ cc_library(
             "libusb/libusb/strerror.c",
             "libusb/libusb/sync.c",
         ],
-        "linux": glob(["**/*.a"]),
+        "linux": glob(["**/libusb.a"]),
     }),
     hdrs = select({
         "windows": glob(["**/libusb/**/*.h"]),
@@ -461,15 +445,9 @@ cc_library(
 
 cc_library(
     name = "lrelease",
-    srcs = glob(["**/*.a"]),
+    srcs = glob(["**/liblrelease.a"]),
     hdrs = glob(["**/lrelease/include/**/*.h"]),
     includes = ["lrelease"],
-)
-
-cc_library(
-    name = "minissdpd",
-    srcs = glob(["**/minissdpd/*.a"]),
-    hdrs = glob(["**/minissdpd/*.h"]),
 )
 
 cc_library(
@@ -478,7 +456,7 @@ cc_library(
         "windows": glob([
             "**/miniupnpc/*.a",
         ]),
-        "mac": glob(["**/*.a"]),
+        "mac": glob(["**/libminiupnpc.a"]),
         "//conditions:default": glob(["**/miniupnpc/*.a"]),
     }),
     hdrs = glob(["**/miniupnpc/**/*.h"]),
@@ -492,35 +470,11 @@ cc_library(
 )
 
 cc_library(
-    name = "miniupnpc-async",
-    srcs = glob(["**/miniupnpc-async/*.a"]),
-    hdrs = glob(["**/miniupnpc-async/*.h"]),
-)
-
-cc_library(
-    name = "miniupnpc-libevent",
-    srcs = glob(["**/miniupnpc-libevent/*.a"]),
-    hdrs = glob(["**/miniupnpc-libevent/*.h"]),
-)
-
-cc_library(
-    name = "miniupnpc-libuv",
-    srcs = glob(["**/miniupnpc-libuv/*.a"]),
-    hdrs = glob(["**/miniupnpc-libuv/*.h"]),
-)
-
-cc_library(
-    name = "miniupnpd",
-    srcs = glob(["**/miniupnpd/*.a"]),
-    hdrs = glob(["**/miniupnpd/*.h"]),
-)
-
-cc_library(
     name = "openpgm",
     srcs = select({
-        "windows": glob(["**/*.lib"]),
-        "mac": glob(["**/*.a"]),
-        "linux": glob(["**/*.a"]),
+        "windows": glob(["**/libpgm.lib"]),
+        "mac": glob(["**/libpgm.a"]),
+        "linux": glob(["**/libpgm.a"]),
     }),
     hdrs = glob(["**/openpgm/include/**/*.h"]),
     includes = ["openpgm"],
@@ -528,55 +482,27 @@ cc_library(
 
 cc_library(
     name = "qrcodegen",
-    srcs = glob(["**/*.cpp"]),
-    hdrs = glob(["**/*.hpp"]),
+    srcs = glob(["**/qrcodegen/*.cpp"]),
+    hdrs = glob(["**/qrcodegen/*.hpp"]),
     includes = ["qrcodegen"],
 )
 
-# This doesn't work with all platforms. It only works with x86_64 and maybe not even that.
 cc_library(
     name = "randomx",
-    srcs = glob(
-        [
-            "**/*.cpp",
-            "**/*.c",
-            "**/jit_compiler_x86_static.S",
-        ],
-        exclude = [
-            "**/tests/*",
-            "**/jit_compiler_a64.cpp",
-            "**/jit_compiler_a64_static.cpp",
-        ],
-    ),
-    hdrs = glob(
-        [
-            "**/randomx/**/*.h",
-            "**/randomx/**/*.hpp",
-        ],
-        exclude = [
-            "**/jit_compiler_a64.hpp",
-            "**/jit_compiler_a64_static.hpp",
-        ],
-    ),
-    includes = ["randomx"],
-)
-
-cc_library(
-    name = "randomx_lib",
     srcs = select({
-        "windows": glob(["**/*.a"]),
+        "windows": glob(["**/librandomx.a"]),
         "mac": glob(
             [
-                "**/randomx/*.cpp",
-                "**/randomx/*.c",
-                "**/randomx/*.S",
+                "**/randomx/**/*.cpp",
+                "**/randomx/**/*.c",
+                "**/randomx/**/*.S",
             ],
             exclude = [
                 "**/tests/*",
                 "**/*x86*",
             ],
         ),
-        "linux": glob(["**/*.a"]),
+        "linux": glob(["**/librandomx.a"]),
     }),
     hdrs = select({
         "windows": glob(["**/randomx.h"]),
@@ -592,14 +518,13 @@ cc_library(
 
 cc_library(
     name = "rapidjson",
-    srcs = [],
     hdrs = glob(["**/include/rapidjson/**/*.h"]),
     includes = ["rapidjson"],
 )
 
 cc_library(
     name = "spdlog",
-    srcs = glob(["**/*.a"]),
+    srcs = glob(["**/libspdlog.a"]),
     hdrs = glob(["**/spdlog/**/*.h"]),
     includes = ["spdlog/include"],
 )
@@ -632,17 +557,20 @@ proto_library(
 
 cc_library(
     name = "unbound",
-    srcs = glob(["**/*.so"]),
+    srcs = glob(["**/unbound/*.so"]),
     hdrs = glob(["**/unbound/**/*.h"]),
     includes = ["unbound"],
 )
-
 
 cc_library(
     name = "ssl",
     srcs = glob([
         "**/libcrypto.a",
-    ]),
+    ]) + select({
+        ":windows": [],
+        "mac": glob(["**/libssl.dylib"]),
+        "linux": [],
+    }),
     hdrs = select({
         ":windows": glob(["**/openssl/**/*.h"]),
         "mac": glob(["**/openssl/**/*.h"]),
@@ -661,7 +589,11 @@ cc_library(
     name = "crypto",
     srcs = glob([
         "**/libcrypto.a",
-    ]),
+    ]) + select({
+        ":windows": [],
+        "mac": glob(["**/libcrypto.dylib"]),
+        "linux": [],
+    }),
     hdrs =
         select({
             ":windows": glob(["**/openssl/**/*.h"]),

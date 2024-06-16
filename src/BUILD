@@ -69,7 +69,7 @@ cc_binary(
             "-lunbound",
             "-L miniupnp/miniupnpc",
             "-lminiupnpc",
-            "-L randomx/build",
+            "-Lother/randomx/build",
             "-lrandomx",
             "-lws2_32",
             "-lwsock32",
@@ -188,17 +188,18 @@ cc_library(
     }),
     linkopts = select({
         "windows": [
-            "-L randomx/build",
+            "-Lother/randomx/build",
             "-lrandomx",
         ],
-        "mac": [],
+        "mac": [
+        ],
         "linux": [],
     }),
     deps = [
         ":config",
         "//contrib/epee",
         "//other:libsodium",
-        "//other:randomx_lib",
+        "//other:randomx",
         "@boost.scope_exit",
         "@boost.system",
     ],
@@ -231,7 +232,7 @@ cc_library(
     }),
     linkopts = select({
         "windows": [
-            "-L randomx/build",
+            "-Lother/randomx/build",
             "-lrandomx",
         ],
         "mac": [],
@@ -241,7 +242,7 @@ cc_library(
         ":config",
         "//contrib/epee",
         "//other:libsodium",
-        "//other:randomx_lib",
+        "//other:randomx",
         "@boost.system",
     ],
 )
@@ -762,7 +763,7 @@ cc_binary(
         "-lcrypto",
     ] + select({
         "windows": [
-            "-L randomx/build",
+            "-Lother/randomx/build",
             "-lrandomx",
             "-lws2_32",
             "-lwsock32",
