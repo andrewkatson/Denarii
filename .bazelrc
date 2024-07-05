@@ -1,4 +1,8 @@
+# These are required otherwise paths are too long
 startup --windows_enable_symlinks
+build:windows --action_env=MSYS=winsymlinks:nativestrict
+test:windows --action_env=MSYS=winsymlinks:nativestrict
+
 common --enable_bzlmod
 build --enable_platform_specific_config
 build --incompatible_enable_cc_toolchain_resolution

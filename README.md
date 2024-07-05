@@ -180,18 +180,18 @@ Visual Studio: https://visualstudio.microsoft.com/
 ### On Linux 
 
 
-Do `bazel build target --@boost.asio//:ssl=boringssl` for all targets -- e.g. ```bazel build src:denariid --@boost.asio//:ssl=boringssl```
+Do `bazel build target --@boost.asio//:ssl=openssl` for all targets -- e.g. ```bazel build src:denariid --@boost.asio//:ssl=openssl```
 
 
 ### On Windows  
 
-All builds should use ```--output_base="C:\bazel-bin"``` before the `build` command and ```  --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows_mingw --extra_execution_platforms=//:windows-mingw-gcc ``` after the build command and ```--compiler=mingw-gcc --host_compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static"``` ```--@boost.asio//:ssl=boringssl``` after `target`
+All builds should use ```--output_base="C:\bazel-bin"``` before the `build` command and ```  --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows_mingw --extra_execution_platforms=//:windows-mingw-gcc ``` after the build command and ```--compiler=mingw-gcc --host_compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static"``` ```--@boost.asio//:ssl=openssl``` after `target`
 
 For why we need `output_base` see https://github.com/protocolbuffers/protobuf/issues/12947
 
 Ex: 
 
-`bazel --output_base="C:\bazel-bin" build  --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows_mingw --extra_execution_platforms=//:windows-mingw-gcc src:denariid --compiler=mingw-gcc --host_compiler=mingmw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static" --@boost.asio//:ssl=boringssl` 
+`bazel --output_base="C:\bazel-bin" build  --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows_mingw --extra_execution_platforms=//:windows-mingw-gcc src:denariid --compiler=mingw-gcc --host_compiler=mingmw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static" --@boost.asio//:ssl=openssl` 
 
 
 If you want to build in debug mode use `--compilation_mode=dbg` instead of `--copt="-O3"` and also add in `--linkopt="mcmodel=medium"` and `--copt="=Wa,-mbig-obj"`
@@ -210,7 +210,7 @@ These can all be found under `C:\Windows\SYSTEM32`
 
 ### On Mac
 
-Do `bazel build target --@boost.asio//:ssl=boringssl` on all targets.
+Do `bazel build target --@boost.asio//:ssl=openssl` on all targets.
 
 ## Running denariid
 
