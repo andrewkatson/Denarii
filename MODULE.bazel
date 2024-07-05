@@ -45,3 +45,9 @@ bazel_dep(name = "boost.variant", version = "1.83.0.bzl.1")
 bazel_dep(name = "boost.variant2", version = "1.83.0.bzl.1")
 bazel_dep(name = "boost.logic", version = "1.83.0.bzl.1")
 bazel_dep(name = "boost.timer", version = "1.83.0.bzl.1")
+
+http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+http_file(
+    name = "openssl",
+    url = "https://www.openssl.org/source/openssl-3.0.14.tar.gz",
+)

@@ -1,5 +1,7 @@
 # Denarii
 
+NOTE: This does not work on Windows right now.
+
 Copyright (c) 2020-2023 Denarii.   
 Portions Copyright (c) 2014-2020 The Monero Project.   
 Portions Copyright (c) 2012-2013 The Cryptonote developers.
@@ -40,11 +42,6 @@ Denarii is a private, secure, untraceable, decentralised digital currency. You a
 See [LICENSE](LICENSE).
 
 ## Compiling Denarii from source
-
-### Note
-* Everything has to be built with sudo because the files are moved using sudo and that gives them certain permissions.
-* The real dependencies no longer need to be fiddled with just run the configuration script and it will do the rest.
-* Need to set an enviornment variable ```DENARI_WORKSPACE_PATH=``` and then put whatever the path is to folder containing the ```WORKSPACE``` file. 
 
 ### Dependencies
 
