@@ -37,11 +37,9 @@ cc_binary(
     }),
     deps = [
         "//contrib/epee",
-        "//other:crypto",
         "//other:liblzma",
         "//other:libreadline",
         "//other:qrcodegen",
-        "//other:ssl",
         "//src:cncrypto",
         "//src:common",
         "//src:cryptonote_core",
@@ -57,5 +55,7 @@ cc_binary(
         "@boost.program_options",
         "@boost.system",
         "@boost.thread",
+        "@openssl:crypto",
+        "@openssl:ssl",
     ],
 )

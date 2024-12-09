@@ -66,8 +66,8 @@ linux_library_info = [LibraryInfo("libnorm-dev", "libnorm"), LibraryInfo("libunb
                       LibraryInfo("libudev-dev", "libudev")]
 
 mac_library_info = [LibraryInfo("autoconf"), LibraryInfo("autogen"), LibraryInfo("automake"), LibraryInfo("coreutils"),
-                    LibraryInfo("pkg-config"), LibraryInfo(
-                        "openssl"), LibraryInfo("hidapi", "libhidapi"), LibraryInfo("zmq", "libzmq"), LibraryInfo("libpgm", "openpgm"),
+                    LibraryInfo("pkg-config"), LibraryInfo("hidapi", "libhidapi"), LibraryInfo(
+                        "zmq", "libzmq"), LibraryInfo("libpgm", "openpgm"),
                     LibraryInfo("unbound", "libunbound"), LibraryInfo("libsodium"), LibraryInfo(
                         "miniupnpc", "miniupnp"), LibraryInfo("readline", "libreadline"), LibraryInfo("ldns"), LibraryInfo("expat"),
                     LibraryInfo("doxygen"), LibraryInfo("graphviz"), LibraryInfo("libunwind-headers", "libunwind"), LibraryInfo("xz", "liblzma"), LibraryInfo("protobuf")]
@@ -443,40 +443,6 @@ def unbound(external_dir_path):
     common.check_exists(libunbound_library_path)
 
 
-def openssl(external_dir_path):
-    openssl_path = workspace_path / "external" / "openssl"
-
-    libssl_path = openssl_path / "libssl.a"
-    libcrypto_path = openssl_path / "libcrypto.a"
-
-    if common.check_exists_with_existing_artifact_check(paths=[libssl_path, libcrypto_path], root_path=openssl_path, delete_tree=True, fail_on_existence=False):
-        return
-
-    common.print_something("Getting openssl")
-
-    common.chdir(external_dir_path)
-
-    openssl_zip_path = external_dir_path / "openssl.zip"
-    download_url(
-        "https://www.openssl.org/source/openssl-3.2.1.tar.gz", str(openssl_zip_path))
-
-    unzip_command = "tar -xvzf " + \
-        str(openssl_zip_path) + " -C " + str(external_dir_path)
-    common.system(unzip_command)
-
-    openssl_wrong_name_path = external_dir_path / "openssl-3.2.1"
-
-    shutil.copytree(str(openssl_wrong_name_path), str(openssl_path))
-
-    common.chdir(openssl_path)
-
-    make_command = "./Configure && make && make test"
-    common.system(make_command)
-
-    common.check_exists(libssl_path)
-    common.check_exists(libcrypto_path)
-
-
 def libzmq(external_dir_path):
     libzmq_path = external_dir_path / "libzmq"
 
@@ -609,9 +575,6 @@ def build_dependencies():
 
     common.chdir(external_dir_path)
     unbound(external_dir_path)
-
-    common.chdir(external_dir_path)
-    openssl(external_dir_path)
 
     common.chdir(external_dir_path)
     libzmq(external_dir_path)

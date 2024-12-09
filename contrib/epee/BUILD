@@ -52,10 +52,8 @@ cc_library(
         "linux": [],
     }),
     deps = [
-        "//other:crypto",
         "//other:libreadline",
         "//other:spdlog",
-        "//other:ssl",
         "@boost.asio",
         "@boost.assign",
         "@boost.chrono",
@@ -69,6 +67,8 @@ cc_library(
         "@boost.thread",
         "@boost.timer",
         "@boost.uuid",
+        "@openssl:crypto",
+        "@openssl:ssl",
         "@zlib",
     ],
 )

@@ -280,10 +280,8 @@ cc_library(
         }),
     deps = [
         "//contrib/epee",
-        "//other:crypto",
         "//other:libsodium",
         "//other:libunbound",
-        "//other:ssl",
         "//src:cncrypto",
         "//src:config",
         "//src/boost/archive:boost_extra",
@@ -296,6 +294,8 @@ cc_library(
         "@boost.regex",
         "@boost.system",
         "@boost.thread",
+        "@openssl:crypto",
+        "@openssl:ssl",
     ] + select({
         ":windows": [
         ],
@@ -416,13 +416,13 @@ cc_library(
             ],
         }),
     deps = [
-        "//other:crypto",
-        "//other:ssl",
         "//src:cncrypto",
         "//src:common",
         "//src/centralnode:dynamic_critical_values",
         "@boost.variant",
         "@boost.variant2",
+        "@openssl:crypto",
+        "@openssl:ssl",
     ],
 )
 
@@ -448,12 +448,12 @@ cc_library(
             ],
         }),
     deps = [
-        "//other:crypto",
-        "//other:ssl",
         "//src:cncrypto",
         "//src:common",
         "//src:cryptonote_basic",
         "//src:device",
+        "@openssl:crypto",
+        "@openssl:ssl",
     ],
 )
 
@@ -606,9 +606,7 @@ cc_library(
             ],
         }),
     deps = [
-        "//other:crypto",
         "//other:libhidapi",
-        "//other:ssl",
         "//src:cncrypto",
         "//src:ringct_basic",
         "//src:version",
@@ -618,6 +616,8 @@ cc_library(
         "@boost.logic",
         "@boost.multi_index",
         "@boost.serialization",
+        "@openssl:crypto",
+        "@openssl:ssl",
     ] + select({
         "windows": [],
         "mac": [],
@@ -1022,15 +1022,15 @@ cc_binary(
     }),
     deps = [
         "//contrib/epee",
-        "//other:crypto",
         "//other:liblzma",
-        "//other:ssl",
         "//src:blockchain_db",
         "//src:cryptonote_core",
         "//src:version",
         "@boost.filesystem",
         "@boost.system",
         "@boost.thread",
+        "@openssl:crypto",
+        "@openssl:ssl",
     ],
 )
 

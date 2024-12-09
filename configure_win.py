@@ -27,8 +27,7 @@ win_library_info = [LibraryInfo("liblzma", "liblzma"), LibraryInfo("libsodium", 
                     LibraryInfo("libreadline", "libreadline"), LibraryInfo(
                         "libhidapi", "libhidapi"),
                     LibraryInfo("libusb", "libusb"), LibraryInfo(
-                        "libunbound", "libunbound"),
-                    LibraryInfo("libopenssl", "openssl"), LibraryInfo(
+                        "libunbound", "libunbound"), LibraryInfo(
                         "libzmq", "libzmq"),
                     LibraryInfo("liblmdb", "db_drivers", False),
                     LibraryInfo("libunwind", "libunwind", False)]
@@ -38,7 +37,7 @@ workspace_path = workspace_path_finder.find_workspace_path()
 
 def get_libunwind():
     libunwind_path = workspace_path / "external" / "libunwind"
-    
+
     if common.check_exists_with_existing_artifact_check(libunwind_path, root_path=libunwind_path, delete_tree=True, fail_on_existence=False):
         return
 
@@ -290,7 +289,6 @@ def randomx_win(external_dir_path):
 
     common.print_something("Getting randomx")
 
-
     common.chdir(randomx_path)
 
     common.chdir(build_path)
@@ -327,7 +325,8 @@ def miniupnp_win(external_dir_path):
 def openpgm_win(external_dir_path):
     openpgm_path = external_dir_path / "openpgm"
     inner_path = openpgm_path / "openpgm" / "pgm"
-    binary_path = inner_path / "build" / "lib" / "Debug" / "libpgm-v142-mt-gd-5_2_127.lib"
+    binary_path = inner_path / "build" / "lib" / \
+        "Debug" / "libpgm-v142-mt-gd-5_2_127.lib"
 
     if common.check_exists_with_existing_artifact_check(binary_path, root_path=openpgm_path, delete_tree=True, fail_on_existence=False):
         return
@@ -375,6 +374,7 @@ def libnorm_win(external_dir_path):
 
     common.check_exists(binary_path)
 
+
 def curl_win(external_dir_path):
     raw_path = external_dir_path / "curl"
 
@@ -394,7 +394,6 @@ def curl_win(external_dir_path):
     os.system(command)
 
     common.check_exists(curl_path)
-
 
 
 def build_dependencies_win():
