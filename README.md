@@ -124,7 +124,7 @@ Denarii uses bazel (<https://bazel.build/>). And it needs `C++14` at least. So s
 
 ### On Windows
 
-* Download and install the following. Make sure they are in your path.
+- Download and install the following. Make sure they are in your path.
 CMAKE: <https://cmake.org/download/>
 Make: <http://gnuwin32.sourceforge.net/packages/make.htm>
 MinGW: <https://sourceforge.net/projects/mingw/files/latest/download>
@@ -198,6 +198,7 @@ Need to set JAVA_HOME in msys. Mine is ```export JAVA_HOME=/c/'Program Files'/Ja
 Protoc works weird with mingw-gcc so you have to fix it.
 
 Add the following files to `C:\msys64\mingw-gcc\bin`
+
 - `ntdll.dll`
 - `KERNEL32.DLL`
 - `KERNELBASE.dll`
