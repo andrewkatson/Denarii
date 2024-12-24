@@ -10,20 +10,20 @@ Portions Copyright (c) 2012-2013 The Cryptonote developers.
 
 ## Table of Contents
 
-  - [Introduction](#introduction)
-  - [License](#license)
-  - [Compiling Denarii from source](#compiling-denarii-from-source)
-    - [Dependencies](#dependencies)
-  - [Configuration Instructions](#configuration-instructions)
-  - [Building](#building)
-  - [Running Denariid](#running-denariid)
-  - [Running Denarii Wallet Rpc Server](#running-denarii-wallet-rpc-server)
-  - [Running Denarii GUI](#running-denarii-gui)
-  - [Internationalization](#Internationalization)
-  - [Using Tor](#using-tor)
-  - [Pruning](#Pruning)
-  - [Debugging](#Debugging)
-  - [Known issues](#known-issues)
+- [Introduction](#introduction)
+- [License](#license)
+- [Compiling Denarii from source](#compiling-denarii-from-source)
+  - [Dependencies](#dependencies)
+- [Configuration Instructions](#configuration-instructions)
+- [Building](#building)
+- [Running Denariid](#running-denariid)
+- [Running Denarii Wallet Rpc Server](#running-denarii-wallet-rpc-server)
+- [Running Denarii GUI](#running-denarii-gui)
+- [Internationalization](#internationalization)
+- [Using Tor](#using-tor)
+- [Pruning](#pruning)
+- [Debugging](#debugging)
+- [Known issues](#known-issues)
   
 ## Introduction
 
@@ -84,7 +84,7 @@ library archives (`.a`).
 | libudev      | ?             | No       | `libudev-dev`        | `systemd`    | `eudev-libudev-devel` | `systemd-devel`     | YES      | Hardware wallet |
 
 [1] On Debian/Ubuntu `libgtest-dev` only includes sources and headers. You must
-build the library binary manually. This can be done with the following command ```sudo apt-get install libgtest-dev && cd /usr/src/gtest && sudo cmake . && sudo make && sudo mv libg* /usr/lib/ ```
+build the library binary manually. This can be done with the following command ```sudo apt-get install libgtest-dev && cd /usr/src/gtest && sudo cmake . && sudo make && sudo mv libg* /usr/lib/```
 [2] libnorm-dev is needed if your zmq library was built with libnorm, and not needed otherwise
 
 Install all dependencies at once on Debian/Ubuntu:
@@ -92,7 +92,7 @@ Install all dependencies at once on Debian/Ubuntu:
 ```sudo apt update && sudo apt install build-essential cmake pkg-config libboost-all-dev libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev doxygen graphviz libpgm-dev qttools5-dev-tools libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev libnorm-dev  qtbase5-dev qt5-qmake python-pip && sudo apt-get install python3-pyqt5```
 
 Install all dependencies at once on macOS with the provided Brewfile:
-```brew update && brew bundle --file=contrib/brew/Brewfile && pip3 install PyQt5 ```
+```brew update && brew bundle --file=contrib/brew/Brewfile && pip3 install PyQt5```
 
 FreeBSD 12.1 one-liner required to build dependencies:
 ```pkg install git gmake cmake pkgconf boost-libs libzmq4 libsodium```
@@ -109,12 +109,12 @@ If you already have a repo cloned, initialize and update:
 
 ## Configuration instructions
 
-Denarii uses bazel (https://bazel.build/). And it needs `C++14` at least. So set `BAZEL_CXXOPTS="-std=c++14"` on Linux/Mac and `BAZEL_CXXOPT="-std:c++14"` on Windows.
+Denarii uses bazel (<https://bazel.build/>). And it needs `C++14` at least. So set `BAZEL_CXXOPTS="-std=c++14"` on Linux/Mac and `BAZEL_CXXOPT="-std:c++14"` on Windows.
 
 ### On Linux and macOS
 
-* Install the dependencies
-* Change to the root of the source code directory, change to the most recent release branch, and build:
+- Install the dependencies
+- Change to the root of the source code directory, change to the most recent release branch, and build:
 
     ```bash
     cd denarii
@@ -123,32 +123,32 @@ Denarii uses bazel (https://bazel.build/). And it needs `C++14` at least. So set
     ```
 
 ### On Windows
+
 * Download and install the following. Make sure they are in your path.
-CMAKE: https://cmake.org/download/
-Make: http://gnuwin32.sourceforge.net/packages/make.htm
-MinGW: https://sourceforge.net/projects/mingw/files/latest/download
-Msys2: https://www.msys2.org/
-Bazel with gcc: https://github.com/bazelbuild/bazel/issues/12100
-Visual Studio: https://visualstudio.microsoft.com/
+CMAKE: <https://cmake.org/download/>
+Make: <http://gnuwin32.sourceforge.net/packages/make.htm>
+MinGW: <https://sourceforge.net/projects/mingw/files/latest/download>
+Msys2: <https://www.msys2.org/>
+Bazel with gcc: <https://github.com/bazelbuild/bazel/issues/12100>
+Visual Studio: <https://visualstudio.microsoft.com/>
 
-* Open the MSYS shell via the `MSYS2 Shell` shortcut
-* Update packages using pacman:  
+- Open the MSYS shell via the `MSYS2 Shell` shortcut
+- Update packages using pacman:  
 
     ```bash
     pacman -Syu
     ```
 
-* Exit the MSYS shell using Alt+F4  
-* Edit the properties for the `MSYS2 Shell` shortcut changing "msys2_shell.bat" to "msys2_shell.cmd -mingw64" for 64-bit builds or "msys2_shell.cmd -mingw32" for 32-bit builds. 
+- Exit the MSYS shell using Alt+F4  
+- Edit the properties for the `MSYS2 Shell` shortcut changing "msys2_shell.bat" to "msys2_shell.cmd -mingw64" for 64-bit builds or "msys2_shell.cmd -mingw32" for 32-bit builds.
   You could also just open the msys of the appropriate type found under ```C:/Users/%USER%/AppData/Roaming/Micorsoft/Windwos/'Start Menu'/Programs/'Msys 64bit'```
-* Restart MSYS shell via modified shortcut and update packages again using pacman:  
+- Restart MSYS shell via modified shortcut and update packages again using pacman:  
 
     ```bash
     pacman -Syu
     ```
 
-
-* Install dependencies:
+- Install dependencies:
 
     To build for 64-bit Windows in Msys2:
 
@@ -162,36 +162,34 @@ Visual Studio: https://visualstudio.microsoft.com/
     pacman -S mingw-w64-i686-toolchain make mingw-w64-i686-cmake mingw-w64-i686-boost mingw-w64-i686-openssl mingw-w64-i686-zeromq mingw-w64-i686-libsodium mingw-w64-i686-hidapi mingw-w64-i686-libunwind mingw-w64-i686-libusb mingw-w64-i686-unbound mingw-w64-i686-lmdb mingw-w64-i686-qt-creator mingw-w64-i686-python-pyqt5 mingw-w64-i686-qt5-tools
     ```
   
-    Then run in command prompt 
-    ```bash 
+    Then run in command prompt
+
+    ```bash
     pip install PyQt5
     ```
   
-* Run Configure 
+- Run Configure
 
-    ``` 
+    ```
     bazel run :configure_win (run through command prompt) or python configure_win.py (run through command prompt)
     bazel run :configure     (run through msys2) or python configure.py (run through msys2)
     ```
 
-## Building 
+## Building
 
-### On Linux 
-
+### On Linux
 
 Do `bazel build target --@boost.asio//:ssl=openssl` for all targets -- e.g. ```bazel build src:denariid --@boost.asio//:ssl=openssl```
 
-
 ### On Windows  
 
-All builds should use ```--output_base="C:\bazel-bin"``` before the `build` command and ```  --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows_mingw --extra_execution_platforms=//:windows-mingw-gcc ``` after the build command and ```--compiler=mingw-gcc --host_compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static"``` ```--@boost.asio//:ssl=openssl``` after `target`
+All builds should use ```--output_base="C:\bazel-bin"``` before the `build` command and ```--extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows_mingw --extra_execution_platforms=//:windows-mingw-gcc``` after the build command and ```--compiler=mingw-gcc --host_compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static"``` ```--@boost.asio//:ssl=openssl``` after `target`
 
-For why we need `output_base` see https://github.com/protocolbuffers/protobuf/issues/12947
+For why we need `output_base` see <https://github.com/protocolbuffers/protobuf/issues/12947>
 
-Ex: 
+Ex:
 
-`bazel --output_base="C:\bazel-bin" build  --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows_mingw --extra_execution_platforms=//:windows-mingw-gcc src:denariid --compiler=mingw-gcc --host_compiler=mingmw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static" --@boost.asio//:ssl=openssl` 
-
+`bazel --output_base="C:\bazel-bin" build  --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows_mingw --extra_execution_platforms=//:windows-mingw-gcc src:denariid --compiler=mingw-gcc --host_compiler=mingmw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static" --@boost.asio//:ssl=openssl`
 
 If you want to build in debug mode use `--compilation_mode=dbg` instead of `--copt="-O3"` and also add in `--linkopt="mcmodel=medium"` and `--copt="=Wa,-mbig-obj"`
 
@@ -200,12 +198,12 @@ Need to set JAVA_HOME in msys. Mine is ```export JAVA_HOME=/c/'Program Files'/Ja
 Protoc works weird with mingw-gcc so you have to fix it.
 
 Add the following files to `C:\msys64\mingw-gcc\bin`
-* `ntdll.dll`
-* `KERNEL32.DLL`
-* `KERNELBASE.dll`
-* `msvcrt.dll` 
+- `ntdll.dll`
+- `KERNEL32.DLL`
+- `KERNELBASE.dll`
+- `msvcrt.dll`
 
-These can all be found under `C:\Windows\SYSTEM32` 
+These can all be found under `C:\Windows\SYSTEM32`
 
 ### On Mac
 
@@ -234,12 +232,14 @@ To run in background:
 ./bazel-bin/src/denariid --log-file denariid.log --detach
 ```
 
-### On Windows 
+### On Windows
+
 ```bash
 start bazel-bin/src/denariid.exe
 ```
 
 ### On Mac
+
 ```bash
 ./bazel-bin/src/denariid
 ```
@@ -251,30 +251,31 @@ denarii-wallet-cli, and possibly denariid, if you get crashes refreshing. You al
 
 ### On Linux
 
-The build places the binary in `bazel-bin` sub-directory: To run in the foreground: 
+The build places the binary in `bazel-bin` sub-directory: To run in the foreground:
 
 ```bash
 sudo ./bazel-bin/src/denarii_wallet_rpc_server --rpc-bind-port=8080 --wallet-dir=/some/existing/path
 ```
 
-### On Windows 
+### On Windows
 
-```bash 
+```bash
 start bazel-bin/src/denarii_wallet_rpc_server.exe --rpc-bind-port=8080 --wallet-dir=/some/existing/path
 ```
 
-## Testing 
+## Testing
 
 Set the path to this workspace in `contrib/epee/include/string_tools.h` in function `get_workspace_path`. And set it in `tests/unit_tests/BUILD`.
 
-Run 
-```bash 
+Run
+
+```bash
 bazel run tests:get_monero_test_commands
 ```
 
 Then execute the command it prints out.
 
-#### Stack Traces on Windows 
+#### Stack Traces on Windows
 
 Linux has stack traces by default. Windows crashes when there is a stack trace so we by default do not log them. However, you can enable them with `--copt="-DSTACK_TRACE_DENARII`
 
@@ -303,23 +304,23 @@ See [README.i18n.md](README.i18n.md).
 While Denarii isn't made to integrate with Tor, it can be used wrapped with torsocks, by
 setting the following configuration parameters and environment variables:
 
-* `--p2p-bind-ip 127.0.0.1` on the command line or `p2p-bind-ip=127.0.0.1` in
+- `--p2p-bind-ip 127.0.0.1` on the command line or `p2p-bind-ip=127.0.0.1` in
   monerod.conf to disable listening for connections on external interfaces.
-* `--no-igd` on the command line or `no-igd=1` in monerod.conf to disable IGD
+- `--no-igd` on the command line or `no-igd=1` in monerod.conf to disable IGD
   (UPnP port forwarding negotiation), which is pointless with Tor.
-* `DNS_PUBLIC=tcp` or `DNS_PUBLIC=tcp://x.x.x.x` where x.x.x.x is the IP of the
+- `DNS_PUBLIC=tcp` or `DNS_PUBLIC=tcp://x.x.x.x` where x.x.x.x is the IP of the
   desired DNS server, for DNS requests to go over TCP, so that they are routed
   through Tor. When IP is not specified, denariid uses the default list of
   servers defined in [src/common/dns_utils.cpp](src/common/dns_utils.cpp).
-* `TORSOCKS_ALLOW_INBOUND=1` to tell torsocks to allow denariid to bind to interfaces
+- `TORSOCKS_ALLOW_INBOUND=1` to tell torsocks to allow denariid to bind to interfaces
    to accept connections from the wallet. On some Linux systems, torsocks
    allows binding to localhost by default, so setting this variable is only
    necessary to allow binding to local LAN/VPN interfaces to allow wallets to
    connect from remote hosts. On other systems, it may be needed for local wallets
    as well.
-* Do NOT pass `--detach` when running through torsocks with systemd, (see
+- Do NOT pass `--detach` when running through torsocks with systemd, (see
   [utils/systemd/monerod.service](utils/systemd/monerod.service) for details).
-* If you use the wallet with a Tor daemon via the loopback IP (eg, 127.0.0.1:9050),
+- If you use the wallet with a Tor daemon via the loopback IP (eg, 127.0.0.1:9050),
   then use `--untrusted-daemon` unless it is your own hidden service.
 
 Example command line to start denariid through Tor:
@@ -341,6 +342,7 @@ DNS_PUBLIC=tcp torsocks ./bazel-bin/src/denariid --p2p-bind-ip 127.0.0.1 --no-ig
 ```
 
 ## Pruning
+
 One can store a pruned blockchain,  which is ~1/3 the size of the full chain.
 A pruned blockchain can only serve part of the historical chain data to other peers, but is otherwise identical in
 functionality to the full blockchain.
@@ -357,7 +359,7 @@ This section contains general instructions for debugging failed installs or prob
 
 We generally use the tool `gdb` (GNU debugger) to provide stack trace functionality, and `ulimit` to provide core dumps in builds which crash or segfault. You need to use version 10+.
 
-* To use `gdb` in order to obtain a stack trace for a build that has stalled:
+- To use `gdb` in order to obtain a stack trace for a build that has stalled:
 
 Run the build.
 
@@ -369,7 +371,7 @@ gdb /path/to/denaridd `pidof denariid`
 
 Type `thread apply all bt` within gdb in order to obtain the stack trace
 
-* If however the core dumps or segfaults:
+- If however the core dumps or segfaults:
 
 Enter `ulimit -c unlimited` on the command line to enable unlimited filesizes for core dumps
 
@@ -387,15 +389,15 @@ gdb /path/to/denariid /path/to/dumpfile`
 
 Print the stack trace with `bt`
 
- * If a program crashed and cores are managed by systemd, the following can also get a stack trace for that crash:
+- If a program crashed and cores are managed by systemd, the following can also get a stack trace for that crash:
 
 ```bash
 coredumpctl -1 gdb
 ```
 
-#### To run Denarii within gdb:
+#### To run Denarii within gdb
 
-Type `gdb /path/to/denaridd` but you will need to follow the instructions here https://stackoverflow.com/questions/71903316/gdb-command-aborted-for-all-commands?noredirect=1#comment127059480_71903316 and get the latest gdb.
+Type `gdb /path/to/denaridd` but you will need to follow the instructions here <https://stackoverflow.com/questions/71903316/gdb-command-aborted-for-all-commands?noredirect=1#comment127059480_71903316> and get the latest gdb.
 
 Pass command-line options with `--args` followed by the relevant arguments
 
@@ -437,17 +439,17 @@ These records are dumped as hex data, where the first line is the key and the se
 
 ## Known Issues
 
-### Building 
+### Building
 
-#### Mac 
+#### Mac
 
 Only works with `ARM` CPUs.
 
-#### Windows 
+#### Windows
 
 Only works with `x86` CPUs.
 
-#### Linux 
+#### Linux
 
 Only works on `Ubuntu` with `x86` CPUs.
 
@@ -466,8 +468,8 @@ Certain blockchain "features" can be considered "bugs" if misused correctly. Con
 
 - When receiving denarii, be aware that it may be locked for an arbitrary time if the sender elected to, preventing you from spending that denarii until the lock time expires. You may want to hold off acting upon such a transaction until the unlock time lapses. To get a sense of that time, you can consider the remaining blocktime until unlock as seen in the `show_transfers` command.
 
-### Connections 
+### Connections
 
-#### Denariid on Windows 
+#### Denariid on Windows
 
 - Right now, `denaiid.exe` will sometimes fail to connect to the network. If it happens just restart it. The gui will restart it automatically in the background.
