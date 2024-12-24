@@ -3,7 +3,9 @@
 NOTE: This does not work on Windows right now.
 
 Portions Copyright (c) 2020-2025 Denarii.
-Portions Copyright (c) 2014-2020 The Monero Project.   
+
+Portions Copyright (c) 2014-2020 The Monero Project.
+
 Portions Copyright (c) 2012-2013 The Cryptonote developers.
 
 ## Table of Contents
