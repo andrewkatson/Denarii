@@ -1,4 +1,4 @@
-name: bazel_windows
+name: Windows
 permissions: read-all
 
 on: [push, pull_request]

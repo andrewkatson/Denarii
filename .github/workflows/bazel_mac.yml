@@ -1,4 +1,4 @@
-name: bazel_mac
+name: MacOS
 permissions: read-all
 
 on: [push, pull_request]
