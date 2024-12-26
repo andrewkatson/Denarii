@@ -1,6 +1,8 @@
 # Denarii
 
-NOTE: This does not work on Windows right now.
+[![Ubuntu](https://github.com/andrewkatson/denarii/actions/workflows/bazel_mac.yml/badge.svg)](https://github.com/andrewkatson/denarii/actions/workflows/bazel_ubuntu.yml)
+[![MacOS](https://github.com/andrewkatson/denarii/actions/workflows/bazel_mac.yml/badge.svg)](https://github.com/andrewkatson/denarii/actions/workflows/bazel_mac.yml)
+[![Windows](https://github.com/andrewkatson/denarii/actions/workflows/bazel_mac.yml/badge.svg)](https://github.com/andrewkatson/denarii/actions/workflows/bazel_windows.yml)
 
 Portions Copyright (c) 2020-2025 Denarii.
 
