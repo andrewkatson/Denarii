@@ -1,3 +1,5 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+
 package(default_visibility = ["//visibility:public"])
 
 config_setting(
@@ -31,8 +33,8 @@ cc_binary(
         "-lboost_system",
         "-lboost_thread",
     ] + select({
-        "windows": [],
         "mac": [],
+        "windows": [],
         "//conditions:default": [],
     }),
     deps = [
