@@ -1,0 +1,25 @@
+name: bazel_mac
+permissions: read-all
+
+on: [push, pull_request]
+
+jobs:
+  build-macos:
+    strategy:
+      matrix:
+        os:
+          - macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@main
+        with:
+          submodules: recursive
+          update: true
+          install: brew update && brew bundle --file=contrib/brew/Brewfile && pip3 install PyQt5
+      - run: bazelisk build src:all --@boost.asio//:ssl=openssl
+      - run: bazelisk build utils/gui
+      - run: bazelisk run tests:run_monero_tests  --@boost.asio//:ssl=openssl
+      - run: bazelisk run tests/core_tests  --@boost.asio//:ssl=openssl -- --generate_and_play_test_data
+      - run: bazelisk run tests/functional_tests:functional_tests_rpc  --@boost.asio//:ssl=openssl -- -- python3 ${GITHUB_WORKSPACE}/tests/functional_tests ${GITHUB_WORKSPACE}/bazel-bin all
+      - run: bazelisk run tests/functional_tests:check_missing_rpc_methods  --@boost.asio//:ssl=openssl -- ${GITHUB_WORKSPACE}/tests/functional_tests
+      - run: bazelisk test utils/gui:all
