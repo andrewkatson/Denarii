@@ -172,18 +172,18 @@ Visual Studio: <https://visualstudio.microsoft.com/>
   
 - Run Configure
 
-    ```
+    ```bash
     bazel run :configure_win (run through command prompt) or python configure_win.py (run through command prompt)
     bazel run :configure     (run through msys2) or python configure.py (run through msys2)
     ```
 
 ## Building
 
-### On Linux
+### Building On Linux
 
 Do `bazel build target --@boost.asio//:ssl=openssl` for all targets -- e.g. ```bazel build src:denariid --@boost.asio//:ssl=openssl```
 
-### On Windows  
+### Building On Windows
 
 All builds should use ```--output_base="C:\bazel-bin"``` before the `build` command and ```--extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows_mingw --extra_execution_platforms=//:windows-mingw-gcc``` after the build command and ```--compiler=mingw-gcc --host_compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" --copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static"``` ```--@boost.asio//:ssl=openssl``` after `target`
 
@@ -208,13 +208,13 @@ Add the following files to `C:\msys64\mingw-gcc\bin`
 
 These can all be found under `C:\Windows\SYSTEM32`
 
-### On Mac
+### Building On Mac
 
 Do `bazel build target --@boost.asio//:ssl=openssl` on all targets.
 
 ## Running denariid
 
-### On Linux
+### Running Daemon On Linux
 
 The build places the binary in `bazel-bin/` sub-directory. To run in the
 foreground:
@@ -235,13 +235,13 @@ To run in background:
 ./bazel-bin/src/denariid --log-file denariid.log --detach
 ```
 
-### On Windows
+### Running Daemon On Windows
 
 ```bash
 start bazel-bin/src/denariid.exe
 ```
 
-### On Mac
+### Running Daemon  On Mac
 
 ```bash
 ./bazel-bin/src/denariid
@@ -252,7 +252,7 @@ denarii-wallet-cli, and possibly denariid, if you get crashes refreshing. You al
 
 ## Running denarii wallet rpc server
 
-### On Linux
+### Running Wallet Server On Linux
 
 The build places the binary in `bazel-bin` sub-directory: To run in the foreground:
 
@@ -260,10 +260,16 @@ The build places the binary in `bazel-bin` sub-directory: To run in the foregrou
 sudo ./bazel-bin/src/denarii_wallet_rpc_server --rpc-bind-port=8080 --wallet-dir=/some/existing/path
 ```
 
-### On Windows
+### Running Wallet Server On Windows
 
 ```bash
 start bazel-bin/src/denarii_wallet_rpc_server.exe --rpc-bind-port=8080 --wallet-dir=/some/existing/path
+```
+
+### Running Wallet Server On Mac
+
+```bash
+./bazel-bin/src/denarii_wallet_rpc_server --rpc-bind-port=8080 --wallet-dir=/some/existing/path
 ```
 
 ## Testing
@@ -273,20 +279,12 @@ Set the path to this workspace in `contrib/epee/include/string_tools.h` in funct
 Run
 
 ```bash
-bazel run tests:get_monero_test_commands
+bazel run tests:run_monero_tests
 ```
 
-Then execute the command it prints out.
-
-#### Stack Traces on Windows
+### Stack Traces on Windows
 
 Linux has stack traces by default. Windows crashes when there is a stack trace so we by default do not log them. However, you can enable them with `--copt="-DSTACK_TRACE_DENARII`
-
-### On Mac
-
-```bash
-./bazel-bin/src/denarii_wallet_rpc_server --rpc-bind-port=8080 --wallet-dir=/some/existing/path
-```
 
 ## Running Denarii GUI
 
@@ -442,7 +440,7 @@ These records are dumped as hex data, where the first line is the key and the se
 
 ## Known Issues
 
-### Building
+### Building Issues
 
 #### Mac
 
