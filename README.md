@@ -1,8 +1,8 @@
 # Denarii
 
-[![Ubuntu](https://github.com/andrewkatson/denarii/actions/workflows/bazel_mac.yml/badge.svg)](https://github.com/andrewkatson/denarii/actions/workflows/bazel_ubuntu.yml)
+[![Ubuntu](https://github.com/andrewkatson/denarii/actions/workflows/bazel_ubuntu.yml/badge.svg)](https://github.com/andrewkatson/denarii/actions/workflows/bazel_ubuntu.yml)
 [![MacOS](https://github.com/andrewkatson/denarii/actions/workflows/bazel_mac.yml/badge.svg)](https://github.com/andrewkatson/denarii/actions/workflows/bazel_mac.yml)
-[![Windows](https://github.com/andrewkatson/denarii/actions/workflows/bazel_mac.yml/badge.svg)](https://github.com/andrewkatson/denarii/actions/workflows/bazel_windows.yml)
+[![Windows](https://github.com/andrewkatson/denarii/actions/workflows/bazel_windows.yml/badge.svg)](https://github.com/andrewkatson/denarii/actions/workflows/bazel_windows.yml)
 
 Portions Copyright (c) 2020-2025 Denarii.
 
