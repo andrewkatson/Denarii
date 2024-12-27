@@ -11,7 +11,6 @@ import requests
 import shutil
 import subprocess
 import sys
-import zipfile
 
 import common
 import workspace_path_finder
@@ -26,9 +25,9 @@ py_pb_files_to_check = ["any_pb2.py", "api_pb2.py", "descriptor_pb2.py", "durati
 py_files_to_check = ["descriptor.py", "descriptor_pool.py",
                      "message.py", "reflection.py", "symbol_database.py"]
 
-common_bazel_options_windows = f' --output_base="C:\\bazel-bin '
-common_bazel_build_command_options_windows = f' --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows_mingw --extra_execution_platforms=//:windows-mingw-gcc '
-common_build_options_windows = f' --compiler=mingw-gcc --host_compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" ' \
+common_bazel_options_windows = ' --output_base="C:\\bazel-bin '
+common_bazel_build_command_options_windows = ' --extra_toolchains=@local_config_cc//:cc-toolchain-x64_windows_mingw --extra_execution_platforms=//:windows-mingw-gcc '
+common_build_options_windows = ' --compiler=mingw-gcc --host_compiler=mingw-gcc --copt="-O3" --copt="-DWIN32_LEAN_AND_MEAN" ' \
                                '--copt="-DMINIUPNP_STATICLIB" --copt="-DZMQ_STATIC" --linkopt="-static" '
 
 
@@ -79,7 +78,7 @@ print(f"GITHUB PATH {github_path}")
 
 def download_url(url, save_path, chunk_size=128):
     common.print_something(f"Downloading url {url} to {save_path}")
-    r = requests.get(url, stream=True)
+    r = requests.get(url, stream=True, timeout=10)
     with open(save_path, 'wb') as fd:
         for chunk in r.iter_content(chunk_size=chunk_size):
             fd.write(chunk)
@@ -520,7 +519,7 @@ def bigint(external_dir_path):
         return
 
     clone_command = "git clone git@github.com:kasparsklavins/bigint.git"
-    os.system(clone_command)
+    common.system(clone_command)
 
     common.check_exists(bigint_path)
 
@@ -534,12 +533,12 @@ def curl(external_dir_path):
         return
 
     clone_command = "git clone git@github.com:curl/curl.git"
-    os.system(clone_command)
+    common.system(clone_command)
 
     common.chdir(inside_folder_path)
 
     make_command = "./buildconf && ./configure && make"
-    os.system(make_command)
+    common.system(make_command)
 
     common.check_exists(inside_folder_path)
 
@@ -554,7 +553,7 @@ def json(external_dir_path):
     common.chdir(json_path)
 
     clone_command = "git clone git@github.com:andrewkatson/json.git"
-    os.system(clone_command)
+    common.system(clone_command)
 
     common.check_exists(json_path)
 

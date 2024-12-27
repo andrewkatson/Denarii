@@ -46,7 +46,7 @@ def check_exists(path, fail_on_existence=True):
 def check_exists_with_existing_artifact_check(path="", paths=None, root_path="", delete_tree=False, delete_single_file=False, fail_on_existence=True):
 
 
-    if root_path == "" and delete_tree == True: 
+    if root_path == "" and delete_tree is True:
         raise ValueError("If delete_tree is specified you need to supply a root_path")
 
     if paths is None and path != "": 

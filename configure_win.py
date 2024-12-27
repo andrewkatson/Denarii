@@ -155,7 +155,7 @@ def get_relevant_paths_win(libraries):
             names = ["openssl", "libssl", "libcrypto"]
 
         for name in names:
-            for subdir, dirs, files in os.walk(includes_path):
+            for _, dirs, files in os.walk(includes_path):
                 for directory in dirs:
                     if name in directory:
                         library.relevant_paths.append(
@@ -164,7 +164,7 @@ def get_relevant_paths_win(libraries):
                     if name in file and file.endswith(".h"):
                         library.relevant_paths.append(
                             os.path.join(includes_path, file))
-            for subdir, dirs, files in os.walk(src_path):
+            for _, _, files in os.walk(src_path):
                 for file in files:
                     if name in file and file.endswith(".a") or file.endswith(".so"):
                         library.relevant_paths.append(
@@ -189,7 +189,7 @@ def find_src_files_win(libraries):
                         if not os.path.exists(new_path):
                             with open(new_path, 'w'):
                                 pass
-                    except:
+                    except Exception:
                         common.print_something(
                             "weird this shouldnt happen but is ok")
 
@@ -386,12 +386,12 @@ def curl_win(external_dir_path):
         return
 
     clone_command = "git clone git@github.com:curl/curl.git"
-    os.system(clone_command)
+    common.system(clone_command)
 
     common.chdir(curl_path)
 
     command = "buildconf && mingw32-make mingw32"
-    os.system(command)
+    common.system(command)
 
     common.check_exists(curl_path)
 
